@@ -105,10 +105,10 @@ git push -u origin main
 
 以降、`main` にpushするたび自動デプロイされます。
 
-### 3. 独自ドメイン（ibatoco.com）
+### 3. 独自ドメイン（ibatoco.jp）
 
 - **Cloudflare Registrar** または **お名前.com** でドメイン取得
-- Cloudflare Pages のプロジェクト → **Custom domains** → `ibatoco.com` を追加
+- Cloudflare の Worker「ibatoco」→ **ドメイン** → `ibatoco.jp` を追加
 - （お名前.com取得の場合）ネームサーバーをCloudflareに向けるか、CNAMEを設定
 - 取得したドメインに合わせて [`astro.config.mjs`](astro.config.mjs) の `SITE` と [`public/robots.txt`](public/robots.txt) のSitemap URLを更新
 

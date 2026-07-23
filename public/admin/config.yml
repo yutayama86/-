@@ -8,7 +8,7 @@
 #    a) Cloudflare Pages の場合: OAuthプロキシ（例: github.com/i40west/netlify-cms-cloudflare-pages）を用意し
 #       base_url / auth_endpoint を設定
 #    b) お手軽に始めるなら Netlify で Identity + Git Gateway を使う方法もあります
-# 3. https://ibatoco.com/admin/ にアクセスしてログイン
+# 3. https://ibatoco.jp/admin/ にアクセスしてログイン
 # =========================================================
 
 backend:

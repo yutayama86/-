@@ -3,7 +3,7 @@ import { CATEGORIES, type CategoryKey } from '../content.config';
 export const SITE_CONFIG = {
   name: 'イバトコ',
   nameEn: 'IBATOCO',
-  domain: 'https://ibatoco.com',
+  domain: 'https://ibatoco.jp',
   tagline: '茨城の“いいとこ”を、行った人の熱量で。',
   description:
     '茨城に一番くわしい体験型ローカルメディア「イバトコ」。編集部とご当地レポーターが実際に足を運び、食・暮らし・遊び・美容・ものづくりのリアルをお届けします。',
@@ -18,7 +18,7 @@ export const SITE_CONFIG = {
     x: 'https://x.com/',
     threads: 'https://www.threads.net/',
   },
-  contactEmail: 'hello@ibatoco.com',
+  contactEmail: 'hello@ibatoco.jp',
 } as const;
 
 export { CATEGORIES };

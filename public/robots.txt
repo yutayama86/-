@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ibatoco.com/sitemap-index.xml
+Sitemap: https://ibatoco.jp/sitemap-index.xml

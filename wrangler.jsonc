@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers（静的アセット配信）でイバトコを公開するための設定。
+  // Astroのビルド成果物 dist/ をそのまま配信します。
+  "name": "ibatoco",
+  "compatibility_date": "2024-11-01",
+  "assets": {
+    "directory": "./dist",
+    // 未知のURLは自作の404ページ（dist/404.html）を返す
+    "not_found_handling": "404-page"
+  }
+}

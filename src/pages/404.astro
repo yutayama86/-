@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="ページが見つかりません" noindex={true}>
+  <section class="wrap nf">
+    <p class="latin nf-code">404</p>
+    <h1 class="display nf-title">この道は、行き止まりでした。</h1>
+    <p class="nf-lead mincho muted">お探しのページは見つかりませんでしたが、茨城の“いいとこ”はまだまだあります。</p>
+    <div class="nf-cta">
+      <a href="/" class="btn btn--ai btn--lg">トップへ戻る <span class="arw">→</span></a>
+      <a href="/eat/" class="btn btn--ghost btn--lg">よみものを読む</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { min-height: 62vh; display: grid; place-content: center; text-align: center; gap: 1rem; padding-block: 4rem; }
+  .nf-code { font-size: var(--step-5); color: var(--shu); line-height: 1; }
+  .nf-title { font-size: var(--step-3); }
+  .nf-lead { font-size: var(--step-1); max-width: 44ch; margin-inline: auto; }
+  .nf-cta { margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+</style>

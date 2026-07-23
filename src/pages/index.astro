@@ -1,0 +1,275 @@
+---
+import Base from '../layouts/Base.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { getArticles, getFeatured } from '../lib/content';
+import { CATEGORY_LIST, SITE_CONFIG } from '../data/site';
+
+const articles = await getArticles();
+const featuredAll = await getFeatured();
+const hero = (featuredAll[0] ?? articles[0]) ?? null;
+const featured = (featuredAll.length ? featuredAll : articles).slice(hero ? 1 : 0, hero ? 4 : 3);
+const latest = articles.filter((a) => a.id !== hero?.id).slice(0, 6);
+
+const heroCat = hero ? CATEGORY_LIST.find((c) => c.key === hero.data.category) : null;
+const heroHref = hero ? `/${heroCat?.path}/${hero.id.split('/').pop()}/` : '#';
+---
+
+<Base hero title={undefined}>
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true">
+      <span class="orb orb-1"></span>
+      <span class="orb orb-2"></span>
+    </div>
+    <div class="wrap-wide hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow hero-eyebrow" data-reveal>Ibaraki Local Media</p>
+        <h1 class="hero-title display" data-reveal>
+          茨城の<span class="hl">いいとこ</span>、<br />
+          <span class="hero-sub">行った人の熱量で。</span>
+        </h1>
+        <p class="hero-lead" data-reveal>
+          ガイドブックには載らない、地元の“本物”だけを。<br class="pc" />
+          編集部とご当地レポーターが実際に足を運び、<br class="pc" />
+          食・暮らし・遊び・美容・ものづくりのリアルをお届けします。
+        </p>
+        <div class="hero-cta" data-reveal>
+          <a href="/eat/" class="btn btn--ai btn--lg">よみものを読む <span class="arw">→</span></a>
+          <a href="/biz/" class="btn btn--ghost btn--lg">お店を掲載したい方へ</a>
+        </div>
+      </div>
+
+      <div class="hero-vert" aria-hidden="true">
+        <span class="vertical mincho">茨城、ぜんぶ体験。</span>
+      </div>
+    </div>
+
+    {hero && (
+      <div class="wrap-wide">
+        <a href={heroHref} class="hero-feature" data-reveal>
+          <div class="hero-feature-media">
+            {hero.data.cover ? (
+              <img src={hero.data.cover} alt={hero.data.coverAlt} loading="eager" />
+            ) : (
+              <div class="hero-feature-fallback" style={`--_a:${heroCat?.accent}`}>
+                <span class="mincho">{heroCat?.label}</span>
+              </div>
+            )}
+          </div>
+          <div class="hero-feature-body">
+            <span class="chip chip--solid">PICK UP</span>
+            <h2 class="hero-feature-title display">{hero.data.title}</h2>
+            <p class="hero-feature-desc">{hero.data.description}</p>
+            <span class="hero-feature-more ul-link">記事を読む →</span>
+          </div>
+        </a>
+      </div>
+    )}
+  </section>
+
+  <!-- ============ CATEGORIES ============ -->
+  <section class="wrap section">
+    <div class="sec-head" data-reveal>
+      <h2>よみもののジャンル<span class="latin num"> / Genres</span></h2>
+    </div>
+    <ul class="cat-grid">
+      {CATEGORY_LIST.map((c, i) => (
+        <li data-reveal style={`--delay:${i * 60}ms`}>
+          <a href={`/${c.path}/`} class="cat-card" style={`--_a:${c.accent}`}>
+            <span class="cat-num latin">0{i + 1}</span>
+            <div class="cat-text">
+              <span class="cat-reading mincho">{c.reading}</span>
+              <h3 class="cat-label">{c.label}</h3>
+            </div>
+            <span class="cat-arw" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- ============ FEATURED ============ -->
+  {featured.length > 0 && (
+    <section class="wrap section">
+      <div class="sec-head" data-reveal>
+        <h2>特集・注目の体験<span class="latin num"> / Featured</span></h2>
+        <a href="/eat/" class="ul-link muted">すべて見る →</a>
+      </div>
+      <div class="feature-grid">
+        {featured.map((a, i) => <ArticleCard article={a} size={i === 0 ? 'lg' : 'md'} />)}
+      </div>
+    </section>
+  )}
+
+  <!-- ============ AMBASSADOR ============ -->
+  <section class="amb">
+    <div class="wrap amb-inner">
+      <div class="amb-copy" data-reveal>
+        <p class="eyebrow">Ambassador Model</p>
+        <h2 class="display amb-title">
+          その街を、<br />一番好きな人が書く。
+        </h2>
+        <p class="amb-lead">
+          イバトコは、すでに茨城でファンを持つ地元インフルエンサーを
+          <b>「公式レポーター」</b>としてお迎えします。
+          AIには真似できない“人の熱量”と、プロの撮影クオリティ。
+          その掛け算で、茨城の魅力を最大出力でお届けします。
+        </p>
+        <a href="/reporters/" class="btn btn--ghost">公式レポーターを見る <span class="arw">→</span></a>
+      </div>
+      <div class="amb-visual" data-reveal aria-hidden="true">
+        <div class="amb-quote mincho">「〇〇さんが、取材に来た。」</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LATEST ============ -->
+  <section class="wrap section">
+    <div class="sec-head" data-reveal>
+      <h2>新着のよみもの<span class="latin num"> / Latest</span></h2>
+    </div>
+    {latest.length > 0 ? (
+      <div class="latest-grid">
+        {latest.map((a, i) => <ArticleCard article={a} index={i} />)}
+      </div>
+    ) : (
+      <p class="empty muted mincho">ただいま最初の取材に出ています。記事はまもなく公開します。</p>
+    )}
+  </section>
+
+  <!-- ============ SNS ============ -->
+  <section class="wrap section">
+    <div class="sns" data-reveal>
+      <div>
+        <p class="eyebrow">Follow Ibatoco</p>
+        <h2 class="display sns-title">現地のリアルは、<br class="sp" />SNSが一番早い。</h2>
+      </div>
+      <ul class="sns-list">
+        <li><a href={SITE_CONFIG.social.instagram} target="_blank" rel="noopener noreferrer" class="sns-btn">Instagram</a></li>
+        <li><a href={SITE_CONFIG.social.tiktok} target="_blank" rel="noopener noreferrer" class="sns-btn">TikTok</a></li>
+        <li><a href={SITE_CONFIG.social.x} target="_blank" rel="noopener noreferrer" class="sns-btn">X</a></li>
+        <li><a href={SITE_CONFIG.social.threads} target="_blank" rel="noopener noreferrer" class="sns-btn">Threads</a></li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .section { padding-block: clamp(3.5rem, 8vw, 7rem); }
+
+  /* ---- Hero ---- */
+  .hero { position: relative; padding-top: 120px; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.5; }
+  .orb-1 { width: 46vw; height: 46vw; background: radial-gradient(circle, rgba(216,69,43,.28), transparent 70%); top: -12vw; right: -8vw; }
+  .orb-2 { width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(107,155,209,.3), transparent 70%); top: 20vw; left: -12vw; }
+
+  .hero-inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; }
+  .hero-eyebrow { margin-bottom: 1.6rem; }
+  .hero-title { font-size: clamp(2.7rem, 1.5rem + 4.9vw, 6.4rem); font-weight: 700; letter-spacing: 0.01em; }
+  .hero-title .hl {
+    position: relative; color: var(--shu); white-space: nowrap;
+  }
+  .hero-title .hl::after {
+    content: ""; position: absolute; left: -2%; right: -2%; bottom: 0.08em; height: 0.14em;
+    background: color-mix(in srgb, var(--shu) 35%, transparent); z-index: -1; border-radius: 2px;
+  }
+  .hero-sub { color: var(--ai); }
+  .hero-lead { margin-top: 2rem; font-size: var(--step-1); color: var(--ink-soft); line-height: 1.95; }
+  .hero-cta { margin-top: 2.6rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .hero-vert { padding-top: 0.5rem; }
+  .hero-vert .vertical {
+    font-size: var(--step-2); letter-spacing: 0.3em; color: var(--ink-mute);
+    height: 340px; border-right: 1px solid var(--line); padding-right: 1.2rem;
+  }
+
+  .hero-feature {
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(1.5rem, 4vw, 3.5rem);
+    margin-top: clamp(3rem, 7vw, 6rem); align-items: center;
+    padding-top: 3rem; border-top: 1px solid var(--line);
+  }
+  .hero-feature-media { aspect-ratio: 16/10; overflow: hidden; border-radius: var(--radius); background: var(--paper-3); }
+  .hero-feature-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+  .hero-feature:hover .hero-feature-media img { transform: scale(1.05); }
+  .hero-feature-fallback {
+    width: 100%; height: 100%; display: grid; place-items: center;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--_a) 18%, var(--paper-2)), var(--paper-3));
+    color: color-mix(in srgb, var(--_a) 75%, var(--ink));
+  }
+  .hero-feature-fallback span { font-size: var(--step-3); letter-spacing: 0.2em; opacity: 0.55; }
+  .hero-feature-body { display: grid; gap: 1.1rem; align-content: center; }
+  .hero-feature-title { font-size: var(--step-3); line-height: 1.3; }
+  .hero-feature-desc { color: var(--ink-soft); }
+  .hero-feature-more { color: var(--shu-deep); font-weight: 700; width: fit-content; }
+
+  /* ---- Categories ---- */
+  .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; margin-top: 2.5rem; background: var(--line); border-block: 1px solid var(--line); }
+  .cat-card {
+    background: var(--paper); display: flex; flex-direction: column; gap: 2.5rem;
+    padding: 1.8rem 1.4rem; min-height: 220px; position: relative;
+    transition: background 0.4s var(--ease);
+  }
+  .cat-card:hover { background: var(--_a); color: #fff; }
+  .cat-num { font-size: var(--step-1); color: var(--ink-mute); transition: color 0.4s; }
+  .cat-card:hover .cat-num { color: rgba(255,255,255,.7); }
+  .cat-text { margin-top: auto; }
+  .cat-reading { display: block; font-size: var(--step--1); color: var(--ink-mute); letter-spacing: 0.2em; transition: color 0.4s; }
+  .cat-card:hover .cat-reading { color: rgba(255,255,255,.8); }
+  .cat-label { font-family: var(--font-display); font-weight: 600; font-size: var(--step-1); margin-top: 0.3rem; }
+  .cat-arw { position: absolute; top: 1.8rem; right: 1.4rem; opacity: 0; transform: translateX(-6px); transition: opacity 0.3s, transform 0.4s var(--ease); }
+  .cat-card:hover .cat-arw { opacity: 1; transform: none; }
+
+  /* ---- Feature grid ---- */
+  .feature-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: clamp(1.2rem, 3vw, 2.5rem); margin-top: 2.5rem; align-items: start; }
+  .feature-grid > :global(.card--lg) { grid-row: span 1; }
+
+  /* ---- Ambassador ---- */
+  .amb { background: var(--paper-2); margin-block: clamp(2rem, 5vw, 4rem); }
+  .amb-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; padding-block: clamp(3.5rem, 8vw, 6rem); }
+  .amb-title { font-size: var(--step-4); margin: 0.8rem 0 1.4rem; }
+  .amb-lead { color: var(--ink-soft); font-size: var(--step-1); line-height: 1.95; margin-bottom: 2rem; }
+  .amb-lead b { color: var(--shu-deep); }
+  .amb-visual {
+    aspect-ratio: 4/3; border-radius: var(--radius); display: grid; place-items: center; padding: 2rem;
+    background: radial-gradient(120% 120% at 30% 20%, #234c6e, var(--ai-deep));
+    color: var(--paper); position: relative; overflow: hidden;
+  }
+  .amb-visual::after { content:""; position:absolute; inset:0; background: radial-gradient(50% 60% at 80% 100%, rgba(216,69,43,.4), transparent 70%); }
+  .amb-quote { font-size: var(--step-3); text-align: center; line-height: 1.6; position: relative; }
+
+  /* ---- Latest ---- */
+  .latest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: 2.5rem; }
+  .empty { margin-top: 2rem; font-size: var(--step-1); }
+
+  /* ---- SNS ---- */
+  .sns {
+    display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;
+    padding: clamp(2rem, 5vw, 3.5rem); background: var(--ink); color: var(--paper); border-radius: var(--radius);
+  }
+  .sns-title { font-size: var(--step-3); margin-top: 0.6rem; }
+  .sns-list { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .sns-btn {
+    display: inline-block; padding: 0.7em 1.3em; border: 1px solid rgba(245,241,232,.3); border-radius: 999px;
+    font-size: var(--step--1); font-weight: 700; letter-spacing: 0.06em; transition: background 0.3s, color 0.3s;
+  }
+  .sns-btn:hover { background: var(--paper); color: var(--ink); }
+
+  .sp { display: none; }
+  @media (max-width: 1000px) {
+    .cat-grid { grid-template-columns: repeat(2, 1fr); }
+    .feature-grid { grid-template-columns: 1fr 1fr; }
+    .latest-grid { grid-template-columns: 1fr 1fr; }
+    .hero-vert { display: none; }
+  }
+  @media (max-width: 720px) {
+    .pc { display: none; }
+    .sp { display: inline; }
+    .hero { padding-top: 70px; }
+    .hero-feature { grid-template-columns: 1fr; }
+    .cat-grid { grid-template-columns: 1fr 1fr; }
+    .feature-grid, .latest-grid { grid-template-columns: 1fr; }
+    .amb-inner { grid-template-columns: 1fr; }
+    .amb-visual { display: none; }
+  }
+</style>

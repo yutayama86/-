@@ -1,0 +1,93 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE_CONFIG } from '../data/site';
+
+// 送信先は src/data/site.ts の formEndpoint（Formspree）で一元管理。
+const FORM_ENDPOINT = SITE_CONFIG.formEndpoint;
+---
+
+<Base
+  title="お問い合わせ"
+  description="イバトコへのお問い合わせ。掲載のご相談、WEB集客サポート、取材依頼など、お気軽にどうぞ。"
+>
+  <section class="wrap ct">
+    <div class="ct-intro">
+      <p class="eyebrow" data-reveal>Contact</p>
+      <h1 class="display ct-title" data-reveal>お気軽に、<br />ご相談ください。</h1>
+      <p class="ct-lead mincho" data-reveal>
+        掲載のご相談、WEB集客サポート、取材のご依頼など。<br />
+        茨城のことなら、まずはイバトコへ。
+      </p>
+      <ul class="ct-direct" data-reveal>
+        <li><span class="muted">メール</span><a href={`mailto:${SITE_CONFIG.contactEmail}`} class="ul-link">{SITE_CONFIG.contactEmail}</a></li>
+        <li><span class="muted">SNS DM</span><a href={SITE_CONFIG.social.instagram} class="ul-link" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+      </ul>
+    </div>
+
+    <form class="ct-form" data-reveal method="POST" action={FORM_ENDPOINT || undefined} data-endpoint={FORM_ENDPOINT}>
+      <div class="field" hidden><input type="hidden" name="_subject" value="【イバトコ】お問い合わせ" /></div>
+      <div class="field">
+        <label for="subject">ご用件</label>
+        <select id="subject" name="subject" required>
+          <option value="">選択してください</option>
+          <option value="掲載相談">お店・企業の掲載相談（無料）</option>
+          <option value="WEB相談">WEB集客・HP・SNSの相談</option>
+          <option value="取材依頼">取材のご依頼</option>
+          <option value="レポーター">公式レポーターに興味がある</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="name">お名前 / 店舗・企業名</label>
+        <input id="name" name="name" type="text" required autocomplete="organization" />
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="email">メールアドレス</label>
+          <input id="email" name="email" type="email" required autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="tel">電話番号（任意）</label>
+          <input id="tel" name="tel" type="tel" autocomplete="tel" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="message">ご相談内容</label>
+        <textarea id="message" name="message" rows="6" required></textarea>
+      </div>
+      <button type="submit" class="btn btn--shu btn--lg ct-submit">送信する <span class="arw">→</span></button>
+      <p class="ct-privacy muted">送信をもって<a href="/privacy/" class="ul-link">プライバシーポリシー</a>に同意いただいたものとします。</p>
+      <p class="form-status" data-status role="status" aria-live="polite" hidden></p>
+    </form>
+  </section>
+</Base>
+
+<style>
+  .ct { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(2.5rem, 6vw, 5rem); padding-block: clamp(3rem, 8vw, 6rem); align-items: start; }
+  .ct-title { font-size: var(--step-4); margin: 0.5rem 0 1.2rem; }
+  .ct-lead { font-size: var(--step-1); color: var(--ink-soft); line-height: 1.9; }
+  .ct-direct { margin-top: 2.5rem; display: grid; gap: 1rem; }
+  .ct-direct li { display: grid; grid-template-columns: 6em 1fr; gap: 1rem; align-items: baseline; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+
+  .ct-form { display: grid; gap: 1.4rem; }
+  .field { display: grid; gap: 0.5rem; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+  label { font-size: var(--step--1); font-weight: 700; color: var(--ink-soft); letter-spacing: 0.04em; }
+  input, select, textarea {
+    font: inherit; font-size: var(--step-0); padding: 0.85em 1em; background: var(--paper);
+    border: 1px solid var(--line-strong); border-radius: var(--radius); color: var(--ink); width: 100%;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--shu); box-shadow: 0 0 0 3px color-mix(in srgb, var(--shu) 18%, transparent); }
+  textarea { resize: vertical; }
+  .ct-submit { justify-content: center; margin-top: 0.4rem; }
+  .ct-privacy { font-size: var(--step--1); }
+
+  @media (max-width: 800px) { .ct { grid-template-columns: 1fr; } .row { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  import { submitForm } from '../lib/forms';
+  const form = document.querySelector<HTMLFormElement>('.ct-form');
+  if (form) submitForm(form, { successText: 'お問い合わせを受け付けました。折り返しご連絡します。' });
+</script>

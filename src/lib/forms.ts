@@ -1,0 +1,66 @@
+/**
+ * フォーム送信ヘルパー（クライアント）。
+ * - form[data-endpoint] が設定されていれば Formspree へAJAX送信（ページ遷移なし）
+ * - 未設定ならメール下書き（mailto）にフォールバック
+ */
+interface Options {
+  successText: string;
+  mailto?: string;
+  mailSubject?: string;
+}
+
+export function submitForm(form: HTMLFormElement, opts: Options): void {
+  const endpoint = form.dataset.endpoint?.trim();
+  const status = form.querySelector<HTMLElement>('[data-status]');
+  const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+  const mailto = opts.mailto ?? 'hello@ibatoco.com';
+
+  const show = (text: string, tone: 'ok' | 'err') => {
+    if (!status) return;
+    status.textContent = text;
+    status.dataset.tone = tone;
+    status.hidden = false;
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+
+    // フォールバック：エンドポイント未設定ならメール下書きを開く
+    if (!endpoint) {
+      const body = [...data.entries()].map(([k, v]) => `${k}: ${v}`).join('\n');
+      const subject = encodeURIComponent(opts.mailSubject ?? '【イバトコ】お問い合わせ');
+      window.location.href = `mailto:${mailto}?subject=${subject}&body=${encodeURIComponent(body)}`;
+      return;
+    }
+
+    form.classList.add('is-sending');
+    if (button) button.disabled = true;
+    show('送信中…', 'ok');
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        form.reset();
+        show(opts.successText, 'ok');
+        form.querySelectorAll('input, select, textarea').forEach((el) => {
+          (el as HTMLElement).setAttribute('disabled', '');
+        });
+        if (button) button.style.display = 'none';
+      } else {
+        const json = await res.json().catch(() => null);
+        const msg = json?.errors?.[0]?.message ?? '送信に失敗しました。時間をおいて再度お試しください。';
+        show(msg, 'err');
+      }
+    } catch {
+      show('通信エラーが発生しました。電話またはメールでご連絡ください。', 'err');
+    } finally {
+      form.classList.remove('is-sending');
+      if (button) button.disabled = false;
+    }
+  });
+}

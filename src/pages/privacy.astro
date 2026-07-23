@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE_CONFIG } from '../data/site';
+const updated = '2026年7月';
+---
+
+<Base title="プライバシーポリシー" description="イバトコのプライバシーポリシー。" noindex={true}>
+  <section class="wrap pv">
+    <h1 class="display pv-title">プライバシーポリシー</h1>
+    <p class="muted">最終更新：{updated}</p>
+    <div class="pv-body prose">
+      <p>{SITE_CONFIG.name}（以下「当メディア」）は、ユーザーの個人情報の保護を重要と考え、以下の方針に基づき適切に取り扱います。</p>
+      <h2>1. 取得する情報</h2>
+      <p>お問い合わせ・予約フォームを通じて、お名前・連絡先・ご相談内容などをお預かりします。また、アクセス解析のため、閲覧に関する匿名の統計情報を取得する場合があります。</p>
+      <h2>2. 利用目的</h2>
+      <p>お預かりした情報は、お問い合わせへの対応、掲載店舗との連絡、サービス改善のためにのみ利用します。</p>
+      <h2>3. アクセス解析</h2>
+      <p>当メディアは、プライバシーに配慮したアクセス解析（Cloudflare Web Analytics）を利用します。Cookieを使用せず、個人を特定する情報は収集しません。</p>
+      <h2>4. 第三者提供</h2>
+      <p>法令に基づく場合を除き、ご本人の同意なく個人情報を第三者に提供することはありません。</p>
+      <h2>5. お問い合わせ窓口</h2>
+      <p>本ポリシーに関するお問い合わせは、<a href={`mailto:${SITE_CONFIG.contactEmail}`} class="ul-link">{SITE_CONFIG.contactEmail}</a> までご連絡ください。</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .pv { max-width: 720px; padding-block: clamp(3rem, 8vw, 5rem); }
+  .pv-title { font-size: var(--step-3); margin-bottom: 0.5rem; }
+  .pv-body { margin-top: 2rem; }
+</style>

@@ -1,0 +1,65 @@
+---
+import Base from '../../layouts/Base.astro';
+import { CATEGORIES } from '../../data/site';
+import { getPlaces } from '../../lib/content';
+
+const places = await getPlaces();
+---
+
+<Base title="掲載店舗・企業一覧" description="イバトコが取材した茨城のお店・企業の一覧です。">
+  <section class="wrap section">
+    <p class="eyebrow" data-reveal>Places</p>
+    <h1 class="display page-title" data-reveal>掲載店舗・企業</h1>
+    <p class="page-lead mincho" data-reveal>イバトコ取材班が実際に足を運んだ、茨城の“いいとこ”たち。</p>
+
+    {places.length === 0 ? (
+      <p class="empty muted mincho">最初の掲載店舗をただいま準備中です。</p>
+    ) : (
+      <ul class="place-grid">
+        {places.map((p) => {
+          const cat = CATEGORIES[p.data.category];
+          return (
+            <li data-reveal>
+              <a href={`/place/${p.id.split('/').pop()}/`} class="place-card" style={`--_a:${cat.accent}`}>
+                <div class="place-media">
+                  {p.data.cover ? (
+                    <img src={p.data.cover} alt={p.data.name} loading="lazy" />
+                  ) : (
+                    <div class="place-fallback"><span class="mincho">{p.data.name}</span></div>
+                  )}
+                  <span class="place-tag">{cat.label}</span>
+                </div>
+                <div class="place-body">
+                  <p class="place-area muted">{p.data.area}</p>
+                  <h2 class="place-name display">{p.data.name}</h2>
+                  <p class="place-tagline">{p.data.tagline}</p>
+                </div>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </section>
+</Base>
+
+<style>
+  .section { padding-block: clamp(3rem, 7vw, 5rem); }
+  .page-title { font-size: var(--step-4); margin: 0.5rem 0; }
+  .page-lead { font-size: var(--step-1); color: var(--ink-soft); margin-bottom: 3rem; }
+  .place-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); }
+  .place-card { display: grid; gap: 1rem; }
+  .place-media { position: relative; aspect-ratio: 4/3; overflow: hidden; border-radius: var(--radius); background: var(--paper-3); }
+  .place-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease); }
+  .place-card:hover .place-media img { transform: scale(1.06); }
+  .place-fallback { width: 100%; height: 100%; display: grid; place-items: center; background: linear-gradient(135deg, color-mix(in srgb, var(--_a) 16%, var(--paper-2)), var(--paper-3)); color: color-mix(in srgb, var(--_a) 70%, var(--ink)); }
+  .place-fallback span { font-size: var(--step-1); letter-spacing: 0.1em; opacity: 0.6; }
+  .place-tag { position: absolute; top: 0.8rem; left: 0.8rem; background: var(--_a); color: #fff; font-size: var(--step--1); font-weight: 700; padding: 0.3em 0.8em; border-radius: 999px; }
+  .place-area { font-size: var(--step--1); }
+  .place-name { font-size: var(--step-1); transition: color 0.3s; }
+  .place-card:hover .place-name { color: var(--shu-deep); }
+  .place-tagline { color: var(--ink-soft); font-size: var(--step-0); }
+  .empty { font-size: var(--step-1); padding-block: 3rem; }
+  @media (max-width: 1000px) { .place-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .place-grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE_CONFIG } from '../data/site';
+---
+
+<Base title="運営・編集方針" description="イバトコの運営者と編集方針について。">
+  <section class="wrap ab">
+    <p class="eyebrow" data-reveal>About Ibatoco</p>
+    <h1 class="display ab-title" data-reveal>
+      茨城の魅力を一番知っている、<br />地元の“WEBの相棒”へ。
+    </h1>
+
+    <div class="ab-body prose" data-reveal>
+      <p>
+        「イバトコ」は、茨城の“いいとこ”を、実際に行った人の熱量で伝える体験型ローカルメディアです。
+        ガイドブックやまとめサイトには載らない、一次情報とリアルな体験だけをお届けします。
+      </p>
+      <h2>編集方針</h2>
+      <p>
+        私たちは、<strong>必ず現地に足を運びます。</strong>
+        食べて、泊まって、体験して、人に会う。その熱量こそが、AIには真似できない価値だと信じています。
+        取材先には、写真・動画のクオリティでも貢献します。
+      </p>
+      <h2>メディアの、その先へ</h2>
+      <p>
+        イバトコは、茨城のお店や企業の集客を支援するだけでなく、
+        公式HP・SNS運用・予約システムまで、WEBまわりを丸ごとお預かりする
+        <strong>“地元でいちばん信頼できるWEBの相棒”</strong>を目指しています。
+      </p>
+      <blockquote>
+        「ただのWeb制作会社」や「まとめサイト」はもう要りません。
+        僕たちが作るのは、茨城の魅力を一番知っているメディアであり、
+        地元の店舗や社長が一番信頼できるWEBの相棒です。
+      </blockquote>
+    </div>
+
+    <dl class="ab-info" data-reveal>
+      <div><dt>メディア名</dt><dd>{SITE_CONFIG.name}（{SITE_CONFIG.nameEn}）</dd></div>
+      <div><dt>エリア</dt><dd>茨城県全域</dd></div>
+      <div><dt>お問い合わせ</dt><dd><a href={`mailto:${SITE_CONFIG.contactEmail}`} class="ul-link">{SITE_CONFIG.contactEmail}</a></dd></div>
+    </dl>
+
+    <div class="ab-cta" data-reveal>
+      <a href="/biz/" class="btn btn--shu btn--lg">お店を掲載したい <span class="arw">→</span></a>
+      <a href="/contact/" class="btn btn--ghost btn--lg">お問い合わせ</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ab { max-width: 760px; padding-block: clamp(3rem, 8vw, 5rem); }
+  .ab-title { font-size: var(--step-4); margin: 0.6rem 0 2rem; }
+  .ab-info { margin-top: 3rem; display: grid; gap: 1rem; }
+  .ab-info div { display: grid; grid-template-columns: 10em 1fr; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+  .ab-info dt { color: var(--ink-mute); font-size: var(--step--1); }
+  .ab-cta { margin-top: 3rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+</style>

@@ -1,0 +1,189 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { CATEGORIES, SITE_CONFIG } from '../../data/site';
+import { getPlaces, getArticles } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const places = await getPlaces();
+  return places.map((p) => ({
+    params: { id: p.id.split('/').pop() },
+    props: { place: p },
+  }));
+}) satisfies GetStaticPaths;
+
+const { place } = Astro.props;
+const { data } = place;
+const cat = CATEGORIES[data.category];
+const slug = place.id.split('/').pop();
+const ogImage = data.cover ?? `/og/place/${slug}.png`;
+const { Content } = await render(place);
+
+// この店舗を紹介した記事
+const articles = (await getArticles()).filter((a) => a.data.place?.id === place.id);
+
+// 予約導線：reserveUrl があればそこへ、なければ自社 /reserve/ フォームへ
+const reserveHref = data.reserveUrl ?? `/reserve/?place=${place.id.split('/').pop()}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: data.name,
+  description: data.description,
+  ...(data.address ? { address: data.address } : {}),
+  ...(data.tel ? { telephone: data.tel } : {}),
+  ...(data.website ? { url: data.website } : {}),
+  areaServed: data.area,
+};
+---
+
+<Base title={data.name} description={data.description} image={ogImage} jsonLd={jsonLd}>
+  <article class="lp" style={`--_a:${cat.accent}`}>
+    <!-- Hero -->
+    <header class="lp-hero">
+      <div class="lp-hero-media">
+        {data.cover ? (
+          <img src={data.cover} alt={data.name} loading="eager" />
+        ) : (
+          <div class="lp-hero-fallback"><span class="mincho">{data.name}</span></div>
+        )}
+        <div class="lp-hero-scrim"></div>
+      </div>
+      <div class="wrap lp-hero-copy">
+        <nav class="crumbs" aria-label="パンくず">
+          <a href="/">ホーム</a><span>/</span><a href="/place/">掲載店舗</a>
+        </nav>
+        <span class="chip chip--solid">{data.area}</span>
+        <h1 class="display lp-name">{data.name}</h1>
+        {data.kana && <p class="lp-kana latin">{data.kana}</p>}
+        <p class="lp-tagline mincho">{data.tagline}</p>
+      </div>
+    </header>
+
+    <div class="lp-grid wrap">
+      <div class="lp-main">
+        {data.recommend && (
+          <section class="recommend">
+            <p class="eyebrow" style="color:var(--_a)">Editor's Recommend</p>
+            <h2 class="display recommend-h">イバトコ取材班より</h2>
+            <blockquote class="recommend-body mincho">{data.recommend}</blockquote>
+          </section>
+        )}
+
+        <section class="lp-desc prose">
+          <Content />
+        </section>
+
+        {data.menu.length > 0 && (
+          <section class="menu">
+            <h2 class="display sec-title">メニュー・料金</h2>
+            <ul class="menu-list">
+              {data.menu.map((m) => (
+                <li class="menu-row">
+                  <div>
+                    <span class="menu-name">{m.name}</span>
+                    {m.note && <span class="menu-note muted">{m.note}</span>}
+                  </div>
+                  <span class="menu-price latin">{m.price}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {articles.length > 0 && (
+          <section class="lp-articles">
+            <h2 class="display sec-title">このお店の体験レポート</h2>
+            <ul class="lp-article-list">
+              {articles.map((a) => (
+                <li>
+                  <a href={`/${a.data.category}/${a.id.split('/').pop()}/`} class="lp-article ul-link">
+                    <span class="mincho">{a.data.title}</span>
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+
+      <!-- Sticky 予約サイドバー（階層3 導線） -->
+      <aside class="lp-side">
+        <div class="lp-card">
+          <a href={reserveHref} class="btn btn--shu btn--lg lp-reserve">
+            予約・お問い合わせ <span class="arw">→</span>
+          </a>
+          {data.tel && <a href={`tel:${data.tel.replace(/[^0-9+]/g, '')}`} class="btn btn--ghost lp-tel">☎ {data.tel}</a>}
+
+          <dl class="lp-info">
+            {data.address && <div><dt>住所</dt><dd>{data.address}</dd></div>}
+            {data.access && <div><dt>アクセス</dt><dd>{data.access}</dd></div>}
+            {data.hours && <div><dt>営業時間</dt><dd>{data.hours}</dd></div>}
+            {data.holiday && <div><dt>定休日</dt><dd>{data.holiday}</dd></div>}
+            {data.budget && <div><dt>予算</dt><dd>{data.budget}</dd></div>}
+          </dl>
+
+          <div class="lp-links">
+            {data.website && <a href={data.website} target="_blank" rel="noopener noreferrer" class="ul-link">公式サイト ↗</a>}
+            {data.instagram && <a href={data.instagram} target="_blank" rel="noopener noreferrer" class="ul-link">Instagram ↗</a>}
+            {data.map && <a href={data.map} target="_blank" rel="noopener noreferrer" class="ul-link">地図で見る ↗</a>}
+          </div>
+        </div>
+        <p class="lp-badge muted">Powered by {SITE_CONFIG.name}</p>
+      </aside>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .lp-hero { position: relative; min-height: 56vh; display: flex; align-items: flex-end; color: #fff; }
+  .lp-hero-media { position: absolute; inset: 0; z-index: -1; }
+  .lp-hero-media img { width: 100%; height: 100%; object-fit: cover; }
+  .lp-hero-fallback {
+    width: 100%; height: 100%; display: grid; place-items: center;
+    background: linear-gradient(135deg, var(--_a), var(--ai-deep)); color: rgba(255,255,255,.5);
+  }
+  .lp-hero-fallback span { font-size: var(--step-4); letter-spacing: 0.15em; }
+  .lp-hero-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,20,25,.85) 0%, rgba(15,20,25,.15) 55%, transparent 100%); }
+  .lp-hero-copy { position: relative; padding-block: clamp(2.5rem, 6vw, 4.5rem); }
+  .lp-hero-copy .crumbs { color: rgba(255,255,255,.75); }
+  .lp-hero-copy .crumbs a:hover { color: #fff; }
+  .lp-name { font-size: var(--step-5); margin: 1rem 0 0.3rem; }
+  .lp-kana { color: rgba(255,255,255,.8); letter-spacing: 0.2em; }
+  .lp-tagline { font-size: var(--step-2); margin-top: 0.8rem; color: rgba(255,255,255,.95); }
+
+  .lp-grid { display: grid; grid-template-columns: 1fr 360px; gap: clamp(2rem, 5vw, 4rem); padding-block: clamp(2.5rem, 6vw, 4.5rem); align-items: start; }
+
+  .recommend { background: var(--paper-2); padding: clamp(1.5rem, 4vw, 2.5rem); border-radius: var(--radius); border-top: 4px solid var(--_a); margin-bottom: 2.5rem; }
+  .recommend-h { font-size: var(--step-1); margin: 0.4rem 0 1rem; }
+  .recommend-body { font-size: var(--step-1); line-height: 1.9; color: var(--ink); font-style: italic; }
+
+  .sec-title { font-size: var(--step-2); margin: 2.5rem 0 1.4rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--ink); }
+
+  .menu-list { border-top: 1px solid var(--line); }
+  .menu-row { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+  .menu-name { font-weight: 700; }
+  .menu-note { display: block; font-size: var(--step--1); }
+  .menu-price { font-size: var(--step-1); color: var(--shu-deep); white-space: nowrap; }
+
+  .lp-article-list { display: grid; gap: 0.4rem; }
+  .lp-article { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line); font-size: var(--step-1); }
+
+  .lp-side { position: sticky; top: 96px; }
+  .lp-card { background: var(--paper); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--shadow); display: grid; gap: 1rem; }
+  .lp-reserve { justify-content: center; }
+  .lp-tel { justify-content: center; }
+  .lp-info { display: grid; gap: 0.8rem; padding-top: 0.6rem; border-top: 1px solid var(--line); }
+  .lp-info div { display: grid; grid-template-columns: 5em 1fr; gap: 0.6rem; font-size: var(--step--1); }
+  .lp-info dt { color: var(--ink-mute); }
+  .lp-info dd { color: var(--ink); }
+  .lp-links { display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 0.8rem; border-top: 1px solid var(--line); font-size: var(--step--1); font-weight: 700; }
+  .lp-badge { text-align: center; margin-top: 1rem; font-size: var(--step--1); letter-spacing: 0.1em; }
+
+  @media (max-width: 900px) {
+    .lp-grid { grid-template-columns: 1fr; }
+    .lp-side { position: static; }
+  }
+</style>

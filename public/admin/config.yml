@@ -1,0 +1,117 @@
+# =========================================================
+# Decap CMS 設定 — イバトコ 編集室
+# GitHubリポジトリ上のMarkdownを、ブラウザから編集できます。
+#
+# 【デプロイ後の設定手順】
+# 1. 下の repo をご自身の「GitHubユーザー名/リポジトリ名」に変更
+# 2. GitHub OAuth を有効化（いずれか）
+#    a) Cloudflare Pages の場合: OAuthプロキシ（例: github.com/i40west/netlify-cms-cloudflare-pages）を用意し
+#       base_url / auth_endpoint を設定
+#    b) お手軽に始めるなら Netlify で Identity + Git Gateway を使う方法もあります
+# 3. https://ibatoco.com/admin/ にアクセスしてログイン
+# =========================================================
+
+backend:
+  name: github
+  repo: yutayama86/-   # GitHubリポジトリ（将来 ibatoco 等に改名したらここも更新）
+  branch: main
+  # Cloudflare Pages で運用する場合、OAuthプロキシのURLを設定します:
+  # base_url: https://your-oauth-proxy.example.workers.dev
+  # auth_endpoint: /auth
+
+# 画像などのアップロード先（当面はリポジトリ内。将来Cloudflare Imagesへ）
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+locale: "ja"
+publish_mode: editorial_workflow   # 下書き→レビュー→公開のフロー
+
+collections:
+  # ---------- 体験レポート記事 ----------
+  - name: "articles"
+    label: "よみもの（記事）"
+    label_singular: "記事"
+    folder: "src/content/articles"
+    create: true
+    slug: "{{slug}}"
+    path: "{{fields.category}}/{{slug}}"
+    media_folder: ""
+    preview_path: "{{fields.category}}/{{slug}}"
+    fields:
+      - { name: "title", label: "タイトル", widget: "string" }
+      - { name: "description", label: "説明（一覧・SEO用）", widget: "text" }
+      - name: "category"
+        label: "ジャンル"
+        widget: "select"
+        options:
+          - { label: "グルメ", value: "eat" }
+          - { label: "暮らし", value: "life" }
+          - { label: "あそび・サウナ", value: "sauna-play" }
+          - { label: "ビューティ", value: "beauty" }
+          - { label: "企業・技術", value: "company" }
+      - { name: "cover", label: "アイキャッチ画像", widget: "image", required: false }
+      - { name: "coverAlt", label: "画像の説明（代替テキスト）", widget: "string", required: false, default: "" }
+      - { name: "publishedAt", label: "公開日", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false }
+      - { name: "updatedAt", label: "更新日", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, required: false }
+      - { name: "author", label: "執筆者", widget: "string", default: "イバトコ編集部" }
+      - { name: "reporter", label: "取材レポーター", widget: "string", required: false }
+      - { name: "area", label: "エリア（市町村）", widget: "string", required: false }
+      - { name: "tags", label: "タグ", widget: "list", required: false }
+      - { name: "place", label: "紐づく店舗LP（ファイル名）", widget: "relation", collection: "places", search_fields: ["name"], value_field: "{{slug}}", display_fields: ["name"], required: false }
+      - { name: "featured", label: "特集にピックアップ", widget: "boolean", default: false }
+      - { name: "draft", label: "下書き", widget: "boolean", default: true }
+      - { name: "body", label: "本文", widget: "markdown" }
+
+  # ---------- 店舗・企業LP ----------
+  - name: "places"
+    label: "掲載店舗・企業（LP）"
+    label_singular: "店舗・企業"
+    folder: "src/content/places"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { name: "name", label: "店舗・企業名", widget: "string" }
+      - { name: "kana", label: "英字表記（任意）", widget: "string", required: false }
+      - name: "category"
+        label: "ジャンル"
+        widget: "select"
+        options:
+          - { label: "グルメ", value: "eat" }
+          - { label: "暮らし", value: "life" }
+          - { label: "あそび・サウナ", value: "sauna-play" }
+          - { label: "ビューティ", value: "beauty" }
+          - { label: "企業・技術", value: "company" }
+      - { name: "tagline", label: "ひとことキャッチ", widget: "string" }
+      - { name: "description", label: "説明（SEO用）", widget: "text" }
+      - { name: "cover", label: "メイン画像", widget: "image", required: false }
+      - { name: "recommend", label: "取材班の推薦コメント", widget: "text", required: false }
+      - { name: "area", label: "エリア（市町村）", widget: "string" }
+      - { name: "address", label: "住所", widget: "string", required: false }
+      - { name: "access", label: "アクセス", widget: "string", required: false }
+      - { name: "hours", label: "営業時間", widget: "string", required: false }
+      - { name: "holiday", label: "定休日", widget: "string", required: false }
+      - { name: "tel", label: "電話番号", widget: "string", required: false }
+      - { name: "budget", label: "予算", widget: "string", required: false }
+      - { name: "website", label: "公式サイトURL", widget: "string", required: false }
+      - { name: "instagram", label: "InstagramURL", widget: "string", required: false }
+      - { name: "map", label: "地図URL", widget: "string", required: false }
+      - name: "menu"
+        label: "メニュー・料金"
+        widget: "list"
+        required: false
+        fields:
+          - { name: "name", label: "品名", widget: "string" }
+          - { name: "price", label: "価格", widget: "string" }
+          - { name: "note", label: "補足", widget: "string", required: false }
+      - { name: "reserveUrl", label: "外部予約URL（任意）", widget: "string", required: false }
+      - name: "plan"
+        label: "掲載プラン"
+        widget: "select"
+        default: "free"
+        options:
+          - { label: "無料掲載", value: "free" }
+          - { label: "ライト掲載", value: "listing" }
+          - { label: "パートナー", value: "partner" }
+      - { name: "publishedAt", label: "公開日", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false }
+      - { name: "draft", label: "下書き", widget: "boolean", default: true }
+      - { name: "body", label: "紹介本文", widget: "markdown", required: false }

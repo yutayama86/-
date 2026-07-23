@@ -1,0 +1,72 @@
+import { OGImageRoute } from 'astro-og-canvas';
+import { getArticles, getPlaces } from '../../lib/content';
+import { CATEGORIES } from '../../data/site';
+
+/**
+ * 記事・店舗LPごとのOGP画像（SNSシェア画像）をビルド時にPNG生成します。
+ * URL例：/og/eat/tsukuba-chuka-soba-kaze.png  /  /og/place/tsukuba-ramen-kaze.png
+ * 参照は SEO.astro が自動で行います。
+ */
+const articles = await getArticles();
+const places = await getPlaces();
+
+type OgPage = { title: string; description: string; accent: [number, number, number] };
+
+// #d8452b → [216,69,43] のように16進をRGBへ
+const hexRgb = (hex: string): [number, number, number] => {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+};
+
+const pages: Record<string, OgPage> = {};
+
+for (const a of articles) {
+  const cat = CATEGORIES[a.data.category];
+  pages[`${cat.path}/${a.id.split('/').pop()}`] = {
+    title: a.data.title,
+    description: a.data.area ? `${a.data.area}｜${cat.label}｜IBATOCO` : `${cat.label}｜IBATOCO`,
+    accent: hexRgb(cat.accent),
+  };
+}
+for (const p of places) {
+  const cat = CATEGORIES[p.data.category];
+  pages[`place/${p.id.split('/').pop()}`] = {
+    title: p.data.name,
+    description: `${p.data.tagline}　—　${p.data.area}｜IBATOCO`,
+    accent: hexRgb(cat.accent),
+  };
+}
+
+export const { getStaticPaths, GET } = OGImageRoute({
+  param: 'route',
+  pages,
+  getImageOptions: (_path, page: OgPage) => ({
+    title: page.title,
+    description: page.description,
+    logo: undefined,
+    bgGradient: [
+      [245, 241, 232],
+      [231, 223, 205],
+    ],
+    border: { color: page.accent, width: 24, side: 'inline-start' },
+    padding: 80,
+    font: {
+      title: {
+        families: ['Shippori Mincho'],
+        weight: 'Bold',
+        color: [28, 26, 20],
+        lineHeight: 1.3,
+      },
+      description: {
+        families: ['Zen Kaku Gothic New'],
+        weight: 'Medium',
+        color: [124, 117, 102],
+        lineHeight: 1.4,
+      },
+    },
+    fonts: [
+      './src/assets/fonts/ShipporiMincho-Bold.ttf',
+      './src/assets/fonts/ZenKakuGothicNew-Medium.ttf',
+    ],
+  }),
+});

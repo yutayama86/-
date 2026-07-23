@@ -1,0 +1,68 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="公式レポーター・アンバサダー募集"
+  description="イバトコ公式レポーター（アンバサダー）を募集しています。茨城でファンを持つあなたの発信を、プロのクオリティと成果報酬で応援します。"
+>
+  <section class="rp-hero">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>Official Reporters</p>
+      <h1 class="display rp-h1" data-reveal>その街を、<br />一番好きな人が書く。</h1>
+      <p class="rp-lead" data-reveal>
+        イバトコは、茨城でファンを持つあなたを「公式レポーター」としてお迎えします。
+        “人の熱量”は、最強のコンテンツです。
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <div class="rp-merit">
+      <div class="rp-col" data-reveal>
+        <h2 class="display rp-col-h">レポーターのメリット</h2>
+        <ul class="rp-list">
+          <li><b>「公式レポーター」の肩書</b><span>メディアの看板を背負って発信できる</span></li>
+          <li><b>プロの撮影素材を提供</b><span>高品質な写真・動画をあなたの資産に</span></li>
+          <li><b>成果報酬（キックバック）</b><span>紹介がストック収入になる仕組み</span></li>
+        </ul>
+      </div>
+      <div class="rp-col rp-col--dark" data-reveal>
+        <h2 class="display rp-col-h">こんな方を歓迎</h2>
+        <ul class="rp-list rp-list--light">
+          <li><b>茨城が好きで発信している</b><span>ジャンル・フォロワー数は問いません</span></li>
+          <li><b>お店や人を紹介したい</b><span>“推し”を広める熱量がある方</span></li>
+          <li><b>一緒にメディアを育てたい</b><span>立ち上げから関わる面白さ</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="rp-cta" data-reveal>
+      <h2 class="display rp-cta-h">まずは、話を聞いてみませんか。</h2>
+      <a href="/contact/" class="btn btn--shu btn--lg">レポーターに応募する <span class="arw">→</span></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .section { padding-block: clamp(3rem, 7vw, 5rem); }
+  .rp-hero { padding: clamp(3.5rem, 9vw, 7rem) 0; background: radial-gradient(80% 100% at 100% 0%, color-mix(in srgb, var(--matcha) 14%, transparent), transparent 60%); }
+  .rp-h1 { font-size: var(--step-5); }
+  .rp-lead { margin-top: 1.6rem; font-size: var(--step-1); color: var(--ink-soft); line-height: 1.9; max-width: 55ch; }
+
+  .rp-merit { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .rp-col { background: var(--paper-2); padding: clamp(1.8rem, 4vw, 2.8rem); border-radius: var(--radius); }
+  .rp-col--dark { background: var(--ai-deep); color: var(--paper); }
+  .rp-col-h { font-size: var(--step-2); margin-bottom: 1.5rem; }
+  .rp-list { display: grid; gap: 1.2rem; }
+  .rp-list li { display: flex; flex-direction: column; padding-bottom: 1.2rem; border-bottom: 1px solid var(--line); }
+  .rp-list--light li { border-color: rgba(245,241,232,.2); }
+  .rp-list b { font-size: var(--step-1); }
+  .rp-list span { color: var(--ink-mute); font-size: var(--step--1); margin-top: 0.2rem; }
+  .rp-list--light b { color: #fff; }
+  .rp-list--light span { color: rgba(245,241,232,.6); }
+
+  .rp-cta { text-align: center; margin-top: clamp(3rem, 7vw, 5rem); display: grid; gap: 1.5rem; justify-items: center; }
+  .rp-cta-h { font-size: var(--step-3); }
+  @media (max-width: 760px) { .rp-merit { grid-template-columns: 1fr; } }
+</style>

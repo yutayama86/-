@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="'Hiragino Mincho ProN', serif">
+  <rect width="1200" height="630" fill="#f5f1e8"/>
+  <circle cx="1050" cy="90" r="320" fill="#d8452b" opacity="0.12"/>
+  <circle cx="120" cy="560" r="260" fill="#6b9bd1" opacity="0.14"/>
+  <g transform="translate(90,90)">
+    <path d="M22 4 L40 14 V34 L22 44 L4 34 V14 Z" fill="none" stroke="#17324a" stroke-width="2.4"/>
+    <path d="M22 15 v18 M13 24 h18" stroke="#d8452b" stroke-width="3" stroke-linecap="round"/>
+    <text x="60" y="34" font-size="30" letter-spacing="6" fill="#1c1a14" font-weight="700">IBATOCO</text>
+  </g>
+  <text x="90" y="330" font-size="92" font-weight="700" fill="#1c1a14">茨城の“いいとこ”を、</text>
+  <text x="90" y="440" font-size="92" font-weight="700" fill="#17324a">行った人の熱量で。</text>
+  <text x="92" y="530" font-size="30" fill="#7c7566" font-family="sans-serif" letter-spacing="2">体験型ローカルメディア — 食・暮らし・遊び・美容・ものづくり</text>
+</svg>

@@ -1,0 +1,187 @@
+---
+import Base from '../layouts/Base.astro';
+
+const phases = [
+  {
+    n: '01',
+    tag: '突破口',
+    title: 'まずは、集客の成功体験を。',
+    body: 'イバトコでの取材記事＋店舗専用ページ（LP）を制作。「イバトコを見て来ました」というお客様が、実際にお店に足を運ぶ体験からはじめます。',
+    price: '初期費用 0円 / 月額 5,000円',
+    color: 'var(--shu)',
+  },
+  {
+    n: '02',
+    tag: '拡張',
+    title: '公式HPとSNSも、整える。',
+    body: '集客が動き出したら、公式ホームページのリニューアルとSNS運用代行へ。取材で撮り溜めた動画素材をそのまま活用するので、追加撮影コストはゼロ。',
+    price: 'HP制作 25〜35万円 / SNS運用は顧問に含む',
+    color: 'var(--nemo)',
+  },
+  {
+    n: '03',
+    tag: 'インフラ化',
+    title: 'WEBまわりを、丸ごと相棒に。',
+    body: '予約システム・顧客データ（CRM）まで一元管理。集客からリピートまでの導線をまるごとお預かりする、いちばん頼れるWEBの相棒になります。',
+    price: 'WEB丸抱え顧問 月額 5〜10万円',
+    color: 'var(--matcha)',
+  },
+];
+
+const plans = [
+  {
+    name: 'ライト掲載',
+    price: '月額 5,000円',
+    lead: 'まずはここから。',
+    features: ['取材記事の制作・公開', '店舗専用ページ（LP）', 'イバトコSNSでの紹介', '予約・問い合わせ導線'],
+    cta: '無料掲載を相談する',
+    highlight: false,
+  },
+  {
+    name: 'SNS運用代行',
+    price: '要お見積り',
+    lead: '“看板”を育てる。',
+    features: ['月まとめ撮り撮影', 'リール／TikTok編集・投稿', '公式HP制作・保守', '運用レポート'],
+    cta: 'サポートを相談する',
+    highlight: true,
+  },
+  {
+    name: 'WEB丸抱え顧問',
+    price: '月額 5〜10万円',
+    lead: '心臓部までお任せ。',
+    features: ['SNS運用＋HP保守', '自社予約システム導入', '顧客データ（CRM）一元管理', '集客〜リピート設計'],
+    cta: '顧問契約を相談する',
+    highlight: false,
+  },
+];
+---
+
+<Base
+  title="掲載のご案内｜茨城のお店・企業さまへ"
+  description="イバトコは、初期費用0円・月額5,000円から。取材・撮影・専用ページ制作までワンストップで、茨城のお店の集客を支援します。"
+>
+  <!-- Hero -->
+  <section class="biz-hero">
+    <div class="wrap">
+      <p class="eyebrow" data-reveal>For Business — 掲載のご案内</p>
+      <h1 class="display biz-h1" data-reveal>
+        「イバトコから、<br /><span class="hl">お客さんが来た</span>」を、<br />いっしょに作りませんか。
+      </h1>
+      <p class="biz-hero-lead" data-reveal>
+        ただのまとめサイトでも、ただのWeb制作会社でもありません。<br class="pc" />
+        現場の泥臭い取材とSNSの爆発力で、茨城のお店の“最初のお客さん”を連れてきます。
+      </p>
+      <div class="biz-hero-cta" data-reveal>
+        <a href="/contact/" class="btn btn--shu btn--lg">無料で相談する <span class="arw">→</span></a>
+        <a href="#plans" class="btn btn--ghost btn--lg">料金を見る</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 Phases -->
+  <section class="wrap section">
+    <div class="sec-head" data-reveal><h2>集客から、WEBの相棒へ<span class="latin num"> / 3 Steps</span></h2></div>
+    <ol class="phase-list">
+      {phases.map((p) => (
+        <li class="phase" data-reveal style={`--_a:${p.color}`}>
+          <div class="phase-n latin">{p.n}</div>
+          <div class="phase-body">
+            <span class="chip" style="--_a:var(--_a);color:var(--_a);border-color:color-mix(in srgb,var(--_a) 50%,transparent)">{p.tag}</span>
+            <h3 class="display phase-title">{p.title}</h3>
+            <p class="phase-text">{p.body}</p>
+            <p class="phase-price mincho">{p.price}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- Value / 素材二重取り -->
+  <section class="value">
+    <div class="wrap value-inner">
+      <div data-reveal>
+        <p class="eyebrow">Why Ibatoco</p>
+        <h2 class="display value-title">1回の取材で、<br />1ヶ月分の素材を。</h2>
+      </div>
+      <div class="value-text" data-reveal>
+        <p>
+          通常の制作会社はSNS運用のたびに撮影に行きます。イバトコは
+          <b>メディア取材のときに1ヶ月分をまとめ撮り</b>。だから追加の撮影コストなしで、
+          お店のSNS運用まで一気通貫。浮いたコストは、そのままお店への価値になります。
+        </p>
+        <ul class="value-points">
+          <li><b>取材はプロが撮影</b><span>スマホ縦型動画からリールまで</span></li>
+          <li><b>4大SNSに最適化</b><span>Instagram / TikTok / X / Threads</span></li>
+          <li><b>ご当地レポーター</b><span>地元にファンを持つ公式アンバサダー</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Plans -->
+  <section id="plans" class="wrap section">
+    <div class="sec-head" data-reveal><h2>料金プラン<span class="latin num"> / Plans</span></h2></div>
+    <div class="plan-grid">
+      {plans.map((pl) => (
+        <div class={`plan ${pl.highlight ? 'plan--hl' : ''}`} data-reveal>
+          {pl.highlight && <span class="plan-ribbon">人気</span>}
+          <p class="plan-lead mincho">{pl.lead}</p>
+          <h3 class="plan-name display">{pl.name}</h3>
+          <p class="plan-price"><span class="latin">{pl.price}</span></p>
+          <ul class="plan-features">
+            {pl.features.map((f) => <li>{f}</li>)}
+          </ul>
+          <a href="/contact/" class={`btn ${pl.highlight ? 'btn--shu' : 'btn--ghost'}`} style="justify-content:center;width:100%">{pl.cta}</a>
+        </div>
+      ))}
+    </div>
+    <p class="plan-note muted">※ 価格は目安です。お店の状況にあわせて最適なプランをご提案します。</p>
+  </section>
+</Base>
+
+<style>
+  .section { padding-block: clamp(3rem, 7vw, 6rem); }
+  .biz-hero { padding: clamp(3.5rem, 9vw, 7rem) 0 clamp(2rem, 5vw, 4rem); background: radial-gradient(80% 100% at 100% 0%, color-mix(in srgb, var(--shu) 10%, transparent), transparent 60%); }
+  .biz-h1 { font-size: var(--step-5); line-height: 1.22; }
+  .biz-h1 .hl { color: var(--shu); }
+  .biz-hero-lead { margin-top: 1.8rem; font-size: var(--step-1); color: var(--ink-soft); line-height: 1.9; }
+  .biz-hero-cta { margin-top: 2.4rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .phase-list { display: grid; gap: 1px; margin-top: 2.5rem; background: var(--line); border-block: 1px solid var(--line); }
+  .phase { background: var(--paper); display: grid; grid-template-columns: 120px 1fr; gap: clamp(1rem, 3vw, 2.5rem); padding: clamp(1.8rem, 4vw, 3rem) 0.5rem; align-items: start; }
+  .phase-n { font-size: var(--step-5); color: color-mix(in srgb, var(--_a) 30%, var(--paper-3)); line-height: 1; }
+  .phase-title { font-size: var(--step-2); margin: 0.6rem 0 0.8rem; }
+  .phase-text { color: var(--ink-soft); max-width: 60ch; }
+  .phase-price { margin-top: 1rem; font-size: var(--step-1); color: var(--_a); font-weight: 700; }
+
+  .value { background: var(--ai-deep); color: var(--paper); }
+  .value-inner { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(2rem, 5vw, 4rem); padding-block: clamp(3.5rem, 8vw, 6rem); align-items: center; }
+  .value-title { font-size: var(--step-4); }
+  .value-text p { color: rgba(245,241,232,.85); font-size: var(--step-1); line-height: 1.95; }
+  .value-text b { color: #fff; }
+  .value-points { margin-top: 2rem; display: grid; gap: 1rem; }
+  .value-points li { display: flex; flex-direction: column; padding: 1rem 0; border-top: 1px solid rgba(245,241,232,.18); }
+  .value-points b { color: #fff; font-size: var(--step-1); }
+  .value-points span { color: rgba(245,241,232,.6); font-size: var(--step--1); }
+
+  .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+  .plan { position: relative; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 2rem 1.6rem; display: grid; gap: 0.8rem; align-content: start; background: var(--paper); }
+  .plan--hl { border-color: var(--shu); border-width: 2px; box-shadow: var(--shadow); }
+  .plan-ribbon { position: absolute; top: -0.8rem; right: 1.5rem; background: var(--shu); color: #fff; font-size: var(--step--1); font-weight: 700; padding: 0.3em 1em; border-radius: 999px; }
+  .plan-lead { color: var(--ink-mute); font-size: var(--step-0); }
+  .plan-name { font-size: var(--step-2); }
+  .plan-price { font-size: var(--step-1); color: var(--shu-deep); font-weight: 700; margin-bottom: 0.6rem; }
+  .plan-features { display: grid; gap: 0.7rem; margin: 0.6rem 0 1.6rem; }
+  .plan-features li { position: relative; padding-left: 1.6em; color: var(--ink-soft); font-size: var(--step-0); }
+  .plan-features li::before { content: "✓"; position: absolute; left: 0; color: var(--matcha); font-weight: 700; }
+  .plan-note { margin-top: 1.5rem; font-size: var(--step--1); }
+
+  .pc { display: inline; }
+  @media (max-width: 860px) {
+    .value-inner { grid-template-columns: 1fr; }
+    .plan-grid { grid-template-columns: 1fr; }
+    .phase { grid-template-columns: 70px 1fr; }
+    .phase-n { font-size: var(--step-4); }
+  }
+  @media (max-width: 640px) { .pc { display: none; } }
+</style>

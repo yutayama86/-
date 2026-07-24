@@ -36,6 +36,7 @@ export const NAV = [
   { label: 'あそび・サウナ', href: '/sauna-play/' },
   { label: 'ビューティ', href: '/beauty/' },
   { label: '企業・技術', href: '/company/' },
+  { label: 'エリア', href: '/area/' },
 ] as const;
 
 // 事業者向け（階層4 制圧導線）

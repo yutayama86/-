@@ -1,0 +1,154 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import IbarakiMap from '../../components/IbarakiMap.astro';
+import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, municipalitiesByRegion } from '../../data/areas';
+import { getArticlesByArea, getPlacesByArea, getAreaCounts } from '../../lib/content';
+import { CATEGORIES } from '../../data/site';
+
+export const getStaticPaths = (() => {
+  return MUNICIPALITIES.map((m) => ({ params: { slug: m.slug } }));
+}) satisfies GetStaticPaths;
+
+const { slug } = Astro.params;
+const muni = MUNI_BY_SLUG.get(slug!);
+if (!muni) return Astro.redirect('/404');
+
+const region = REGIONS[muni.region];
+const [articles, places, counts] = await Promise.all([
+  getArticlesByArea(slug!),
+  getPlacesByArea(slug!),
+  getAreaCounts(),
+]);
+
+// 同エリアの他の市町村（回遊用）
+const neighbors = municipalitiesByRegion(muni.region).filter((m) => m.slug !== slug);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${muni.name}の体験・お店`,
+  about: { '@type': 'Place', name: muni.name, address: `茨城県${muni.name}` },
+};
+---
+
+<Base
+  title={`${muni.name}｜茨城${muni.name}の体験・お店`}
+  description={`茨城県${muni.name}（${region.label}エリア）の、行った人が選ぶグルメ・暮らし・遊び・美容・ものづくり。イバトコの現地レポートとお店をまとめました。`}
+  jsonLd={jsonLd}
+>
+  <section class="ah" style={`--_c:${region.color}`}>
+    <div class="wrap">
+      <nav class="crumbs" aria-label="パンくず">
+        <a href="/">ホーム</a><span aria-hidden="true">/</span>
+        <a href="/area/">エリア</a><span aria-hidden="true">/</span>
+        <span>{region.label}</span>
+      </nav>
+      <span class="chip" style={`--_a:${region.color};color:var(--_c);border-color:color-mix(in srgb,var(--_c) 50%,transparent)`}>{region.label}エリア</span>
+      <h1 class="display ah-name">{muni.name}</h1>
+      <p class="ah-lead mincho">茨城県{muni.name}の“いいとこ”。行った人の熱量で。</p>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    {articles.length === 0 && places.length === 0 ? (
+      <div class="empty">
+        <p class="mincho">{muni.name}は、これから取材が入るエリアです。<br />最初のレポートをお楽しみに。</p>
+        <div class="empty-cta">
+          <a href="/biz/" class="btn btn--shu">このエリアで取材・掲載を相談する <span class="arw">→</span></a>
+          <a href="/area/" class="btn btn--ghost">他のエリアを見る</a>
+        </div>
+      </div>
+    ) : (
+      <>
+        {articles.length > 0 && (
+          <div class="block">
+            <div class="sec-head"><h2>{muni.name}の体験レポート<span class="latin num"> / Articles</span></h2></div>
+            <div class="grid">{articles.map((a, i) => <ArticleCard article={a} index={i} />)}</div>
+          </div>
+        )}
+        {places.length > 0 && (
+          <div class="block">
+            <div class="sec-head"><h2>{muni.name}のお店・企業<span class="latin num"> / Places</span></h2></div>
+            <ul class="place-list">
+              {places.map((p) => {
+                const cat = CATEGORIES[p.data.category];
+                return (
+                  <li>
+                    <a href={`/place/${p.id.split('/').pop()}/`} class="place-row" style={`--_a:${cat.accent}`}>
+                      <span class="place-tag" style={`background:${cat.accent}`}>{cat.label}</span>
+                      <span class="place-info">
+                        <b class="mincho">{p.data.name}</b>
+                        <span class="muted">{p.data.tagline}</span>
+                      </span>
+                      <span class="arw" aria-hidden="true">→</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </>
+    )}
+  </section>
+
+  <!-- 回遊：同エリアの他市町村＋地図 -->
+  <section class="ah-nav">
+    <div class="wrap ah-nav-inner">
+      <div>
+        <h2 class="display ah-nav-h">{region.label}の、ほかの街</h2>
+        <ul class="neigh">
+          {neighbors.map((m) => {
+            const c = counts.get(m.slug) ?? 0;
+            return <li><a href={`/area/${m.slug}/`} class:list={["muni", { has: c > 0 }]} style={`--_c:${region.color}`}>{m.name}{c > 0 && <span class="muni-count latin">{c}</span>}</a></li>;
+          })}
+        </ul>
+        <a href="/area/" class="ul-link ah-all">茨城の全エリアマップを見る →</a>
+      </div>
+      <div class="ah-map">
+        <IbarakiMap counts={counts} activeSlug={slug} compact />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ah { padding: clamp(2.5rem, 6vw, 4rem) 0 1.5rem; position: relative; }
+  .ah::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0.5;
+    background: radial-gradient(60% 100% at 100% 0%, color-mix(in srgb, var(--_c) 18%, transparent), transparent 65%); }
+  .crumbs { display: flex; gap: 0.6rem; font-size: var(--step--1); color: var(--ink-mute); margin-bottom: 1.2rem; }
+  .crumbs a:hover { color: var(--_c); }
+  .ah-name { font-size: var(--step-5); margin: 0.6rem 0 0.3rem; }
+  .ah-lead { font-size: var(--step-1); color: var(--ink-soft); }
+
+  .section { padding-block: clamp(2.5rem, 6vw, 4rem); display: grid; gap: clamp(2.5rem, 5vw, 4rem); }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: 1.5rem; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+  .place-list { display: grid; gap: 0.8rem; margin-top: 1.5rem; }
+  .place-row { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.3rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); transition: all 0.25s var(--ease); }
+  .place-row:hover { border-color: var(--_a); transform: translateX(4px); box-shadow: var(--shadow-sm); }
+  .place-tag { color: #fff; font-size: var(--step--1); font-weight: 700; padding: 0.3em 0.8em; border-radius: 999px; white-space: nowrap; }
+  .place-info { display: flex; flex-direction: column; flex: 1; }
+  .place-info b { font-size: var(--step-1); }
+  .place-info span { font-size: var(--step--1); }
+
+  .empty { text-align: center; padding-block: 2rem; display: grid; gap: 1.6rem; justify-items: center; }
+  .empty p { font-size: var(--step-1); color: var(--ink-soft); }
+  .empty-cta { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+  .ah-nav { background: var(--paper-2); }
+  .ah-nav-inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(2rem, 5vw, 4rem); padding-block: clamp(3rem, 6vw, 5rem); align-items: center; }
+  .ah-nav-h { font-size: var(--step-2); margin-bottom: 1.2rem; }
+  .neigh { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.5rem; }
+  .muni { display: inline-flex; align-items: center; gap: 0.5em; padding: 0.5em 1em; border: 1px solid var(--line); border-radius: 999px; font-size: var(--step-0); color: var(--ink-soft); background: var(--paper); transition: all 0.25s; }
+  .muni:hover { border-color: var(--_c); color: var(--_c); }
+  .muni.has { font-weight: 700; color: var(--ink); border-color: color-mix(in srgb, var(--_c) 45%, transparent); }
+  .muni-count { display: inline-grid; place-items: center; min-width: 1.4em; height: 1.4em; background: var(--_c); color: #fff; border-radius: 999px; font-size: 0.7em; }
+  .ah-all { font-weight: 700; color: var(--ink); }
+  .ah-map { max-width: 380px; margin-inline: auto; }
+  @media (max-width: 820px) { .ah-nav-inner { grid-template-columns: 1fr; } .ah-map { display: none; } }
+</style>

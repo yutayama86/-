@@ -1,0 +1,104 @@
+---
+import { MUNICIPALITIES, REGIONS, REGION_ORDER, project, MAP_BOUNDS } from '../data/areas';
+
+interface Props {
+  counts?: Map<string, number>;
+  activeSlug?: string;
+  compact?: boolean;
+}
+const { counts = new Map(), activeSlug, compact = false } = Astro.props;
+
+const W = 520;
+const H = 620;
+
+const nodes = MUNICIPALITIES.map((m) => {
+  const { x, y } = project(m.lat, m.lon, W, H);
+  const count = counts.get(m.slug) ?? 0;
+  return { ...m, x, y, count, active: m.slug === activeSlug, has: count > 0 };
+});
+
+// 霞ヶ浦のヒント位置
+const kasumi = project(36.03, 140.4, W, H);
+const kasumi2 = project(35.95, 140.5, W, H);
+---
+
+<figure class={`imap ${compact ? 'imap--compact' : ''}`} aria-label="茨城県 市町村マップ">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" xmlns="http://www.w3.org/2000/svg" class="imap-svg">
+    <defs>
+      <linearGradient id="sea" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#6b9bd1" stop-opacity="0" />
+        <stop offset="1" stop-color="#6b9bd1" stop-opacity="0.16" />
+      </linearGradient>
+    </defs>
+
+    <!-- 太平洋（東側の暗示） -->
+    <rect x={W - 70} y="0" width="70" height={H} fill="url(#sea)" />
+    <text x={W - 14} y={H / 2} class="imap-sea" transform={`rotate(90 ${W - 14} ${H / 2})`}>太平洋</text>
+
+    <!-- 霞ヶ浦のヒント -->
+    <ellipse cx={(kasumi.x + kasumi2.x) / 2} cy={(kasumi.y + kasumi2.y) / 2} rx="26" ry="40"
+      fill="#6b9bd1" opacity="0.14" transform={`rotate(28 ${(kasumi.x + kasumi2.x) / 2} ${(kasumi.y + kasumi2.y) / 2})`} />
+    <text x={kasumi.x - 4} y={kasumi.y + 46} class="imap-lake">霞ヶ浦</text>
+
+    <!-- 市町村ノード -->
+    {nodes.map((n) => (
+      <a href={`/area/${n.slug}/`} class:list={["imap-node", { "is-active": n.active, "has-content": n.has }]} aria-label={`${n.name}${n.has ? `（${n.count}件）` : ''}`}>
+        <circle cx={n.x} cy={n.y} r={n.active ? 9 : n.has ? 7 : 4.5}
+          fill={n.has || n.active ? REGIONS[n.region].color : 'var(--paper)'}
+          stroke={REGIONS[n.region].color} stroke-width={n.has ? 0 : 1.4}
+          class="imap-dot" style={`--_c:${REGIONS[n.region].color}`} />
+        {n.has && n.count > 0 && (
+          <circle cx={n.x + 6} cy={n.y - 6} r="6.5" class="imap-badge-bg" />
+        )}
+        {n.has && n.count > 0 && (
+          <text x={n.x + 6} y={n.y - 6} class="imap-badge">{n.count}</text>
+        )}
+        <text x={n.x} y={n.y - 12} class="imap-label" style={`--_c:${REGIONS[n.region].color}`}>{n.name}</text>
+      </a>
+    ))}
+  </svg>
+
+  <ul class="imap-legend" aria-hidden="true">
+    {REGION_ORDER.map((k) => (
+      <li><span class="imap-swatch" style={`background:${REGIONS[k].color}`}></span>{REGIONS[k].label}</li>
+    ))}
+  </ul>
+</figure>
+
+<style>
+  .imap { margin: 0; position: relative; }
+  .imap-svg { width: 100%; height: auto; overflow: visible; }
+  .imap-sea { fill: #4d7ba8; font-size: 13px; letter-spacing: 0.3em; text-anchor: middle; opacity: 0.7; font-family: var(--font-display); }
+  .imap-lake { fill: #4d7ba8; font-size: 11px; text-anchor: middle; opacity: 0.7; font-family: var(--font-display); }
+
+  .imap-node { cursor: pointer; }
+  .imap-dot { transition: transform 0.25s var(--ease), filter 0.25s; transform-box: fill-box; transform-origin: center; }
+  .imap-node:hover .imap-dot,
+  .imap-node:focus-visible .imap-dot { transform: scale(1.5); filter: drop-shadow(0 3px 6px rgba(28,26,20,.3)); }
+  .imap-node.is-active .imap-dot { filter: drop-shadow(0 0 0 3px color-mix(in srgb, var(--_c) 30%, transparent)); }
+
+  .imap-badge-bg { fill: var(--shu); }
+  .imap-badge { fill: #fff; font-size: 8px; font-weight: 700; text-anchor: middle; dominant-baseline: central; font-family: var(--font-latin); pointer-events: none; }
+
+  /* ラベル：コンテンツありは常時表示、それ以外はホバー時 */
+  .imap-label {
+    font-size: 10px; text-anchor: middle; font-weight: 700; fill: var(--ink);
+    paint-order: stroke; stroke: var(--paper); stroke-width: 3px; stroke-linejoin: round;
+    opacity: 0; transition: opacity 0.2s; pointer-events: none; font-family: var(--font-sans);
+  }
+  .imap-node.has-content .imap-label { opacity: 1; fill: color-mix(in srgb, var(--_c) 75%, var(--ink)); }
+  .imap-node:hover .imap-label,
+  .imap-node:focus-visible .imap-label { opacity: 1; }
+
+  .imap-legend {
+    display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; justify-content: center;
+    margin-top: 1rem; font-size: var(--step--1); color: var(--ink-soft); font-weight: 700;
+  }
+  .imap-legend li { display: inline-flex; align-items: center; gap: 0.4em; }
+  .imap-swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+  @media (max-width: 560px) {
+    .imap-label { font-size: 12px; }
+    .imap-node:not(.has-content):not(.is-active) .imap-dot { r: 6; }
+  }
+</style>

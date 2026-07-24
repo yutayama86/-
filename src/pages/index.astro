@@ -1,10 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import ArticleCard from '../components/ArticleCard.astro';
-import { getArticles, getFeatured } from '../lib/content';
+import IbarakiMap from '../components/IbarakiMap.astro';
+import { getArticles, getFeatured, getAreaCounts } from '../lib/content';
 import { CATEGORY_LIST, SITE_CONFIG } from '../data/site';
 
 const articles = await getArticles();
+const areaCounts = await getAreaCounts();
 const featuredAll = await getFeatured();
 const hero = (featuredAll[0] ?? articles[0]) ?? null;
 const featured = (featuredAll.length ? featuredAll : articles).slice(hero ? 1 : 0, hero ? 4 : 3);
@@ -86,6 +88,24 @@ const heroHref = hero ? `/${heroCat?.path}/${hero.id.split('/').pop()}/` : '#';
         </li>
       ))}
     </ul>
+  </section>
+
+  <!-- ============ AREA MAP ============ -->
+  <section class="areasec">
+    <div class="wrap areasec-inner">
+      <div class="areasec-copy" data-reveal>
+        <p class="eyebrow">Explore by Area</p>
+        <h2 class="display areasec-title">茨城を、<br />街から探す。</h2>
+        <p class="areasec-lead">
+          44市町村、5つのエリア。地図の点をタップすれば、その街の体験レポートとお店へ。
+          あなたの“地元のいいとこ”から、旅先の街まで。
+        </p>
+        <a href="/area/" class="btn btn--ai btn--lg">エリアマップを開く <span class="arw">→</span></a>
+      </div>
+      <div class="areasec-map" data-reveal>
+        <IbarakiMap counts={areaCounts} />
+      </div>
+    </div>
   </section>
 
   <!-- ============ FEATURED ============ -->
@@ -219,6 +239,17 @@ const heroHref = hero ? `/${heroCat?.path}/${hero.id.split('/').pop()}/` : '#';
   .cat-label { font-family: var(--font-display); font-weight: 600; font-size: var(--step-1); margin-top: 0.3rem; }
   .cat-arw { position: absolute; top: 1.8rem; right: 1.4rem; opacity: 0; transform: translateX(-6px); transition: opacity 0.3s, transform 0.4s var(--ease); }
   .cat-card:hover .cat-arw { opacity: 1; transform: none; }
+
+  /* ---- Area map section ---- */
+  .areasec { background: var(--paper-2); margin-top: clamp(2rem, 5vw, 4rem); }
+  .areasec-inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center; padding-block: clamp(3rem, 7vw, 5.5rem); }
+  .areasec-title { font-size: var(--step-4); margin: 0.6rem 0 1.2rem; }
+  .areasec-lead { color: var(--ink-soft); font-size: var(--step-1); line-height: 1.9; margin-bottom: 2rem; }
+  .areasec-map { max-width: 520px; margin-inline: auto; width: 100%; }
+  @media (max-width: 860px) {
+    .areasec-inner { grid-template-columns: 1fr; }
+    .areasec-map { max-width: 420px; }
+  }
 
   /* ---- Feature grid ---- */
   .feature-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: clamp(1.2rem, 3vw, 2.5rem); margin-top: 2.5rem; align-items: start; }

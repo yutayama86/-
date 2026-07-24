@@ -86,14 +86,3 @@ export function areaToSlug(area?: string): string | null {
 export function municipalitiesByRegion(region: RegionKey): Municipality[] {
   return MUNICIPALITIES.filter((m) => m.region === region);
 }
-
-/** 地図投影用の境界（茨城県の概略bbox） */
-export const MAP_BOUNDS = { lonMin: 139.66, lonMax: 140.82, latMin: 35.8, latMax: 36.86 };
-
-/** lat/lon → SVG座標 */
-export function project(lat: number, lon: number, width: number, height: number, pad = 26) {
-  const { lonMin, lonMax, latMin, latMax } = MAP_BOUNDS;
-  const x = pad + ((lon - lonMin) / (lonMax - lonMin)) * (width - pad * 2);
-  const y = pad + ((latMax - lat) / (latMax - latMin)) * (height - pad * 2);
-  return { x, y };
-}

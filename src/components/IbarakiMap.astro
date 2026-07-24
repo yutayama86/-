@@ -1,5 +1,6 @@
 ---
-import { MUNICIPALITIES, REGIONS, REGION_ORDER, project, MAP_BOUNDS } from '../data/areas';
+import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, REGION_ORDER } from '../data/areas';
+import { IBARAKI_GEO, GEO_VIEW } from '../data/ibaraki-geo';
 
 interface Props {
   counts?: Map<string, number>;
@@ -7,19 +8,23 @@ interface Props {
   compact?: boolean;
 }
 const { counts = new Map(), activeSlug, compact = false } = Astro.props;
+const { w: W, h: H } = GEO_VIEW;
 
-const W = 520;
-const H = 620;
-
-const nodes = MUNICIPALITIES.map((m) => {
-  const { x, y } = project(m.lat, m.lon, W, H);
+const nodes = MUNICIPALITIES.filter((m) => IBARAKI_GEO[m.slug]).map((m) => {
+  const g = IBARAKI_GEO[m.slug];
   const count = counts.get(m.slug) ?? 0;
-  return { ...m, x, y, count, active: m.slug === activeSlug, has: count > 0 };
+  return { ...m, ...g, count, has: count > 0, active: m.slug === activeSlug };
 });
+// 描画順：空 → コンテンツ有 → アクティブ（上に重ねる）
+nodes.sort((a, b) => Number(a.has) - Number(b.has) || Number(a.active) - Number(b.active));
 
-// 霞ヶ浦のヒント位置
-const kasumi = project(36.03, 140.4, W, H);
-const kasumi2 = project(35.95, 140.5, W, H);
+// ラベル位置（データ駆動）
+const lake = (() => {
+  const a = MUNI_BY_SLUG.get('kasumigaura') && IBARAKI_GEO['kasumigaura'];
+  const b = MUNI_BY_SLUG.get('namegata') && IBARAKI_GEO['namegata'];
+  if (a && b) return { x: (a.cx + b.cx) / 2, y: (a.cy + b.cy) / 2 };
+  return { x: W * 0.62, y: H * 0.72 };
+})();
 ---
 
 <figure class={`imap ${compact ? 'imap--compact' : ''}`} aria-label="茨城県 市町村マップ">
@@ -27,33 +32,25 @@ const kasumi2 = project(35.95, 140.5, W, H);
     <defs>
       <linearGradient id="sea" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0" stop-color="#6b9bd1" stop-opacity="0" />
-        <stop offset="1" stop-color="#6b9bd1" stop-opacity="0.16" />
+        <stop offset="1" stop-color="#6b9bd1" stop-opacity="0.13" />
       </linearGradient>
     </defs>
 
-    <!-- 太平洋（東側の暗示） -->
-    <rect x={W - 70} y="0" width="70" height={H} fill="url(#sea)" />
-    <text x={W - 14} y={H / 2} class="imap-sea" transform={`rotate(90 ${W - 14} ${H / 2})`}>太平洋</text>
+    <rect x={W - 58} y="0" width="58" height={H} fill="url(#sea)" />
+    <text x={W - 12} y={H * 0.4} class="imap-sea" transform={`rotate(90 ${W - 12} ${H * 0.4})`}>太平洋</text>
+    <text x={lake.x} y={lake.y} class="imap-lake">霞ヶ浦</text>
 
-    <!-- 霞ヶ浦のヒント -->
-    <ellipse cx={(kasumi.x + kasumi2.x) / 2} cy={(kasumi.y + kasumi2.y) / 2} rx="26" ry="40"
-      fill="#6b9bd1" opacity="0.14" transform={`rotate(28 ${(kasumi.x + kasumi2.x) / 2} ${(kasumi.y + kasumi2.y) / 2})`} />
-    <text x={kasumi.x - 4} y={kasumi.y + 46} class="imap-lake">霞ヶ浦</text>
-
-    <!-- 市町村ノード -->
     {nodes.map((n) => (
-      <a href={`/area/${n.slug}/`} class:list={["imap-node", { "is-active": n.active, "has-content": n.has }]} aria-label={`${n.name}${n.has ? `（${n.count}件）` : ''}`}>
-        <circle cx={n.x} cy={n.y} r={n.active ? 9 : n.has ? 7 : 4.5}
-          fill={n.has || n.active ? REGIONS[n.region].color : 'var(--paper)'}
-          stroke={REGIONS[n.region].color} stroke-width={n.has ? 0 : 1.4}
-          class="imap-dot" style={`--_c:${REGIONS[n.region].color}`} />
-        {n.has && n.count > 0 && (
-          <circle cx={n.x + 6} cy={n.y - 6} r="6.5" class="imap-badge-bg" />
+      <a href={`/area/${n.slug}/`} class:list={["imap-m", { "is-active": n.active, "has-content": n.has }]}
+        style={`--_c:${REGIONS[n.region].color}`} aria-label={`${n.name}${n.has ? `（${n.count}件）` : ''}`}>
+        <path d={n.d} class="imap-shape" />
+        {n.has && (
+          <>
+            <circle cx={n.cx + 12} cy={n.cy - 11} r="7" class="imap-badge-bg" />
+            <text x={n.cx + 12} y={n.cy - 11} class="imap-badge">{n.count}</text>
+          </>
         )}
-        {n.has && n.count > 0 && (
-          <text x={n.x + 6} y={n.y - 6} class="imap-badge">{n.count}</text>
-        )}
-        <text x={n.x} y={n.y - 12} class="imap-label" style={`--_c:${REGIONS[n.region].color}`}>{n.name}</text>
+        <text x={n.cx} y={n.cy} class="imap-label">{n.name}</text>
       </a>
     ))}
   </svg>
@@ -66,39 +63,38 @@ const kasumi2 = project(35.95, 140.5, W, H);
 </figure>
 
 <style>
-  .imap { margin: 0; position: relative; }
-  .imap-svg { width: 100%; height: auto; overflow: visible; }
-  .imap-sea { fill: #4d7ba8; font-size: 13px; letter-spacing: 0.3em; text-anchor: middle; opacity: 0.7; font-family: var(--font-display); }
-  .imap-lake { fill: #4d7ba8; font-size: 11px; text-anchor: middle; opacity: 0.7; font-family: var(--font-display); }
+  .imap { margin: 0; }
+  .imap-svg { width: 100%; height: auto; overflow: visible; display: block; }
+  .imap-sea { fill: #4d7ba8; font-size: 13px; letter-spacing: 0.3em; text-anchor: middle; opacity: 0.6; font-family: var(--font-display); }
+  .imap-lake { fill: #6f9ac2; font-size: 10px; text-anchor: middle; opacity: 0.85; font-family: var(--font-display); pointer-events: none; }
 
-  .imap-node { cursor: pointer; }
-  .imap-dot { transition: transform 0.25s var(--ease), filter 0.25s; transform-box: fill-box; transform-origin: center; }
-  .imap-node:hover .imap-dot,
-  .imap-node:focus-visible .imap-dot { transform: scale(1.5); filter: drop-shadow(0 3px 6px rgba(28,26,20,.3)); }
-  .imap-node.is-active .imap-dot { filter: drop-shadow(0 0 0 3px color-mix(in srgb, var(--_c) 30%, transparent)); }
+  .imap-m { cursor: pointer; }
+  .imap-shape {
+    fill: color-mix(in srgb, var(--_c) 12%, var(--paper));
+    stroke: color-mix(in srgb, var(--_c) 45%, var(--paper));
+    stroke-width: 0.8; stroke-linejoin: round;
+    transition: fill 0.25s var(--ease), filter 0.25s;
+  }
+  .imap-m.has-content .imap-shape { fill: var(--_c); stroke: var(--paper); stroke-width: 1; }
+  .imap-m:hover .imap-shape { fill: color-mix(in srgb, var(--_c) 78%, white); filter: drop-shadow(0 4px 8px rgba(28,26,20,.28)); }
+  .imap-m.has-content:hover .imap-shape { fill: var(--_c); }
+  .imap-m.is-active .imap-shape { fill: var(--_c); stroke: var(--ink); stroke-width: 1.6; }
 
   .imap-badge-bg { fill: var(--shu); }
-  .imap-badge { fill: #fff; font-size: 8px; font-weight: 700; text-anchor: middle; dominant-baseline: central; font-family: var(--font-latin); pointer-events: none; }
+  .imap-badge { fill: #fff; font-size: 8.5px; font-weight: 700; text-anchor: middle; dominant-baseline: central; font-family: var(--font-latin); pointer-events: none; }
 
-  /* ラベル：コンテンツありは常時表示、それ以外はホバー時 */
   .imap-label {
-    font-size: 10px; text-anchor: middle; font-weight: 700; fill: var(--ink);
-    paint-order: stroke; stroke: var(--paper); stroke-width: 3px; stroke-linejoin: round;
+    font-size: 10px; text-anchor: middle; dominant-baseline: central; font-weight: 700;
+    paint-order: stroke; stroke: var(--paper); stroke-width: 2.8px; stroke-linejoin: round;
     opacity: 0; transition: opacity 0.2s; pointer-events: none; font-family: var(--font-sans);
   }
-  .imap-node.has-content .imap-label { opacity: 1; fill: color-mix(in srgb, var(--_c) 75%, var(--ink)); }
-  .imap-node:hover .imap-label,
-  .imap-node:focus-visible .imap-label { opacity: 1; }
+  .imap-m.has-content .imap-label { opacity: 1; fill: #fff; stroke: color-mix(in srgb, var(--_c) 60%, black); stroke-width: 2.4px; }
+  .imap-m:not(.has-content):hover .imap-label { opacity: 1; fill: var(--ink); }
+  .imap-m.is-active .imap-label { opacity: 1; fill: #fff; stroke: color-mix(in srgb, var(--_c) 55%, black); }
 
-  .imap-legend {
-    display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; justify-content: center;
-    margin-top: 1rem; font-size: var(--step--1); color: var(--ink-soft); font-weight: 700;
-  }
+  .imap-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; justify-content: center; margin-top: 1rem; font-size: var(--step--1); color: var(--ink-soft); font-weight: 700; }
   .imap-legend li { display: inline-flex; align-items: center; gap: 0.4em; }
   .imap-swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
 
-  @media (max-width: 560px) {
-    .imap-label { font-size: 12px; }
-    .imap-node:not(.has-content):not(.is-active) .imap-dot { r: 6; }
-  }
+  @media (max-width: 560px) { .imap-label { font-size: 11px; } }
 </style>

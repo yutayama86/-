@@ -82,8 +82,10 @@ const lake = (() => {
     transition: fill 0.25s var(--ease), filter 0.25s;
   }
   .imap-m.has-content .imap-shape { fill: var(--_c); stroke: var(--paper); stroke-width: 1; }
-  .imap-m:hover .imap-shape { fill: color-mix(in srgb, var(--_c) 78%, white); filter: drop-shadow(0 4px 8px rgba(28,26,20,.28)); }
-  .imap-m.has-content:hover .imap-shape { fill: var(--_c); }
+  .imap-m:hover .imap-shape,
+  .imap-m.is-hover .imap-shape { fill: color-mix(in srgb, var(--_c) 78%, white); filter: drop-shadow(0 4px 8px rgba(28,26,20,.28)); }
+  .imap-m.has-content:hover .imap-shape,
+  .imap-m.has-content.is-hover .imap-shape { fill: var(--_c); }
   .imap-m.is-active .imap-shape { fill: var(--_c); stroke: var(--ink); stroke-width: 1.6; }
 
   .imap-badge-bg { fill: var(--shu); }
@@ -96,7 +98,8 @@ const lake = (() => {
   }
   .imap-m.is-anchor .imap-label { opacity: 1; fill: var(--ink-soft); }
   .imap-m.has-content .imap-label { opacity: 1; fill: #fff; stroke: color-mix(in srgb, var(--_c) 60%, black); stroke-width: 2.4px; }
-  .imap-m:not(.has-content):hover .imap-label { opacity: 1; fill: var(--ink); }
+  .imap-m:not(.has-content):hover .imap-label,
+  .imap-m:not(.has-content).is-hover .imap-label { opacity: 1; fill: var(--ink); }
   .imap-m.is-active .imap-label { opacity: 1; fill: #fff; stroke: color-mix(in srgb, var(--_c) 55%, black); }
 
   .imap-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; justify-content: center; margin-top: 1rem; font-size: var(--step--1); color: var(--ink-soft); font-weight: 700; }
@@ -107,12 +110,25 @@ const lake = (() => {
 </style>
 
 <script>
-  // ホバー/フォーカスした市町村を最前面へ（ラベルの重なりを防ぐ）
+  // SVG <a> のクリック遷移・ホバー表示を確実に動かす（SVGアンカーは環境差があるためJSで明示制御）
   for (const svg of document.querySelectorAll('.imap-svg')) {
-    for (const m of svg.querySelectorAll('.imap-m')) {
-      const raise = () => m.parentNode?.appendChild(m);
-      m.addEventListener('pointerenter', raise);
-      m.addEventListener('focusin', raise);
+    for (const m of svg.querySelectorAll<SVGAElement>('.imap-m')) {
+      const href = m.getAttribute('href');
+      // ホバー：クラスでラベル表示（DOM移動はしない＝クリックを壊さない）
+      m.addEventListener('pointerenter', () => m.classList.add('is-hover'));
+      m.addEventListener('pointerleave', () => m.classList.remove('is-hover'));
+      // クリック遷移
+      m.addEventListener('click', (e) => {
+        if (!href) return;
+        // 修飾キー/中クリックは既定動作（新規タブ等）に任せる
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        window.location.href = href;
+      });
+      // キーボード（Enter）
+      m.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && href) window.location.href = href;
+      });
     }
   }
 </script>

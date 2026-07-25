@@ -10,19 +10,18 @@ interface Props {
 const { counts = new Map(), activeSlug, compact = false } = Astro.props;
 const { w: W, h: H } = GEO_VIEW;
 
-// 目印として常時ラベルを出す主要都市（地理の把握用）
-const ANCHORS = new Set([
-  'hitachi', 'hitachiota', 'tsuchiura', 'ishioka', 'koga', 'chikusei', 'kashima', 'kamisu',
-]);
+// 小さな町などラベルが海側にはみ出るものは手動で陸側へ微調整
+const LABEL_OFFSET: Record<string, { dx: number; dy: number }> = {
+  tokai: { dx: -22, dy: -17 }, // 東海村：重心が海側に出るため陸(形の中心)へ寄せる
+};
 
 const nodes = MUNICIPALITIES.filter((m) => IBARAKI_GEO[m.slug]).map((m) => {
   const g = IBARAKI_GEO[m.slug];
-  const count = counts.get(m.slug) ?? 0;
-  const label = m.name.replace(/[市町村]$/u, ''); // 地図表示は接尾辞を省略
-  return { ...m, ...g, label, count, has: count > 0, anchor: ANCHORS.has(m.slug), active: m.slug === activeSlug };
+  const off = LABEL_OFFSET[m.slug] ?? { dx: 0, dy: 0 };
+  return { ...m, ...g, lx: g.cx + off.dx, ly: g.cy + off.dy, active: m.slug === activeSlug };
 });
-// 描画順：空 → コンテンツ有 → アクティブ（上に重ねる）
-nodes.sort((a, b) => Number(a.has) - Number(b.has) || Number(a.active) - Number(b.active));
+// アクティブ（現在の市町村ページ）を最前面に
+nodes.sort((a, b) => Number(a.active) - Number(b.active));
 
 // ラベル位置（データ駆動）
 const lake = (() => {
@@ -47,16 +46,10 @@ const lake = (() => {
     <text x={lake.x} y={lake.y} class="imap-lake">霞ヶ浦</text>
 
     {nodes.map((n) => (
-      <a href={`/area/${n.slug}/`} class:list={["imap-m", { "is-active": n.active, "has-content": n.has, "is-anchor": n.anchor && !n.has }]}
-        style={`--_c:${REGIONS[n.region].color}`} aria-label={`${n.name}${n.has ? `（${n.count}件）` : ''}`}>
+      <a href={`/area/${n.slug}/`} class:list={["imap-m", { "is-active": n.active }]}
+        style={`--_c:${REGIONS[n.region].color}`} aria-label={n.name}>
         <path d={n.d} class="imap-shape" />
-        {n.has && (
-          <>
-            <circle cx={n.cx} cy={n.cy - 14} r="7" class="imap-badge-bg" />
-            <text x={n.cx} y={n.cy - 14} class="imap-badge">{n.count}</text>
-          </>
-        )}
-        <text x={n.cx} y={n.cy} class="imap-label">{n.label}</text>
+        <text x={n.lx} y={n.ly} class="imap-label">{n.name}</text>
       </a>
     ))}
   </svg>
@@ -76,20 +69,14 @@ const lake = (() => {
 
   .imap-m { cursor: pointer; }
   .imap-shape {
-    fill: color-mix(in srgb, var(--_c) 12%, var(--paper));
-    stroke: color-mix(in srgb, var(--_c) 45%, var(--paper));
+    fill: color-mix(in srgb, var(--_c) 20%, var(--paper));
+    stroke: color-mix(in srgb, var(--_c) 50%, var(--paper));
     stroke-width: 0.8; stroke-linejoin: round;
     transition: fill 0.25s var(--ease), filter 0.25s;
   }
-  .imap-m.has-content .imap-shape { fill: var(--_c); stroke: var(--paper); stroke-width: 1; }
   .imap-m:hover .imap-shape,
-  .imap-m.is-hover .imap-shape { fill: color-mix(in srgb, var(--_c) 78%, white); filter: drop-shadow(0 4px 8px rgba(28,26,20,.28)); }
-  .imap-m.has-content:hover .imap-shape,
-  .imap-m.has-content.is-hover .imap-shape { fill: var(--_c); }
+  .imap-m.is-hover .imap-shape { fill: color-mix(in srgb, var(--_c) 82%, white); filter: drop-shadow(0 4px 8px rgba(28,26,20,.28)); }
   .imap-m.is-active .imap-shape { fill: var(--_c); stroke: var(--ink); stroke-width: 1.6; }
-
-  .imap-badge-bg { fill: var(--shu); }
-  .imap-badge { fill: #fff; font-size: 8.5px; font-weight: 700; text-anchor: middle; dominant-baseline: central; font-family: var(--font-latin); pointer-events: none; }
 
   .imap-label {
     font-size: 8.5px; text-anchor: middle; dominant-baseline: central; font-weight: 700;
@@ -97,10 +84,10 @@ const lake = (() => {
     paint-order: stroke; stroke: var(--paper); stroke-width: 2.4px; stroke-linejoin: round;
     opacity: 1; transition: opacity 0.2s; pointer-events: none; font-family: var(--font-sans);
   }
-  .imap-m.has-content .imap-label { opacity: 1; fill: #fff; stroke: color-mix(in srgb, var(--_c) 60%, black); stroke-width: 2.4px; }
-  .imap-m:not(.has-content):hover .imap-label,
-  .imap-m:not(.has-content).is-hover .imap-label { opacity: 1; fill: var(--ink); }
-  .imap-m.is-active .imap-label { opacity: 1; fill: #fff; stroke: color-mix(in srgb, var(--_c) 55%, black); }
+  /* ホバー/選択中は塗りが濃くなるので白文字で読みやすく */
+  .imap-m:hover .imap-label,
+  .imap-m.is-hover .imap-label,
+  .imap-m.is-active .imap-label { fill: #fff; stroke: color-mix(in srgb, var(--_c) 55%, black); stroke-width: 2.4px; }
 
   .imap-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; justify-content: center; margin-top: 1rem; font-size: var(--step--1); color: var(--ink-soft); font-weight: 700; }
   .imap-legend li { display: inline-flex; align-items: center; gap: 0.4em; }

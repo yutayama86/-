@@ -62,10 +62,10 @@ for (const f of features) {
 
 // --- TopoJSONで共有境界ごと簡略化（隣接を崩さない）---
 // quantization で近接頂点をグリッドにスナップ→共有アークを確実に検出（隙間防止）
-let topo = topology({ m: { type: 'FeatureCollection', features } }, 2200);
+let topo = topology({ m: { type: 'FeatureCollection', features } }, 12000);
 console.log(`arcs: ${topo.arcs.length}`);
 topo = presimplify(topo);
-const MIN_WEIGHT = 3; // px² 未満の微小な凹凸を除去
+const MIN_WEIGHT = 0.5; // px² 未満の微小な凹凸を除去
 topo = simplify(topo, MIN_WEIGHT);
 const fc = feature(topo, topo.objects.m);
 
@@ -87,11 +87,16 @@ const geo = {};
 for (const f of fc.features) {
   const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
   let d = '', best = null;
+  const MIN_RING = 4.0; // これ未満の面積(px²)のリングは“かけら”とみなし除去
+  // 最大の外周をもつポリゴン（=本体）を先に特定（ラベル位置＆必ず残す用）
   for (const poly of polys) {
-    for (const ring of poly) d += dOfRing(ring);
-    const ext = poly[0];
-    const area = ringArea(ext);
-    if (!best || area > best.area) best = { area, c: ringCentroid(ext) };
+    const a = ringArea(poly[0]);
+    if (!best || a > best.area) best = { area: a, poly, c: ringCentroid(poly[0]) };
+  }
+  for (const poly of polys) {
+    const extArea = ringArea(poly[0]);
+    if (extArea < MIN_RING && poly !== best.poly) continue; // かけら除去（本体は必ず残す）
+    for (const ring of poly) if (ringArea(ring) >= MIN_RING) d += dOfRing(ring);
   }
   const [cx, cy] = best.c;
   geo[f.id] = { d, cx: Math.round(cx * 10) / 10, cy: Math.round(cy * 10) / 10 };

@@ -10,10 +10,15 @@ interface Props {
 const { counts = new Map(), activeSlug, compact = false } = Astro.props;
 const { w: W, h: H } = GEO_VIEW;
 
+// 目印として常時ラベルを出す主要都市（地理の把握用）
+const ANCHORS = new Set([
+  'hitachi', 'hitachiota', 'tsuchiura', 'ishioka', 'koga', 'chikusei', 'kashima', 'kamisu',
+]);
+
 const nodes = MUNICIPALITIES.filter((m) => IBARAKI_GEO[m.slug]).map((m) => {
   const g = IBARAKI_GEO[m.slug];
   const count = counts.get(m.slug) ?? 0;
-  return { ...m, ...g, count, has: count > 0, active: m.slug === activeSlug };
+  return { ...m, ...g, count, has: count > 0, anchor: ANCHORS.has(m.slug), active: m.slug === activeSlug };
 });
 // 描画順：空 → コンテンツ有 → アクティブ（上に重ねる）
 nodes.sort((a, b) => Number(a.has) - Number(b.has) || Number(a.active) - Number(b.active));
@@ -41,7 +46,7 @@ const lake = (() => {
     <text x={lake.x} y={lake.y} class="imap-lake">霞ヶ浦</text>
 
     {nodes.map((n) => (
-      <a href={`/area/${n.slug}/`} class:list={["imap-m", { "is-active": n.active, "has-content": n.has }]}
+      <a href={`/area/${n.slug}/`} class:list={["imap-m", { "is-active": n.active, "has-content": n.has, "is-anchor": n.anchor && !n.has }]}
         style={`--_c:${REGIONS[n.region].color}`} aria-label={`${n.name}${n.has ? `（${n.count}件）` : ''}`}>
         <path d={n.d} class="imap-shape" />
         {n.has && (
@@ -88,6 +93,7 @@ const lake = (() => {
     paint-order: stroke; stroke: var(--paper); stroke-width: 2.8px; stroke-linejoin: round;
     opacity: 0; transition: opacity 0.2s; pointer-events: none; font-family: var(--font-sans);
   }
+  .imap-m.is-anchor .imap-label { opacity: 1; fill: var(--ink-soft); font-size: 9.5px; }
   .imap-m.has-content .imap-label { opacity: 1; fill: #fff; stroke: color-mix(in srgb, var(--_c) 60%, black); stroke-width: 2.4px; }
   .imap-m:not(.has-content):hover .imap-label { opacity: 1; fill: var(--ink); }
   .imap-m.is-active .imap-label { opacity: 1; fill: #fff; stroke: color-mix(in srgb, var(--_c) 55%, black); }

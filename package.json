@@ -15,5 +15,10 @@
     "@astrojs/sitemap": "^3.2.1",
     "astro": "^5.2.5",
     "astro-og-canvas": "^0.7.2"
+  },
+  "devDependencies": {
+    "topojson-client": "^3.1.0",
+    "topojson-server": "^3.0.1",
+    "topojson-simplify": "^3.0.3"
   }
 }

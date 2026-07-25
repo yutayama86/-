@@ -92,11 +92,11 @@ const lake = (() => {
   .imap-badge { fill: #fff; font-size: 8.5px; font-weight: 700; text-anchor: middle; dominant-baseline: central; font-family: var(--font-latin); pointer-events: none; }
 
   .imap-label {
-    font-size: 10px; text-anchor: middle; dominant-baseline: central; font-weight: 700;
-    paint-order: stroke; stroke: var(--paper); stroke-width: 2.8px; stroke-linejoin: round;
-    opacity: 0; transition: opacity 0.2s; pointer-events: none; font-family: var(--font-sans);
+    font-size: 8.5px; text-anchor: middle; dominant-baseline: central; font-weight: 700;
+    fill: var(--ink-soft);
+    paint-order: stroke; stroke: var(--paper); stroke-width: 2.4px; stroke-linejoin: round;
+    opacity: 1; transition: opacity 0.2s; pointer-events: none; font-family: var(--font-sans);
   }
-  .imap-m.is-anchor .imap-label { opacity: 1; fill: var(--ink-soft); }
   .imap-m.has-content .imap-label { opacity: 1; fill: #fff; stroke: color-mix(in srgb, var(--_c) 60%, black); stroke-width: 2.4px; }
   .imap-m:not(.has-content):hover .imap-label,
   .imap-m:not(.has-content).is-hover .imap-label { opacity: 1; fill: var(--ink); }

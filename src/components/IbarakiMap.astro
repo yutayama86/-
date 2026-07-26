@@ -6,8 +6,9 @@ interface Props {
   counts?: Map<string, number>;
   activeSlug?: string;
   compact?: boolean;
+  decor?: boolean; // 装飾用：単色（薄緑）・ラベルなし・非対話
 }
-const { counts = new Map(), activeSlug, compact = false } = Astro.props;
+const { counts = new Map(), activeSlug, compact = false, decor = false } = Astro.props;
 const { w: W, h: H } = GEO_VIEW;
 
 // 小さな町などラベルが海側にはみ出るものは手動で陸側へ微調整
@@ -33,42 +34,58 @@ const lake = (() => {
 })();
 ---
 
-<figure class={`imap ${compact ? 'imap--compact' : ''}`} aria-label="茨城県 市町村マップ">
+<figure class:list={["imap", { "imap--compact": compact, "imap--decor": decor }]}
+  aria-hidden={decor ? 'true' : undefined} aria-label={decor ? undefined : '茨城県 市町村マップ'}>
   <svg viewBox={`0 0 ${W} ${H}`} role="img" xmlns="http://www.w3.org/2000/svg" class="imap-svg">
-    <defs>
-      <linearGradient id="sea" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stop-color="#6b9bd1" stop-opacity="0" />
-        <stop offset="1" stop-color="#6b9bd1" stop-opacity="0.13" />
-      </linearGradient>
-    </defs>
+    {decor ? (
+      nodes.map((n) => <path d={n.d} class="imap-decor" />)
+    ) : (
+      <>
+        <defs>
+          <linearGradient id="sea" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#6b9bd1" stop-opacity="0" />
+            <stop offset="1" stop-color="#6b9bd1" stop-opacity="0.13" />
+          </linearGradient>
+        </defs>
 
-    <rect x={W - 58} y="0" width="58" height={H} fill="url(#sea)" />
-    <text x={W - 12} y={H * 0.4} class="imap-sea" transform={`rotate(90 ${W - 12} ${H * 0.4})`}>太平洋</text>
-    <text x={lake.x} y={lake.y} class="imap-lake">霞ヶ浦</text>
+        <rect x={W - 58} y="0" width="58" height={H} fill="url(#sea)" />
+        <text x={W - 12} y={H * 0.4} class="imap-sea" transform={`rotate(90 ${W - 12} ${H * 0.4})`}>太平洋</text>
+        <text x={lake.x} y={lake.y} class="imap-lake">霞ヶ浦</text>
 
-    {/* 塗り（クリック／ホバー） */}
-    {nodes.map((n) => (
-      <a href={`/area/${n.slug}/`} class:list={["imap-m", { "is-active": n.active }]}
-        style={`--_c:${REGIONS[n.region].color}`} aria-label={n.name}>
-        <path d={n.d} class="imap-shape" />
-      </a>
-    ))}
-    {/* ラベル（常に最前面のレイヤー・隣の塗りに隠れない） */}
-    {nodes.map((n) => (
-      <text x={n.lx} y={n.ly} class="imap-label">{n.name}</text>
-    ))}
+        {/* 塗り（クリック／ホバー） */}
+        {nodes.map((n) => (
+          <a href={`/area/${n.slug}/`} class:list={["imap-m", { "is-active": n.active }]}
+            style={`--_c:${REGIONS[n.region].color}`} aria-label={n.name}>
+            <path d={n.d} class="imap-shape" />
+          </a>
+        ))}
+        {/* ラベル（常に最前面のレイヤー・隣の塗りに隠れない） */}
+        {nodes.map((n) => (
+          <text x={n.lx} y={n.ly} class="imap-label">{n.name}</text>
+        ))}
+      </>
+    )}
   </svg>
 
+  {!decor && (
   <ul class="imap-legend" aria-hidden="true">
     {REGION_ORDER.map((k) => (
       <li><span class="imap-swatch" style={`background:${REGIONS[k].color}`}></span>{REGIONS[k].label}</li>
     ))}
   </ul>
+  )}
 </figure>
 
 <style>
   .imap { margin: 0; }
   .imap-svg { width: 100%; height: auto; overflow: visible; display: block; }
+
+  /* 装飾モード：薄緑の単色シルエット */
+  .imap-decor {
+    fill: color-mix(in srgb, var(--matcha) 15%, var(--paper));
+    stroke: color-mix(in srgb, var(--matcha) 32%, var(--paper));
+    stroke-width: 0.7; stroke-linejoin: round;
+  }
   .imap-sea { fill: #4d7ba8; font-size: 13px; letter-spacing: 0.3em; text-anchor: middle; opacity: 0.6; font-family: var(--font-display); }
   .imap-lake { fill: #6f9ac2; font-size: 10px; text-anchor: middle; opacity: 0.85; font-family: var(--font-display); pointer-events: none; }
 

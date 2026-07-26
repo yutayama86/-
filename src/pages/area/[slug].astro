@@ -6,6 +6,7 @@ import IbarakiMap from '../../components/IbarakiMap.astro';
 import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, municipalitiesByRegion } from '../../data/areas';
 import { getArticlesByArea, getPlacesByArea, getAreaCounts } from '../../lib/content';
 import { CATEGORIES } from '../../data/site';
+import { MUNICIPALITY_CONTENT } from '../../data/municipality-content';
 
 export const getStaticPaths = (() => {
   return MUNICIPALITIES.map((m) => ({ params: { slug: m.slug } }));
@@ -16,6 +17,7 @@ const muni = MUNI_BY_SLUG.get(slug!);
 if (!muni) return Astro.redirect('/404');
 
 const region = REGIONS[muni.region];
+const content = MUNICIPALITY_CONTENT[slug!] ?? {};
 const [articles, places, counts] = await Promise.all([
   getArticlesByArea(slug!),
   getPlacesByArea(slug!),
@@ -25,17 +27,29 @@ const [articles, places, counts] = await Promise.all([
 // 同エリアの他の市町村（回遊用）
 const neighbors = municipalitiesByRegion(muni.region).filter((m) => m.slug !== slug);
 
+const metaDesc = content.intro
+  ? `${content.intro} 茨城県${muni.name}の見どころ・おすすめスポット・グルメ・体験をイバトコがまとめました。`
+  : `茨城県${muni.name}（${region.label}エリア）の見どころ・グルメ・体験。イバトコの現地レポートとお店をまとめました。`;
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
-  name: `${muni.name}の体験・お店`,
-  about: { '@type': 'Place', name: muni.name, address: `茨城県${muni.name}` },
+  name: `${muni.name}の見どころ・グルメ・体験`,
+  ...(content.intro ? { description: content.intro } : {}),
+  about: {
+    '@type': 'Place',
+    name: `茨城県${muni.name}`,
+    address: { '@type': 'PostalAddress', addressRegion: '茨城県', addressLocality: muni.name, addressCountry: 'JP' },
+  },
+  ...(content.spots?.length
+    ? { hasPart: content.spots.map((s) => ({ '@type': 'TouristAttraction', name: s.name, description: s.desc })) }
+    : {}),
 };
 ---
 
 <Base
-  title={`${muni.name}｜茨城${muni.name}の体験・お店`}
-  description={`茨城県${muni.name}（${region.label}エリア）の、行った人が選ぶグルメ・暮らし・遊び・美容・ものづくり。イバトコの現地レポートとお店をまとめました。`}
+  title={`${muni.name}の見どころ・グルメ・体験｜茨城${muni.name}`}
+  description={metaDesc}
   jsonLd={jsonLd}
 >
   <section class="ah" style={`--_c:${region.color}`}>
@@ -47,51 +61,96 @@ const jsonLd = {
       </nav>
       <span class="chip" style={`--_a:${region.color};color:var(--_c);border-color:color-mix(in srgb,var(--_c) 50%,transparent)`}>{region.label}エリア</span>
       <h1 class="display ah-name">{muni.name}</h1>
-      <p class="ah-lead mincho">茨城県{muni.name}の“いいとこ”。行った人の熱量で。</p>
+      <p class="ah-lead mincho">{content.catch ?? `茨城県${muni.name}の“いいとこ”。行った人の熱量で。`}</p>
     </div>
   </section>
 
   <section class="wrap section">
-    {articles.length === 0 && places.length === 0 ? (
-      <div class="empty">
-        <p class="mincho">{muni.name}は、これから取材が入るエリアです。<br />最初のレポートをお楽しみに。</p>
-        <div class="empty-cta">
-          <a href="/biz/" class="btn btn--shu">このエリアで取材・掲載を相談する <span class="arw">→</span></a>
-          <a href="/area/" class="btn btn--ghost">他のエリアを見る</a>
-        </div>
+    {content.intro && (
+      <div class="mc-intro" data-reveal>
+        <p class="eyebrow" style={`color:var(--_c)`}>見どころ</p>
+        <p class="mc-intro-text mincho" style={`--_c:${region.color}`}>{content.intro}</p>
       </div>
-    ) : (
-      <>
-        {articles.length > 0 && (
-          <div class="block">
-            <div class="sec-head"><h2>{muni.name}の体験レポート<span class="latin num"> / Articles</span></h2></div>
-            <div class="grid">{articles.map((a, i) => <ArticleCard article={a} index={i} />)}</div>
-          </div>
-        )}
-        {places.length > 0 && (
-          <div class="block">
-            <div class="sec-head"><h2>{muni.name}のお店・企業<span class="latin num"> / Places</span></h2></div>
-            <ul class="place-list">
-              {places.map((p) => {
-                const cat = CATEGORIES[p.data.category];
-                return (
-                  <li>
-                    <a href={`/place/${p.id.split('/').pop()}/`} class="place-row" style={`--_a:${cat.accent}`}>
-                      <span class="place-tag" style={`background:${cat.accent}`}>{cat.label}</span>
-                      <span class="place-info">
-                        <b class="mincho">{p.data.name}</b>
-                        <span class="muted">{p.data.tagline}</span>
-                      </span>
-                      <span class="arw" aria-hidden="true">→</span>
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
-      </>
     )}
+
+    {content.spots && content.spots.length > 0 && (
+      <div class="block" data-reveal>
+        <div class="sec-head"><h2>おすすめスポット<span class="latin num"> / Spots</span></h2></div>
+        <ul class="mc-cards">
+          {content.spots.map((s, i) => (
+            <li class="mc-card" style={`--_c:${region.color}`}>
+              <span class="mc-num latin">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <b class="mincho mc-card-name">{s.name}</b>
+                <p class="mc-card-desc">{s.desc}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {content.gourmet && content.gourmet.length > 0 && (
+      <div class="block" data-reveal>
+        <div class="sec-head"><h2>グルメ・名物<span class="latin num"> / Gourmet</span></h2></div>
+        <ul class="mc-list">
+          {content.gourmet.map((g) => (
+            <li><b class="mincho">{g.name}</b><span>{g.desc}</span></li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {content.experiences && content.experiences.length > 0 && (
+      <div class="block" data-reveal>
+        <div class="sec-head"><h2>体験・遊び<span class="latin num"> / Experiences</span></h2></div>
+        <ul class="mc-list">
+          {content.experiences.map((e) => (
+            <li><b class="mincho">{e.name}</b><span>{e.desc}</span></li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {articles.length > 0 && (
+      <div class="block" data-reveal>
+        <div class="sec-head"><h2>{muni.name}の体験レポート<span class="latin num"> / Articles</span></h2></div>
+        <div class="grid">{articles.map((a, i) => <ArticleCard article={a} index={i} />)}</div>
+      </div>
+    )}
+
+    {places.length > 0 && (
+      <div class="block" data-reveal>
+        <div class="sec-head"><h2>{muni.name}のお店・企業<span class="latin num"> / Places</span></h2></div>
+        <ul class="place-list">
+          {places.map((p) => {
+            const cat = CATEGORIES[p.data.category];
+            return (
+              <li>
+                <a href={`/place/${p.id.split('/').pop()}/`} class="place-row" style={`--_a:${cat.accent}`}>
+                  <span class="place-tag" style={`background:${cat.accent}`}>{cat.label}</span>
+                  <span class="place-info">
+                    <b class="mincho">{p.data.name}</b>
+                    <span class="muted">{p.data.tagline}</span>
+                  </span>
+                  <span class="arw" aria-hidden="true">→</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    )}
+
+    <!-- 取材・掲載の募集（BtoB導線）-->
+    <div class="mc-cta" data-reveal>
+      <p class="mincho mc-cta-h">{muni.name}の“いいとこ”、まだまだあります。</p>
+      <p class="muted">お店・スポットの取材や掲載のご相談、{muni.name}のレポーター募集も。</p>
+      <div class="mc-cta-btns">
+        <a href="/biz/" class="btn btn--shu">取材・掲載を相談する <span class="arw">→</span></a>
+        <a href="/contact/" class="btn btn--ghost">お問い合わせ</a>
+      </div>
+    </div>
   </section>
 
   <!-- 回遊：同エリアの他市町村＋地図 -->
@@ -127,6 +186,33 @@ const jsonLd = {
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: 1.5rem; }
   @media (max-width: 1000px) { .grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+  /* ---- 見どころ（intro）---- */
+  .mc-intro { max-width: 780px; }
+  .mc-intro-text {
+    font-size: var(--step-2); line-height: 1.9; color: var(--ink); margin-top: 0.6rem;
+    padding-left: 1rem; border-left: 4px solid var(--_c);
+  }
+
+  /* ---- おすすめスポット ---- */
+  .mc-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 1.5rem; background: var(--line); border: 1px solid var(--line); }
+  .mc-card { background: var(--paper); display: flex; gap: 1rem; padding: 1.4rem 1.5rem; align-items: flex-start; }
+  .mc-num { font-size: var(--step-1); color: color-mix(in srgb, var(--_c) 55%, var(--paper-3)); line-height: 1; flex: none; }
+  .mc-card-name { display: block; font-size: var(--step-1); color: var(--ink); }
+  .mc-card-desc { color: var(--ink-soft); font-size: var(--step-0); margin-top: 0.3rem; }
+  @media (max-width: 640px) { .mc-cards { grid-template-columns: 1fr; } }
+
+  /* ---- グルメ・体験 リスト ---- */
+  .mc-list { display: grid; gap: 0.9rem; margin-top: 1.5rem; }
+  .mc-list li { display: grid; grid-template-columns: minmax(7em, auto) 1fr; gap: 0.4rem 1.2rem; align-items: baseline; padding-bottom: 0.9rem; border-bottom: 1px solid var(--line); }
+  .mc-list b { font-size: var(--step-1); color: var(--ink); }
+  .mc-list span { color: var(--ink-soft); font-size: var(--step-0); }
+  @media (max-width: 560px) { .mc-list li { grid-template-columns: 1fr; gap: 0.2rem; } }
+
+  /* ---- 取材募集CTA ---- */
+  .mc-cta { text-align: center; background: var(--paper-2); border-radius: var(--radius); padding: clamp(2rem, 5vw, 3rem); display: grid; gap: 0.6rem; justify-items: center; }
+  .mc-cta-h { font-size: var(--step-2); color: var(--ink); }
+  .mc-cta-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem; }
 
   .place-list { display: grid; gap: 0.8rem; margin-top: 1.5rem; }
   .place-row { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.3rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); transition: all 0.25s var(--ease); }

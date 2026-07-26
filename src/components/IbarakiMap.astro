@@ -13,6 +13,7 @@ const { w: W, h: H } = GEO_VIEW;
 // 小さな町などラベルが海側にはみ出るものは手動で陸側へ微調整
 const LABEL_OFFSET: Record<string, { dx: number; dy: number }> = {
   tokai: { dx: -22, dy: -17 }, // 東海村：重心が海側に出るため陸(形の中心)へ寄せる
+  oarai: { dx: -13, dy: -2 }, // 大洗町：ラベルを地図内へ
 };
 
 const nodes = MUNICIPALITIES.filter((m) => IBARAKI_GEO[m.slug]).map((m) => {
@@ -45,12 +46,16 @@ const lake = (() => {
     <text x={W - 12} y={H * 0.4} class="imap-sea" transform={`rotate(90 ${W - 12} ${H * 0.4})`}>太平洋</text>
     <text x={lake.x} y={lake.y} class="imap-lake">霞ヶ浦</text>
 
+    {/* 塗り（クリック／ホバー） */}
     {nodes.map((n) => (
       <a href={`/area/${n.slug}/`} class:list={["imap-m", { "is-active": n.active }]}
         style={`--_c:${REGIONS[n.region].color}`} aria-label={n.name}>
         <path d={n.d} class="imap-shape" />
-        <text x={n.lx} y={n.ly} class="imap-label">{n.name}</text>
       </a>
+    ))}
+    {/* ラベル（常に最前面のレイヤー・隣の塗りに隠れない） */}
+    {nodes.map((n) => (
+      <text x={n.lx} y={n.ly} class="imap-label">{n.name}</text>
     ))}
   </svg>
 
@@ -84,10 +89,6 @@ const lake = (() => {
     paint-order: stroke; stroke: var(--paper); stroke-width: 2.4px; stroke-linejoin: round;
     opacity: 1; transition: opacity 0.2s; pointer-events: none; font-family: var(--font-sans);
   }
-  /* ホバー/選択中は塗りが濃くなるので白文字で読みやすく */
-  .imap-m:hover .imap-label,
-  .imap-m.is-hover .imap-label,
-  .imap-m.is-active .imap-label { fill: #fff; stroke: color-mix(in srgb, var(--_c) 55%, black); stroke-width: 2.4px; }
 
   .imap-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; justify-content: center; margin-top: 1rem; font-size: var(--step--1); color: var(--ink-soft); font-weight: 700; }
   .imap-legend li { display: inline-flex; align-items: center; gap: 0.4em; }

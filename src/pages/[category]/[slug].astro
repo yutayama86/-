@@ -81,7 +81,9 @@ const jsonLd = {
 
       {data.tags.length > 0 && (
         <ul class="post-tags">
-          {data.tags.map((t) => <li class="chip">#{t}</li>)}
+          {data.tags.map((t) => (
+            <li><a href={`/tag/${encodeURIComponent(t)}/`} class="chip chip--link">#{t}</a></li>
+          ))}
         </ul>
       )}
     </div>

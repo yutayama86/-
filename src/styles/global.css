@@ -155,6 +155,7 @@ ul, ol { list-style: none; padding: 0; }
 }
 .chip[data-accent] { border-color: color-mix(in srgb, var(--_a) 55%, transparent); color: var(--_a); }
 .chip--solid { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.chip--link:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); transform: translateY(-1px); }
 
 /* --- Section heading ----------------------------------------- */
 .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }

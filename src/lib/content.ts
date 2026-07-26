@@ -38,6 +38,18 @@ export async function getAreaCounts(): Promise<Map<string, number>> {
   return counts;
 }
 
+/** 全記事のタグ一覧（重複除去・件数付き） */
+export async function getAllTags(): Promise<{ tag: string; count: number }[]> {
+  const articles = await getArticles();
+  const map = new Map<string, number>();
+  for (const a of articles) for (const t of a.data.tags) map.set(t, (map.get(t) ?? 0) + 1);
+  return [...map.entries()].map(([tag, count]) => ({ tag, count })).sort((a, b) => b.count - a.count);
+}
+
+export async function getArticlesByTag(tag: string) {
+  return (await getArticles()).filter((a) => a.data.tags.includes(tag));
+}
+
 export async function getArticlesByArea(slug: string) {
   return (await getArticles()).filter((a) => areaToSlug(a.data.area) === slug);
 }

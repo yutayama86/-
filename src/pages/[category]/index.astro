@@ -15,7 +15,6 @@ const cat = CATEGORIES[category as CategoryKey];
 if (!cat) return Astro.redirect('/404');
 
 const articles = await getArticlesByCategory(category!);
-const [lead, ...rest] = articles;
 ---
 
 <Base
@@ -41,16 +40,9 @@ const [lead, ...rest] = articles;
     {articles.length === 0 ? (
       <p class="empty mincho muted">この「{cat.label}」は、いま取材の真っ最中。<br />最初のレポートをお楽しみに。</p>
     ) : (
-      <>
-        {lead && (
-          <div class="cat-lead" data-reveal>
-            <ArticleCard article={lead} size="lg" />
-          </div>
-        )}
-        <div class="cat-grid">
-          {rest.map((a, i) => <ArticleCard article={a} index={i} />)}
-        </div>
-      </>
+      <div class="cat-grid">
+        {articles.map((a, i) => <ArticleCard article={a} index={i} />)}
+      </div>
     )}
   </section>
 </Base>

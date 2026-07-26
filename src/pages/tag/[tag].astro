@@ -1,0 +1,51 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getAllTags, getArticlesByTag } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const tags = await getAllTags();
+  return tags.map(({ tag }) => ({ params: { tag }, props: { tag } }));
+}) satisfies GetStaticPaths;
+
+const { tag } = Astro.props;
+const articles = await getArticlesByTag(tag);
+---
+
+<Base
+  title={`#${tag}の記事`}
+  description={`「${tag}」に関する茨城の体験レポート・お店をイバトコがまとめました。`}
+>
+  <section class="wrap tag-hero">
+    <nav class="crumbs" aria-label="パンくず" data-reveal>
+      <a href="/">ホーム</a><span aria-hidden="true">/</span><span>タグ</span>
+    </nav>
+    <p class="eyebrow" data-reveal>Tag</p>
+    <h1 class="display tag-title" data-reveal>#{tag}</h1>
+    <p class="tag-lead muted" data-reveal>「{tag}」の記事 {articles.length}件</p>
+  </section>
+
+  <section class="wrap section">
+    {articles.length > 0 ? (
+      <div class="tag-grid">
+        {articles.map((a, i) => <ArticleCard article={a} index={i} />)}
+      </div>
+    ) : (
+      <p class="empty muted mincho">この タグの記事はまだありません。</p>
+    )}
+  </section>
+</Base>
+
+<style>
+  .tag-hero { padding-block: clamp(2.5rem, 6vw, 4rem) 0; }
+  .crumbs { display: flex; gap: 0.6rem; font-size: var(--step--1); color: var(--ink-mute); margin-bottom: 1.2rem; }
+  .crumbs a:hover { color: var(--shu); }
+  .tag-title { font-size: var(--step-4); margin: 0.4rem 0; color: var(--ink); }
+  .tag-lead { font-size: var(--step-0); }
+  .section { padding-block: clamp(2rem, 5vw, 3.5rem); }
+  .tag-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); }
+  .empty { font-size: var(--step-1); padding-block: 2rem; }
+  @media (max-width: 1000px) { .tag-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .tag-grid { grid-template-columns: 1fr; } }
+</style>

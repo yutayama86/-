@@ -10,6 +10,7 @@ export const CATEGORIES = {
   life: { label: '暮らし', reading: 'くらす', path: 'life', accent: '#3f7d5a' },
   'sauna-play': { label: 'あそび・サウナ', reading: 'あそぶ', path: 'sauna-play', accent: '#2f6f9e' },
   beauty: { label: 'ビューティ', reading: 'ととのう', path: 'beauty', accent: '#b0567e' },
+  stay: { label: '泊まる', reading: 'とまる', path: 'stay', accent: '#9a6b45' },
   company: { label: '企業・技術', reading: 'つくる', path: 'company', accent: '#1f3a52' },
 } as const;
 

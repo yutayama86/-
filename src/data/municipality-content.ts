@@ -8,9 +8,11 @@
 export interface Item {
   name: string;
   desc: string;
+  image?: string; // 取材写真URL（未設定なら上品なプレースホルダー表示）
 }
 export interface MuniContent {
   catch?: string; // ひとことキャッチ
+  cover?: string; // ページ上部のメイン写真（未設定なら装飾フォールバック）
   intro?: string; // 見どころ・概要
   spots?: Item[]; // おすすめスポット
   gourmet?: Item[]; // グルメ・名物

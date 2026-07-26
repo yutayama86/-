@@ -52,14 +52,17 @@ const jsonLd = {
   description={metaDesc}
   jsonLd={jsonLd}
 >
-  <section class="ah" style={`--_c:${region.color}`}>
-    <div class="wrap">
+  <section class:list={["ah", { "ah--photo": content.cover }]} style={`--_c:${region.color}`}>
+    <div class="ah-bg" aria-hidden="true">
+      {content.cover && <img src={content.cover} alt="" loading="eager" />}
+    </div>
+    <div class="wrap ah-inner">
       <nav class="crumbs" aria-label="パンくず">
         <a href="/">ホーム</a><span aria-hidden="true">/</span>
         <a href="/area/">エリア</a><span aria-hidden="true">/</span>
         <span>{region.label}</span>
       </nav>
-      <span class="chip" style={`--_a:${region.color};color:var(--_c);border-color:color-mix(in srgb,var(--_c) 50%,transparent)`}>{region.label}エリア</span>
+      <span class="chip ah-chip">{region.label}エリア</span>
       <h1 class="display ah-name">{muni.name}</h1>
       <p class="ah-lead mincho">{content.catch ?? `茨城県${muni.name}の“いいとこ”。行った人の熱量で。`}</p>
     </div>
@@ -79,8 +82,15 @@ const jsonLd = {
         <ul class="mc-cards">
           {content.spots.map((s, i) => (
             <li class="mc-card" style={`--_c:${region.color}`}>
-              <span class="mc-num latin">{String(i + 1).padStart(2, '0')}</span>
-              <div>
+              <div class="mc-card-media">
+                {s.image ? (
+                  <img src={s.image} alt={s.name} loading="lazy" />
+                ) : (
+                  <span class="mc-card-mark mincho">{s.name.slice(0, 1)}</span>
+                )}
+                <span class="mc-num latin">{String(i + 1).padStart(2, '0')}</span>
+              </div>
+              <div class="mc-card-body">
                 <b class="mincho mc-card-name">{s.name}</b>
                 <p class="mc-card-desc">{s.desc}</p>
               </div>
@@ -174,13 +184,21 @@ const jsonLd = {
 </Base>
 
 <style>
-  .ah { padding: clamp(2.5rem, 6vw, 4rem) 0 1.5rem; position: relative; }
-  .ah::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0.5;
-    background: radial-gradient(60% 100% at 100% 0%, color-mix(in srgb, var(--_c) 18%, transparent), transparent 65%); }
-  .crumbs { display: flex; gap: 0.6rem; font-size: var(--step--1); color: var(--ink-mute); margin-bottom: 1.2rem; }
-  .crumbs a:hover { color: var(--_c); }
-  .ah-name { font-size: var(--step-5); margin: 0.6rem 0 0.3rem; }
-  .ah-lead { font-size: var(--step-1); color: var(--ink-soft); }
+  .ah {
+    position: relative; overflow: hidden; color: #fff;
+    padding: clamp(3rem, 8vw, 5.5rem) 0 clamp(2rem, 5vw, 3rem);
+    background: linear-gradient(135deg, var(--_c), color-mix(in srgb, var(--_c) 45%, var(--ink)));
+  }
+  .ah-bg { position: absolute; inset: 0; z-index: 0; }
+  .ah-bg img { width: 100%; height: 100%; object-fit: cover; }
+  .ah--photo::after { content: ""; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(to top, rgba(20,18,14,.85), rgba(20,18,14,.4)); }
+  .ah-inner { position: relative; z-index: 2; }
+  .crumbs { display: flex; gap: 0.6rem; font-size: var(--step--1); color: rgba(255,255,255,.8); margin-bottom: 1.2rem; }
+  .crumbs a:hover { color: #fff; }
+  .ah-chip { color: #fff; border-color: rgba(255,255,255,.5); background: rgba(255,255,255,.12); }
+  .ah-name { font-size: var(--step-5); margin: 0.6rem 0 0.3rem; color: #fff; }
+  .ah-lead { font-size: var(--step-1); color: rgba(255,255,255,.92); }
 
   .section { padding-block: clamp(2.5rem, 6vw, 4rem); display: grid; gap: clamp(2.5rem, 5vw, 4rem); }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: 1.5rem; }
@@ -194,13 +212,20 @@ const jsonLd = {
     padding-left: 1rem; border-left: 4px solid var(--_c);
   }
 
-  /* ---- おすすめスポット ---- */
-  .mc-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 1.5rem; background: var(--line); border: 1px solid var(--line); }
-  .mc-card { background: var(--paper); display: flex; gap: 1rem; padding: 1.4rem 1.5rem; align-items: flex-start; }
-  .mc-num { font-size: var(--step-1); color: color-mix(in srgb, var(--_c) 55%, var(--paper-3)); line-height: 1; flex: none; }
+  /* ---- おすすめスポット（画像カード）---- */
+  .mc-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem, 2.5vw, 2rem); margin-top: 1.5rem; }
+  .mc-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .mc-card-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden;
+    background: color-mix(in srgb, var(--_c) 14%, var(--paper-2)); display: grid; place-items: center; }
+  .mc-card-media img { width: 100%; height: 100%; object-fit: cover; }
+  .mc-card-mark { font-size: var(--step-4); color: color-mix(in srgb, var(--_c) 42%, var(--paper-3)); font-family: var(--font-display); }
+  .mc-num { position: absolute; top: 0.6rem; left: 0.7rem; font-size: var(--step--1); font-weight: 700;
+    color: #fff; background: color-mix(in srgb, var(--_c) 90%, black); padding: 0.15em 0.7em; border-radius: 999px; }
+  .mc-card-body { padding: 1rem 1.2rem 1.3rem; }
   .mc-card-name { display: block; font-size: var(--step-1); color: var(--ink); }
-  .mc-card-desc { color: var(--ink-soft); font-size: var(--step-0); margin-top: 0.3rem; }
-  @media (max-width: 640px) { .mc-cards { grid-template-columns: 1fr; } }
+  .mc-card-desc { color: var(--ink-soft); font-size: var(--step-0); margin-top: 0.35rem; }
+  @media (max-width: 900px) { .mc-cards { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .mc-cards { grid-template-columns: 1fr; } }
 
   /* ---- グルメ・体験 リスト ---- */
   .mc-list { display: grid; gap: 0.9rem; margin-top: 1.5rem; }

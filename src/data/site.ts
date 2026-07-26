@@ -35,6 +35,7 @@ export const NAV = [
   { label: '暮らし', href: '/life/' },
   { label: 'あそび・サウナ', href: '/sauna-play/' },
   { label: 'ビューティ', href: '/beauty/' },
+  { label: '泊まる', href: '/stay/' },
   { label: '企業・技術', href: '/company/' },
   { label: 'エリア', href: '/area/' },
 ] as const;

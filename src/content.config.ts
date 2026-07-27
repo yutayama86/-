@@ -58,6 +58,7 @@ const places = defineCollection({
     tagline: z.string(), // 一言キャッチ
     description: z.string(),
     cover: z.string().optional(),
+    gallery: z.array(z.string()).default([]), // 写真強化（公式店舗プラン向け）
     // 取材班の推薦コメント（企画書サイトマップ記載）
     recommend: z.string().optional(),
     area: z.string(),
@@ -67,6 +68,8 @@ const places = defineCollection({
     holiday: z.string().optional(),
     tel: z.string().optional(),
     budget: z.string().optional(),
+    // 特徴タグ（駐車場あり・個室・カード可 等）＝検索・絞り込み・AI検索用の構造化情報
+    features: z.array(z.string()).default([]),
     website: z.string().url().optional(),
     instagram: z.string().optional(),
     map: z.string().url().optional(), // Googleマップ埋め込み or リンク
@@ -74,9 +77,12 @@ const places = defineCollection({
     menu: z
       .array(z.object({ name: z.string(), price: z.string(), note: z.string().optional() }))
       .default([]),
+    // FAQ（SEO＋AI検索での引用に効く。FAQPage構造化データに使用）
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
     // 予約・問い合わせ導線（階層3 /reserve へ）。未設定なら問い合わせフォームへ。
     reserveUrl: z.string().optional(),
-    plan: z.enum(['free', 'listing', 'partner']).default('free'), // 掲載プラン
+    // 掲載プラン：free=無料掲載 / official=公式店舗 / growth=集客 / partner=地域DX
+    plan: z.enum(['free', 'official', 'growth', 'partner']).default('free'),
     publishedAt: z.coerce.date(),
     draft: z.boolean().default(false),
   }),

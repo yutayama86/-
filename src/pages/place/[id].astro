@@ -4,6 +4,7 @@ import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { CATEGORIES, SITE_CONFIG } from '../../data/site';
 import { getPlaces, getArticles } from '../../lib/content';
+import { areaToSlug, MUNI_BY_SLUG } from '../../data/areas';
 
 export const getStaticPaths = (async () => {
   const places = await getPlaces();
@@ -23,19 +24,59 @@ const { Content } = await render(place);
 // この店舗を紹介した記事
 const articles = (await getArticles()).filter((a) => a.data.place?.id === place.id);
 
+// 近隣情報：市町村ページへ紐付け
+const areaSlug = areaToSlug(data.area);
+const muni = areaSlug ? MUNI_BY_SLUG.get(areaSlug) : undefined;
+
+// 同じ市町村の他の店舗（関連スポット・回遊）
+const nearby = (await getPlaces())
+  .filter((p) => p.id !== place.id && areaToSlug(p.data.area) === areaSlug)
+  .slice(0, 4);
+
+const isOfficial = data.plan !== 'free';
+const planLabel = { free: '', official: '公式店舗', growth: '公式店舗', partner: '公式店舗' }[data.plan];
+
 // 予約導線：reserveUrl があればそこへ、なければ自社 /reserve/ フォームへ
 const reserveHref = data.reserveUrl ?? `/reserve/?place=${place.id.split('/').pop()}`;
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: data.name,
-  description: data.description,
-  ...(data.address ? { address: data.address } : {}),
-  ...(data.tel ? { telephone: data.tel } : {}),
-  ...(data.website ? { url: data.website } : {}),
-  areaServed: data.area,
-};
+const abs = (path: string) => new URL(path, Astro.site ?? SITE_CONFIG.domain).href;
+
+// --- 構造化データ（LocalBusiness / FAQPage / BreadcrumbList）---
+const jsonLd: Record<string, unknown>[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: data.name,
+    description: data.description,
+    ...(data.cover ? { image: data.cover } : {}),
+    ...(data.address
+      ? { address: { '@type': 'PostalAddress', addressRegion: '茨城県', addressLocality: data.area, streetAddress: data.address, addressCountry: 'JP' } }
+      : { address: { '@type': 'PostalAddress', addressRegion: '茨城県', addressLocality: data.area, addressCountry: 'JP' } }),
+    ...(data.tel ? { telephone: data.tel } : {}),
+    ...(data.website ? { url: data.website } : {}),
+    ...(data.hours ? { openingHours: data.hours } : {}),
+    ...(data.budget ? { priceRange: data.budget } : {}),
+    ...(data.instagram ? { sameAs: [data.instagram] } : {}),
+    areaServed: `茨城県${data.area}`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: '掲載店舗', item: abs('/place/') },
+      ...(muni ? [{ '@type': 'ListItem', position: 3, name: muni.name, item: abs(`/area/${areaSlug}/`) }] : []),
+      { '@type': 'ListItem', position: muni ? 4 : 3, name: data.name },
+    ],
+  },
+  ...(data.faq.length > 0
+    ? [{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: data.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      }]
+    : []),
+];
 ---
 
 <Base title={data.name} description={data.description} image={ogImage} jsonLd={jsonLd}>
@@ -52,9 +93,15 @@ const jsonLd = {
       </div>
       <div class="wrap lp-hero-copy">
         <nav class="crumbs" aria-label="パンくず">
-          <a href="/">ホーム</a><span>/</span><a href="/place/">掲載店舗</a>
+          <a href="/">ホーム</a><span>/</span>
+          {muni ? <><a href={`/area/${areaSlug}/`}>{muni.name}</a><span>/</span></> : null}
+          <a href="/place/">掲載店舗</a>
         </nav>
-        <span class="chip chip--solid">{data.area}</span>
+        <div class="lp-badges">
+          <span class="chip chip--solid">{cat.label}</span>
+          <span class="chip chip--solid">{data.area}</span>
+          {isOfficial && <span class="lp-official">✓ {planLabel}</span>}
+        </div>
         <h1 class="display lp-name">{data.name}</h1>
         {data.kana && <p class="lp-kana latin">{data.kana}</p>}
         <p class="lp-tagline mincho">{data.tagline}</p>
@@ -74,6 +121,15 @@ const jsonLd = {
         <section class="lp-desc prose">
           <Content />
         </section>
+
+        {data.features.length > 0 && (
+          <section class="lp-features">
+            <h2 class="display sec-title">特徴</h2>
+            <ul class="feature-chips">
+              {data.features.map((f) => <li class="chip">{f}</li>)}
+            </ul>
+          </section>
+        )}
 
         {data.menu.length > 0 && (
           <section class="menu">
@@ -105,6 +161,67 @@ const jsonLd = {
                 </li>
               ))}
             </ul>
+          </section>
+        )}
+
+        {data.faq.length > 0 && (
+          <section class="lp-faq">
+            <h2 class="display sec-title">よくある質問</h2>
+            <dl class="faq-list">
+              {data.faq.map((f) => (
+                <div class="faq-item">
+                  <dt>Q. {f.q}</dt>
+                  <dd>{f.a}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
+        <section class="lp-reviews">
+          <h2 class="display sec-title">口コミ</h2>
+          <div class="reviews-empty">
+            <p class="mincho">このお店の口コミは準備中です。</p>
+            <p class="muted">行った方の声を、これから集めていきます。</p>
+          </div>
+        </section>
+
+        {(muni || nearby.length > 0) && (
+          <section class="lp-nearby">
+            <h2 class="display sec-title">近隣・関連情報</h2>
+            {nearby.length > 0 && (
+              <ul class="nearby-list">
+                {nearby.map((p) => {
+                  const c = CATEGORIES[p.data.category];
+                  return (
+                    <li>
+                      <a href={`/place/${p.id.split('/').pop()}/`} class="nearby-row" style={`--_a:${c.accent}`}>
+                        <span class="nearby-tag" style={`background:${c.accent}`}>{c.label}</span>
+                        <span class="mincho">{p.data.name}</span>
+                        <span class="arw" aria-hidden="true">→</span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            {muni && (
+              <a href={`/area/${areaSlug}/`} class="btn btn--ghost nearby-area">
+                {muni.name}の見どころ・グルメ・お店をもっと見る <span class="arw">→</span>
+              </a>
+            )}
+          </section>
+        )}
+
+        {!isOfficial && (
+          <section class="lp-upsell">
+            <p class="eyebrow">For Owners</p>
+            <h2 class="display lp-upsell-h">この店舗の関係者の方へ</h2>
+            <p class="lp-upsell-lead">
+              写真の追加、メニューやクーポンの掲載、アクセス分析、予約導線の強化——
+              <b>「公式店舗」</b>として情報を充実させ、検索からの来店を増やせます。掲載は無料から。
+            </p>
+            <a href="/biz/" class="btn btn--shu">公式店舗にする・情報を追加する <span class="arw">→</span></a>
           </section>
         )}
       </div>
@@ -150,6 +267,36 @@ const jsonLd = {
   .lp-hero-copy { position: relative; padding-block: clamp(2.5rem, 6vw, 4.5rem); }
   .lp-hero-copy .crumbs { color: rgba(255,255,255,.75); }
   .lp-hero-copy .crumbs a:hover { color: #fff; }
+  .lp-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+  .lp-official { display: inline-flex; align-items: center; gap: 0.3em; background: var(--gold); color: #3a2c0e; font-weight: 700; font-size: var(--step--1); padding: 0.3em 0.9em; border-radius: 999px; }
+
+  .lp-features { margin-top: 2.5rem; }
+  .feature-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.2rem; }
+  .feature-chips .chip { border-color: var(--line-strong); }
+
+  .lp-faq { margin-top: 2.5rem; }
+  .faq-list { display: grid; gap: 0.9rem; margin-top: 1.4rem; }
+  .faq-item { border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.3rem; background: var(--paper); }
+  .faq-item dt { font-weight: 700; color: var(--ink); }
+  .faq-item dd { color: var(--ink-soft); margin-top: 0.5rem; padding-left: 1.4em; }
+
+  .lp-reviews { margin-top: 2.5rem; }
+  .reviews-empty { border: 1px dashed var(--line-strong); border-radius: var(--radius); padding: clamp(1.5rem, 4vw, 2.5rem); text-align: center; margin-top: 1.4rem; }
+  .reviews-empty p:first-child { font-size: var(--step-1); color: var(--ink); }
+
+  .lp-nearby { margin-top: 2.5rem; }
+  .nearby-list { display: grid; gap: 0.7rem; margin-top: 1.4rem; }
+  .nearby-row { display: flex; align-items: center; gap: 0.9rem; padding: 0.9rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius); transition: all 0.25s var(--ease); }
+  .nearby-row:hover { border-color: var(--_a); transform: translateX(3px); }
+  .nearby-row .mincho { flex: 1; font-size: var(--step-1); }
+  .nearby-tag { color: #fff; font-size: var(--step--1); font-weight: 700; padding: 0.25em 0.7em; border-radius: 999px; }
+  .nearby-area { margin-top: 1.4rem; }
+
+  .lp-upsell { margin-top: 3rem; background: var(--paper-2); border-radius: var(--radius); padding: clamp(1.8rem, 4vw, 2.8rem); border-left: 4px solid var(--shu); }
+  .lp-upsell-h { font-size: var(--step-2); margin: 0.3rem 0 0.8rem; }
+  .lp-upsell-lead { color: var(--ink-soft); line-height: 1.9; margin-bottom: 1.5rem; }
+  .lp-upsell-lead b { color: var(--shu-deep); }
+
   .lp-name { font-size: var(--step-5); margin: 1rem 0 0.3rem; }
   .lp-kana { color: rgba(255,255,255,.8); letter-spacing: 0.2em; }
   .lp-tagline { font-size: var(--step-2); margin-top: 0.8rem; color: rgba(255,255,255,.95); }

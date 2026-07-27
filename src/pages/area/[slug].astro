@@ -5,7 +5,7 @@ import ArticleCard from '../../components/ArticleCard.astro';
 import IbarakiMap from '../../components/IbarakiMap.astro';
 import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, municipalitiesByRegion } from '../../data/areas';
 import { getArticlesByArea, getPlacesByArea, getAreaCounts } from '../../lib/content';
-import { CATEGORIES } from '../../data/site';
+import { CATEGORIES, CATEGORY_LIST, CATEGORY_PAGE_META } from '../../data/site';
 import { MUNICIPALITY_CONTENT } from '../../data/municipality-content';
 
 export const getStaticPaths = (() => {
@@ -26,6 +26,18 @@ const [articles, places, counts] = await Promise.all([
 
 // 同エリアの他の市町村（回遊用）
 const neighbors = municipalitiesByRegion(muni.region).filter((m) => m.slug !== slug);
+
+// この市町村で実際に生成される「地名×ジャンル」ページ（[category].astro と同じ条件）
+const catLinks = CATEGORY_LIST.map((c) => {
+  const meta = CATEGORY_PAGE_META[c.key];
+  const arts = articles.filter((a) => a.data.category === c.key).length;
+  const plcs = places.filter((p) => p.data.category === c.key).length;
+  const muniItems =
+    meta.muniField === 'gourmet' ? (content.gourmet?.length ?? 0) :
+    meta.muniField === 'spotsExp' ? (content.spots?.length ?? 0) + (content.experiences?.length ?? 0) : 0;
+  const count = arts + plcs + muniItems;
+  return { key: c.key, label: c.label, path: c.path, accent: c.accent, count };
+}).filter((c) => c.count > 0);
 
 const metaDesc = content.intro
   ? `${content.intro} 茨城県${muni.name}の見どころ・おすすめスポット・グルメ・体験をイバトコがまとめました。`
@@ -69,6 +81,17 @@ const jsonLd = {
   </section>
 
   <section class="wrap section">
+    {catLinks.length > 0 && (
+      <nav class="cat-nav" data-reveal aria-label={`${muni.name}のジャンル`}>
+        {catLinks.map((c) => (
+          <a href={`/area/${slug}/${c.path}/`} class="cat-nav-link" style={`--_c:${c.accent}`}>
+            <span class="cat-nav-label mincho">{muni.name}の{c.label}</span>
+            <span class="arw" aria-hidden="true">→</span>
+          </a>
+        ))}
+      </nav>
+    )}
+
     {content.intro && (
       <div class="mc-intro" data-reveal>
         <p class="eyebrow" style={`color:var(--_c)`}>見どころ</p>
@@ -204,6 +227,17 @@ const jsonLd = {
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: 1.5rem; }
   @media (max-width: 1000px) { .grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+  /* ---- ジャンル別まとめへの導線 ---- */
+  .cat-nav { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .cat-nav-link { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.7rem 1.1rem;
+    border: 1px solid var(--line); border-radius: 999px; transition: all 0.25s var(--ease);
+    background: color-mix(in srgb, var(--_c) 6%, var(--paper)); }
+  .cat-nav-link:hover { border-color: var(--_c); transform: translateY(-2px);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--_c) 22%, transparent); }
+  .cat-nav-label { font-size: var(--step-0); color: var(--ink); }
+  .cat-nav-link .arw { color: var(--_c); transition: transform 0.25s var(--ease); }
+  .cat-nav-link:hover .arw { transform: translateX(3px); }
 
   /* ---- 見どころ（intro）---- */
   .mc-intro { max-width: 780px; }

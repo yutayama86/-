@@ -1,0 +1,174 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../../layouts/Base.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS } from '../../../data/areas';
+import { CATEGORIES, CATEGORY_LIST, CATEGORY_PAGE_META, SITE_CONFIG } from '../../../data/site';
+import { MUNICIPALITY_CONTENT } from '../../../data/municipality-content';
+import { getArticles, getPlaces } from '../../../lib/content';
+import { areaToSlug } from '../../../data/areas';
+import type { CategoryKey } from '../../../content.config';
+
+export const getStaticPaths = (async () => {
+  const [articles, places] = await Promise.all([getArticles(), getPlaces()]);
+  const paths: any[] = [];
+  for (const m of MUNICIPALITIES) {
+    const content = MUNICIPALITY_CONTENT[m.slug] ?? {};
+    for (const c of CATEGORY_LIST) {
+      const arts = articles.filter((a) => a.data.category === c.key && areaToSlug(a.data.area) === m.slug);
+      const plcs = places.filter((p) => p.data.category === c.key && areaToSlug(p.data.area) === m.slug);
+      const meta = CATEGORY_PAGE_META[c.key];
+      const muniItems =
+        meta.muniField === 'gourmet' ? content.gourmet ?? [] :
+        meta.muniField === 'spotsExp' ? [...(content.spots ?? []), ...(content.experiences ?? [])] : [];
+      // 中身のある組み合わせだけ生成（薄いページを作らない）
+      if (arts.length + plcs.length + muniItems.length === 0) continue;
+      paths.push({ params: { slug: m.slug, category: c.path }, props: { muniSlug: m.slug, catKey: c.key } });
+    }
+  }
+  return paths;
+}) satisfies GetStaticPaths;
+
+const { muniSlug, catKey } = Astro.props as { muniSlug: string; catKey: CategoryKey };
+const muni = MUNI_BY_SLUG.get(muniSlug)!;
+const cat = CATEGORIES[catKey];
+const region = REGIONS[muni.region];
+const meta = CATEGORY_PAGE_META[catKey];
+const content = MUNICIPALITY_CONTENT[muniSlug] ?? {};
+
+const [allArticles, allPlaces] = await Promise.all([getArticles(), getPlaces()]);
+const articles = allArticles.filter((a) => a.data.category === catKey && areaToSlug(a.data.area) === muniSlug);
+const places = allPlaces.filter((p) => p.data.category === catKey && areaToSlug(p.data.area) === muniSlug);
+const muniItems = meta.muniField === 'gourmet' ? content.gourmet ?? [] : meta.muniField === 'spotsExp' ? [...(content.spots ?? []), ...(content.experiences ?? [])] : [];
+
+// 他ジャンルへの相互リンク（生成済みか簡易判定：記事/店舗があるもの）
+const otherCats = CATEGORY_LIST.filter((c) => c.key !== catKey);
+
+const abs = (p: string) => new URL(p, Astro.site ?? SITE_CONFIG.domain).href;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org', '@type': 'CollectionPage',
+    name: `${muni.name}の${cat.label}`, description: meta.lead(muni.name),
+    about: { '@type': 'Place', name: `茨城県${muni.name}` },
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'エリア', item: abs('/area/') },
+      { '@type': 'ListItem', position: 3, name: muni.name, item: abs(`/area/${muniSlug}/`) },
+      { '@type': 'ListItem', position: 4, name: cat.label },
+    ],
+  },
+];
+---
+
+<Base
+  title={`${muni.name}の${cat.label}｜茨城${muni.name}${cat.label}まとめ`}
+  description={`${meta.lead(muni.name)} イバトコが茨城県${muni.name}の${cat.label}を現地目線でまとめています。`}
+  jsonLd={jsonLd}
+>
+  <section class="xc-hero" style={`--_c:${cat.accent}`}>
+    <div class="wrap">
+      <nav class="crumbs" aria-label="パンくず">
+        <a href="/">ホーム</a><span aria-hidden="true">/</span>
+        <a href="/area/">エリア</a><span aria-hidden="true">/</span>
+        <a href={`/area/${muniSlug}/`}>{muni.name}</a><span aria-hidden="true">/</span>
+        <span>{cat.label}</span>
+      </nav>
+      <h1 class="display xc-title">{muni.name}の{cat.label}</h1>
+      <p class="xc-lead mincho">{meta.lead(muni.name)}</p>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    {muniItems.length > 0 && (
+      <div class="block" data-reveal>
+        <div class="sec-head"><h2>{muni.name}の{meta.heading}</h2></div>
+        <ul class="xc-items">
+          {muniItems.map((it) => (
+            <li class="xc-item"><b class="mincho">{it.name}</b><span>{it.desc}</span></li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {places.length > 0 && (
+      <div class="block" data-reveal>
+        <div class="sec-head"><h2>{muni.name}の{cat.label}のお店<span class="latin num"> / Places</span></h2></div>
+        <ul class="xc-places">
+          {places.map((p) => (
+            <li>
+              <a href={`/place/${p.id.split('/').pop()}/`} class="xc-place" style={`--_c:${cat.accent}`}>
+                <b class="mincho">{p.data.name}</b>
+                <span class="muted">{p.data.tagline}</span>
+                <span class="arw" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {articles.length > 0 && (
+      <div class="block" data-reveal>
+        <div class="sec-head"><h2>{muni.name}の{cat.label}レポート<span class="latin num"> / Articles</span></h2></div>
+        <div class="xc-grid">{articles.map((a, i) => <ArticleCard article={a} index={i} />)}</div>
+      </div>
+    )}
+
+    <!-- 回遊：他ジャンル・市町村トップ -->
+    <div class="xc-links" data-reveal>
+      <div class="xc-links-row">
+        <span class="muted">{muni.name}の他のジャンル：</span>
+        {otherCats.map((c) => (
+          <a href={`/area/${muniSlug}/${c.path}/`} class="chip chip--link">{c.label}</a>
+        ))}
+      </div>
+      <a href={`/area/${muniSlug}/`} class="btn btn--ghost">{muni.name}のトップへ <span class="arw">→</span></a>
+    </div>
+
+    <div class="mc-cta" data-reveal>
+      <p class="mincho mc-cta-h">{muni.name}の{cat.label}、掲載しませんか。</p>
+      <p class="muted">お店の掲載・取材のご相談はこちら。無料掲載から始められます。</p>
+      <div class="mc-cta-btns">
+        <a href="/biz/" class="btn btn--shu">掲載を相談する <span class="arw">→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .xc-hero { position: relative; overflow: hidden; color: #fff; padding: clamp(2.8rem, 7vw, 4.5rem) 0 clamp(1.8rem, 4vw, 2.6rem);
+    background: linear-gradient(135deg, var(--_c), color-mix(in srgb, var(--_c) 45%, var(--ink))); }
+  .crumbs { display: flex; gap: 0.5rem; flex-wrap: wrap; font-size: var(--step--1); color: rgba(255,255,255,.82); margin-bottom: 1.1rem; }
+  .crumbs a:hover { color: #fff; }
+  .xc-title { font-size: var(--step-4); color: #fff; }
+  .xc-lead { font-size: var(--step-1); color: rgba(255,255,255,.92); margin-top: 0.5rem; }
+
+  .section { padding-block: clamp(2.5rem, 6vw, 4rem); display: grid; gap: clamp(2.5rem, 5vw, 4rem); }
+
+  .xc-items { display: grid; gap: 0.9rem; margin-top: 1.4rem; }
+  .xc-items li { display: grid; grid-template-columns: minmax(7em, auto) 1fr; gap: 0.4rem 1.2rem; align-items: baseline; padding-bottom: 0.9rem; border-bottom: 1px solid var(--line); }
+  .xc-items b { font-size: var(--step-1); color: var(--ink); }
+  .xc-items span { color: var(--ink-soft); font-size: var(--step-0); }
+  @media (max-width: 560px) { .xc-items li { grid-template-columns: 1fr; gap: 0.2rem; } }
+
+  .xc-places { display: grid; gap: 0.7rem; margin-top: 1.4rem; }
+  .xc-place { display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1.2rem; border: 1px solid var(--line); border-radius: var(--radius); transition: all 0.25s var(--ease); }
+  .xc-place:hover { border-color: var(--_c); transform: translateX(3px); }
+  .xc-place b { font-size: var(--step-1); }
+  .xc-place .muted { flex: 1; font-size: var(--step--1); }
+
+  .xc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: 1.4rem; }
+  @media (max-width: 1000px) { .xc-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .xc-grid { grid-template-columns: 1fr; } }
+
+  .xc-links { display: grid; gap: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+  .xc-links-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .xc-links-row .muted { font-size: var(--step--1); }
+
+  .mc-cta { text-align: center; background: var(--paper-2); border-radius: var(--radius); padding: clamp(2rem, 5vw, 3rem); display: grid; gap: 0.6rem; justify-items: center; }
+  .mc-cta-h { font-size: var(--step-2); color: var(--ink); }
+  .mc-cta-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem; }
+</style>

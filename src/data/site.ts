@@ -29,6 +29,19 @@ export const CATEGORY_LIST = (Object.keys(CATEGORIES) as CategoryKey[]).map((key
   ...CATEGORIES[key],
 }));
 
+// 地名×ジャンルまとめページ用メタ（見出し・導入・引き当てる市町村コンテンツ）
+export const CATEGORY_PAGE_META: Record<
+  CategoryKey,
+  { heading: string; lead: (n: string) => string; muniField: 'gourmet' | 'spotsExp' | null }
+> = {
+  eat: { heading: 'グルメ・名物', lead: (n) => `${n}の食。名物・ご当地グルメと、行った人が選ぶお店をまとめました。`, muniField: 'gourmet' },
+  life: { heading: '暮らし', lead: (n) => `${n}の暮らし・住まい。地元の日常に根ざした情報を。`, muniField: null },
+  'sauna-play': { heading: 'おでかけ・あそび', lead: (n) => `${n}のお出かけ・遊び・サウナ。見どころとアクティビティ。`, muniField: 'spotsExp' },
+  beauty: { heading: 'サロン・リラクゼーション', lead: (n) => `${n}のサロン・美容・リラクゼーション。`, muniField: null },
+  stay: { heading: '宿・温泉', lead: (n) => `${n}の宿・温泉。泊まって楽しむ${n}。`, muniField: null },
+  company: { heading: '企業・ものづくり', lead: (n) => `${n}の企業・技術・ものづくりの現場。`, muniField: null },
+};
+
 // グローバルナビ（階層1 中心）
 export const NAV = [
   { label: 'グルメ', href: '/eat/' },

@@ -22,6 +22,7 @@ const FORM_ENDPOINT = SITE_CONFIG.formEndpoint;
 
     <form class="rsv-form" data-reveal method="POST" action={FORM_ENDPOINT || undefined} data-endpoint={FORM_ENDPOINT}>
       <input type="hidden" name="_subject" value="【イバトコ】予約申込" />
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
       <div class="field">
         <label for="place">お店・企業</label>
         <select id="place" name="place" required>

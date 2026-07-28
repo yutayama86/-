@@ -8,7 +8,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "db:seed": "node scripts/csv-to-d1-seed.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",

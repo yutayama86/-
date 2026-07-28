@@ -1,0 +1,137 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { REPORTERS, REPORTER_BY_SLUG } from '../../data/reporters';
+import { getArticlesByReporter } from '../../lib/content';
+import { SITE_CONFIG } from '../../data/site';
+
+export const getStaticPaths = (async () => {
+  return REPORTERS.map((r) => ({ params: { slug: r.slug }, props: { slug: r.slug } }));
+}) satisfies GetStaticPaths;
+
+const { slug } = Astro.props as { slug: string };
+const reporter = REPORTER_BY_SLUG.get(slug)!;
+const articles = await getArticlesByReporter(reporter.name);
+
+const abs = (p: string) => new URL(p, Astro.site ?? SITE_CONFIG.domain).href;
+const sns = Object.entries(reporter.sns ?? {}).filter(([, v]) => v) as [string, string][];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: {
+      '@type': 'Person',
+      name: reporter.name,
+      jobTitle: reporter.role,
+      description: reporter.bio,
+      ...(reporter.area ? { homeLocation: { '@type': 'Place', name: `茨城県${reporter.area}` } } : {}),
+      ...(reporter.avatar ? { image: reporter.avatar } : {}),
+      ...(sns.length ? { sameAs: sns.map(([, v]) => v) } : {}),
+      worksFor: { '@type': 'Organization', name: SITE_CONFIG.name },
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'レポーター', item: abs('/reporters/') },
+      { '@type': 'ListItem', position: 3, name: reporter.name },
+    ],
+  },
+];
+
+const initial = reporter.name.replace(/^(編集長|公式レポーター)\s*/, '').slice(0, 1);
+---
+
+<Base
+  title={reporter.name}
+  description={`${reporter.role}・${reporter.name}のプロフィールと取材記事。${reporter.bio}`}
+  jsonLd={jsonLd}
+>
+  <article class="rpp">
+    <header class="rpp-hero">
+      <div class="wrap rpp-hero-inner">
+        <nav class="crumbs" aria-label="パンくず">
+          <a href="/">ホーム</a><span aria-hidden="true">/</span>
+          <a href="/reporters/">レポーター</a>
+        </nav>
+        <div class="rpp-head">
+          <div class="rpp-avatar" aria-hidden={reporter.avatar ? undefined : 'true'}>
+            {reporter.avatar ? <img src={reporter.avatar} alt={reporter.name} /> : <span class="mincho">{initial}</span>}
+          </div>
+          <div class="rpp-id">
+            <p class="rpp-role">{reporter.role}</p>
+            <h1 class="display rpp-name">{reporter.name}</h1>
+            <div class="rpp-tags">
+              {reporter.area && <span class="chip">📍 {reporter.area}</span>}
+              {reporter.genres?.map((g) => <span class="chip">{g}</span>)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap rpp-body">
+      <p class="rpp-bio mincho">{reporter.bio}</p>
+      {sns.length > 0 && (
+        <ul class="rpp-sns">
+          {sns.map(([k, v]) => (
+            <li><a href={v} target="_blank" rel="noopener noreferrer" class="ul-link">{k} ↗</a></li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    <section class="wrap section">
+      <div class="sec-head">
+        <h2>{reporter.name}の取材記事<span class="latin num"> / Reports</span></h2>
+      </div>
+      {articles.length > 0 ? (
+        <div class="rpp-grid">
+          {articles.map((a, i) => <ArticleCard article={a} index={i} />)}
+        </div>
+      ) : (
+        <p class="muted mincho rpp-empty">この レポーターの記事は準備中です。</p>
+      )}
+    </section>
+
+    <div class="rpp-cta">
+      <div class="wrap rpp-cta-inner">
+        <p class="mincho rpp-cta-h">あなたも、好きな街のレポーターに。</p>
+        <p class="muted">イバトコは、茨城でファンを持つ公式レポーターを募集しています。</p>
+        <a href="/reporters/" class="btn btn--shu">レポーターについて知る <span class="arw">→</span></a>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .rpp-hero { background: radial-gradient(80% 120% at 100% 0%, color-mix(in srgb, var(--matcha) 14%, transparent), transparent 60%); padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(1.5rem, 4vw, 2.5rem); }
+  .crumbs { display: flex; gap: 0.6rem; font-size: var(--step--1); color: var(--ink-mute); margin-bottom: 1.8rem; }
+  .crumbs a:hover { color: var(--shu); }
+  .rpp-head { display: flex; align-items: center; gap: clamp(1.2rem, 3vw, 2rem); }
+  .rpp-avatar { flex-shrink: 0; width: clamp(76px, 14vw, 120px); aspect-ratio: 1; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: linear-gradient(135deg, var(--matcha), var(--ai-deep)); color: #fff; }
+  .rpp-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .rpp-avatar span { font-size: var(--step-4); }
+  .rpp-role { font-size: var(--step--1); color: var(--matcha); font-weight: 700; letter-spacing: 0.06em; }
+  .rpp-name { font-size: var(--step-4); margin: 0.2rem 0 0.6rem; }
+  .rpp-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+  .rpp-body { max-width: 720px; padding-top: clamp(1.5rem, 4vw, 2.5rem); }
+  .rpp-bio { font-size: var(--step-1); line-height: 2; color: var(--ink); }
+  .rpp-sns { display: flex; gap: 1.2rem; margin-top: 1.2rem; }
+
+  .section { padding-block: clamp(2.5rem, 6vw, 4rem); }
+  .rpp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: 1.5rem; }
+  .rpp-empty { padding-block: 2rem; }
+  @media (max-width: 1000px) { .rpp-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .rpp-grid { grid-template-columns: 1fr; } .rpp-head { flex-direction: column; text-align: center; } .rpp-tags { justify-content: center; } }
+
+  .rpp-cta { background: var(--paper-2); margin-top: 2rem; }
+  .rpp-cta-inner { text-align: center; padding: clamp(2.5rem, 6vw, 4rem) 0; display: grid; gap: 0.5rem; justify-items: center; }
+  .rpp-cta-h { font-size: var(--step-2); color: var(--ink); }
+  .rpp-cta .btn { margin-top: 1rem; }
+</style>

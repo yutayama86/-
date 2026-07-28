@@ -1,5 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
+import { REPORTERS } from '../data/reporters';
+import { getArticlesByReporter } from '../lib/content';
+
+const roster = await Promise.all(
+  REPORTERS.map(async (r) => ({
+    r,
+    count: (await getArticlesByReporter(r.name)).length,
+    initial: r.name.replace(/^(編集長|公式レポーター)\s*/, '').slice(0, 1),
+  }))
+);
 ---
 
 <Base
@@ -15,6 +25,25 @@ import Base from '../layouts/Base.astro';
         “人の熱量”は、最強のコンテンツです。
       </p>
     </div>
+  </section>
+
+  <section class="wrap section">
+    <div class="sec-head" data-reveal><h2>いま活動中のレポーター<span class="latin num"> / Members</span></h2></div>
+    <ul class="rp-roster">
+      {roster.map(({ r, count, initial }) => (
+        <li data-reveal>
+          <a href={`/reporter/${r.slug}/`} class="rp-member">
+            <div class="rp-member-avatar" aria-hidden="true">
+              {r.avatar ? <img src={r.avatar} alt="" /> : <span class="mincho">{initial}</span>}
+            </div>
+            <p class="rp-member-role">{r.role}</p>
+            <p class="rp-member-name display">{r.name}</p>
+            {r.area && <p class="rp-member-area muted">📍 {r.area}</p>}
+            <p class="rp-member-count latin">{count} 記事</p>
+          </a>
+        </li>
+      ))}
+    </ul>
   </section>
 
   <section class="wrap section">
@@ -49,6 +78,18 @@ import Base from '../layouts/Base.astro';
   .rp-hero { padding: clamp(3.5rem, 9vw, 7rem) 0; background: radial-gradient(80% 100% at 100% 0%, color-mix(in srgb, var(--matcha) 14%, transparent), transparent 60%); }
   .rp-h1 { font-size: var(--step-5); }
   .rp-lead { margin-top: 1.6rem; font-size: var(--step-1); color: var(--ink-soft); line-height: 1.9; max-width: 55ch; }
+
+  .rp-roster { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem, 3vw, 2rem); margin-top: 1.8rem; }
+  .rp-member { display: grid; justify-items: center; text-align: center; gap: 0.3rem; padding: 2rem 1.5rem; background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius); transition: border-color 0.25s var(--ease), transform 0.25s var(--ease); }
+  .rp-member:hover { border-color: var(--matcha); transform: translateY(-3px); }
+  .rp-member-avatar { width: 88px; height: 88px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: linear-gradient(135deg, var(--matcha), var(--ai-deep)); color: #fff; margin-bottom: 0.6rem; }
+  .rp-member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .rp-member-avatar span { font-size: var(--step-3); }
+  .rp-member-role { font-size: var(--step--2); color: var(--matcha); font-weight: 700; letter-spacing: 0.05em; }
+  .rp-member-name { font-size: var(--step-1); }
+  .rp-member-area { font-size: var(--step--1); }
+  .rp-member-count { font-size: var(--step--1); color: var(--ink-mute); margin-top: 0.3rem; }
+  @media (max-width: 760px) { .rp-roster { grid-template-columns: 1fr 1fr; } }
 
   .rp-merit { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
   .rp-col { background: var(--paper-2); padding: clamp(1.8rem, 4vw, 2.8rem); border-radius: var(--radius); }

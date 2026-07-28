@@ -5,6 +5,7 @@ import Base from '../../layouts/Base.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import { CATEGORIES, SITE_CONFIG } from '../../data/site';
 import { getArticles, getPlaces, formatDate } from '../../lib/content';
+import { reporterByName } from '../../data/reporters';
 
 export const getStaticPaths = (async () => {
   const articles = await getArticles();
@@ -19,7 +20,13 @@ const { data } = article;
 const cat = CATEGORIES[data.category];
 const slug = article.id.split('/').pop();
 const ogImage = data.cover ?? `/og/${cat.path}/${slug}.png`;
-const { Content } = await render(article);
+const { Content, headings } = await render(article);
+
+// 目次（h2/h3 のみ）
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+// 著者＝公式レポーター（E-E-A-T：誰が実際に行ったか）
+const reporter = reporterByName(data.reporter);
 
 // 紐づく店舗LP
 const places = await getPlaces();
@@ -30,6 +37,7 @@ const related = (await getArticles())
   .filter((a) => a.id !== article.id && a.data.category === data.category)
   .slice(0, 3);
 
+const abs = (p: string) => new URL(p, Astro.site ?? SITE_CONFIG.domain).href;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -37,7 +45,10 @@ const jsonLd = {
   description: data.description,
   datePublished: data.publishedAt.toISOString(),
   dateModified: (data.updatedAt ?? data.publishedAt).toISOString(),
-  author: { '@type': 'Organization', name: data.author },
+  // レポーターが登録済みなら Person（実体験の書き手）、なければ編集部＝Organization
+  author: reporter
+    ? { '@type': 'Person', name: reporter.name, jobTitle: reporter.role, url: abs(`/reporter/${reporter.slug}/`) }
+    : { '@type': 'Organization', name: data.author },
   publisher: { '@type': 'Organization', name: SITE_CONFIG.name },
   ...(data.cover ? { image: data.cover } : {}),
 };
@@ -63,7 +74,9 @@ const jsonLd = {
       <div class="post-meta">
         {data.area && <span class="pm">📍 {data.area}</span>}
         <span class="pm">🗓 <time datetime={data.publishedAt.toISOString()}>{formatDate(data.publishedAt)}</time></span>
-        {data.reporter && <span class="pm">✍️ 取材：{data.reporter}</span>}
+        {data.reporter && (reporter
+          ? <a class="pm pm--link" href={`/reporter/${reporter.slug}/`}>✍️ 取材：{data.reporter}</a>
+          : <span class="pm">✍️ 取材：{data.reporter}</span>)}
         <span class="pm">{data.author}</span>
       </div>
     </header>
@@ -75,6 +88,17 @@ const jsonLd = {
     )}
 
     <div class="post-body wrap">
+      {toc.length > 1 && (
+        <nav class="post-toc" aria-label="目次">
+          <p class="post-toc-h">目次</p>
+          <ol>
+            {toc.map((h) => (
+              <li class={`toc-d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
       <div class="prose">
         <Content />
       </div>
@@ -85,6 +109,20 @@ const jsonLd = {
             <li><a href={`/tag/${encodeURIComponent(t)}/`} class="chip chip--link">#{t}</a></li>
           ))}
         </ul>
+      )}
+
+      {reporter && (
+        <a href={`/reporter/${reporter.slug}/`} class="byline">
+          <div class="byline-avatar" aria-hidden="true">
+            {reporter.avatar ? <img src={reporter.avatar} alt="" /> : <span class="mincho">{reporter.name.replace(/^(編集長|公式レポーター)\s*/, '').slice(0, 1)}</span>}
+          </div>
+          <div class="byline-body">
+            <p class="byline-role">この記事を取材した{reporter.role}</p>
+            <p class="byline-name display">{reporter.name}</p>
+            <p class="byline-bio muted">{reporter.bio}</p>
+            <span class="byline-more">プロフィール・他の記事を見る <span class="arw" aria-hidden="true">→</span></span>
+          </div>
+        </a>
       )}
     </div>
 
@@ -132,6 +170,28 @@ const jsonLd = {
   .post-desc { font-size: var(--step-1); color: var(--ink-soft); }
   .post-meta { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; margin-top: 1.8rem; font-size: var(--step--1); color: var(--ink-mute); }
   .post-meta time { font-family: var(--font-latin); }
+  .pm--link { color: var(--matcha); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color 0.2s; }
+  .pm--link:hover { color: var(--matcha-deep, var(--shu)); }
+
+  /* 目次 */
+  .post-toc { background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem 1.5rem; margin-bottom: 2.5rem; }
+  .post-toc-h { font-size: var(--step--1); font-weight: 700; color: var(--ink-soft); letter-spacing: 0.08em; margin-bottom: 0.7rem; }
+  .post-toc ol { list-style: none; display: grid; gap: 0.5rem; }
+  .post-toc a { color: var(--ink); font-size: var(--step-0); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s, color 0.2s; }
+  .post-toc a:hover { color: var(--shu); border-color: currentColor; }
+  .post-toc .toc-d3 { padding-left: 1.2em; font-size: var(--step--1); }
+  .post-toc .toc-d3 a { color: var(--ink-soft); }
+
+  /* 著者バイライン */
+  .byline { display: flex; gap: 1.2rem; align-items: flex-start; margin-top: 3rem; padding: 1.5rem; background: var(--paper-2); border-radius: var(--radius); border: 1px solid var(--line); transition: border-color 0.25s var(--ease), transform 0.25s var(--ease); }
+  .byline:hover { border-color: var(--matcha); transform: translateY(-2px); }
+  .byline-avatar { flex-shrink: 0; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: linear-gradient(135deg, var(--matcha), var(--ai-deep)); color: #fff; }
+  .byline-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .byline-avatar span { font-size: var(--step-2); }
+  .byline-role { font-size: var(--step--2); color: var(--matcha); font-weight: 700; letter-spacing: 0.05em; }
+  .byline-name { font-size: var(--step-1); margin: 0.15rem 0 0.5rem; color: var(--ink); }
+  .byline-bio { font-size: var(--step--1); line-height: 1.8; }
+  .byline-more { display: inline-block; margin-top: 0.7rem; font-size: var(--step--1); color: var(--shu); font-weight: 700; }
 
   .post-cover { margin: clamp(2rem, 5vw, 3.5rem) auto; aspect-ratio: 16/9; overflow: hidden; border-radius: var(--radius); }
   .post-cover img { width: 100%; height: 100%; object-fit: cover; }

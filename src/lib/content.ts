@@ -117,6 +117,11 @@ export async function getArticlesByArea(slug: string) {
   return (await getArticles()).filter((a) => areaToSlug(a.data.area) === slug);
 }
 
+/** 指定レポーター（表示名）が取材した記事 */
+export async function getArticlesByReporter(name: string) {
+  return (await getArticles()).filter((a) => a.data.reporter === name);
+}
+
 export async function getPlacesByArea(slug: string) {
   return (await getPlaces()).filter((p) => areaToSlug(p.data.area) === slug);
 }

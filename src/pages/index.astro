@@ -119,6 +119,24 @@ const guidePicks = GUIDES.slice(0, 3); // 目的から選ぶ：まとめ・モ�
     </div>
   </section>
 
+  <!-- ============ 店舗ディレクトリ（条件から探す）============ -->
+  <section class="wrap section">
+    <a href="/place/" class="dir-band" data-reveal>
+      <div class="dir-band-copy">
+        <p class="eyebrow">Store Directory</p>
+        <h2 class="display dir-band-title">お店を、<br class="sp" />条件から探す。</h2>
+        <p class="dir-band-lead">エリア・ジャンル・特徴・キーワードで、茨城のお店をまるごと検索。行った人の熱量で選ぶ、あなたの一軒を。</p>
+      </div>
+      <div class="dir-band-fake" aria-hidden="true">
+        <span class="dir-band-search">🔍 店名・エリア・特徴で検索</span>
+        <span class="dir-band-chips">
+          <span class="chip">グルメ</span><span class="chip">サウナ</span><span class="chip">駐車場あり</span><span class="chip">個室あり</span>
+        </span>
+        <span class="dir-band-cta">店舗ディレクトリを開く <span class="arw">→</span></span>
+      </div>
+    </a>
+  </section>
+
   <!-- ============ AMBASSADOR ============ -->
   <section class="amb">
     <div class="wrap amb-inner">
@@ -245,6 +263,23 @@ const guidePicks = GUIDES.slice(0, 3); // 目的から選ぶ：まとめ・モ�
   .home-guide-lead { color: var(--ink-soft); font-size: var(--step-0); line-height: 1.8; }
   .home-guide-more { margin-top: 0.4rem; font-size: var(--step--1); font-weight: 700; color: var(--_c); }
 
+  /* ---- 店舗ディレクトリ band ---- */
+  .dir-band { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: center;
+    padding: clamp(1.8rem, 4vw, 3rem); border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--ai), var(--ai-deep)); color: var(--paper);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); }
+  .dir-band:hover { transform: translateY(-3px); box-shadow: 0 16px 40px color-mix(in srgb, var(--ai) 30%, transparent); }
+  .dir-band .eyebrow { color: rgba(245,241,232,.7); }
+  .dir-band-title { font-size: var(--step-4); color: #fff; margin: 0.4rem 0 0.8rem; }
+  .dir-band-lead { color: rgba(245,241,232,.85); font-size: var(--step-0); line-height: 1.9; max-width: 46ch; }
+  .dir-band-fake { display: grid; gap: 0.9rem; background: rgba(255,255,255,.08); border: 1px solid rgba(245,241,232,.2); border-radius: var(--radius); padding: clamp(1.2rem, 3vw, 1.8rem); }
+  .dir-band-search { display: block; background: var(--paper); color: var(--ink-mute); border-radius: 999px; padding: 0.7em 1.1em; font-size: var(--step--1); }
+  .dir-band-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .dir-band-chips .chip { color: #fff; border-color: rgba(245,241,232,.4); background: rgba(255,255,255,.1); font-size: var(--step--1); }
+  .dir-band-cta { font-weight: 700; color: #fff; font-size: var(--step-0); }
+  .dir-band-cta .arw { display: inline-block; transition: transform 0.25s var(--ease); }
+  .dir-band:hover .dir-band-cta .arw { transform: translateX(4px); }
+
   /* ---- SNS ---- */
   .sns {
     display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;
@@ -274,5 +309,6 @@ const guidePicks = GUIDES.slice(0, 3); // 目的から選ぶ：まとめ・モ�
     .latest-grid { grid-template-columns: 1fr; }
     .amb-inner { grid-template-columns: 1fr; }
     .amb-visual { display: none; }
+    .dir-band { grid-template-columns: 1fr; }
   }
 </style>

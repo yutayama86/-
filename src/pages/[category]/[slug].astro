@@ -152,12 +152,26 @@ const jsonLd = {
 
     {related.length > 0 && (
       <section class="wrap section">
-        <div class="sec-head"><h2>あわせて読みたい<span class="latin num"> / Related</span></h2></div>
+        <div class="sec-head sec-head--split">
+          <h2>あわせて読みたい<span class="latin num"> / Related</span></h2>
+          <a href={`/${cat.path}/`} class="ul-link muted">{cat.label}をもっと見る →</a>
+        </div>
         <div class="rel-grid">
           {related.map((a) => <ArticleCard article={a} size="sm" />)}
         </div>
       </section>
     )}
+
+    <!-- 店舗ディレクトリへの導線 -->
+    <aside class="wrap">
+      <a href="/place/" class="post-dir">
+        <div>
+          <p class="post-dir-h mincho">茨城のお店を、条件から探す。</p>
+          <p class="post-dir-lead muted">エリア・ジャンル・特徴・キーワードで検索できる店舗ディレクトリ。</p>
+        </div>
+        <span class="btn btn--ghost">お店を探す <span class="arw" aria-hidden="true">→</span></span>
+      </a>
+    </aside>
   </article>
 </Base>
 
@@ -214,7 +228,15 @@ const jsonLd = {
   .place-cta-note { font-size: var(--step--1); }
 
   .section { padding-block: clamp(2.5rem, 6vw, 4rem); }
+  .sec-head--split { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
   .rel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
+
+  .post-dir { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+    margin: 0 0 clamp(2.5rem, 6vw, 4rem); padding: clamp(1.5rem, 3.5vw, 2.2rem);
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius); transition: border-color 0.25s var(--ease); }
+  .post-dir:hover { border-color: var(--ai); }
+  .post-dir-h { font-size: var(--step-1); color: var(--ink); }
+  .post-dir-lead { font-size: var(--step--1); margin-top: 0.3rem; }
   @media (max-width: 800px) {
     .place-cta { grid-template-columns: 1fr; }
     .rel-grid { grid-template-columns: 1fr; }

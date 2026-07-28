@@ -40,6 +40,19 @@ const total = rows.length;
 
     <!-- 絞り込みバー -->
     <div class="filters" data-reveal>
+      <div class="filter-group filter-group--search">
+        <span class="filter-label">キーワード</span>
+        <div class="search-wrap">
+          <input
+            type="search"
+            id="store-search"
+            class="search-input"
+            placeholder="店名・エリア・特徴で検索（例：ラーメン 駐車場）"
+            autocomplete="off"
+            enterkeyhint="search"
+          />
+        </div>
+      </div>
       <div class="filter-group">
         <span class="filter-label">エリア</span>
         <div class="chips" data-facet="region">
@@ -79,6 +92,7 @@ const total = rows.length;
             data-category={s.data.category}
             data-region={region}
             data-features={s.data.features.join('|')}
+            data-search={[s.data.name, s.data.kana, s.data.area, s.data.tagline, ...s.data.features].filter(Boolean).join(' ').toLowerCase()}
           >
             <a href={`/place/${s.id}/`} class="place-card" style={`--_a:${cat.accent}`}>
               <div class="place-media">
@@ -122,23 +136,34 @@ const total = rows.length;
   const grid = document.getElementById('place-grid');
   if (grid) {
     const items = Array.from(grid.querySelectorAll<HTMLElement>('.place-item'));
-    const state = { region: '', category: '', feature: new Set<string>() };
+    const state = { region: '', category: '', feature: new Set<string>(), q: '' };
     const rcNum = document.getElementById('rc-num');
     const noResult = document.getElementById('no-result');
+    const searchInput = document.getElementById('store-search') as HTMLInputElement | null;
 
     function apply() {
+      const terms = state.q.split(/\s+/).filter(Boolean);
       let shown = 0;
       for (const el of items) {
         const okRegion = !state.region || el.dataset.region === state.region;
         const okCat = !state.category || el.dataset.category === state.category;
         const feats = (el.dataset.features || '').split('|').filter(Boolean);
         const okFeat = [...state.feature].every((f) => feats.includes(f));
-        const visible = okRegion && okCat && okFeat;
+        const haystack = el.dataset.search || '';
+        const okSearch = terms.every((t) => haystack.includes(t));
+        const visible = okRegion && okCat && okFeat && okSearch;
         el.hidden = !visible;
         if (visible) shown++;
       }
       if (rcNum) rcNum.textContent = String(shown);
       if (noResult) noResult.hidden = shown !== 0;
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        state.q = searchInput.value.trim().toLowerCase();
+        apply();
+      });
     }
 
     document.querySelectorAll<HTMLElement>('.filters .chips').forEach((group) => {
@@ -173,6 +198,14 @@ const total = rows.length;
   .filters { display: grid; gap: 1rem; padding: 1.4rem 1.5rem; background: var(--paper-2); border-radius: var(--radius); margin-bottom: 1.5rem; }
   .filter-group { display: grid; grid-template-columns: 4.5em 1fr; gap: 0.6rem 1rem; align-items: start; }
   .filter-label { font-size: var(--step--1); color: var(--ink-soft); font-weight: 700; padding-top: 0.45rem; }
+  .search-wrap { position: relative; }
+  .search-input {
+    width: 100%; max-width: 520px; font: inherit; font-size: var(--step-0);
+    padding: 0.6em 1em; border: 1px solid var(--line-strong); border-radius: 999px;
+    background: var(--paper); color: var(--ink); transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+  .search-input::placeholder { color: var(--ink-soft); opacity: 0.7; }
+  .search-input:focus { outline: none; border-color: var(--shu); box-shadow: 0 0 0 3px color-mix(in srgb, var(--shu) 18%, transparent); }
   .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .fchip {
     font-size: var(--step--1); padding: 0.4em 0.95em; border-radius: 999px;

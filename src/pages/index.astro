@@ -4,10 +4,12 @@ import ArticleCard from '../components/ArticleCard.astro';
 import IbarakiMap from '../components/IbarakiMap.astro';
 import { getArticles, getAreaCounts } from '../lib/content';
 import { CATEGORY_LIST, SITE_CONFIG } from '../data/site';
+import { GUIDES } from '../data/guides';
 
 const articles = await getArticles();
 const areaCounts = await getAreaCounts();
 const latest = articles.slice(0, 3); // ヒーロー下：新着3カード
+const guidePicks = GUIDES.slice(0, 3); // 目的から選ぶ：まとめ・モデルコース
 ---
 
 <Base hero title={undefined}>
@@ -76,6 +78,28 @@ const latest = articles.slice(0, 3); // ヒーロー下：新着3カード
       ))}
     </ul>
   </section>
+
+  <!-- ============ まとめ・モデルコース（目的から選ぶ）============ -->
+  {guidePicks.length > 0 && (
+    <section class="wrap section">
+      <div class="sec-head" data-reveal>
+        <h2>目的から選ぶ<span class="latin num"> / Model Course</span></h2>
+        <a href="/guide/" class="ul-link muted">まとめをすべて見る →</a>
+      </div>
+      <ul class="home-guides">
+        {guidePicks.map((g) => (
+          <li data-reveal>
+            <a href={`/guide/${g.slug}/`} class="home-guide" style={`--_c:${g.accent ?? '#d8452b'}`}>
+              <span class="home-guide-eyebrow latin">MODEL COURSE</span>
+              <h3 class="display home-guide-title">{g.title.split('。')[0]}</h3>
+              <p class="home-guide-lead mincho">{g.lead}</p>
+              <span class="home-guide-more">コースを見る <span class="arw" aria-hidden="true">→</span></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 
   <!-- ============ AREA MAP ============ -->
   <section class="areasec">
@@ -208,6 +232,19 @@ const latest = articles.slice(0, 3); // ヒーロー下：新着3カード
   .latest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: 2.5rem; }
   .empty { margin-top: 2rem; font-size: var(--step-1); }
 
+  /* ---- まとめ・モデルコース ---- */
+  .home-guides { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem, 2.5vw, 1.8rem); margin-top: 2.5rem; }
+  .home-guide { position: relative; display: grid; gap: 0.6rem; align-content: start; padding: clamp(1.5rem, 3vw, 2rem);
+    border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+    background: color-mix(in srgb, var(--_c) 5%, var(--paper));
+    transition: border-color 0.25s var(--ease), transform 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+  .home-guide::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--_c); }
+  .home-guide:hover { border-color: var(--_c); transform: translateY(-3px); box-shadow: 0 10px 28px color-mix(in srgb, var(--_c) 16%, transparent); }
+  .home-guide-eyebrow { letter-spacing: 0.16em; font-size: var(--step--2); font-weight: 700; color: var(--_c); }
+  .home-guide-title { font-size: var(--step-2); line-height: 1.35; }
+  .home-guide-lead { color: var(--ink-soft); font-size: var(--step-0); line-height: 1.8; }
+  .home-guide-more { margin-top: 0.4rem; font-size: var(--step--1); font-weight: 700; color: var(--_c); }
+
   /* ---- SNS ---- */
   .sns {
     display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;
@@ -225,6 +262,7 @@ const latest = articles.slice(0, 3); // ヒーロー下：新着3カード
   @media (max-width: 1000px) {
     .cat-grid { grid-template-columns: repeat(2, 1fr); }
     .latest-grid { grid-template-columns: 1fr 1fr; }
+    .home-guides { grid-template-columns: 1fr; }
     .hero-map { width: clamp(180px, 26vw, 260px); }
   }
   @media (max-width: 720px) {

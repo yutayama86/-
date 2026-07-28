@@ -4,61 +4,111 @@ import Base from '../layouts/Base.astro';
 const phases = [
   {
     n: '01',
-    tag: '突破口',
-    title: 'まずは、集客の成功体験を。',
-    body: 'イバトコでの取材記事＋店舗専用ページ（LP）を制作。「イバトコを見て来ました」というお客様が、実際にお店に足を運ぶ体験からはじめます。',
-    price: '初期費用 0円 / 月額 5,000円',
-    color: 'var(--shu)',
+    tag: '入口・無料',
+    title: 'まず、無料で載る。',
+    body: '店舗ページ・ディレクトリ・「地名×ジャンル」まとめに無料で掲載。「イバトコを見て来ました」という最初のお客様との出会いから、リスクなく始められます。',
+    price: '無料掲載　0円',
+    color: 'var(--matcha)',
   },
   {
     n: '02',
-    tag: '拡張',
-    title: '公式HPとSNSも、整える。',
-    body: '集客が動き出したら、公式ホームページのリニューアルとSNS運用代行へ。取材で撮り溜めた動画素材をそのまま活用するので、追加撮影コストはゼロ。',
-    price: 'HP制作 25〜35万円 / SNS運用は顧問に含む',
-    color: 'var(--nemo)',
+    tag: '強化',
+    title: '公式店舗で、"選ばれる"ページに。',
+    body: '写真・メニュー・クーポンを充実させ、アクセス分析で反応を見る。検索とAI検索から見つけてもらえる、育つ店舗ページへ。オーナーご自身でも編集できます。',
+    price: '公式店舗　月額 9,800円',
+    color: 'var(--shu)',
   },
   {
     n: '03',
-    tag: 'インフラ化',
-    title: 'WEBまわりを、丸ごと相棒に。',
-    body: '予約システム・顧客データ（CRM）まで一元管理。集客からリピートまでの導線をまるごとお預かりする、いちばん頼れるWEBの相棒になります。',
-    price: 'WEB丸抱え顧問 月額 5〜10万円',
-    color: 'var(--matcha)',
+    tag: '集客〜DX',
+    title: '集客も、WEBまわりも相棒に。',
+    body: '取材記事・モデルコース掲載やSNS／AI検索対策で攻めの集客へ。さらに公式HP・予約・LINE・CRMまで、地域DXパートナーとして丸ごとお預かりします。',
+    price: '集客 月額29,800円　〜　地域DX 要相談',
+    color: 'var(--gold)',
   },
 ];
 
 const plans = [
   {
-    name: 'ライト掲載',
-    price: '月額 5,000円',
-    lead: 'まずはここから。',
-    features: ['取材記事の制作・公開', '店舗専用ページ（LP）', 'イバトコSNSでの紹介', '予約・問い合わせ導線'],
-    cta: '無料掲載を相談する',
+    key: 'free',
+    name: '無料掲載',
+    price: '¥0',
+    unit: '/ 月',
+    lead: 'まずは載せる。',
+    features: ['店舗専用ページ', 'ディレクトリ・地名×ジャンル掲載', '基本情報・特徴タグ', '問い合わせ導線'],
+    cta: '無料で掲載する',
     highlight: false,
   },
   {
-    name: 'SNS運用代行',
-    price: '要お見積り',
-    lead: '“看板”を育てる。',
-    features: ['月まとめ撮り撮影', 'リール／TikTok編集・投稿', '公式HP制作・保守', '運用レポート'],
-    cta: 'サポートを相談する',
+    key: 'official',
+    name: '公式店舗',
+    price: '¥9,800',
+    unit: '/ 月',
+    lead: '選ばれるページへ。',
+    features: ['無料掲載のすべて', '写真・ギャラリー強化', 'メニュー・クーポン掲載', '公式店舗バッジ', 'アクセス分析', 'オーナー自己編集'],
+    cta: '公式店舗にする',
     highlight: true,
   },
   {
-    name: 'WEB丸抱え顧問',
-    price: '月額 5〜10万円',
-    lead: '心臓部までお任せ。',
-    features: ['SNS運用＋HP保守', '自社予約システム導入', '顧客データ（CRM）一元管理', '集客〜リピート設計'],
-    cta: '顧問契約を相談する',
+    key: 'growth',
+    name: '集客プラン',
+    price: '¥29,800',
+    unit: '/ 月',
+    lead: '攻めの集客。',
+    features: ['公式店舗のすべて', '取材記事の制作・公開', 'モデルコース・特集掲載', 'SNS／AI検索対策', 'キャンペーン企画'],
+    cta: '集客を相談する',
+    highlight: false,
+  },
+  {
+    key: 'partner',
+    name: '地域DXパートナー',
+    price: '要相談',
+    unit: '¥10万〜',
+    lead: 'WEBまるごと。',
+    features: ['集客プランのすべて', '公式HP制作・保守', '予約システム導入', 'LINE・CRM連携', '運用の内製化支援'],
+    cta: 'DXを相談する',
     highlight: false,
   },
 ];
+
+// 機能比較表（○＝含む）
+const compareRows: { label: string; on: string[] }[] = [
+  { label: '店舗専用ページ', on: ['free', 'official', 'growth', 'partner'] },
+  { label: 'ディレクトリ・地名×ジャンル掲載', on: ['free', 'official', 'growth', 'partner'] },
+  { label: '写真・ギャラリー強化', on: ['official', 'growth', 'partner'] },
+  { label: 'メニュー・クーポン掲載', on: ['official', 'growth', 'partner'] },
+  { label: '公式店舗バッジ', on: ['official', 'growth', 'partner'] },
+  { label: 'アクセス分析', on: ['official', 'growth', 'partner'] },
+  { label: 'オーナー自己編集', on: ['official', 'growth', 'partner'] },
+  { label: '取材記事・特集の制作', on: ['growth', 'partner'] },
+  { label: 'モデルコース掲載', on: ['growth', 'partner'] },
+  { label: 'SNS／AI検索対策', on: ['growth', 'partner'] },
+  { label: '公式HP・予約・CRM', on: ['partner'] },
+];
+
+// よくある質問
+const bizFaq = [
+  { q: '無料掲載でも本当に費用はかかりませんか？', a: 'はい。無料掲載は0円で、店舗ページやエリア・ジャンルのまとめに掲載されます。まず反応を見てから、公式店舗へ進むかご判断いただけます。' },
+  { q: '公式店舗にすると何が変わりますか？', a: '写真やメニュー・クーポンを充実でき、公式バッジ・アクセス分析・オーナー自己編集が使えます。検索やAI検索から「選ばれる」情報量のページになります。' },
+  { q: '途中でプランを変更・解約できますか？', a: '可能です。反応や季節にあわせて、公式店舗↔集客プランの切り替えや一時停止のご相談も承ります。' },
+  { q: '写真がありませんが大丈夫ですか？', a: '取材・撮影からお手伝いできます（集客プラン以上）。無料掲載は上品なデザインのフォールバックで表示されるので、写真なしでも見栄えします。' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: bizFaq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
 ---
 
 <Base
   title="掲載のご案内｜茨城のお店・企業さまへ"
-  description="イバトコは、初期費用0円・月額5,000円から。取材・撮影・専用ページ制作までワンストップで、茨城のお店の集客を支援します。"
+  description="茨城のお店・企業の掲載は無料から。公式店舗（月額9,800円）で写真・クーポン・アクセス分析、集客プランで取材記事やSNS/AI検索対策まで。地域No.1メディアで“選ばれる”お店に。"
+  jsonLd={jsonLd}
 >
   <!-- Hero -->
   <section class="biz-hero">
@@ -121,21 +171,77 @@ const plans = [
   <!-- Plans -->
   <section id="plans" class="wrap section">
     <div class="sec-head" data-reveal><h2>料金プラン<span class="latin num"> / Plans</span></h2></div>
+    <p class="plan-intro mincho" data-reveal>0円で始めて、反応を見ながら育てる。無理なく“稼げる”お店へ。</p>
     <div class="plan-grid">
       {plans.map((pl) => (
         <div class={`plan ${pl.highlight ? 'plan--hl' : ''}`} data-reveal>
-          {pl.highlight && <span class="plan-ribbon">人気</span>}
+          {pl.highlight && <span class="plan-ribbon">いちばん人気</span>}
           <p class="plan-lead mincho">{pl.lead}</p>
           <h3 class="plan-name display">{pl.name}</h3>
-          <p class="plan-price"><span class="latin">{pl.price}</span></p>
+          <p class="plan-price"><span class="latin plan-amt">{pl.price}</span><span class="plan-unit">{pl.unit}</span></p>
           <ul class="plan-features">
             {pl.features.map((f) => <li>{f}</li>)}
           </ul>
-          <a href="/contact/" class={`btn ${pl.highlight ? 'btn--shu' : 'btn--ghost'}`} style="justify-content:center;width:100%">{pl.cta}</a>
+          <a href="/contact/" class={`btn ${pl.highlight ? 'btn--shu' : 'btn--ghost'} plan-cta`}>{pl.cta} <span class="arw" aria-hidden="true">→</span></a>
         </div>
       ))}
     </div>
-    <p class="plan-note muted">※ 価格は目安です。お店の状況にあわせて最適なプランをご提案します。</p>
+    <p class="plan-note muted">※ 価格は税別・目安です。お店の状況にあわせて最適なプランをご提案します。地域DXは内容により個別お見積り。</p>
+
+    <!-- 機能比較表 -->
+    <div class="compare-wrap" data-reveal>
+      <h3 class="display compare-h">プランの違いを一覧で</h3>
+      <div class="compare-scroll">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th scope="col" class="compare-feat">機能</th>
+              {plans.map((pl) => (
+                <th scope="col" class={pl.highlight ? 'is-hl' : ''}>
+                  <span class="compare-plan">{pl.name}</span>
+                  <span class="compare-price latin">{pl.price}</span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {compareRows.map((row) => (
+              <tr>
+                <th scope="row">{row.label}</th>
+                {plans.map((pl) => (
+                  <td class={pl.highlight ? 'is-hl' : ''}>
+                    {row.on.includes(pl.key) ? <span class="yes" aria-label="含む">●</span> : <span class="no" aria-label="含まない">—</span>}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="biz-faq" data-reveal>
+      <h3 class="display compare-h">よくあるご質問</h3>
+      <dl class="biz-faq-list">
+        {bizFaq.map((f) => (
+          <div class="biz-faq-item">
+            <dt>Q. {f.q}</dt>
+            <dd>{f.a}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    <!-- 最終CTA -->
+    <div class="biz-final" data-reveal>
+      <p class="mincho biz-final-h">まずは、無料掲載から。</p>
+      <p class="muted">ご相談は無料です。お店の状況をお聞きして、ぴったりのはじめ方をご提案します。</p>
+      <div class="biz-final-cta">
+        <a href="/contact/" class="btn btn--shu btn--lg">無料で相談する <span class="arw">→</span></a>
+        <a href="/place/" class="btn btn--ghost btn--lg">掲載イメージを見る</a>
+      </div>
+    </div>
   </section>
 </Base>
 
@@ -164,24 +270,56 @@ const plans = [
   .value-points b { color: #fff; font-size: var(--step-1); }
   .value-points span { color: rgba(245,241,232,.6); font-size: var(--step--1); }
 
-  .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
-  .plan { position: relative; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 2rem 1.6rem; display: grid; gap: 0.8rem; align-content: start; background: var(--paper); }
+  .plan-intro { font-size: var(--step-1); color: var(--ink-soft); margin-top: 0.6rem; }
+  .plan-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin-top: 2.5rem; align-items: stretch; }
+  .plan { position: relative; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 1.8rem 1.4rem; display: grid; gap: 0.6rem; align-content: start; background: var(--paper); }
   .plan--hl { border-color: var(--shu); border-width: 2px; box-shadow: var(--shadow); }
-  .plan-ribbon { position: absolute; top: -0.8rem; right: 1.5rem; background: var(--shu); color: #fff; font-size: var(--step--1); font-weight: 700; padding: 0.3em 1em; border-radius: 999px; }
-  .plan-lead { color: var(--ink-mute); font-size: var(--step-0); }
-  .plan-name { font-size: var(--step-2); }
-  .plan-price { font-size: var(--step-1); color: var(--shu-deep); font-weight: 700; margin-bottom: 0.6rem; }
-  .plan-features { display: grid; gap: 0.7rem; margin: 0.6rem 0 1.6rem; }
-  .plan-features li { position: relative; padding-left: 1.6em; color: var(--ink-soft); font-size: var(--step-0); }
+  .plan-ribbon { position: absolute; top: -0.8rem; left: 50%; transform: translateX(-50%); white-space: nowrap; background: var(--shu); color: #fff; font-size: var(--step--1); font-weight: 700; padding: 0.3em 1em; border-radius: 999px; }
+  .plan-lead { color: var(--ink-mute); font-size: var(--step--1); }
+  .plan-name { font-size: var(--step-1); }
+  .plan-price { display: flex; align-items: baseline; gap: 0.3em; margin-bottom: 0.4rem; }
+  .plan-amt { font-size: var(--step-3); color: var(--shu-deep); font-weight: 700; }
+  .plan-unit { font-size: var(--step--1); color: var(--ink-mute); }
+  .plan-features { display: grid; gap: 0.55rem; margin: 0.5rem 0 1.4rem; }
+  .plan-features li { position: relative; padding-left: 1.5em; color: var(--ink-soft); font-size: var(--step--1); line-height: 1.5; }
   .plan-features li::before { content: "✓"; position: absolute; left: 0; color: var(--matcha); font-weight: 700; }
-  .plan-note { margin-top: 1.5rem; font-size: var(--step--1); }
+  .plan-cta { justify-content: center; width: 100%; margin-top: auto; }
+  .plan-note { margin-top: 1.4rem; font-size: var(--step--1); }
+
+  /* 機能比較表 */
+  .compare-wrap { margin-top: clamp(3rem, 7vw, 5rem); }
+  .compare-h { font-size: var(--step-2); text-align: center; margin-bottom: 1.6rem; }
+  .compare-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .compare { width: 100%; min-width: 640px; border-collapse: collapse; font-size: var(--step-0); }
+  .compare th, .compare td { padding: 0.85rem 0.9rem; text-align: center; border-bottom: 1px solid var(--line); }
+  .compare thead th { vertical-align: bottom; border-bottom: 2px solid var(--line-strong); }
+  .compare .compare-feat, .compare tbody th { text-align: left; }
+  .compare tbody th { font-weight: 500; color: var(--ink); font-size: var(--step--1); }
+  .compare-plan { display: block; font-weight: 700; font-family: var(--font-display); font-size: var(--step-0); }
+  .compare-price { display: block; font-size: var(--step--1); color: var(--shu-deep); margin-top: 0.2rem; }
+  .compare th.is-hl, .compare td.is-hl { background: color-mix(in srgb, var(--shu) 6%, transparent); }
+  .compare thead th.is-hl { border-bottom-color: var(--shu); }
+  .compare .yes { color: var(--matcha); font-size: var(--step-0); }
+  .compare .no { color: var(--line-strong); }
+
+  /* FAQ */
+  .biz-faq { margin-top: clamp(3rem, 7vw, 5rem); }
+  .biz-faq-list { display: grid; gap: 0.9rem; margin-top: 1.6rem; max-width: 820px; margin-inline: auto; }
+  .biz-faq-item { border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.3rem; background: var(--paper); }
+  .biz-faq-item dt { font-weight: 700; color: var(--ink); }
+  .biz-faq-item dd { color: var(--ink-soft); margin-top: 0.5rem; padding-left: 1.4em; line-height: 1.8; }
+
+  /* 最終CTA */
+  .biz-final { text-align: center; margin-top: clamp(3rem, 7vw, 5rem); background: var(--paper-2); border-radius: var(--radius); padding: clamp(2.2rem, 5vw, 3.5rem); display: grid; gap: 0.5rem; justify-items: center; }
+  .biz-final-h { font-size: var(--step-3); color: var(--ink); }
+  .biz-final-cta { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 1.2rem; }
 
   .pc { display: inline; }
+  @media (max-width: 1000px) { .plan-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 860px) {
     .value-inner { grid-template-columns: 1fr; }
-    .plan-grid { grid-template-columns: 1fr; }
     .phase { grid-template-columns: 70px 1fr; }
     .phase-n { font-size: var(--step-4); }
   }
-  @media (max-width: 640px) { .pc { display: none; } }
+  @media (max-width: 520px) { .plan-grid { grid-template-columns: 1fr; } .pc { display: none; } }
 </style>

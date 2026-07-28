@@ -1,14 +1,17 @@
 import { OGImageRoute } from 'astro-og-canvas';
-import { getArticles, getPlaces } from '../../lib/content';
+import { getArticles, getStores } from '../../lib/content';
 import { CATEGORIES } from '../../data/site';
+import { GUIDES } from '../../data/guides';
 
 /**
- * 記事・店舗LPごとのOGP画像（SNSシェア画像）をビルド時にPNG生成します。
- * URL例：/og/eat/tsukuba-chuka-soba-kaze.png  /  /og/place/tsukuba-ramen-kaze.png
- * 参照は SEO.astro が自動で行います。
+ * 記事・店舗・まとめごとのOGP画像（SNSシェア画像）をビルド時にPNG生成します。
+ * URL例：/og/eat/tsukuba-chuka-soba-kaze.png ／ /og/place/tsukuba-ramen-kaze.png
+ *        /og/guide/mito-date.png
+ * 参照は各ページの image プロップ経由（SEO.astro）。
+ * ※店舗が数千件規模になったら、ビルド時間の観点でテンプレ化/オンデマンド化を検討。
  */
 const articles = await getArticles();
-const places = await getPlaces();
+const places = await getStores();
 
 type OgPage = { title: string; description: string; accent: [number, number, number] };
 
@@ -29,11 +32,18 @@ for (const a of articles) {
   };
 }
 for (const p of places) {
-  const cat = CATEGORIES[p.data.category];
+  const cat = CATEGORIES[p.data.category as keyof typeof CATEGORIES];
   pages[`place/${p.id.split('/').pop()}`] = {
     title: p.data.name,
     description: `${p.data.tagline}　—　${p.data.area}｜IBATOCO`,
     accent: hexRgb(cat.accent),
+  };
+}
+for (const g of GUIDES) {
+  pages[`guide/${g.slug}`] = {
+    title: g.title.split('。')[0],
+    description: `${g.lead}　—　まとめ・モデルコース｜IBATOCO`,
+    accent: hexRgb(g.accent ?? '#d8452b'),
   };
 }
 

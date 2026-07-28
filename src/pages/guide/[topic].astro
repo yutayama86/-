@@ -16,6 +16,7 @@ const stores = await getStores();
 const storeById = new Map(stores.map((s) => [s.id, s]));
 const muni = guide.areaSlug ? MUNI_BY_SLUG.get(guide.areaSlug) : undefined;
 const accent = guide.accent ?? '#d8452b';
+const ogImage = `/og/guide/${guide.slug}.png`;
 
 const abs = (p: string) => new URL(p, Astro.site ?? SITE_CONFIG.domain).href;
 const jsonLd = [
@@ -51,7 +52,7 @@ const jsonLd = [
 ];
 ---
 
-<Base title={guide.title} description={guide.lead} jsonLd={jsonLd}>
+<Base title={guide.title} description={guide.lead} image={ogImage} jsonLd={jsonLd}>
   <section class="gd-hero" style={`--_c:${accent}`}>
     <div class="wrap">
       <nav class="crumbs" aria-label="パンくず">

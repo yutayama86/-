@@ -18,8 +18,8 @@ const { store } = Astro.props;
 const { data } = store;
 const cat = CATEGORIES[data.category as keyof typeof CATEGORIES];
 const slug = store.id;
-// 作り込み店舗(md)はOGP画像を個別生成、無料一括掲載(csv)は既定画像（ビルド軽量化）
-const ogImage = data.cover ?? (store.source === 'md' ? `/og/place/${slug}.png` : '/og-default.svg');
+// 店舗ごとにOGP画像を個別生成（md/csv問わず）。写真があればそれを優先。
+const ogImage = data.cover ?? `/og/place/${slug}.png`;
 // 本文は md のみ。csv は description を段落表示。
 const Content = store.entry ? (await render(store.entry)).Content : null;
 

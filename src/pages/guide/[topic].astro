@@ -1,0 +1,166 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import { GUIDES, GUIDE_BY_SLUG } from '../../data/guides';
+import { getStores } from '../../lib/content';
+import { CATEGORIES, SITE_CONFIG } from '../../data/site';
+import { MUNI_BY_SLUG } from '../../data/areas';
+
+export const getStaticPaths = (async () => {
+  return GUIDES.map((g) => ({ params: { topic: g.slug }, props: { slug: g.slug } }));
+}) satisfies GetStaticPaths;
+
+const { slug } = Astro.props as { slug: string };
+const guide = GUIDE_BY_SLUG.get(slug)!;
+const stores = await getStores();
+const storeById = new Map(stores.map((s) => [s.id, s]));
+const muni = guide.areaSlug ? MUNI_BY_SLUG.get(guide.areaSlug) : undefined;
+const accent = guide.accent ?? '#d8452b';
+
+const abs = (p: string) => new URL(p, Astro.site ?? SITE_CONFIG.domain).href;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: guide.title,
+    description: guide.lead,
+    datePublished: new Date(guide.publishedAt).toISOString(),
+    author: { '@type': 'Organization', name: SITE_CONFIG.name },
+    publisher: { '@type': 'Organization', name: SITE_CONFIG.name },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: guide.title,
+    itemListElement: guide.steps.map((st, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: st.title,
+      ...(st.placeId && storeById.has(st.placeId) ? { url: abs(`/place/${st.placeId}/`) } : {}),
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'まとめ', item: abs('/guide/') },
+      { '@type': 'ListItem', position: 3, name: guide.title },
+    ],
+  },
+];
+---
+
+<Base title={guide.title} description={guide.lead} jsonLd={jsonLd}>
+  <section class="gd-hero" style={`--_c:${accent}`}>
+    <div class="wrap">
+      <nav class="crumbs" aria-label="パンくず">
+        <a href="/">ホーム</a><span aria-hidden="true">/</span>
+        <a href="/guide/">まとめ</a>
+      </nav>
+      <p class="gd-eyebrow">MODEL COURSE</p>
+      <h1 class="display gd-title">{guide.title}</h1>
+      <p class="gd-lead mincho">{guide.lead}</p>
+      <ul class="gd-tags">
+        {guide.tags.map((t) => <li><a href={`/tag/${encodeURIComponent(t)}/`} class="chip chip--link">#{t}</a></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <div class="wrap gd-body">
+    <p class="gd-intro mincho">{guide.intro}</p>
+
+    <ol class="gd-steps" style={`--_c:${accent}`}>
+      {guide.steps.map((st, i) => {
+        const store = st.placeId ? storeById.get(st.placeId) : undefined;
+        const cat = store ? CATEGORIES[store.data.category as keyof typeof CATEGORIES] : undefined;
+        return (
+          <li class="gd-step" data-reveal>
+            <div class="gd-step-mark">
+              <span class="gd-step-num latin">{String(i + 1).padStart(2, '0')}</span>
+              {st.time && <span class="gd-step-time">{st.time}</span>}
+            </div>
+            <div class="gd-step-body">
+              <h2 class="display gd-step-title">{st.title}</h2>
+              <p class="gd-step-text">{st.body}</p>
+              {store && cat ? (
+                <a href={`/place/${store.id}/`} class="gd-place" style={`--_a:${cat.accent}`}>
+                  <span class="gd-place-tag" style={`background:${cat.accent}`}>{cat.label}</span>
+                  <span class="gd-place-info">
+                    <b class="mincho">{store.data.name}</b>
+                    <span class="muted">{store.data.area}｜{store.data.tagline}</span>
+                  </span>
+                  <span class="arw" aria-hidden="true">→</span>
+                </a>
+              ) : st.area ? (
+                <p class="gd-step-area muted">📍 {st.area}</p>
+              ) : null}
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+
+    <!-- 回遊：エリア・他のまとめ -->
+    <div class="gd-foot" data-reveal>
+      {muni && (
+        <a href={`/area/${guide.areaSlug}/`} class="btn btn--ghost">
+          {muni.name}の見どころ・お店をもっと見る <span class="arw">→</span>
+        </a>
+      )}
+      <a href="/guide/" class="btn btn--ghost">ほかのまとめを見る <span class="arw">→</span></a>
+    </div>
+
+    <div class="gd-cta" data-reveal>
+      <p class="mincho gd-cta-h">このコースにお店を載せませんか。</p>
+      <p class="muted">モデルコースやまとめで紹介するお店を募集しています。無料掲載から。</p>
+      <a href="/biz/" class="btn btn--shu">掲載を相談する <span class="arw">→</span></a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .gd-hero { color: #fff; padding: clamp(2.8rem, 7vw, 4.5rem) 0 clamp(2rem, 4vw, 2.8rem);
+    background: linear-gradient(135deg, var(--_c), color-mix(in srgb, var(--_c) 45%, var(--ink))); }
+  .crumbs { display: flex; gap: 0.5rem; font-size: var(--step--1); color: rgba(255,255,255,.82); margin-bottom: 1.2rem; }
+  .crumbs a:hover { color: #fff; }
+  .gd-eyebrow { font-family: var(--font-latin); letter-spacing: 0.18em; font-size: var(--step--1); color: rgba(255,255,255,.75); }
+  .gd-title { font-size: var(--step-4); line-height: 1.28; margin: 0.5rem 0 0.8rem; color: #fff; }
+  .gd-lead { font-size: var(--step-1); color: rgba(255,255,255,.92); max-width: 60ch; }
+  .gd-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.4rem; }
+  .gd-tags .chip { color: #fff; border-color: rgba(255,255,255,.5); background: rgba(255,255,255,.12); }
+
+  .gd-body { max-width: 780px; padding-block: clamp(2.5rem, 6vw, 4rem); }
+  .gd-intro { font-size: var(--step-1); line-height: 2; color: var(--ink); margin-bottom: clamp(2rem, 5vw, 3rem); }
+
+  .gd-steps { list-style: none; display: grid; gap: clamp(1.5rem, 3vw, 2.2rem); }
+  .gd-step { display: grid; grid-template-columns: 4.5rem 1fr; gap: 1.2rem; position: relative; }
+  .gd-step::before { content: ""; position: absolute; left: 1.55rem; top: 3.2rem; bottom: -1.6rem; width: 2px; background: var(--line); }
+  .gd-step:last-child::before { display: none; }
+  .gd-step-mark { display: grid; justify-items: center; gap: 0.3rem; }
+  .gd-step-num { display: grid; place-items: center; width: 3.2rem; height: 3.2rem; border-radius: 50%;
+    background: var(--_c); color: #fff; font-size: var(--step-0); font-weight: 700; }
+  .gd-step-time { font-size: var(--step--2); color: var(--ink-mute); font-family: var(--font-latin); }
+  .gd-step-title { font-size: var(--step-2); margin-bottom: 0.5rem; }
+  .gd-step-text { color: var(--ink-soft); line-height: 1.9; }
+
+  .gd-place { display: flex; align-items: center; gap: 0.9rem; margin-top: 1rem; padding: 0.9rem 1.1rem;
+    border: 1px solid var(--line); border-radius: var(--radius); transition: border-color 0.25s var(--ease), transform 0.25s var(--ease); }
+  .gd-place:hover { border-color: var(--_a); transform: translateX(3px); }
+  .gd-place-tag { color: #fff; font-size: var(--step--1); font-weight: 700; padding: 0.25em 0.7em; border-radius: 999px; flex-shrink: 0; }
+  .gd-place-info { display: grid; gap: 0.1rem; flex: 1; }
+  .gd-place-info b { font-size: var(--step-0); }
+  .gd-place-info .muted { font-size: var(--step--1); }
+  .gd-step-area { margin-top: 0.8rem; font-size: var(--step--1); }
+
+  .gd-foot { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: clamp(2.5rem, 5vw, 3.5rem); padding-top: 2rem; border-top: 1px solid var(--line); }
+  .gd-cta { text-align: center; margin-top: 2.5rem; background: var(--paper-2); border-radius: var(--radius); padding: clamp(2rem, 5vw, 3rem); display: grid; gap: 0.5rem; justify-items: center; }
+  .gd-cta-h { font-size: var(--step-2); color: var(--ink); }
+  .gd-cta .btn { margin-top: 1rem; }
+
+  @media (max-width: 560px) {
+    .gd-step { grid-template-columns: 3.4rem 1fr; }
+    .gd-step-num { width: 2.6rem; height: 2.6rem; }
+    .gd-step::before { left: 1.2rem; }
+  }
+</style>

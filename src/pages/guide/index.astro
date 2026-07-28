@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro';
+import { GUIDES } from '../../data/guides';
+
+const guides = [...GUIDES].sort((a, b) => new Date(b.publishedAt).valueOf() - new Date(a.publishedAt).valueOf());
+---
+
+<Base
+  title="茨城のまとめ・モデルコース｜デート・雨の日・休日プラン"
+  description="水戸デート、茨城の雨の日、大洗の休日プランなど。イバトコが目的別に巡り方をまとめた、茨城のモデルコース集です。"
+>
+  <section class="wrap section">
+    <p class="eyebrow" data-reveal>Guide / Model Course</p>
+    <h1 class="display page-title" data-reveal>目的から、茨城を選ぶ。</h1>
+    <p class="page-lead mincho" data-reveal>デートに、雨の日に、休日に。行きたい気分から巡り方が見つかる、イバトコのまとめ集。</p>
+
+    <ul class="gl-grid">
+      {guides.map((g) => (
+        <li data-reveal>
+          <a href={`/guide/${g.slug}/`} class="gl-card" style={`--_c:${g.accent ?? '#d8452b'}`}>
+            <div class="gl-card-top">
+              <span class="gl-eyebrow latin">MODEL COURSE</span>
+              <span class="gl-count">{g.steps.length} spots</span>
+            </div>
+            <h2 class="display gl-title">{g.title}</h2>
+            <p class="gl-lead mincho">{g.lead}</p>
+            <ul class="gl-tags">
+              {g.tags.slice(0, 4).map((t) => <li>#{t}</li>)}
+            </ul>
+            <span class="gl-more">コースを見る <span class="arw" aria-hidden="true">→</span></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .section { padding-block: clamp(3rem, 7vw, 5rem); }
+  .page-title { font-size: var(--step-4); margin: 0.5rem 0; }
+  .page-lead { font-size: var(--step-1); color: var(--ink-soft); margin-bottom: 3rem; }
+
+  .gl-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(1.5rem, 3vw, 2.2rem); }
+  .gl-card { display: grid; gap: 0.7rem; padding: clamp(1.6rem, 3.5vw, 2.4rem); border: 1px solid var(--line);
+    border-radius: var(--radius); background: color-mix(in srgb, var(--_c) 5%, var(--paper)); position: relative; overflow: hidden;
+    transition: border-color 0.25s var(--ease), transform 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+  .gl-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--_c); }
+  .gl-card:hover { border-color: var(--_c); transform: translateY(-3px); box-shadow: 0 10px 30px color-mix(in srgb, var(--_c) 18%, transparent); }
+  .gl-card-top { display: flex; justify-content: space-between; align-items: center; }
+  .gl-eyebrow { letter-spacing: 0.16em; font-size: var(--step--2); color: var(--_c); font-weight: 700; }
+  .gl-count { font-size: var(--step--1); color: var(--ink-mute); font-family: var(--font-latin); }
+  .gl-title { font-size: var(--step-2); line-height: 1.35; }
+  .gl-lead { color: var(--ink-soft); font-size: var(--step-0); line-height: 1.8; }
+  .gl-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.3rem; }
+  .gl-tags li { font-size: var(--step--2); color: var(--ink-mute); }
+  .gl-more { margin-top: 0.6rem; font-size: var(--step--1); font-weight: 700; color: var(--_c); }
+
+  @media (max-width: 720px) { .gl-grid { grid-template-columns: 1fr; } }
+</style>

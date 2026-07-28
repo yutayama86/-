@@ -1,5 +1,6 @@
 import { defineCollection, z, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { csvStoresLoader } from './loaders/csv-stores';
 
 /**
  * カテゴリ（階層1：集客メディア）
@@ -88,4 +89,33 @@ const places = defineCollection({
   }),
 });
 
-export const collections = { articles, places };
+/**
+ * 無料一括掲載の店舗（CSV → ビルド時生成）＝供給エンジン。
+ * places(md)より項目は少なく、本文なし。両者は lib/content.ts の getStores() で統合。
+ */
+const stores = defineCollection({
+  loader: csvStoresLoader('./src/data/stores.csv'),
+  schema: z.object({
+    name: z.string(),
+    kana: z.string().optional(),
+    category: z.enum(categoryKeys),
+    tagline: z.string(),
+    description: z.string(),
+    cover: z.string().optional(),
+    area: z.string(),
+    address: z.string().optional(),
+    access: z.string().optional(),
+    hours: z.string().optional(),
+    holiday: z.string().optional(),
+    tel: z.string().optional(),
+    budget: z.string().optional(),
+    features: z.array(z.string()).default([]),
+    website: z.string().url().optional(),
+    instagram: z.string().optional(),
+    map: z.string().url().optional(),
+    plan: z.enum(['free', 'official', 'growth', 'partner']).default('free'),
+    publishedAt: z.coerce.date().default(new Date('2026-07-01')),
+  }),
+});
+
+export const collections = { articles, places, stores };

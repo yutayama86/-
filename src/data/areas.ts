@@ -30,10 +30,10 @@ export const MUNICIPALITIES: Municipality[] = [
   { slug: 'kitaibaraki', name: '北茨城市', region: 'kenpoku', lat: 36.8, lon: 140.75 },
   { slug: 'takahagi', name: '高萩市', region: 'kenpoku', lat: 36.72, lon: 140.71 },
   { slug: 'hitachi', name: '日立市', region: 'kenpoku', lat: 36.6, lon: 140.65 },
-  { slug: 'naka', name: '那珂市', region: 'kenpoku', lat: 36.45, lon: 140.48 },
-  { slug: 'tokai', name: '東海村', region: 'kenpoku', lat: 36.47, lon: 140.57 },
-  { slug: 'hitachinaka', name: 'ひたちなか市', region: 'kenpoku', lat: 36.4, lon: 140.53 },
-  // ── 県央 ──
+  // ── 県央 ──（那珂市・東海村・ひたちなか市は茨城県の公式区分で県央）
+  { slug: 'naka', name: '那珂市', region: 'keno', lat: 36.45, lon: 140.48 },
+  { slug: 'tokai', name: '東海村', region: 'keno', lat: 36.47, lon: 140.57 },
+  { slug: 'hitachinaka', name: 'ひたちなか市', region: 'keno', lat: 36.4, lon: 140.53 },
   { slug: 'shirosato', name: '城里町', region: 'keno', lat: 36.47, lon: 140.36 },
   { slug: 'mito', name: '水戸市', region: 'keno', lat: 36.37, lon: 140.47 },
   { slug: 'kasama', name: '笠間市', region: 'keno', lat: 36.35, lon: 140.24 },

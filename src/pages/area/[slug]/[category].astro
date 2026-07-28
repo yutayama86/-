@@ -5,12 +5,12 @@ import ArticleCard from '../../../components/ArticleCard.astro';
 import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS } from '../../../data/areas';
 import { CATEGORIES, CATEGORY_LIST, CATEGORY_PAGE_META, SITE_CONFIG } from '../../../data/site';
 import { MUNICIPALITY_CONTENT } from '../../../data/municipality-content';
-import { getArticles, getPlaces } from '../../../lib/content';
+import { getArticles, getStores } from '../../../lib/content';
 import { areaToSlug } from '../../../data/areas';
 import type { CategoryKey } from '../../../content.config';
 
 export const getStaticPaths = (async () => {
-  const [articles, places] = await Promise.all([getArticles(), getPlaces()]);
+  const [articles, places] = await Promise.all([getArticles(), getStores()]);
   const paths: any[] = [];
   for (const m of MUNICIPALITIES) {
     const content = MUNICIPALITY_CONTENT[m.slug] ?? {};
@@ -36,7 +36,7 @@ const region = REGIONS[muni.region];
 const meta = CATEGORY_PAGE_META[catKey];
 const content = MUNICIPALITY_CONTENT[muniSlug] ?? {};
 
-const [allArticles, allPlaces] = await Promise.all([getArticles(), getPlaces()]);
+const [allArticles, allPlaces] = await Promise.all([getArticles(), getStores()]);
 const articles = allArticles.filter((a) => a.data.category === catKey && areaToSlug(a.data.area) === muniSlug);
 const places = allPlaces.filter((p) => p.data.category === catKey && areaToSlug(p.data.area) === muniSlug);
 const muniItems = meta.muniField === 'gourmet' ? content.gourmet ?? [] : meta.muniField === 'spotsExp' ? [...(content.spots ?? []), ...(content.experiences ?? [])] : [];

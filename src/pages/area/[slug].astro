@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import IbarakiMap from '../../components/IbarakiMap.astro';
 import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, municipalitiesByRegion } from '../../data/areas';
-import { getArticlesByArea, getPlacesByArea, getAreaCounts } from '../../lib/content';
+import { getArticlesByArea, getStoresByArea, getAreaCounts } from '../../lib/content';
 import { CATEGORIES, CATEGORY_LIST, CATEGORY_PAGE_META } from '../../data/site';
 import { MUNICIPALITY_CONTENT } from '../../data/municipality-content';
 
@@ -20,7 +20,7 @@ const region = REGIONS[muni.region];
 const content = MUNICIPALITY_CONTENT[slug!] ?? {};
 const [articles, places, counts] = await Promise.all([
   getArticlesByArea(slug!),
-  getPlacesByArea(slug!),
+  getStoresByArea(slug!),
   getAreaCounts(),
 ]);
 

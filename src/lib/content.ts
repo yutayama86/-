@@ -23,15 +23,78 @@ export async function getPlaces(): Promise<CollectionEntry<'places'>[]> {
 
 import { areaToSlug } from '../data/areas';
 
+/**
+ * 手書き店舗(places.md)と無料一括掲載(stores.csv)を統合した「店舗」正規化型。
+ * ディレクトリ /place/・詳細 /place/[id]・エリア/ジャンルページはこれを使う。
+ * source==='md' のときだけ本文(entry)を render できる。
+ */
+export type Store = {
+  id: string;
+  source: 'md' | 'csv';
+  entry?: CollectionEntry<'places'>;
+  data: {
+    name: string;
+    kana?: string;
+    category: string;
+    tagline: string;
+    description: string;
+    cover?: string;
+    gallery: string[];
+    recommend?: string;
+    area: string;
+    address?: string;
+    access?: string;
+    hours?: string;
+    holiday?: string;
+    tel?: string;
+    budget?: string;
+    features: string[];
+    website?: string;
+    instagram?: string;
+    map?: string;
+    menu: { name: string; price: string; note?: string }[];
+    faq: { q: string; a: string }[];
+    reserveUrl?: string;
+    plan: 'free' | 'official' | 'growth' | 'partner';
+    publishedAt: Date;
+  };
+};
+
+/** 全店舗（md＋csv）を新しい順に統合。同一slugはmd（作り込み）を優先。 */
+export async function getStores(): Promise<Store[]> {
+  const [mdPlaces, csvRows] = await Promise.all([
+    getPlaces(),
+    getCollection('stores'),
+  ]);
+  const md: Store[] = mdPlaces.map((p) => ({
+    id: p.id.split('/').pop()!,
+    source: 'md',
+    entry: p,
+    data: p.data as unknown as Store['data'],
+  }));
+  const csv: Store[] = csvRows.map((s) => ({
+    id: s.id,
+    source: 'csv',
+    data: { gallery: [], menu: [], faq: [], ...(s.data as object) } as Store['data'],
+  }));
+  const seen = new Set(md.map((s) => s.id));
+  const merged = [...md, ...csv.filter((s) => !seen.has(s.id))];
+  return merged.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+}
+
+export async function getStoresByArea(slug: string): Promise<Store[]> {
+  return (await getStores()).filter((s) => areaToSlug(s.data.area) === slug);
+}
+
 /** 市町村slugごとの記事・店舗件数（コンテンツのある市町村を把握） */
 export async function getAreaCounts(): Promise<Map<string, number>> {
-  const [articles, places] = await Promise.all([getArticles(), getPlaces()]);
+  const [articles, stores] = await Promise.all([getArticles(), getStores()]);
   const counts = new Map<string, number>();
   for (const a of articles) {
     const s = areaToSlug(a.data.area);
     if (s) counts.set(s, (counts.get(s) ?? 0) + 1);
   }
-  for (const p of places) {
+  for (const p of stores) {
     const s = areaToSlug(p.data.area);
     if (s) counts.set(s, (counts.get(s) ?? 0) + 1);
   }

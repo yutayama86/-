@@ -3,41 +3,45 @@ import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { CATEGORIES, SITE_CONFIG } from '../../data/site';
-import { getPlaces, getArticles } from '../../lib/content';
+import { getStores, getArticles } from '../../lib/content';
 import { areaToSlug, MUNI_BY_SLUG } from '../../data/areas';
 
 export const getStaticPaths = (async () => {
-  const places = await getPlaces();
-  return places.map((p) => ({
-    params: { id: p.id.split('/').pop() },
-    props: { place: p },
+  const stores = await getStores();
+  return stores.map((s) => ({
+    params: { id: s.id },
+    props: { store: s },
   }));
 }) satisfies GetStaticPaths;
 
-const { place } = Astro.props;
-const { data } = place;
-const cat = CATEGORIES[data.category];
-const slug = place.id.split('/').pop();
-const ogImage = data.cover ?? `/og/place/${slug}.png`;
-const { Content } = await render(place);
+const { store } = Astro.props;
+const { data } = store;
+const cat = CATEGORIES[data.category as keyof typeof CATEGORIES];
+const slug = store.id;
+// 作り込み店舗(md)はOGP画像を個別生成、無料一括掲載(csv)は既定画像（ビルド軽量化）
+const ogImage = data.cover ?? (store.source === 'md' ? `/og/place/${slug}.png` : '/og-default.svg');
+// 本文は md のみ。csv は description を段落表示。
+const Content = store.entry ? (await render(store.entry)).Content : null;
 
-// この店舗を紹介した記事
-const articles = (await getArticles()).filter((a) => a.data.place?.id === place.id);
+// この店舗を紹介した記事（mdのみ紐付く）
+const articles = store.entry
+  ? (await getArticles()).filter((a) => a.data.place?.id === store.entry!.id)
+  : [];
 
 // 近隣情報：市町村ページへ紐付け
 const areaSlug = areaToSlug(data.area);
 const muni = areaSlug ? MUNI_BY_SLUG.get(areaSlug) : undefined;
 
 // 同じ市町村の他の店舗（関連スポット・回遊）
-const nearby = (await getPlaces())
-  .filter((p) => p.id !== place.id && areaToSlug(p.data.area) === areaSlug)
+const nearby = (await getStores())
+  .filter((p) => p.id !== store.id && areaToSlug(p.data.area) === areaSlug)
   .slice(0, 4);
 
 const isOfficial = data.plan !== 'free';
 const planLabel = { free: '', official: '公式店舗', growth: '公式店舗', partner: '公式店舗' }[data.plan];
 
 // 予約導線：reserveUrl があればそこへ、なければ自社 /reserve/ フォームへ
-const reserveHref = data.reserveUrl ?? `/reserve/?place=${place.id.split('/').pop()}`;
+const reserveHref = data.reserveUrl ?? `/reserve/?place=${store.id}`;
 
 const abs = (path: string) => new URL(path, Astro.site ?? SITE_CONFIG.domain).href;
 
@@ -119,7 +123,7 @@ const jsonLd: Record<string, unknown>[] = [
         )}
 
         <section class="lp-desc prose">
-          <Content />
+          {Content ? <Content /> : <p>{data.description}</p>}
         </section>
 
         {data.features.length > 0 && (

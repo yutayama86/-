@@ -1,65 +1,215 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { CATEGORIES } from '../../data/site';
-import { getPlaces } from '../../lib/content';
+import { CATEGORIES, CATEGORY_LIST } from '../../data/site';
+import { getStores } from '../../lib/content';
+import { areaToSlug, MUNI_BY_SLUG, REGIONS, REGION_ORDER } from '../../data/areas';
 
-const places = await getPlaces();
+const stores = await getStores();
+
+// 各店舗にエリア（region）を付与
+const rows = stores.map((s) => {
+  const muniSlug = areaToSlug(s.data.area);
+  const region = muniSlug ? MUNI_BY_SLUG.get(muniSlug)?.region : undefined;
+  return { s, region: region ?? '', muniSlug: muniSlug ?? '' };
+});
+
+// 絞り込みファセット
+const regionFacets = REGION_ORDER.map((key) => ({ key, label: REGIONS[key].label }))
+  .filter((r) => rows.some((row) => row.region === r.key));
+const catFacets = CATEGORY_LIST.filter((c) => rows.some((row) => row.s.data.category === c.key));
+
+// 特徴タグ（2件以上に出るものだけ＝ノイズ低減）
+const featCount = new Map<string, number>();
+for (const row of rows) for (const f of row.s.data.features) featCount.set(f, (featCount.get(f) ?? 0) + 1);
+const featFacets = [...featCount.entries()]
+  .filter(([, n]) => n >= 2)
+  .sort((a, b) => b[1] - a[1])
+  .map(([f]) => f);
+
+const total = rows.length;
 ---
 
-<Base title="掲載店舗・企業一覧" description="イバトコが取材した茨城のお店・企業の一覧です。">
+<Base
+  title="店舗ディレクトリ｜茨城のお店・企業を探す"
+  description="茨城県のお店・企業をエリア・ジャンル・特徴でしぼって探せます。イバトコが掲載する店舗ディレクトリ。"
+>
   <section class="wrap section">
-    <p class="eyebrow" data-reveal>Places</p>
-    <h1 class="display page-title" data-reveal>掲載店舗・企業</h1>
-    <p class="page-lead mincho" data-reveal>イバトコ取材班が実際に足を運んだ、茨城の“いいとこ”たち。</p>
+    <p class="eyebrow" data-reveal>Directory</p>
+    <h1 class="display page-title" data-reveal>茨城のお店を探す</h1>
+    <p class="page-lead mincho" data-reveal>エリア・ジャンル・特徴でしぼりこみ。行った人の熱量で選ぶ、茨城の“いいとこ”。</p>
 
-    {places.length === 0 ? (
-      <p class="empty muted mincho">最初の掲載店舗をただいま準備中です。</p>
-    ) : (
-      <ul class="place-grid">
-        {places.map((p) => {
-          const cat = CATEGORIES[p.data.category];
-          return (
-            <li data-reveal>
-              <a href={`/place/${p.id.split('/').pop()}/`} class="place-card" style={`--_a:${cat.accent}`}>
-                <div class="place-media">
-                  {p.data.cover ? (
-                    <img src={p.data.cover} alt={p.data.name} loading="lazy" />
-                  ) : (
-                    <div class="place-fallback"><span class="mincho">{p.data.name}</span></div>
-                  )}
-                  <span class="place-tag">{cat.label}</span>
-                </div>
-                <div class="place-body">
-                  <p class="place-area muted">{p.data.area}</p>
-                  <h2 class="place-name display">{p.data.name}</h2>
-                  <p class="place-tagline">{p.data.tagline}</p>
-                </div>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    )}
+    <!-- 絞り込みバー -->
+    <div class="filters" data-reveal>
+      <div class="filter-group">
+        <span class="filter-label">エリア</span>
+        <div class="chips" data-facet="region">
+          <button class="fchip is-active" data-value="">すべて</button>
+          {regionFacets.map((r) => <button class="fchip" data-value={r.key}>{r.label}</button>)}
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">ジャンル</span>
+        <div class="chips" data-facet="category">
+          <button class="fchip is-active" data-value="">すべて</button>
+          {catFacets.map((c) => (
+            <button class="fchip" data-value={c.key} style={`--_c:${c.accent}`}>{c.label}</button>
+          ))}
+        </div>
+      </div>
+      {featFacets.length > 0 && (
+        <div class="filter-group">
+          <span class="filter-label">特徴</span>
+          <div class="chips" data-facet="feature">
+            {featFacets.map((f) => <button class="fchip fchip--feat" data-value={f}>{f}</button>)}
+          </div>
+        </div>
+      )}
+    </div>
+
+    <p class="result-count muted" data-reveal>
+      <span id="rc-num">{total}</span> 件の店舗
+    </p>
+
+    <ul class="place-grid" id="place-grid">
+      {rows.map(({ s, region, muniSlug }) => {
+        const cat = CATEGORIES[s.data.category as keyof typeof CATEGORIES];
+        return (
+          <li
+            class="place-item"
+            data-category={s.data.category}
+            data-region={region}
+            data-features={s.data.features.join('|')}
+          >
+            <a href={`/place/${s.id}/`} class="place-card" style={`--_a:${cat.accent}`}>
+              <div class="place-media">
+                {s.data.cover ? (
+                  <img src={s.data.cover} alt={s.data.name} loading="lazy" />
+                ) : (
+                  <div class="place-fallback"><span class="mincho">{s.data.name}</span></div>
+                )}
+                <span class="place-tag">{cat.label}</span>
+                {s.data.plan !== 'free' && <span class="place-official">✓ 公式</span>}
+              </div>
+              <div class="place-body">
+                <p class="place-area muted">{s.data.area}</p>
+                <h2 class="place-name display">{s.data.name}</h2>
+                <p class="place-tagline">{s.data.tagline}</p>
+                {s.data.features.length > 0 && (
+                  <ul class="place-feats">
+                    {s.data.features.slice(0, 3).map((f) => <li>{f}</li>)}
+                  </ul>
+                )}
+              </div>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+
+    <p class="empty muted mincho" id="no-result" hidden>
+      条件にあうお店が見つかりませんでした。絞り込みを変えてお試しください。
+    </p>
+
+    <div class="dir-cta" data-reveal>
+      <p class="mincho dir-cta-h">お店を掲載しませんか。</p>
+      <p class="muted">無料掲載から。写真・クーポン・分析がつく公式店舗へのアップグレードも。</p>
+      <a href="/biz/" class="btn btn--shu">掲載を相談する <span class="arw">→</span></a>
+    </div>
   </section>
 </Base>
+
+<script>
+  const grid = document.getElementById('place-grid');
+  if (grid) {
+    const items = Array.from(grid.querySelectorAll<HTMLElement>('.place-item'));
+    const state = { region: '', category: '', feature: new Set<string>() };
+    const rcNum = document.getElementById('rc-num');
+    const noResult = document.getElementById('no-result');
+
+    function apply() {
+      let shown = 0;
+      for (const el of items) {
+        const okRegion = !state.region || el.dataset.region === state.region;
+        const okCat = !state.category || el.dataset.category === state.category;
+        const feats = (el.dataset.features || '').split('|').filter(Boolean);
+        const okFeat = [...state.feature].every((f) => feats.includes(f));
+        const visible = okRegion && okCat && okFeat;
+        el.hidden = !visible;
+        if (visible) shown++;
+      }
+      if (rcNum) rcNum.textContent = String(shown);
+      if (noResult) noResult.hidden = shown !== 0;
+    }
+
+    document.querySelectorAll<HTMLElement>('.filters .chips').forEach((group) => {
+      const facet = group.dataset.facet as 'region' | 'category' | 'feature';
+      group.querySelectorAll<HTMLButtonElement>('.fchip').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const value = btn.dataset.value || '';
+          if (facet === 'feature') {
+            // 複数選択（AND）
+            if (state.feature.has(value)) state.feature.delete(value);
+            else state.feature.add(value);
+            btn.classList.toggle('is-active');
+          } else {
+            // 単一選択
+            state[facet] = value;
+            group.querySelectorAll('.fchip').forEach((b) => b.classList.remove('is-active'));
+            btn.classList.add('is-active');
+          }
+          apply();
+        });
+      });
+    });
+  }
+</script>
 
 <style>
   .section { padding-block: clamp(3rem, 7vw, 5rem); }
   .page-title { font-size: var(--step-4); margin: 0.5rem 0; }
-  .page-lead { font-size: var(--step-1); color: var(--ink-soft); margin-bottom: 3rem; }
+  .page-lead { font-size: var(--step-1); color: var(--ink-soft); margin-bottom: 2.5rem; }
+
+  /* ---- 絞り込みバー ---- */
+  .filters { display: grid; gap: 1rem; padding: 1.4rem 1.5rem; background: var(--paper-2); border-radius: var(--radius); margin-bottom: 1.5rem; }
+  .filter-group { display: grid; grid-template-columns: 4.5em 1fr; gap: 0.6rem 1rem; align-items: start; }
+  .filter-label { font-size: var(--step--1); color: var(--ink-soft); font-weight: 700; padding-top: 0.45rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .fchip {
+    font-size: var(--step--1); padding: 0.4em 0.95em; border-radius: 999px;
+    border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink-soft);
+    cursor: pointer; transition: all 0.2s var(--ease); line-height: 1.4;
+  }
+  .fchip:hover { border-color: var(--_c, var(--ink)); color: var(--ink); }
+  .fchip.is-active { background: var(--_c, var(--ink)); border-color: var(--_c, var(--ink)); color: #fff; }
+  .fchip--feat.is-active { background: var(--matcha, #3f7d5a); border-color: var(--matcha, #3f7d5a); }
+  @media (max-width: 560px) { .filter-group { grid-template-columns: 1fr; gap: 0.35rem; } .filter-label { padding-top: 0; } }
+
+  .result-count { font-size: var(--step--1); margin-bottom: 1.5rem; }
+  .result-count #rc-num { font-weight: 700; color: var(--ink); }
+
+  /* ---- グリッド ---- */
   .place-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); }
-  .place-card { display: grid; gap: 1rem; }
+  .place-item[hidden] { display: none; }
+  .place-card { display: grid; gap: 0.9rem; }
   .place-media { position: relative; aspect-ratio: 4/3; overflow: hidden; border-radius: var(--radius); background: var(--paper-3); }
   .place-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease); }
   .place-card:hover .place-media img { transform: scale(1.06); }
   .place-fallback { width: 100%; height: 100%; display: grid; place-items: center; background: linear-gradient(135deg, color-mix(in srgb, var(--_a) 16%, var(--paper-2)), var(--paper-3)); color: color-mix(in srgb, var(--_a) 70%, var(--ink)); }
-  .place-fallback span { font-size: var(--step-1); letter-spacing: 0.1em; opacity: 0.6; }
+  .place-fallback span { font-size: var(--step-1); letter-spacing: 0.1em; opacity: 0.6; text-align: center; padding: 0 1rem; }
   .place-tag { position: absolute; top: 0.8rem; left: 0.8rem; background: var(--_a); color: #fff; font-size: var(--step--1); font-weight: 700; padding: 0.3em 0.8em; border-radius: 999px; }
+  .place-official { position: absolute; top: 0.8rem; right: 0.8rem; background: var(--gold); color: #3a2c0e; font-size: var(--step--2); font-weight: 700; padding: 0.25em 0.7em; border-radius: 999px; }
   .place-area { font-size: var(--step--1); }
   .place-name { font-size: var(--step-1); transition: color 0.3s; }
   .place-card:hover .place-name { color: var(--shu-deep); }
   .place-tagline { color: var(--ink-soft); font-size: var(--step-0); }
-  .empty { font-size: var(--step-1); padding-block: 3rem; }
+  .place-feats { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.2rem; }
+  .place-feats li { font-size: var(--step--2); color: var(--ink-soft); background: var(--paper-2); border: 1px solid var(--line); padding: 0.15em 0.6em; border-radius: 999px; }
+  .empty { font-size: var(--step-1); padding-block: 3rem; text-align: center; }
+
+  .dir-cta { margin-top: 4rem; text-align: center; background: var(--paper-2); border-radius: var(--radius); padding: clamp(2rem, 5vw, 3rem); display: grid; gap: 0.5rem; justify-items: center; }
+  .dir-cta-h { font-size: var(--step-2); color: var(--ink); }
+  .dir-cta .btn { margin-top: 1rem; }
+
   @media (max-width: 1000px) { .place-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .place-grid { grid-template-columns: 1fr; } }
 </style>

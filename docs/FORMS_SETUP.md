@@ -6,14 +6,14 @@
 ## いまの状態
 
 - 送信先（エンドポイント）は `src/data/site.ts` の `formEndpoint`（現在は空）。
-- 空のあいだ：送信ボタンでメール作成画面が開く（`hello@ibatoco.jp` 宛）。
+- 空のあいだ：送信ボタンでメール作成画面が開く（`info@ibatoco.jp` 宛）。
 - 設定後：ページ遷移なしのAJAX送信になり、完了メッセージが出る（`src/lib/forms.ts`）。
 - スパム対策の honeypot（`_gotcha`）と件名（`_subject`）は設定済み。返信先は入力された `email` が自動で使われます。
 
 ## 手順（あなたの作業：無料プランでOK）
 
 1. [formspree.io](https://formspree.io/) でアカウントを作成（※アカウント作成・ログインはご本人で。Claudeは代行しません）。
-2. 「New Form」で受信先メール（例：`hello@ibatoco.jp`）を指定してフォームを作成。
+2. 「New Form」で受信先メール（例：`info@ibatoco.jp`）を指定してフォームを作成。
 3. 発行される **エンドポイントURL**（例：`https://formspree.io/f/abcdwxyz`）をコピー。
 4. `src/data/site.ts` を開き、`formEndpoint` に貼り付け：
 

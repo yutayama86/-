@@ -30,11 +30,14 @@ export interface Guide {
   intro: string;
   steps: GuideStep[];
   publishedAt: string;
+  /** 公開前の非表示フラグ（本番ビルドで除外） */
+  draft?: boolean;
 }
 
 export const GUIDES: Guide[] = [
   {
     slug: 'mito-date',
+    draft: true, // ※デモ用。実在の内容に差し替えたら false に
     title: '水戸デートのモデルコース。半日で“ちょうどいい”を巡る',
     lead: '珈琲で始めて、庭園を歩き、夜はほぐれて帰る。水戸で過ごす、肩肘張らない半日デート。',
     areaSlug: 'mito',
@@ -52,6 +55,7 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: 'ibaraki-rainy-day',
+    draft: true, // ※デモ用。実在の内容に差し替えたら false に
     title: '茨城・雨の日でも楽しい過ごし方。屋内で“ととのう”一日',
     lead: '雨でも大丈夫。サウナ、器めぐり、温泉宿。濡れずに満ちる、茨城の雨の日プラン。',
     accent: '#2f6f9e',
@@ -67,6 +71,7 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: 'oarai-holiday',
+    draft: true, // ※デモ用。実在の内容に差し替えたら false に
     title: '大洗の休日プラン。海を五感で味わう一日',
     lead: '朝どれの魚を買って、太平洋を水風呂に。海の街・大洗を、まるごと楽しむ休日。',
     areaSlug: 'oarai',
@@ -83,6 +88,7 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: 'tsukuba-holiday',
+    draft: true, // ※デモ用。実在の内容に差し替えたら false に
     title: 'つくばの休日プラン。筑波山から、澄んだ一杯とサウナへ',
     lead: '朝は山、昼は名店の一杯、午後は森のサウナ。知の街つくばで、体をゆるめる休日。',
     areaSlug: 'tsukuba',
@@ -100,6 +106,7 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: 'kasama-pottery',
+    draft: true, // ※デモ用。実在の内容に差し替えたら false に
     title: '笠間で器めぐり。焼きものと出会う半日',
     lead: '稲荷神社に参って、ギャラリーと工房で“ふだんの器”を探す。焼きものの街・笠間をめぐる半日。',
     areaSlug: 'kasama',
@@ -117,6 +124,7 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: 'hitachinaka-nemophila',
+    draft: true, // ※デモ用。実在の内容に差し替えたら false に
     title: 'ひたちなかの海辺で過ごす一日。花と、パンと、潮風のサイクリング',
     lead: 'ネモフィラの丘に、焼きたてのパン、海沿いを走る自転車。ひたちなかの海を、まるごと楽しむ一日。',
     areaSlug: 'hitachinaka',
@@ -133,4 +141,9 @@ export const GUIDES: Guide[] = [
   },
 ];
 
-export const GUIDE_BY_SLUG = new Map(GUIDES.map((g) => [g.slug, g]));
+// 本番ビルドでは draft を除外。dev/preview では全て表示。
+const isProd = import.meta.env.PROD;
+/** 公開対象のまとめ（本番では draft を除外） */
+export const VISIBLE_GUIDES = GUIDES.filter((g) => !(isProd && g.draft));
+
+export const GUIDE_BY_SLUG = new Map(VISIBLE_GUIDES.map((g) => [g.slug, g]));

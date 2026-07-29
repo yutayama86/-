@@ -38,7 +38,12 @@ const total = rows.length;
     <h1 class="display page-title" data-reveal>茨城のお店を探す</h1>
     <p class="page-lead mincho" data-reveal>エリア・ジャンル・特徴でしぼりこみ。行った人の熱量で選ぶ、茨城の“いいとこ”。</p>
 
-    <!-- 絞り込みバー -->
+    {total === 0 && (
+      <p class="empty muted mincho" data-reveal>掲載店舗はただいま準備中です。近日、茨城のお店が続々登場します。</p>
+    )}
+
+    {total > 0 && (
+    <Fragment>
     <div class="filters" data-reveal>
       <div class="filter-group filter-group--search">
         <span class="filter-label">キーワード</span>
@@ -123,6 +128,8 @@ const total = rows.length;
     <p class="empty muted mincho" id="no-result" hidden>
       条件にあうお店が見つかりませんでした。絞り込みを変えてお試しください。
     </p>
+    </Fragment>
+    )}
 
     <div class="dir-cta" data-reveal>
       <p class="mincho dir-cta-h">お店を掲載しませんか。</p>

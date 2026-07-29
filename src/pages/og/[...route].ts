@@ -1,7 +1,7 @@
 import { OGImageRoute } from 'astro-og-canvas';
 import { getArticles, getStores } from '../../lib/content';
 import { CATEGORIES } from '../../data/site';
-import { GUIDES } from '../../data/guides';
+import { VISIBLE_GUIDES as GUIDES } from '../../data/guides';
 
 /**
  * 記事・店舗・まとめごとのOGP画像（SNSシェア画像）をビルド時にPNG生成します。

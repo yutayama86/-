@@ -64,7 +64,7 @@ export type Store = {
 export async function getStores(): Promise<Store[]> {
   const [mdPlaces, csvRows] = await Promise.all([
     getPlaces(),
-    getCollection('stores'),
+    getCollection('stores', ({ data }) => !(isProd && (data as { draft?: boolean }).draft)),
   ]);
   const md: Store[] = mdPlaces.map((p) => ({
     id: p.id.split('/').pop()!,

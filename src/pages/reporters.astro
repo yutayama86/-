@@ -1,10 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import { REPORTERS } from '../data/reporters';
+import { VISIBLE_REPORTERS } from '../data/reporters';
 import { getArticlesByReporter } from '../lib/content';
 
 const roster = await Promise.all(
-  REPORTERS.map(async (r) => ({
+  VISIBLE_REPORTERS.map(async (r) => ({
     r,
     count: (await getArticlesByReporter(r.name)).length,
     initial: r.name.replace(/^(編集長|公式レポーター)\s*/, '').slice(0, 1),
@@ -27,24 +27,26 @@ const roster = await Promise.all(
     </div>
   </section>
 
-  <section class="wrap section">
-    <div class="sec-head" data-reveal><h2>いま活動中のレポーター<span class="latin num"> / Members</span></h2></div>
-    <ul class="rp-roster">
-      {roster.map(({ r, count, initial }) => (
-        <li data-reveal>
-          <a href={`/reporter/${r.slug}/`} class="rp-member">
-            <div class="rp-member-avatar" aria-hidden="true">
-              {r.avatar ? <img src={r.avatar} alt="" /> : <span class="mincho">{initial}</span>}
-            </div>
-            <p class="rp-member-role">{r.role}</p>
-            <p class="rp-member-name display">{r.name}</p>
-            {r.area && <p class="rp-member-area muted">📍 {r.area}</p>}
-            <p class="rp-member-count latin">{count} 記事</p>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
+  {roster.length > 0 && (
+    <section class="wrap section">
+      <div class="sec-head" data-reveal><h2>いま活動中のレポーター<span class="latin num"> / Members</span></h2></div>
+      <ul class="rp-roster">
+        {roster.map(({ r, count, initial }) => (
+          <li data-reveal>
+            <a href={`/reporter/${r.slug}/`} class="rp-member">
+              <div class="rp-member-avatar" aria-hidden="true">
+                {r.avatar ? <img src={r.avatar} alt="" /> : <span class="mincho">{initial}</span>}
+              </div>
+              <p class="rp-member-role">{r.role}</p>
+              <p class="rp-member-name display">{r.name}</p>
+              {r.area && <p class="rp-member-area muted">📍 {r.area}</p>}
+              <p class="rp-member-count latin">{count} 記事</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
 
   <section class="wrap section">
     <div class="rp-merit">

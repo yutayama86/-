@@ -115,6 +115,8 @@ const stores = defineCollection({
     map: z.string().url().optional(),
     plan: z.enum(['free', 'official', 'growth', 'partner']).default('free'),
     publishedAt: z.coerce.date().default(new Date('2026-07-01')),
+    // 公開前の非表示フラグ（本番ビルドで除外）
+    draft: z.boolean().default(false),
   }),
 });
 

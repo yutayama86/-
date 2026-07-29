@@ -39,6 +39,7 @@ export function csvStoresLoader(path: string): Loader {
           area: row.area?.trim(),
           features,
           plan: (row.plan?.trim() || 'free'),
+          draft: row.draft?.trim() === 'true',
         };
         // 任意項目は値があるときだけ渡す（空文字でzod optionalを汚さない）
         for (const key of ['kana', 'address', 'access', 'hours', 'holiday', 'tel', 'budget', 'website', 'instagram', 'map', 'cover', 'publishedAt'] as const) {

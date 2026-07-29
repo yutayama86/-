@@ -32,6 +32,8 @@ export interface Reporter {
   /** 顔写真URL（未設定ならイニシャル表示） */
   avatar?: string;
   sns?: { instagram?: string; x?: string; note?: string; website?: string };
+  /** 公開前の非表示フラグ（本番ビルドで除外＝実在レポーターのみ公開） */
+  draft?: boolean;
 }
 
 export const REPORTERS: Reporter[] = [
@@ -44,6 +46,7 @@ export const REPORTERS: Reporter[] = [
     area: '茨城全域',
     genres: ['グルメ', '企業・ものづくり'],
     expertise: ['ラーメン・中華そば', 'ご当地グルメ', 'ものづくり・職人取材', '地域の商い'],
+    draft: true, // ※デモ用。実在レポーターに差し替えたら false に
     bio: '茨城生まれ、茨城育ち。県内を車で走り回り、店主や職人の話を聞いてまわるのがライフワーク。派手な流行より、地元で長く愛される“本物”に惹かれます。「行った人にしか書けない一次情報」にこだわり、イバトコの企画・取材・編集を統括しています。',
     credentials: [
       'イバトコ編集長 — 媒体全体の企画・取材・編集を統括',
@@ -63,6 +66,7 @@ export const REPORTERS: Reporter[] = [
     area: '県央（水戸・ひたちなか・大洗）',
     genres: ['暮らし', 'ビューティ', 'あそび・サウナ'],
     expertise: ['カフェ・朝市', 'リラクゼーション・サロン', 'サウナ・ととのい', '休日のおでかけ'],
+    draft: true, // ※デモ用。実在レポーターに差し替えたら false に
     bio: '県央エリアを拠点に活動する公式レポーター。観光名所よりも、地元の人が日常づかいする“ふだんのいいとこ”が好き。朝市やサロン、サウナまで、暮らしのなかの「ちょっといい時間」を実際に体験してレポートしています。',
     credentials: [
       'イバトコ公式レポーター（県央エリア担当）',
@@ -75,10 +79,15 @@ export const REPORTERS: Reporter[] = [
   },
 ];
 
-export const REPORTER_BY_SLUG = new Map(REPORTERS.map((r) => [r.slug, r]));
-export const REPORTER_BY_NAME = new Map(REPORTERS.map((r) => [r.name, r]));
+// 本番ビルドでは draft を除外（＝実在レポーターのみ公開）。dev/preview では全員表示。
+const isProd = import.meta.env.PROD;
+/** 公開対象のレポーター（本番では draft を除外） */
+export const VISIBLE_REPORTERS = REPORTERS.filter((r) => !(isProd && r.draft));
 
-/** 記事の reporter 表示名から登録レポーターを引く（未登録なら undefined） */
+export const REPORTER_BY_SLUG = new Map(VISIBLE_REPORTERS.map((r) => [r.slug, r]));
+export const REPORTER_BY_NAME = new Map(VISIBLE_REPORTERS.map((r) => [r.name, r]));
+
+/** 記事の reporter 表示名から公開レポーターを引く（未登録・非公開なら undefined） */
 export function reporterByName(name?: string): Reporter | undefined {
   if (!name) return undefined;
   return REPORTER_BY_NAME.get(name);

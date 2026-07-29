@@ -9,6 +9,7 @@ area: 笠間市
 tags: [笠間焼, ものづくり, 窯元, BtoB]
 place: kasama-kobo-tsuchi
 featured: false
+draft: true
 ---
 
 日本三大陶器市のひとつに数えられる、笠間焼。その伝統を三代にわたって受け継ぐのが、笠間市の工房**「つち」**です。

@@ -2,12 +2,12 @@
 import type { GetStaticPaths } from 'astro';
 import Base from '../../layouts/Base.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
-import { REPORTERS, REPORTER_BY_SLUG } from '../../data/reporters';
+import { VISIBLE_REPORTERS, REPORTER_BY_SLUG } from '../../data/reporters';
 import { getArticlesByReporter } from '../../lib/content';
 import { SITE_CONFIG } from '../../data/site';
 
 export const getStaticPaths = (async () => {
-  return REPORTERS.map((r) => ({ params: { slug: r.slug }, props: { slug: r.slug } }));
+  return VISIBLE_REPORTERS.map((r) => ({ params: { slug: r.slug }, props: { slug: r.slug } }));
 }) satisfies GetStaticPaths;
 
 const { slug } = Astro.props as { slug: string };

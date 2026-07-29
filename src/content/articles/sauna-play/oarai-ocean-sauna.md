@@ -11,6 +11,7 @@ area: 大洗町
 tags: [サウナ, ととのう, 大洗, 海]
 place: oarai-sauna-nagisa
 featured: true
+draft: true
 ---
 
 「水風呂の代わりに、太平洋があるらしい」。SNSで見かけたその一言が忘れられず、大洗まで向かいました。

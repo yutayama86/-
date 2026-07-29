@@ -1,8 +1,8 @@
 import type { APIRoute } from 'astro';
 import { SITE_CONFIG, CATEGORY_LIST, CATEGORY_PAGE_META } from '../data/site';
 import { getArticles, getStores } from '../lib/content';
-import { GUIDES } from '../data/guides';
-import { REPORTERS } from '../data/reporters';
+import { VISIBLE_GUIDES as GUIDES } from '../data/guides';
+import { VISIBLE_REPORTERS as REPORTERS } from '../data/reporters';
 import { MUNICIPALITIES } from '../data/areas';
 import { MUNICIPALITY_CONTENT } from '../data/municipality-content';
 

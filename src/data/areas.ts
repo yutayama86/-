@@ -3,12 +3,15 @@
  * lat/lon は地図（ノードマップ）の配置に使う概略座標。
  */
 
+// color=ブランド色（見出し・ヒーロー用）。mapColor=地図の塗り用（淡く敷いても色が
+// 残るよう調整）。県北の #17324a は暗い紺で淡くすると灰色に寄るため、地図では
+// 発色するインディゴ寄りの青に差し替える。
 export const REGIONS = {
-  kenpoku: { label: '県北', reading: 'けんぽく', color: '#17324a', note: '海と山、ものづくりの北。' },
-  keno: { label: '県央', reading: 'けんおう', color: '#d8452b', note: '水戸を中心とした県のまんなか。' },
-  kennan: { label: '県南', reading: 'けんなん', color: '#3f7d5a', note: 'つくばの知と、水郷のうるおい。' },
-  rokko: { label: '鹿行', reading: 'ろっこう', color: '#2f6f9e', note: '鹿島灘に沿う、海と大地。' },
-  kensei: { label: '県西', reading: 'けんせい', color: '#c69a3f', note: '田園ひろがる、西の玄関口。' },
+  kenpoku: { label: '県北', reading: 'けんぽく', color: '#17324a', mapColor: '#3a5c93', note: '海と山、ものづくりの北。' },
+  keno: { label: '県央', reading: 'けんおう', color: '#d8452b', mapColor: '#d8452b', note: '水戸を中心とした県のまんなか。' },
+  kennan: { label: '県南', reading: 'けんなん', color: '#3f7d5a', mapColor: '#3f7d5a', note: 'つくばの知と、水郷のうるおい。' },
+  rokko: { label: '鹿行', reading: 'ろっこう', color: '#2f6f9e', mapColor: '#2f6f9e', note: '鹿島灘に沿う、海と大地。' },
+  kensei: { label: '県西', reading: 'けんせい', color: '#c69a3f', mapColor: '#c69a3f', note: '田園ひろがる、西の玄関口。' },
 } as const;
 
 export type RegionKey = keyof typeof REGIONS;

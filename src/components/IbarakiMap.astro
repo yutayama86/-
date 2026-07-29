@@ -55,7 +55,7 @@ const lake = (() => {
         {/* 塗り（クリック／ホバー） */}
         {nodes.map((n) => (
           <a href={`/area/${n.slug}/`} class:list={["imap-m", { "is-active": n.active }]}
-            style={`--_c:${REGIONS[n.region].color}`} aria-label={n.name}>
+            style={`--_c:${REGIONS[n.region].mapColor}`} aria-label={n.name}>
             <path d={n.d} class="imap-shape" />
           </a>
         ))}
@@ -70,7 +70,7 @@ const lake = (() => {
   {!decor && (
   <ul class="imap-legend" aria-hidden="true">
     {REGION_ORDER.map((k) => (
-      <li><span class="imap-swatch" style={`background:${REGIONS[k].color}`}></span>{REGIONS[k].label}</li>
+      <li><span class="imap-swatch" style={`background:${REGIONS[k].mapColor}`}></span>{REGIONS[k].label}</li>
     ))}
   </ul>
   )}

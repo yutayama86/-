@@ -122,7 +122,7 @@ const jsonLd = {
         現場の泥臭い取材とSNSの爆発力で、茨城のお店の“最初のお客さん”を連れてきます。
       </p>
       <div class="biz-hero-cta" data-reveal>
-        <a href="/contact/" class="btn btn--shu btn--lg">無料で相談する <span class="arw">→</span></a>
+        <a href="/contact/?subject=掲載相談" class="btn btn--shu btn--lg">無料で相談する <span class="arw">→</span></a>
         <a href="#plans" class="btn btn--ghost btn--lg">料金を見る</a>
       </div>
     </div>
@@ -182,7 +182,7 @@ const jsonLd = {
           <ul class="plan-features">
             {pl.features.map((f) => <li>{f}</li>)}
           </ul>
-          <a href="/contact/" class={`btn ${pl.highlight ? 'btn--shu' : 'btn--ghost'} plan-cta`}>{pl.cta} <span class="arw" aria-hidden="true">→</span></a>
+          <a href={`/contact/?subject=${encodeURIComponent(pl.name)}&detail=${encodeURIComponent(`「${pl.name}」プランについて相談したいです。`)}`} class={`btn ${pl.highlight ? 'btn--shu' : 'btn--ghost'} plan-cta`}>{pl.cta} <span class="arw" aria-hidden="true">→</span></a>
         </div>
       ))}
     </div>
@@ -238,7 +238,7 @@ const jsonLd = {
       <p class="mincho biz-final-h">まずは、無料掲載から。</p>
       <p class="muted">ご相談は無料です。お店の状況をお聞きして、ぴったりのはじめ方をご提案します。</p>
       <div class="biz-final-cta">
-        <a href="/contact/" class="btn btn--shu btn--lg">無料で相談する <span class="arw">→</span></a>
+        <a href="/contact/?subject=掲載相談" class="btn btn--shu btn--lg">無料で相談する <span class="arw">→</span></a>
         <a href="/place/" class="btn btn--ghost btn--lg">掲載イメージを見る</a>
       </div>
     </div>

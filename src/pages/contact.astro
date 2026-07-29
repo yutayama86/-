@@ -35,6 +35,8 @@ const FORM_ENDPOINT = SITE_CONFIG.formEndpoint;
           <option value="WEB相談">WEB集客・HP・SNSの相談</option>
           <option value="取材依頼">取材のご依頼</option>
           <option value="レポーター">公式レポーターに興味がある</option>
+          <option value="協業希望">協業・提携のご相談</option>
+          <option value="営業の方">営業・売り込みのご連絡</option>
           <option value="その他">その他</option>
         </select>
       </div>
@@ -90,5 +92,24 @@ const FORM_ENDPOINT = SITE_CONFIG.formEndpoint;
 <script>
   import { submitForm } from '../lib/forms';
   const form = document.querySelector<HTMLFormElement>('.ct-form');
+
+  // 遷移元ボタンの用件を「ご用件」に反映（例 /contact/?subject=公式店舗プランの相談）
+  const params = new URLSearchParams(location.search);
+  const subject = params.get('subject');
+  const select = document.getElementById('subject') as HTMLSelectElement | null;
+  if (subject && select) {
+    let opt = Array.from(select.options).find((o) => o.value === subject || o.textContent?.trim() === subject);
+    if (!opt) {
+      // 既存にない用件は動的に追加して選択（＝どのボタンから来ても反映される）
+      opt = new Option(subject, subject);
+      select.add(opt, 1);
+    }
+    select.value = opt.value;
+    // 具体的な内容（プラン名など）は本文にも下書きしておく
+    const detail = params.get('detail');
+    const msg = document.getElementById('message') as HTMLTextAreaElement | null;
+    if (detail && msg && !msg.value) msg.value = detail;
+  }
+
   if (form) submitForm(form, { successText: 'お問い合わせを受け付けました。折り返しご連絡します。' });
 </script>

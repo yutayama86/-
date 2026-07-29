@@ -111,5 +111,15 @@ const FORM_ENDPOINT = SITE_CONFIG.formEndpoint;
     if (detail && msg && !msg.value) msg.value = detail;
   }
 
+  // 件名を「【ご用件】お名前 / 店舗・企業名」に動的生成（Formspreeは _subject を件名に使う）
+  if (form) {
+    form.addEventListener('submit', () => {
+      const yoken = (form.elements.namedItem('subject') as HTMLSelectElement | null)?.value || 'お問い合わせ';
+      const nm = ((form.elements.namedItem('name') as HTMLInputElement | null)?.value || '').trim();
+      const subjField = form.querySelector<HTMLInputElement>('input[name="_subject"]');
+      if (subjField) subjField.value = nm ? `【${yoken}】${nm}` : `【${yoken}】お問い合わせ`;
+    });
+  }
+
   if (form) submitForm(form, { successText: 'お問い合わせを受け付けました。折り返しご連絡します。' });
 </script>

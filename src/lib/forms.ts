@@ -13,7 +13,7 @@ export function submitForm(form: HTMLFormElement, opts: Options): void {
   const endpoint = form.dataset.endpoint?.trim();
   const status = form.querySelector<HTMLElement>('[data-status]');
   const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-  const mailto = opts.mailto ?? 'hello@ibatoco.jp';
+  const mailto = opts.mailto ?? 'info@ibatoco.jp';
 
   const show = (text: string, tone: 'ok' | 'err') => {
     if (!status) return;

@@ -2,7 +2,7 @@
 import type { GetStaticPaths } from 'astro';
 import Base from '../../layouts/Base.astro';
 import { GUIDES, GUIDE_BY_SLUG } from '../../data/guides';
-import { getStores } from '../../lib/content';
+import { getStores, getAllTags } from '../../lib/content';
 import { CATEGORIES, SITE_CONFIG } from '../../data/site';
 import { MUNI_BY_SLUG } from '../../data/areas';
 
@@ -14,6 +14,8 @@ const { slug } = Astro.props as { slug: string };
 const guide = GUIDE_BY_SLUG.get(slug)!;
 const stores = await getStores();
 const storeById = new Map(stores.map((s) => [s.id, s]));
+// タグページが存在するタグだけリンク化（リンク切れ防止）
+const tagSet = new Set((await getAllTags()).map((t) => t.tag));
 const muni = guide.areaSlug ? MUNI_BY_SLUG.get(guide.areaSlug) : undefined;
 const accent = guide.accent ?? '#d8452b';
 const ogImage = `/og/guide/${guide.slug}.png`;
@@ -63,7 +65,13 @@ const jsonLd = [
       <h1 class="display gd-title">{guide.title}</h1>
       <p class="gd-lead mincho">{guide.lead}</p>
       <ul class="gd-tags">
-        {guide.tags.map((t) => <li><a href={`/tag/${encodeURIComponent(t)}/`} class="chip chip--link">#{t}</a></li>)}
+        {guide.tags.map((t) => (
+          <li>
+            {tagSet.has(t)
+              ? <a href={`/tag/${encodeURIComponent(t)}/`} class="chip chip--link">#{t}</a>
+              : <span class="chip">#{t}</span>}
+          </li>
+        ))}
       </ul>
     </div>
   </section>

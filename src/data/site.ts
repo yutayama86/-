@@ -18,7 +18,7 @@ export const SITE_CONFIG = {
     x: 'https://x.com/',
     threads: 'https://www.threads.net/',
   },
-  contactEmail: 'hello@ibatoco.jp',
+  contactEmail: 'info@ibatoco.jp',
 } as const;
 
 export { CATEGORIES };

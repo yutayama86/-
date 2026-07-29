@@ -41,8 +41,18 @@ const articles = allArticles.filter((a) => a.data.category === catKey && areaToS
 const places = allPlaces.filter((p) => p.data.category === catKey && areaToSlug(p.data.area) === muniSlug);
 const muniItems = meta.muniField === 'gourmet' ? content.gourmet ?? [] : meta.muniField === 'spotsExp' ? [...(content.spots ?? []), ...(content.experiences ?? [])] : [];
 
-// 他ジャンルへの相互リンク（生成済みか簡易判定：記事/店舗があるもの）
-const otherCats = CATEGORY_LIST.filter((c) => c.key !== catKey);
+// 他ジャンルへの相互リンク＝この市町村で「実際に生成される」ページのみ
+// （getStaticPaths と同じ判定。リンク切れ防止）
+const otherCats = CATEGORY_LIST.filter((c) => {
+  if (c.key === catKey) return false;
+  const m = CATEGORY_PAGE_META[c.key];
+  const arts = allArticles.filter((a) => a.data.category === c.key && areaToSlug(a.data.area) === muniSlug).length;
+  const plcs = allPlaces.filter((p) => p.data.category === c.key && areaToSlug(p.data.area) === muniSlug).length;
+  const items =
+    m.muniField === 'gourmet' ? (content.gourmet?.length ?? 0) :
+    m.muniField === 'spotsExp' ? (content.spots?.length ?? 0) + (content.experiences?.length ?? 0) : 0;
+  return arts + plcs + items > 0;
+});
 
 const abs = (p: string) => new URL(p, Astro.site ?? SITE_CONFIG.domain).href;
 const jsonLd = [
@@ -119,12 +129,14 @@ const jsonLd = [
 
     <!-- 回遊：他ジャンル・市町村トップ -->
     <div class="xc-links" data-reveal>
-      <div class="xc-links-row">
-        <span class="muted">{muni.name}の他のジャンル：</span>
-        {otherCats.map((c) => (
-          <a href={`/area/${muniSlug}/${c.path}/`} class="chip chip--link">{c.label}</a>
-        ))}
-      </div>
+      {otherCats.length > 0 && (
+        <div class="xc-links-row">
+          <span class="muted">{muni.name}の他のジャンル：</span>
+          {otherCats.map((c) => (
+            <a href={`/area/${muniSlug}/${c.path}/`} class="chip chip--link">{c.label}</a>
+          ))}
+        </div>
+      )}
       <a href={`/area/${muniSlug}/`} class="btn btn--ghost">{muni.name}のトップへ <span class="arw">→</span></a>
     </div>
 

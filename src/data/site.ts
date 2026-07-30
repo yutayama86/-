@@ -11,7 +11,7 @@ export const SITE_CONFIG = {
   cfAnalyticsToken: '',
   // Google Analytics 4 の測定ID（G-XXXXXXXXXX）。ここに書くだけで有効化できます（本番のみ）。
   // ※環境変数 PUBLIC_GA_ID を設定した場合はそちらが優先されます。
-  gaMeasurementId: '',
+  gaMeasurementId: 'G-2DNYX7CSK6',
   // Google Search Console のHTMLタグ確認コード（<meta google-site-verification> の content）。
   // ※環境変数 PUBLIC_GSC_VERIFICATION を設定した場合はそちらが優先されます。
   gscVerification: '',

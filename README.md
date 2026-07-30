@@ -118,6 +118,37 @@ git push -u origin main
 2. 発行された **トークン** を [`src/data/site.ts`](src/data/site.ts) の `cfAnalyticsToken` に貼り付け
 3. commit & push（トークン未設定の間は解析スクリプトは読み込まれません）
 
+### 4b. Google Analytics 4 / Search Console（環境変数）
+
+GA4 と Search Console の所有権確認（HTMLタグ方式）は、**環境変数で後から設定**できます。
+対象は `.env.example` の2つ（`PUBLIC_` 始まりはビルド時にHTMLへ埋め込まれる公開値です）。
+
+| 変数 | 用途 | 例 |
+| --- | --- | --- |
+| `PUBLIC_GA_ID` | GA4 の測定ID。`<head>` に gtag.js を設置 | `G-XXXXXXXXXX` |
+| `PUBLIC_GSC_VERIFICATION` | Search Console 確認用 `<meta google-site-verification>` | `abc123...` |
+
+**挙動**
+- **GA4 は「本番ビルド かつ `PUBLIC_GA_ID` 設定あり」のときだけ**読み込まれます（`npm run dev` では無効）。
+- gtag.js は `<head>` に **async** で設置し、`preconnect` 済み。**表示速度・SEOに影響しません**。
+- `PUBLIC_GSC_VERIFICATION` を設定すると、全ページの `<head>` に確認用metaが入ります（DNS/インポートで確認済みなら不要）。
+- 実装は [`src/layouts/Base.astro`](src/layouts/Base.astro)。CSPは [`public/_headers`](public/_headers) で GA ドメインを許可済み。
+
+**ローカルで設定**
+
+```bash
+cp .env.example .env
+# .env を編集：PUBLIC_GA_ID=G-XXXXXXXXXX など
+```
+
+**本番（Cloudflare）で設定** … ビルド環境変数として登録（コードに直書きしない）
+1. Cloudflare → **Workers & Pages** → 対象プロジェクト → **Settings → 変数とシークレット（Build 用の環境変数）**
+2. `PUBLIC_GA_ID`（必要なら `PUBLIC_GSC_VERIFICATION`）を追加
+3. 再デプロイ（`PUBLIC_` 変数はビルド時に埋め込まれるため、**設定後の再ビルドが必要**）
+
+> ⚠️ GA4 は Cookie を使用します。導入時は [`/privacy/`](src/pages/privacy.astro) のプライバシーポリシー（Cookie/アクセス解析の項）が実態と一致しているか確認してください（本リポジトリでは記載済み）。
+> なお Cloudflare Web Analytics（Cookie不要）と併用も可能です。
+
 ### 5. お問い合わせ・予約フォームの送信先（Formspree）
 
 問い合わせ [`/contact/`](src/pages/contact.astro) と予約 [`/reserve/`](src/pages/reserve/index.astro) の

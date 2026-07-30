@@ -22,8 +22,9 @@ const { hero = false, ...seo } = Astro.props;
 //   PUBLIC_GA_ID           … GA4 測定ID（例: G-XXXXXXXXXX）
 //   PUBLIC_GSC_VERIFICATION … Search Console のHTMLメタタグ確認コード
 // GA4 は「本番ビルド かつ 測定ID設定あり」のときだけ読み込む（開発では無効）。
-const GA_ID = import.meta.env.PUBLIC_GA_ID as string | undefined;
-const GSC_VERIFICATION = import.meta.env.PUBLIC_GSC_VERIFICATION as string | undefined;
+// 環境変数を優先し、無ければ site.ts の値を使う（＝どちらか片方に書けばOK）
+const GA_ID = (import.meta.env.PUBLIC_GA_ID as string | undefined) || SITE_CONFIG.gaMeasurementId;
+const GSC_VERIFICATION = (import.meta.env.PUBLIC_GSC_VERIFICATION as string | undefined) || SITE_CONFIG.gscVerification;
 const enableGA = import.meta.env.PROD && !!GA_ID;
 ---
 

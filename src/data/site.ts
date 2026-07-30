@@ -9,6 +9,12 @@ export const SITE_CONFIG = {
     '茨城に一番くわしい体験型ローカルメディア「イバトコ」。編集部とご当地レポーターが実際に足を運び、食・暮らし・遊び・美容・ものづくりのリアルをお届けします。',
   // Cloudflare Web Analytics のトークンをデプロイ後にここへ（空なら読み込みません）
   cfAnalyticsToken: '',
+  // Google Analytics 4 の測定ID（G-XXXXXXXXXX）。ここに書くだけで有効化できます（本番のみ）。
+  // ※環境変数 PUBLIC_GA_ID を設定した場合はそちらが優先されます。
+  gaMeasurementId: '',
+  // Google Search Console のHTMLタグ確認コード（<meta google-site-verification> の content）。
+  // ※環境変数 PUBLIC_GSC_VERIFICATION を設定した場合はそちらが優先されます。
+  gscVerification: '',
   // Formspree のフォームID付きエンドポイント。送信先は info@ibatoco.jp。
   // 空にするとメール下書き(mailto)にフォールバックします（docs/FORMS_SETUP.md）。
   formEndpoint: 'https://formspree.io/f/mykrvjkg',

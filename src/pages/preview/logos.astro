@@ -1,0 +1,75 @@
+---
+/**
+ * ロゴ・プロトタイプ比較（noindex）。B案3種を主案、A案は比較用。
+ * Codexレビュー用。正式決定前。
+ */
+import '../../styles/global.css';
+import LogoMark from '../../components/LogoMark.astro';
+
+const mains = [
+  { v: 'B1', name: 'B1 — 最も簡潔な一本線', note: 'ゆるやかに上る道筋＋短い横線で終える' },
+  { v: 'B2', name: 'B2 — 紙の折り目を強調', note: '線が鋭く折れ、めくれた角を示す' },
+  { v: 'B3', name: 'B3 — 歩いた軌跡を強調', note: 'うねる道筋＋短い横線で終える' },
+] as const;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>ロゴ プロトタイプ比較｜イバトコ 2026刷新</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+      body { margin: 0; background: var(--color-paper); color: var(--color-charcoal); font-family: var(--font-brand-body); }
+      .pv { max-width: 900px; margin: 0 auto; padding: clamp(2rem, 6vw, 4rem) 1rem; }
+      h1 { font-family: var(--font-brand-display); color: var(--color-ink); font-size: 1.8rem; }
+      .note { font-family: var(--font-brand-meta); color: var(--color-soil); font-size: 0.85rem; }
+      .card { border: 1px solid var(--color-mist); border-radius: var(--radius-sm); background: var(--color-white); padding: 1.6rem; margin-top: 1.4rem; }
+      .card h2 { font-family: var(--font-brand-body); font-size: 1.05rem; color: var(--color-ink); margin: 0 0 0.3rem; }
+      .card .n { font-family: var(--font-brand-meta); color: var(--color-soil); font-size: 0.8rem; margin: 0 0 1.1rem; }
+      .row { display: flex; align-items: center; gap: 2.2rem; flex-wrap: wrap; color: var(--color-ink); }
+      .wm { display: inline-flex; align-items: center; gap: 0.6rem; }
+      .wm span { font-family: var(--font-brand-display); font-size: 1.5rem; letter-spacing: 0.08em; color: var(--color-ink); }
+      .inv { background: var(--color-ink); color: var(--color-white); border-radius: var(--radius-sm); padding: 0.8rem 1.2rem; display: inline-flex; align-items: center; gap: 0.6rem; }
+      .inv span { font-family: var(--font-brand-display); font-size: 1.35rem; letter-spacing: 0.08em; }
+      .cmp { opacity: 0.9; }
+    </style>
+  </head>
+  <body>
+    <main class="pv">
+      <h1>ロゴ プロトタイプ比較</h1>
+      <p class="note">⚠️ 未確定・Codexレビュー用。B案「FIELD NOTE」3種を主案、A案は比較用（C案は今回進めない）。すべてモノクロ・currentColor・16px成立・ワードマーク併用前提。</p>
+
+      {mains.map((m) => (
+        <section class="card">
+          <h2>{m.name}</h2>
+          <p class="n">{m.note}</p>
+          <div class="row">
+            <LogoMark variant={m.v} size={16} label={`${m.name} 16px`} />
+            <LogoMark variant={m.v} size={28} />
+            <LogoMark variant={m.v} size={44} />
+            <LogoMark variant={m.v} size={72} />
+            <span class="wm"><LogoMark variant={m.v} size={34} /><span>イバトコ</span></span>
+            <span class="inv"><LogoMark variant={m.v} size={40} /><span>イバトコ</span></span>
+          </div>
+        </section>
+      ))}
+
+      <section class="card cmp">
+        <h2>A — EDITOR'S MARK（比較用・不採用寄り）</h2>
+        <p class="n">向かい合う不完全な角括弧＋中央余白</p>
+        <div class="row">
+          <LogoMark variant="A" size={16} />
+          <LogoMark variant="A" size={28} />
+          <LogoMark variant="A" size={44} />
+          <LogoMark variant="A" size={72} />
+          <span class="wm"><LogoMark variant="A" size={34} /><span>イバトコ</span></span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

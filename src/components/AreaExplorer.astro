@@ -1,0 +1,211 @@
+---
+/**
+ * AreaExplorer — 44市町村インタラクティブマップの「編集インターフェース」進化版（M3 preview）。
+ * Blueprint §7「地図のビジュアル進化」＋Codex承認事項に基づく。※最終配色はCodex確認後に確定。
+ *
+ * 保護（無変更で再利用）：ibaraki-geo.ts の境界データ・44市町村・5地域・地名。
+ * 進化：Tide系の選択色／低彩度の5地域色／隣接情報パネル／二段階操作（概要→この街を読む）／
+ *   hover・focus・selected を色以外でも識別／キーボード操作・aria・focus-visible／
+ *   同等リンク一覧／モバイルは地域タブ＋市町村リスト。
+ */
+import { IBARAKI_GEO, GEO_VIEW } from '../data/ibaraki-geo';
+import { MUNICIPALITIES, REGIONS, REGION_ORDER } from '../data/areas';
+import { getAreaSummary } from '../lib/content';
+
+const { w: W, h: H } = GEO_VIEW;
+
+const summaries = await Promise.all(MUNICIPALITIES.map((m) => getAreaSummary(m.slug)));
+const fmt = (d: Date | null) => (d ? new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(d) : null);
+
+// クライアントのパネル描画用データ（架空を出さない：実データが無ければ空）
+const panelData = Object.fromEntries(
+  summaries.map((s) => [
+    s.slug,
+    {
+      name: s.name,
+      region: s.region,
+      href: `/area/${s.slug}/`,
+      lastUpdated: fmt(s.lastUpdated),
+      stories: s.stories.slice(0, 3).map((a) => ({ title: a.data.title, href: `/${a.data.category}/${a.id.split('/').pop()}/` })),
+      places: s.places.slice(0, 3).map((p) => ({ name: p.data.name, href: `/place/${p.id}/` })),
+      people: s.people.slice(0, 3).map((p) => ({ name: p.name, href: `/reporter/${p.slug}/` })),
+      hasContent: s.hasContent,
+    },
+  ])
+);
+
+const nodes = MUNICIPALITIES.map((m) => ({ ...m, ...IBARAKI_GEO[m.slug] })).filter((n) => n.d);
+---
+
+<section class="ax">
+  <div class="ax-grid">
+    <!-- 地図（SVG） -->
+    <figure class="ax-mapwrap">
+      <svg viewBox={`0 0 ${W} ${H}`} class="ax-map" role="group" aria-label="茨城県の市町村マップ。市町村を選ぶと右側に概要が表示されます。">
+        {nodes.map((n) => (
+          <g
+            class="ax-muni"
+            data-slug={n.slug}
+            data-region={n.region}
+            role="button"
+            tabindex="0"
+            aria-pressed="false"
+            aria-label={`${n.name}（${REGIONS[n.region].label}）を選ぶ`}
+          >
+            <path d={n.d} class="ax-shape" />
+          </g>
+        ))}
+        {nodes.map((n) => (
+          <text x={n.lx ?? n.cx} y={n.ly ?? n.cy} class="ax-label">{n.name}</text>
+        ))}
+      </svg>
+    </figure>
+
+    <!-- 隣接パネル（選択中の市町村の概要） -->
+    <aside class="ax-panel" aria-live="polite">
+      <div class="ax-panel-empty" data-panel-empty>
+        <p class="ax-panel-hint">地図または一覧から市町村を選ぶと、その街の概要が表示されます。</p>
+      </div>
+      <div class="ax-panel-body" data-panel-body hidden>
+        <p class="ax-panel-region" data-panel-region></p>
+        <h3 class="ax-panel-name" data-panel-name></h3>
+        <p class="ax-panel-updated" data-panel-updated></p>
+        <div data-panel-content></div>
+        <a class="ax-panel-read" data-panel-read href="#">この街を読む <span aria-hidden="true">→</span></a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- モバイル：地域タブ＋市町村リスト。SR等価リンク一覧も兼ねる -->
+  <nav class="ax-list" aria-label="地域と市町村の一覧">
+    {REGION_ORDER.map((k, i) => (
+      <details class="ax-region" open={i === 0}>
+        <summary><span class="ax-region-dot" data-region={k}></span>{REGIONS[k].label}</summary>
+        <ul>
+          {MUNICIPALITIES.filter((m) => m.region === k).map((m) => (
+            <li>
+              <button type="button" class="ax-list-btn" data-slug={m.slug}>{m.name}</button>
+              <a class="ax-list-read" href={`/area/${m.slug}/`} aria-label={`${m.name}を読む`}>読む</a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    ))}
+  </nav>
+
+  <script type="application/json" set:html={JSON.stringify(panelData)} data-ax-data></script>
+</section>
+
+<style>
+  .ax { font-family: var(--font-brand-body); color: var(--color-charcoal); }
+  .ax-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(1rem, 3vw, 2rem); align-items: start; }
+
+  .ax-mapwrap { margin: 0; }
+  .ax-map { width: 100%; height: auto; display: block; }
+
+  /* 5地域：低彩度のブランド派生色（原色分けを避ける）。最終色はCodex確認後に確定 */
+  .ax-shape { stroke: color-mix(in srgb, var(--color-ink) 22%, var(--color-paper)); stroke-width: 0.8; stroke-linejoin: round;
+    transition: fill .2s var(--ease), stroke-width .2s; }
+  .ax-muni[data-region="kenpoku"] .ax-shape { fill: color-mix(in srgb, var(--color-tide) 14%, var(--color-mist)); }
+  .ax-muni[data-region="keno"]    .ax-shape { fill: color-mix(in srgb, var(--color-soil) 16%, var(--color-mist)); }
+  .ax-muni[data-region="kennan"]  .ax-shape { fill: color-mix(in srgb, var(--color-tide) 22%, var(--color-paper)); }
+  .ax-muni[data-region="rokko"]   .ax-shape { fill: color-mix(in srgb, var(--color-ink) 12%, var(--color-mist)); }
+  .ax-muni[data-region="kensei"]  .ax-shape { fill: color-mix(in srgb, var(--color-brass) 14%, var(--color-mist)); }
+
+  /* hover / focus / selected は色だけに依存せず、境界線の太さでも識別 */
+  .ax-muni { cursor: pointer; }
+  .ax-muni:hover .ax-shape { stroke: var(--color-ink); stroke-width: 1.6; }
+  .ax-muni:focus-visible { outline: none; }
+  .ax-muni:focus-visible .ax-shape { stroke: var(--color-ink); stroke-width: 2.4; }
+  .ax-muni[aria-pressed="true"] .ax-shape { fill: var(--color-tide); stroke: var(--color-ink); stroke-width: 2.2; }
+
+  .ax-label { font-family: var(--font-brand-body); font-size: 8.5px; font-weight: 600; text-anchor: middle; dominant-baseline: central;
+    fill: var(--color-ink); paint-order: stroke; stroke: color-mix(in srgb, var(--color-paper) 70%, transparent); stroke-width: 2px; pointer-events: none; }
+  .ax-muni[aria-pressed="true"] + text, .ax-label { }
+
+  /* パネル */
+  .ax-panel { border: 1px solid var(--color-mist); border-radius: var(--radius-sm); background: var(--color-white); padding: clamp(1.1rem, 3vw, 1.6rem); min-height: 220px; }
+  .ax-panel-hint { color: var(--color-soil); font-size: 0.9rem; }
+  .ax-panel-region { font-family: var(--font-brand-meta); font-size: 0.75rem; letter-spacing: 0.08em; color: var(--color-tide); }
+  .ax-panel-name { font-family: var(--font-brand-display); font-size: 1.5rem; color: var(--color-ink); margin: 0.2rem 0 0.3rem; }
+  .ax-panel-updated { font-family: var(--font-brand-meta); font-size: 0.78rem; color: var(--color-soil); }
+  .ax-panel h4 { font-family: var(--font-brand-meta); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--color-soil); margin: 1rem 0 0.4rem; }
+  .ax-panel ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; }
+  .ax-panel a { color: var(--color-tide); text-decoration: none; }
+  .ax-panel a:hover, .ax-panel a:focus-visible { text-decoration: underline; }
+  .ax-panel-none { border: 1px dashed var(--color-mist); border-radius: var(--radius-xs); padding: 0.9rem; margin-top: 0.8rem; font-size: 0.88rem; color: var(--color-soil); }
+  .ax-panel-none a { font-weight: 600; }
+  .ax-panel-read { display: inline-block; margin-top: 1.2rem; font-weight: 600; color: var(--color-ink);
+    border: 1px solid var(--color-ink); border-radius: var(--radius-xs); padding: 0.5em 1.1em; text-decoration: none; }
+  .ax-panel-read:hover, .ax-panel-read:focus-visible { background: var(--color-ink); color: var(--color-white); }
+
+  /* リスト（モバイル＋SR等価） */
+  .ax-list { margin-top: 1.4rem; display: none; }
+  .ax-region summary { cursor: pointer; font-weight: 600; color: var(--color-ink); padding: 0.6em 0; display: flex; align-items: center; gap: 0.5em; }
+  .ax-region-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .ax-region-dot[data-region="kenpoku"] { background: color-mix(in srgb, var(--color-tide) 40%, var(--color-mist)); }
+  .ax-region-dot[data-region="keno"] { background: color-mix(in srgb, var(--color-soil) 45%, var(--color-mist)); }
+  .ax-region-dot[data-region="kennan"] { background: color-mix(in srgb, var(--color-tide) 55%, var(--color-paper)); }
+  .ax-region-dot[data-region="rokko"] { background: color-mix(in srgb, var(--color-ink) 35%, var(--color-mist)); }
+  .ax-region-dot[data-region="kensei"] { background: color-mix(in srgb, var(--color-brass) 40%, var(--color-mist)); }
+  .ax-region ul { list-style: none; padding: 0 0 0.6rem; margin: 0; }
+  .ax-region li { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid var(--color-mist); }
+  .ax-list-btn { background: none; border: 0; font: inherit; color: var(--color-charcoal); cursor: pointer; padding: 0.3em 0; text-align: left; }
+  .ax-list-btn[aria-pressed="true"] { color: var(--color-tide); font-weight: 700; }
+  .ax-list-read { font-size: 0.8rem; color: var(--color-tide); text-decoration: none; }
+
+  /* モバイル：地図は保持しつつ、地域タブ＋リストを併設（ピンチ依存にしない） */
+  @media (max-width: 760px) {
+    .ax-grid { grid-template-columns: 1fr; }
+    .ax-list { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) { .ax-shape { transition: none; } }
+</style>
+
+<script>
+  // 二段階操作：選択で概要を表示（遷移しない）→「この街を読む」で /area/[slug]/ へ。
+  const root = document.currentScript?.closest('.ax') ?? document.querySelector('.ax');
+  if (root) {
+    const data = JSON.parse(root.querySelector('[data-ax-data]')?.textContent || '{}');
+    const emptyEl = root.querySelector<HTMLElement>('[data-panel-empty]');
+    const bodyEl = root.querySelector<HTMLElement>('[data-panel-body]');
+    const set = (sel: string, txt: string) => { const el = root.querySelector<HTMLElement>(sel); if (el) el.textContent = txt; };
+
+    function select(slug: string) {
+      const d = data[slug];
+      if (!d) return;
+      // 選択状態（地図＋リスト）を更新
+      root!.querySelectorAll<HTMLElement>('[data-slug]').forEach((el) => {
+        const on = el.getAttribute('data-slug') === slug;
+        if (el.hasAttribute('aria-pressed')) el.setAttribute('aria-pressed', String(on));
+      });
+      if (emptyEl) emptyEl.hidden = true;
+      if (bodyEl) bodyEl.hidden = false;
+      set('[data-panel-region]', d.region);
+      set('[data-panel-name]', d.name);
+      set('[data-panel-updated]', d.lastUpdated ? `最終更新：${d.lastUpdated}` : '');
+      const read = root!.querySelector<HTMLAnchorElement>('[data-panel-read]');
+      if (read) read.href = d.href;
+      // 内容（架空を出さない：無ければ「この街の情報を教える」導線）
+      const c = root!.querySelector<HTMLElement>('[data-panel-content]');
+      if (c) {
+        if (d.hasContent) {
+          const block = (label: string, items: any[], key: string) =>
+            items.length ? `<h4>${label}</h4><ul>${items.map((i) => `<li><a href="${i.href}">${i.title || i.name}</a></li>`).join('')}</ul>` : '';
+          c.innerHTML = block('記事', d.stories, 'title') + block('お店・場所', d.places, 'name') + block('人', d.people, 'name');
+        } else {
+          c.innerHTML = `<div class="ax-panel-none">この街の情報は準備中です。<br /><a href="/contact/?subject=${encodeURIComponent('この街の情報を教える（' + d.name + '）')}">この街の“いいとこ”を教える →</a></div>`;
+        }
+      }
+    }
+
+    root.querySelectorAll<HTMLElement>('.ax-muni, .ax-list-btn').forEach((el) => {
+      const slug = el.getAttribute('data-slug');
+      if (!slug) return;
+      el.addEventListener('click', () => select(slug));
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); select(slug); }
+      });
+    });
+  }
+</script>

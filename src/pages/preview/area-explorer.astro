@@ -1,0 +1,36 @@
+---
+/**
+ * AreaExplorer プレビュー（noindex）。M3の地図進化版をCodexレビュー用に表示。
+ * ※本番ビルドでは記事・店舗がdraft非表示のため各パネルは「この街の情報を教える」状態。
+ *   dev/プレビューサーバーでは代表コンテンツ入りのパネルを確認できます。
+ * ※最終配色・完成ビジュアルはCodex確認後に確定。
+ */
+import '../../styles/global.css';
+import AreaExplorer from '../../components/AreaExplorer.astro';
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>AreaExplorer プレビュー｜イバトコ 2026刷新</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+      body { margin: 0; background: var(--color-paper); color: var(--color-charcoal); font-family: var(--font-brand-body); }
+      .wrap { max-width: var(--content-wide); margin: 0 auto; padding: clamp(2rem, 6vw, 4rem) 1rem; }
+      h1 { font-family: var(--font-brand-display); color: var(--color-ink); font-size: 1.8rem; }
+      .note { font-family: var(--font-brand-meta); color: var(--color-soil); font-size: 0.85rem; max-width: 60ch; }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>AreaExplorer（44市町村インタラクティブマップ・進化版）</h1>
+      <p class="note">⚠️ 未確定・Codexレビュー用。境界データ・44市町村・地名・5地域区分は<strong>完全維持</strong>。選択色Tide系／低彩度の地域色／隣接パネル／二段階操作（選択→概要→「この街を読む」）／色以外の状態識別（境界線）／キーボード操作・focus-visible／同等リンク一覧／モバイル地域タブ。<br />最終配色はCodex確認後に確定します。</p>
+      <AreaExplorer />
+    </main>
+  </body>
+</html>

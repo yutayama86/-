@@ -13,23 +13,23 @@ const roster = await Promise.all(
 ---
 
 <Base
-  title="公式レポーター・アンバサダー募集"
-  description="イバトコ公式レポーター（アンバサダー）を募集しています。茨城でファンを持つあなたの発信を、プロのクオリティと成果報酬で応援します。"
+  title="ローカルエディターについて"
+  description="イバトコのローカルエディターは、地域を歩き、人に会い、日々の営みを取材します。フォロワー数ではなく、地域への理解と誠実な取材姿勢を大切にしています。"
 >
   <section class="rp-hero">
     <div class="wrap">
-      <p class="eyebrow" data-reveal>Official Reporters</p>
-      <h1 class="display rp-h1" data-reveal>その街を、<br />一番好きな人が書く。</h1>
+      <p class="eyebrow" data-reveal>Local Editors</p>
+      <h1 class="display rp-h1" data-reveal>その街を知る人と、<br />記録する。</h1>
       <p class="rp-lead" data-reveal>
-        イバトコは、茨城でファンを持つあなたを「公式レポーター」としてお迎えします。
-        “人の熱量”は、最強のコンテンツです。
+        イバトコのローカルエディターは、地域を歩き、人に会い、日々の営みを取材します。
+        フォロワー数ではなく、地域への理解と誠実な取材姿勢を大切にしています。
       </p>
     </div>
   </section>
 
   {roster.length > 0 && (
     <section class="wrap section">
-      <div class="sec-head" data-reveal><h2>いま活動中のレポーター<span class="latin num"> / Members</span></h2></div>
+      <div class="sec-head" data-reveal><h2>いま活動中のローカルエディター<span class="latin num"> / Members</span></h2></div>
       <ul class="rp-roster">
         {roster.map(({ r, count, initial }) => (
           <li data-reveal>
@@ -51,26 +51,26 @@ const roster = await Promise.all(
   <section class="wrap section">
     <div class="rp-merit">
       <div class="rp-col" data-reveal>
-        <h2 class="display rp-col-h">レポーターのメリット</h2>
+        <h2 class="display rp-col-h">ローカルエディターの関わり方</h2>
         <ul class="rp-list">
-          <li><b>「公式レポーター」の肩書</b><span>メディアの看板を背負って発信できる</span></li>
-          <li><b>プロの撮影素材を提供</b><span>高品質な写真・動画をあなたの資産に</span></li>
-          <li><b>成果報酬（キックバック）</b><span>紹介がストック収入になる仕組み</span></li>
+          <li><b>現地を歩いて取材する</b><span>人に会い、営みを聞き、確かめて記録する</span></li>
+          <li><b>担当者として明記される</b><span>取材・執筆・撮影の担当を記事に開示</span></li>
+          <li><b>編集部と協働する</b><span>企画・事実確認・訂正を一緒に進める</span></li>
         </ul>
       </div>
       <div class="rp-col rp-col--dark" data-reveal>
-        <h2 class="display rp-col-h">こんな方を歓迎</h2>
+        <h2 class="display rp-col-h">こんな方と</h2>
         <ul class="rp-list rp-list--light">
-          <li><b>茨城が好きで発信している</b><span>ジャンル・フォロワー数は問いません</span></li>
-          <li><b>お店や人を紹介したい</b><span>“推し”を広める熱量がある方</span></li>
-          <li><b>一緒にメディアを育てたい</b><span>立ち上げから関わる面白さ</span></li>
+          <li><b>地域を丁寧に見ている</b><span>その街の日常や仕事に関心がある方</span></li>
+          <li><b>誠実に取材できる</b><span>事実と印象を分け、出所を大切にできる方</span></li>
+          <li><b>利益相反を開示できる</b><span>取材先との関係をきちんと明らかにできる方</span></li>
         </ul>
       </div>
     </div>
 
     <div class="rp-cta" data-reveal>
       <h2 class="display rp-cta-h">まずは、話を聞いてみませんか。</h2>
-      <a href="/contact/?subject=レポーター" class="btn btn--shu btn--lg">レポーターに応募する <span class="arw">→</span></a>
+      <a href="/contact/?subject=ローカルエディター" class="btn btn--ghost btn--lg">ローカルエディターについて相談する <span class="arw">→</span></a>
     </div>
   </section>
 </Base>

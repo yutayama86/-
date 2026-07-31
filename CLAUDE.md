@@ -32,6 +32,7 @@ Before changing code, read these two source-of-truth documents completely:
 - Do not make broad URL changes without redirects.
 - Keep mobile accessibility, semantic HTML, Core Web Vitals, and reduced-motion support mandatory.
 - If a visual decision is not covered by the source documents, stop and ask ChatGPT/Codex for design direction rather than improvising a new brand direction.
+- The existing interactive map of all 44 Ibaraki municipalities is a protected core product asset. Never remove it, replace it with a generic prefecture silhouette, or reduce it to five plain links. Preserve the accurate municipal boundaries, labels, and five-region grouping in `IbarakiMap.astro` and `ibaraki-geo.ts`. Evolve it into an accessible editorial explorer that connects each municipality to its stories, people, places, and last-updated state. The instruction to remove the prefecture silhouette applies only to decorative hero artwork, not this interactive map.
 
 ## Working method
 

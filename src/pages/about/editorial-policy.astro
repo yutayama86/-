@@ -1,0 +1,66 @@
+---
+import Base from '../../layouts/Base.astro';
+const updated = '2026年8月';
+---
+
+<Base
+  title="編集方針"
+  description="イバトコの編集方針。現地取材主義、Editorial / Partner / PR の区分、事実と観察の分離、独立性、AIの扱いについて。"
+>
+  <section class="wrap policy">
+    <nav class="crumbs" aria-label="パンくず">
+      <a href="/">ホーム</a><span aria-hidden="true">/</span>
+      <a href="/about/">イバトコについて</a><span aria-hidden="true">/</span>
+      <span>編集方針</span>
+    </nav>
+    <p class="eyebrow">Editorial Policy</p>
+    <h1 class="display policy-title">編集方針</h1>
+    <p class="policy-updated muted">最終更新：{updated}</p>
+
+    <div class="policy-body prose">
+      <p>イバトコは、地域の価値が正しく伝わる仕組みをつくる編集ブランドです。信頼は宣言ではなく、出所・取材方法・利害関係を明らかにすることで示します。この方針は、私たちが記事をつくるときの約束です。</p>
+
+      <h2>1. 現地取材を基本とする</h2>
+      <p>私たちは、可能な限り現地へ足を運び、人に会い、自分の目で確かめたことをもとに書きます。現地取材を行っていない記事は、その旨と情報の出所を明記します。</p>
+
+      <h2>2. 事実と観察を分ける</h2>
+      <p>営業時間・価格・住所などの公式情報と、編集部の感想・評価（観察）を明確に分けて表示します。編集部の主観は「編集部の観察」として示し、事実であるかのように書きません。</p>
+
+      <h2>3. すべての記事に取材情報を表示する</h2>
+      <p>各記事には次を表示します。</p>
+      <ul>
+        <li>区分（<a href="/about/pr-policy/" class="ul-link">Editorial / Partner / PR</a>）</li>
+        <li>取材日・公開日・最終更新日</li>
+        <li>取材・執筆・撮影・編集の担当</li>
+        <li>現地取材の有無</li>
+        <li>情報提供・費用負担・招待の有無</li>
+        <li><a href="/about/corrections/" class="ul-link">訂正申請の窓口と更新履歴</a></li>
+      </ul>
+
+      <h2>4. 独立性を守る</h2>
+      <p>広告や支援関係の有無によって、事実の順位や評価を変えません。有料の関係があっても、それを編集記事の推薦と混同させません（詳細は <a href="/about/pr-policy/" class="ul-link">PR・広告の方針</a>）。</p>
+
+      <h2>5. 言葉を選ぶ</h2>
+      <p>「絶対」「最高」「知らないと損」といった立証の難しい表現や、対立をあおる言い回しは避けます。誰が・いつ・どのように確認したかがわかる言葉で書きます。</p>
+
+      <h2>6. AIの扱い</h2>
+      <p>取材・執筆の補助にツールを用いることはありますが、現地で確かめていない事実を生成物で埋めることはしません。写真は実在するものを用い、AI生成画像を実写のように扱いません。</p>
+
+      <h2>7. 更新し続ける</h2>
+      <p>地域の情報は変わります。古くなった記述は更新し、重要な変更は<a href="/about/corrections/" class="ul-link">更新履歴</a>に残します。</p>
+
+      <p class="policy-foot muted">ご意見・お問い合わせは <a href="/contact/" class="ul-link">お問い合わせ</a> からお願いします。</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .policy { max-width: 720px; padding-block: clamp(2.5rem, 7vw, 4.5rem); }
+  .crumbs { display: flex; gap: 0.5rem; font-size: var(--step--1); color: var(--ink-mute); margin-bottom: 1.5rem; }
+  .crumbs a:hover { color: var(--shu); }
+  .policy-title { font-size: var(--step-4); margin: 0.4rem 0 0.3rem; }
+  .policy-updated { font-size: var(--step--1); }
+  .policy-body { margin-top: 2rem; }
+  .policy-body h2 { font-size: var(--step-2); margin-top: 2rem; }
+  .policy-foot { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: var(--step--1); }
+</style>

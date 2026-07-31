@@ -1,0 +1,67 @@
+---
+import Base from '../../layouts/Base.astro';
+import DisclosureBadge from '../../components/DisclosureBadge.astro';
+const updated = '2026年8月';
+---
+
+<Base
+  title="PR・広告の方針"
+  description="イバトコのPR・広告の方針。Editorial / Partner / PR の区分、費用を伴うコンテンツの明示、契約で編集評価や掲載順位を購入できないことについて。"
+>
+  <section class="wrap policy">
+    <nav class="crumbs" aria-label="パンくず">
+      <a href="/">ホーム</a><span aria-hidden="true">/</span>
+      <a href="/about/">イバトコについて</a><span aria-hidden="true">/</span>
+      <span>PR・広告の方針</span>
+    </nav>
+    <p class="eyebrow">PR &amp; Advertising Policy</p>
+    <h1 class="display policy-title">PR・広告の方針</h1>
+    <p class="policy-updated muted">最終更新：{updated}</p>
+
+    <div class="policy-body prose">
+      <p>イバトコは、広告や支援関係の有無を読者に隠しません。費用を伴うコンテンツは、色だけでなく文言で明示します。編集の独立性を守るため、次のとおり運用します。</p>
+
+      <h2>コンテンツの区分</h2>
+      <p>すべての記事に、次のいずれかの区分を表示します。</p>
+      <ul class="pr-badges" aria-hidden="false">
+        <li><DisclosureBadge type="editorial" /></li>
+        <li><DisclosureBadge type="partner" /></li>
+        <li><DisclosureBadge type="pr" /></li>
+      </ul>
+      <dl class="pr-defs">
+        <dt>Editorial（編集記事）</dt>
+        <dd>編集部の判断で企画・取材・編集した記事。費用の授受はありません。</dd>
+        <dt>Partner（パートナー）</dt>
+        <dd>支援・協業などの関係がある取材コンテンツ。関係の内容を記事内に明示します。</dd>
+        <dt>PR（広告）</dt>
+        <dd>費用を伴う広告コンテンツ。タイトル周辺・本文冒頭・末尾で広告であることを示します。</dd>
+      </dl>
+
+      <h2>お金で変えられないこと</h2>
+      <ul>
+        <li>広告・支援の有無で、事実の順位や評価を変えません。</li>
+        <li>掲載順位や検索結果の優遇を、料金で購入することはできません。</li>
+        <li>編集記事（Editorial）の推薦を、対価で得ることはできません。</li>
+      </ul>
+
+      <h2>できること</h2>
+      <p>事業者の方は、取材・編集・発信の支援をご依頼いただけます。内容・料金・成果の考え方は <a href="/biz/" class="ul-link">地域事業者の方へ</a> でご確認ください。支援を受けた場合も、上記の区分にしたがって関係を明示します。</p>
+
+      <p class="policy-foot muted">関連：<a href="/about/editorial-policy/" class="ul-link">編集方針</a> ／ <a href="/about/corrections/" class="ul-link">訂正・更新方針</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .policy { max-width: 720px; padding-block: clamp(2.5rem, 7vw, 4.5rem); }
+  .crumbs { display: flex; gap: 0.5rem; font-size: var(--step--1); color: var(--ink-mute); margin-bottom: 1.5rem; }
+  .crumbs a:hover { color: var(--shu); }
+  .policy-title { font-size: var(--step-4); margin: 0.4rem 0 0.3rem; }
+  .policy-updated { font-size: var(--step--1); }
+  .policy-body { margin-top: 2rem; }
+  .policy-body h2 { font-size: var(--step-2); margin-top: 2rem; }
+  .pr-badges { list-style: none; display: flex; flex-wrap: wrap; gap: 0.6rem; padding: 0; margin: 1rem 0 1.5rem; }
+  .pr-defs dt { font-weight: 700; color: var(--ink); margin-top: 1rem; }
+  .pr-defs dd { margin: 0.2rem 0 0; color: var(--ink-soft); }
+  .policy-foot { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: var(--step--1); }
+</style>

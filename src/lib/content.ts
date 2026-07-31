@@ -126,6 +126,48 @@ export async function getPlacesByArea(slug: string) {
   return (await getPlaces()).filter((p) => areaToSlug(p.data.area) === slug);
 }
 
+// === 2026 Renewal：市町村 ↔ Story / Person / Place を接続するデータ構造 ===
+// AreaExplorer（M3の隣接パネル）が、選択中の市町村の代表コンテンツと最終更新日を
+// 表示するための集約。実データが無ければ空を返す（架空コンテンツは出さない）。
+import { VISIBLE_REPORTERS, type Reporter } from '../data/reporters';
+import { MUNI_BY_SLUG, REGIONS } from '../data/areas';
+
+export interface AreaSummary {
+  slug: string;
+  name: string;
+  region: string; // 5地域ラベル
+  stories: CollectionEntry<'articles'>[];
+  places: Store[];
+  people: Reporter[];
+  lastUpdated: Date | null;
+  hasContent: boolean;
+}
+
+export async function getAreaSummary(slug: string): Promise<AreaSummary> {
+  const muni = MUNI_BY_SLUG.get(slug);
+  const regionLabel = muni ? REGIONS[muni.region].label : '';
+  const [stories, places] = await Promise.all([getArticlesByArea(slug), getStoresByArea(slug)]);
+  // 担当エリアに市町村名・地域名・「全域」を含むレポーターを紐付け
+  const people = VISIBLE_REPORTERS.filter((r) => {
+    const a = r.area ?? '';
+    return a.includes('全域') || (!!muni && a.includes(muni.name)) || (!!regionLabel && a.includes(regionLabel));
+  });
+  const dates: number[] = [];
+  for (const s of stories) dates.push((s.data.updatedAt ?? s.data.publishedAt).valueOf());
+  for (const p of places) dates.push(p.data.publishedAt.valueOf());
+  const lastUpdated = dates.length ? new Date(Math.max(...dates)) : null;
+  return {
+    slug,
+    name: muni?.name ?? slug,
+    region: regionLabel,
+    stories,
+    places,
+    people,
+    lastUpdated,
+    hasContent: stories.length + places.length > 0,
+  };
+}
+
 export function formatDate(d: Date): string {
   return new Intl.DateTimeFormat('ja-JP', {
     year: 'numeric',

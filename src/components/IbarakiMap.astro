@@ -36,7 +36,9 @@ const lake = (() => {
 
 <figure class:list={["imap", { "imap--compact": compact, "imap--decor": decor }]}
   aria-hidden={decor ? 'true' : undefined} aria-label={decor ? undefined : '茨城県 市町村マップ'}>
-  <svg viewBox={`0 0 ${W} ${H}`} role="img" xmlns="http://www.w3.org/2000/svg" class="imap-svg">
+  <svg viewBox={`0 0 ${W} ${H}`} role={decor ? 'img' : 'group'}
+    aria-label={decor ? undefined : '茨城県の市町村マップ。各市町村を選択できます。'}
+    xmlns="http://www.w3.org/2000/svg" class="imap-svg">
     {decor ? (
       nodes.map((n) => <path d={n.d} class="imap-decor" />)
     ) : (
@@ -68,6 +70,21 @@ const lake = (() => {
   </svg>
 
   {!decor && (
+    <nav class="imap-sr-list sr-only" aria-label="市町村の一覧から選ぶ">
+      {REGION_ORDER.map((k) => (
+        <section>
+          <h3>{REGIONS[k].label}</h3>
+          <ul>
+            {MUNICIPALITIES.filter((m) => m.region === k).map((m) => (
+              <li><a href={`/area/${m.slug}/`}>{m.name}</a></li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </nav>
+  )}
+
+  {!decor && (
   <ul class="imap-legend" aria-hidden="true">
     {REGION_ORDER.map((k) => (
       <li><span class="imap-swatch" style={`background:${REGIONS[k].mapColor}`}></span>{REGIONS[k].label}</li>
@@ -96,9 +113,14 @@ const lake = (() => {
     stroke-width: 0.8; stroke-linejoin: round;
     transition: fill 0.25s var(--ease), filter 0.25s;
   }
+  /* hover/focusは塗りだけでなく境界線も強調（色覚に依存しない状態表現） */
   .imap-m:hover .imap-shape,
-  .imap-m.is-hover .imap-shape { fill: color-mix(in srgb, var(--_c) 82%, white); filter: drop-shadow(0 4px 8px rgba(28,26,20,.28)); }
-  .imap-m.is-active .imap-shape { fill: var(--_c); stroke: var(--ink); stroke-width: 1.6; }
+  .imap-m.is-hover .imap-shape { fill: color-mix(in srgb, var(--_c) 82%, white); filter: drop-shadow(0 4px 8px rgba(28,26,20,.28)); stroke: var(--ink); stroke-width: 1.6; }
+  .imap-m.is-active .imap-shape { fill: var(--_c); stroke: var(--ink); stroke-width: 1.8; }
+  /* キーボードフォーカスを明確に可視化 */
+  .imap-m:focus-visible { outline: none; }
+  .imap-m:focus-visible .imap-shape { stroke: var(--ink); stroke-width: 2.6; filter: drop-shadow(0 0 0 2px rgba(23,43,53,.35)); }
+  @media (prefers-reduced-motion: reduce) { .imap-shape { transition: none; } }
 
   .imap-label {
     font-size: 8.5px; text-anchor: middle; dominant-baseline: central; font-weight: 700;
@@ -130,9 +152,12 @@ const lake = (() => {
         e.preventDefault();
         window.location.href = href;
       });
-      // キーボード（Enter）
+      // キーボード（Enter / Space）
       m.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && href) window.location.href = href;
+        if ((e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') && href) {
+          e.preventDefault();
+          window.location.href = href;
+        }
       });
     }
   }

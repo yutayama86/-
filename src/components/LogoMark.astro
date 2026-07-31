@@ -1,0 +1,41 @@
+---
+/**
+ * LogoMark — ロゴA案「EDITOR'S MARK」の暫定プロトタイプ（Blueprint §4）。
+ * 二つの不完全な角括弧が向かい合い、中央に余白（＝まだ語られていない価値）をつくる。
+ * 片側の角をわずかに開き、現地への入口を示す。モノクロ・currentColor・16pxで成立。
+ *
+ * ⚠️ 未確定：正式ロゴは Codex レビュー前に確定しない。feature flag 相当（現行UIに未接続、
+ *   preview でのみ表示）。ワードマーク「イバトコ」と必ず併用する前提。
+ */
+interface Props {
+  size?: number;
+  label?: string; // 装飾ならnull、意味を持たせるならラベル
+  class?: string;
+}
+const { size = 40, label, class: className } = Astro.props;
+const a11y = label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': 'true' as const };
+---
+
+<svg
+  class:list={['logomark', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 40 40"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.4"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  {...a11y}
+>
+  <!-- 左・角括弧（上の角をわずかに開く＝入口） -->
+  <path d="M12 12 V22" />
+  <path d="M16 12 H24" />
+  <!-- 右・角括弧（向かい合う） -->
+  <path d="M28 28 V18" />
+  <path d="M24 28 H16" />
+</svg>
+
+<style>
+  .logomark { display: inline-block; vertical-align: middle; color: var(--color-ink); }
+</style>

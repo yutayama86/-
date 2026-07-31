@@ -1,0 +1,87 @@
+---
+/**
+ * Milestone 1 プレビュー（noindex・本番ナビ非公開）。
+ * 新ブランドのトークン／ヘッダー・フッター／開示・取材メタの各プリミティブを
+ * 実フォントで確認するための検証用ルート。現行 Base 層には未接続。
+ */
+import '../../styles/global.css';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import DisclosureBadge from '../../components/DisclosureBadge.astro';
+import ReportingMeta from '../../components/ReportingMeta.astro';
+import BylineGroup from '../../components/BylineGroup.astro';
+import CorrectionHistory from '../../components/CorrectionHistory.astro';
+
+const tokens = [
+  ['--color-ink', '#172b35'], ['--color-tide', '#315c68'], ['--color-mist', '#dce6e2'],
+  ['--color-paper', '#f6f2e9'], ['--color-white', '#fffdf8'], ['--color-charcoal', '#292c2b'],
+  ['--color-soil', '#75695a'], ['--color-brass', '#9a7a45'], ['--color-signal', '#a63f32'],
+];
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Milestone 1 プレビュー｜イバトコ 2026刷新</title>
+    <!-- 新ブランドの実フォント（このプレビューでのみ読込） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Source+Sans+3:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body { margin: 0; background: var(--color-paper); color: var(--color-charcoal); font-family: var(--font-brand-body); }
+      .pv-main { max-width: var(--content-reading); margin: 0 auto; padding: clamp(2rem, 6vw, 4rem) 1rem; }
+      .pv-h { font-family: var(--font-brand-display); color: var(--color-ink); font-size: 1.6rem; margin: 2.5rem 0 1rem; }
+      .pv-note { font-family: var(--font-brand-meta); color: var(--color-soil); font-size: 0.85rem; margin-bottom: 1.5rem; }
+      .pv-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.6rem; }
+      .pv-sw { border: 1px solid var(--color-mist); border-radius: var(--radius-sm); overflow: hidden; font-family: var(--font-brand-meta); font-size: 0.72rem; }
+      .pv-sw span { display: block; height: 48px; }
+      .pv-sw code { display: block; padding: 0.4em 0.6em; color: var(--color-charcoal); background: var(--color-white); }
+      .pv-row { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; }
+    </style>
+  </head>
+  <body>
+    <SiteHeader />
+
+    <main class="pv-main">
+      <h1 class="pv-h" style="margin-top:0">Milestone 1 — 基盤プリミティブ検証</h1>
+      <p class="pv-note">このページは検証用（noindex）。新ブランドは本番トップに未接続です。</p>
+
+      <h2 class="pv-h">カラートークン</h2>
+      <div class="pv-swatches">
+        {tokens.map(([name, hex]) => (
+          <div class="pv-sw"><span style={`background:${hex}`}></span><code>{name}<br />{hex}</code></div>
+        ))}
+      </div>
+
+      <h2 class="pv-h">開示区分（Editorial / Partner / PR）</h2>
+      <div class="pv-row">
+        <DisclosureBadge type="editorial" />
+        <DisclosureBadge type="partner" />
+        <DisclosureBadge type="pr" />
+      </div>
+
+      <h2 class="pv-h">取材メタ（ReportingMeta）</h2>
+      <ReportingMeta
+        publishedAt={new Date('2026-07-20')}
+        updatedAt={new Date('2026-07-28')}
+        reportingDate={new Date('2026-07-15')}
+        onSiteReporting={true}
+        disclosureNote="取材先からの費用負担・招待はありません。"
+      />
+
+      <h2 class="pv-h">担当（BylineGroup）</h2>
+      <BylineGroup author="編集部" reporter="編集長 大和" photographer="編集部" editor="編集部" />
+
+      <h2 class="pv-h">訂正・更新履歴（CorrectionHistory）</h2>
+      <CorrectionHistory corrections={[{ date: new Date('2026-07-28'), note: '営業時間の記載を最新情報に更新しました。' }]} />
+    </main>
+
+    <SiteFooter />
+  </body>
+</html>

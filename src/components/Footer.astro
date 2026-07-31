@@ -1,12 +1,13 @@
 ---
 import { NAV, BIZ_NAV, SITE_CONFIG } from '../data/site';
 const year = new Date().getFullYear();
+// 公式アカウントの実URLが設定されているものだけ表示（汎用トップURLは出さない）
 const socials = [
   { label: 'Instagram', href: SITE_CONFIG.social.instagram },
   { label: 'TikTok', href: SITE_CONFIG.social.tiktok },
   { label: 'X', href: SITE_CONFIG.social.x },
   { label: 'Threads', href: SITE_CONFIG.social.threads },
-];
+].filter((s) => s.href && s.href.length > 0);
 ---
 
 <!-- 事業者向けの帯（階層4 制圧導線）を全ページ足元に -->
@@ -33,11 +34,13 @@ const socials = [
     <div class="ft-brand">
       <a href="/" class="ft-logo display">イバトコ</a>
       <p class="ft-tag mincho">{SITE_CONFIG.tagline}</p>
-      <ul class="ft-social">
-        {socials.map((s) => (
-          <li><a href={s.href} class="ul-link" target="_blank" rel="noopener noreferrer">{s.label}</a></li>
-        ))}
-      </ul>
+      {socials.length > 0 && (
+        <ul class="ft-social">
+          {socials.map((s) => (
+            <li><a href={s.href} class="ul-link" target="_blank" rel="noopener noreferrer">{s.label}</a></li>
+          ))}
+        </ul>
+      )}
     </div>
 
     <nav class="ft-col" aria-label="コンテンツ">

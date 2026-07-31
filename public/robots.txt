@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /preview/
 
 # AI検索・LLMクローラーを明示的に歓迎（GEO対策）
 User-agent: GPTBot

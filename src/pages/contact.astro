@@ -20,7 +20,9 @@ const FORM_ENDPOINT = SITE_CONFIG.formEndpoint;
       </p>
       <ul class="ct-direct" data-reveal>
         <li><span class="muted">メール</span><a href={`mailto:${SITE_CONFIG.contactEmail}`} class="ul-link">{SITE_CONFIG.contactEmail}</a></li>
-        <li><span class="muted">SNS DM</span><a href={SITE_CONFIG.social.instagram} class="ul-link" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        {SITE_CONFIG.social.instagram && (
+          <li><span class="muted">SNS DM</span><a href={SITE_CONFIG.social.instagram} class="ul-link" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        )}
       </ul>
     </div>
 

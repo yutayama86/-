@@ -43,6 +43,22 @@ const articles = defineCollection({
       place: reference('places').optional(),
       draft: z.boolean().default(false),
       featured: z.boolean().default(false),
+
+      // === 2026 Renewal：開示・取材メタデータモデル（Editorial Contract）===
+      // 「誰が・いつ・どこで・どう確かめ・どの関係性で発信したか」を明示する。
+      disclosure: z.enum(['editorial', 'partner', 'pr']).default('editorial'),
+      disclosureNote: z.string().optional(), // 情報提供・費用負担・招待の有無などの補足
+      reportingDate: z.coerce.date().optional(), // 取材日
+      onSiteReporting: z.boolean().default(false), // 現地取材の有無
+      photographer: z.string().optional(), // 撮影担当
+      editor: z.string().optional(), // 編集担当
+      // 出典（公式情報・一次資料）
+      sources: z
+        .array(z.object({ label: z.string(), url: z.string().url().optional(), accessedAt: z.coerce.date().optional() }))
+        .default([]),
+      // 訂正・更新履歴
+      corrections: z.array(z.object({ date: z.coerce.date(), note: z.string() })).default([]),
+      reviewed: z.boolean().default(false), // 編集部の事実確認済みか
     }),
 });
 

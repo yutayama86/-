@@ -18,11 +18,14 @@ export const SITE_CONFIG = {
   // Formspree のフォームID付きエンドポイント。送信先は info@ibatoco.jp。
   // 空にするとメール下書き(mailto)にフォールバックします（docs/FORMS_SETUP.md）。
   formEndpoint: 'https://formspree.io/f/mykrvjkg',
+  // 公式アカウントのURLが確定するまで、汎用SNSトップURLは掲載しない（信頼設計）。
+  // 実在する公式URLのみをここに入れると、フッター・構造化データ(sameAs)に反映される。
+  // 例: instagram: 'https://www.instagram.com/ibatoco_official/'
   social: {
-    instagram: 'https://instagram.com/',
-    tiktok: 'https://www.tiktok.com/',
-    x: 'https://x.com/',
-    threads: 'https://www.threads.net/',
+    instagram: '',
+    tiktok: '',
+    x: '',
+    threads: '',
   },
   contactEmail: 'info@ibatoco.jp',
 } as const;

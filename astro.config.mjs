@@ -13,6 +13,8 @@ export default defineConfig({
       i18n: undefined,
       changefreq: 'weekly',
       priority: 0.7,
+      // 検証用プレビュー・管理画面はサイトマップに含めない
+      filter: (page) => !page.includes('/preview/') && !page.includes('/admin/'),
     }),
   ],
   prefetch: {

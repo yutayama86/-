@@ -1,0 +1,45 @@
+---
+/**
+ * CorrectionHistory — 訂正・更新履歴と訂正申請窓口。
+ * 誤りを隠さず、いつ何を直したかを残すことで信頼を担保する。
+ */
+import { SITE_CONFIG } from '../data/site';
+interface Props {
+  corrections?: Array<{ date: Date; note: string }>;
+}
+const { corrections = [] } = Astro.props;
+const fmt = (d: Date) => new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+const contactHref = `mailto:${SITE_CONFIG.contactEmail}?subject=${encodeURIComponent('【訂正のお申し出】')}`;
+---
+
+<section class="corrections" aria-label="訂正・更新履歴">
+  <h2 class="corrections__title">訂正・更新履歴</h2>
+  {corrections.length > 0 ? (
+    <ol class="corrections__list">
+      {corrections.map((c) => (
+        <li class="corrections__item">
+          <time datetime={iso(c.date)}>{fmt(c.date)}</time>
+          <span>{c.note}</span>
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <p class="corrections__none">この記事の訂正はありません。</p>
+  )}
+  <p class="corrections__report">
+    内容に誤りや古い情報があれば、<a href={contactHref} class="corrections__link">訂正のお申し出</a>をお願いします。
+  </p>
+</section>
+
+<style>
+  .corrections { font-family: var(--font-brand-meta); border-top: 1px solid var(--color-mist); padding-top: 1.2rem; }
+  .corrections__title { font-family: var(--font-brand-body); font-size: 0.95rem; font-weight: 700; color: var(--color-ink); margin-bottom: 0.7rem; }
+  .corrections__list { list-style: none; display: grid; gap: 0.5rem; }
+  .corrections__item { display: grid; grid-template-columns: 8em 1fr; gap: 0 1rem; font-size: 0.85rem; color: var(--color-charcoal); }
+  .corrections__item time { color: var(--color-soil); font-family: var(--font-brand-serif-latin); }
+  .corrections__none { font-size: 0.85rem; color: var(--color-soil); }
+  .corrections__report { margin-top: 0.8rem; font-size: 0.85rem; color: var(--color-soil); }
+  .corrections__link { color: var(--color-tide); text-decoration: underline; text-underline-offset: 2px; }
+  @media (max-width: 480px) { .corrections__item { grid-template-columns: 1fr; gap: 0.1rem; } }
+</style>

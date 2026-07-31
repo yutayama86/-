@@ -75,7 +75,7 @@ export async function getStores(): Promise<Store[]> {
   const csv: Store[] = csvRows.map((s) => ({
     id: s.id,
     source: 'csv',
-    data: { gallery: [], menu: [], faq: [], ...(s.data as object) } as Store['data'],
+    data: { gallery: [], menu: [], faq: [], ...(s.data as object) } as unknown as Store['data'],
   }));
   const seen = new Set(md.map((s) => s.id));
   const merged = [...md, ...csv.filter((s) => !seen.has(s.id))];

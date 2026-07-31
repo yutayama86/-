@@ -25,13 +25,15 @@ const pageTitle = title ? `${title}｜${SITE_CONFIG.name}` : `${SITE_CONFIG.name
 const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE_CONFIG.domain).href;
 const ogImage = new URL(image, Astro.site ?? SITE_CONFIG.domain).href;
 
+// 公式アカウントの実URLのみ sameAs に含める（汎用SNSトップURLは入れない）
+const officialSameAs = Object.values(SITE_CONFIG.social).filter((u) => typeof u === 'string' && u.length > 0);
 const org = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: SITE_CONFIG.name,
   url: SITE_CONFIG.domain,
   description: SITE_CONFIG.description,
-  sameAs: Object.values(SITE_CONFIG.social),
+  ...(officialSameAs.length ? { sameAs: officialSameAs } : {}),
 };
 const structured = jsonLd ? [org, ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd])] : [org];
 ---

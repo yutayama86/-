@@ -1,0 +1,86 @@
+---
+/**
+ * SiteFooter — 2026刷新ブランドのフッター・プリミティブ。
+ * Blueprint：方針 / 訂正 / PR / 運営 / 連絡先。汎用SNS URLは載せない
+ * （公式アカウントの実URLが SITE_CONFIG.social に入っているものだけ表示）。
+ *
+ * ※Milestone 1：新プリミティブの定義。現行 Base.astro には未接続。
+ *   方針系リンクは M2 で /about/editorial-policy 等を作成後に付け替え。
+ */
+import { SITE_CONFIG } from '../data/site';
+const year = new Date().getFullYear();
+
+const policyNav = [
+  { label: '編集方針', href: '/about/' },
+  { label: 'PR・広告の方針', href: '/about/' },
+  { label: '訂正・更新方針', href: '/about/' },
+  { label: '運営・チーム', href: '/about/' },
+];
+const utilityNav = [
+  { label: 'お問い合わせ', href: '/contact/' },
+  { label: 'プライバシーポリシー', href: '/privacy/' },
+  { label: '地域事業者の方へ', href: '/biz/' },
+];
+const officialSocials = [
+  { label: 'Instagram', href: SITE_CONFIG.social.instagram },
+  { label: 'X', href: SITE_CONFIG.social.x },
+  { label: 'TikTok', href: SITE_CONFIG.social.tiktok },
+  { label: 'Threads', href: SITE_CONFIG.social.threads },
+].filter((s) => s.href && s.href.length > 0);
+---
+
+<footer class="site-footer2">
+  <div class="site-footer2__inner">
+    <div class="site-footer2__brand">
+      <p class="site-footer2__logo">イバトコ</p>
+      <p class="site-footer2__tag">現地から、信頼を編む。</p>
+      {officialSocials.length > 0 && (
+        <ul class="site-footer2__social" aria-label="公式アカウント">
+          {officialSocials.map((s) => (
+            <li><a href={s.href} target="_blank" rel="noopener noreferrer">{s.label}</a></li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    <nav class="site-footer2__col" aria-label="編集方針">
+      <h2 class="site-footer2__h">方針</h2>
+      <ul>{policyNav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}</ul>
+    </nav>
+
+    <nav class="site-footer2__col" aria-label="その他">
+      <h2 class="site-footer2__h">サイト情報</h2>
+      <ul>{utilityNav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}</ul>
+    </nav>
+  </div>
+
+  <div class="site-footer2__base">
+    <small>© {year} {SITE_CONFIG.name}</small>
+  </div>
+</footer>
+
+<style>
+  .site-footer2 { background: var(--color-ink); color: var(--color-white); font-family: var(--font-brand-body); }
+  .site-footer2__inner {
+    max-width: var(--content-wide); margin-inline: auto;
+    padding: clamp(2.5rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem);
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2rem;
+  }
+  .site-footer2__logo { font-family: var(--font-brand-display); font-size: 1.4rem; letter-spacing: 0.08em; }
+  .site-footer2__tag { font-family: var(--font-brand-display); color: var(--color-mist); margin-top: 0.4rem; font-size: 0.95rem; }
+  .site-footer2__social { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.2rem; list-style: none; }
+  .site-footer2__social a { color: var(--color-mist); font-size: 0.85rem; text-decoration: none; border-bottom: 1px solid transparent; }
+  .site-footer2__social a:hover, .site-footer2__social a:focus-visible { color: var(--color-white); border-color: var(--color-mist); }
+
+  .site-footer2__h { font-family: var(--font-brand-meta); font-size: 0.75rem; letter-spacing: 0.1em; color: var(--color-mist); margin-bottom: 0.9rem; }
+  .site-footer2__col ul { list-style: none; display: grid; gap: 0.55rem; }
+  .site-footer2__col a { color: rgba(255,253,248,0.86); text-decoration: none; font-size: 0.9rem; border-bottom: 1px solid transparent; }
+  .site-footer2__col a:hover, .site-footer2__col a:focus-visible { color: var(--color-white); border-color: var(--color-mist); }
+
+  .site-footer2__base {
+    max-width: var(--content-wide); margin-inline: auto;
+    padding: 1.2rem clamp(1rem, 4vw, 2rem); border-top: 1px solid rgba(255,253,248,0.14);
+    color: var(--color-mist); font-family: var(--font-brand-meta); font-size: 0.75rem;
+  }
+  @media (max-width: 720px) { .site-footer2__inner { grid-template-columns: 1fr 1fr; } .site-footer2__brand { grid-column: 1 / -1; } }
+</style>

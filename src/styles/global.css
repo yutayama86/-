@@ -23,6 +23,33 @@
   --line: rgba(28, 26, 20, 0.14);
   --line-strong: rgba(28, 26, 20, 0.28);
 
+  /* ===========================================================
+     2026 Renewal Brand Tokens（IBATOCO_RENEWAL_BLUEPRINT.md）
+     ※Milestone 1：追加のみ（既存トークンは維持）。新ブランドUIが
+       レンダリングされる箇所（プレビュー/新レイアウト）で使用する。
+     =========================================================== */
+  --color-ink: #172b35;       /* 主要文字・ロゴ・濃色面 */
+  --color-tide: #315c68;      /* リンク・選択状態・図表（アクセント。橙赤CTAの置換） */
+  --color-mist: #dce6e2;      /* 補助面・地図・区切り */
+  --color-paper: #f6f2e9;     /* 基本背景 */
+  --color-white: #fffdf8;     /* カード・記事本文面 */
+  --color-charcoal: #292c2b;  /* 長文本文 */
+  --color-soil: #75695a;      /* 補助文字・自然系図版 */
+  --color-brass: #9a7a45;     /* ごく限定した編集注記 */
+  --color-signal: #a63f32;    /* エラー・重要警告のみ（CTA色にしない） */
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --content-wide: 1200px;
+  --content-reading: 700px;
+
+  /* 新ブランドのフォント指定（トークンとして定義。実フォント読込は新UIレンダ時。
+     現行 coming-soon ページの Core Web Vitals を守るため全ページ一律読込はしない） */
+  --font-brand-display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-brand-body: "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --font-brand-meta: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --font-brand-serif-latin: "Source Serif 4", "Times New Roman", serif;
+
   /* --- Type --------------------------------------------------- */
   --font-display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
   --font-sans: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN",

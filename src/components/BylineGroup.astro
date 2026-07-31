@@ -1,0 +1,37 @@
+---
+/**
+ * BylineGroup — 取材・執筆・撮影・編集の担当を明示する。
+ * 「誰が」を透明にするための表示。実在の担当のみ表示する。
+ */
+interface Props {
+  author?: string; // 執筆・取材
+  reporter?: string; // 現地レポーター
+  photographer?: string; // 撮影
+  editor?: string; // 編集
+}
+const { author, reporter, photographer, editor } = Astro.props;
+
+const roles = [
+  { role: '取材・執筆', name: reporter || author },
+  { role: '撮影', name: photographer },
+  { role: '編集', name: editor },
+].filter((r) => r.name);
+---
+
+{roles.length > 0 && (
+  <ul class="byline" aria-label="担当">
+    {roles.map((r) => (
+      <li class="byline__item">
+        <span class="byline__role">{r.role}</span>
+        <span class="byline__name">{r.name}</span>
+      </li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .byline { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; font-family: var(--font-brand-meta); font-size: 0.85rem; }
+  .byline__item { display: inline-flex; align-items: baseline; gap: 0.5em; }
+  .byline__role { color: var(--color-soil); font-size: 0.75rem; letter-spacing: 0.04em; }
+  .byline__name { color: var(--color-ink); font-weight: 600; }
+</style>

@@ -1,0 +1,104 @@
+---
+/**
+ * SiteHeader — 2026刷新ブランドのヘッダー・プリミティブ。
+ * Blueprintの情報設計：読む / 探す / 人を知る / イバトコについて / 検索、
+ * 事業者導線は主ナビから分離し「地域事業者の方へ」をユーティリティに置く（赤い強調にしない）。
+ *
+ * ※Milestone 1：新プリミティブの定義。現行 Base.astro には未接続（新ブランドは
+ *   記事・場所・編集者が揃うまで本番非公開）。リンク先はURL移行(M4)までは現行URLを指す。
+ */
+import { SITE_CONFIG } from '../data/site';
+
+// label → 現行URL（M4のURL移行で /stories /places /people /partners に付け替え）
+const primaryNav = [
+  { label: '読む', href: '/eat/' },
+  { label: '探す', href: '/place/' },
+  { label: '人を知る', href: '/reporters/' },
+  { label: 'イバトコについて', href: '/about/' },
+];
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a href="/" class="site-header__logo" aria-label={`${SITE_CONFIG.name} ホーム`}>
+      <span class="site-header__logo-ja">イバトコ</span>
+      <span class="site-header__logo-en">IBATOCO</span>
+    </a>
+
+    <nav class="site-header__nav" aria-label="メインナビゲーション">
+      <ul class="site-header__list">
+        {primaryNav.map((n) => (
+          <li><a href={n.href} class="site-header__link">{n.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="site-header__utility">
+      <!-- 検索は M6 で SearchDialog に接続。M1 では入口のみ用意。 -->
+      <button type="button" class="site-header__search" aria-label="サイト内を検索" disabled>
+        <span aria-hidden="true">⌕</span> 検索
+      </button>
+      <a href="/biz/" class="site-header__partner">地域事業者の方へ</a>
+    </div>
+
+    <details class="site-header__mobile">
+      <summary aria-label="メニューを開閉">メニュー</summary>
+      <ul>
+        {primaryNav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+        <li><a href="/biz/">地域事業者の方へ</a></li>
+      </ul>
+    </details>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--color-paper);
+    border-bottom: 1px solid var(--color-mist);
+    font-family: var(--font-brand-body);
+  }
+  .site-header__inner {
+    max-width: var(--content-wide);
+    margin-inline: auto;
+    padding: 0.9rem clamp(1rem, 4vw, 2rem);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .site-header__logo { display: inline-flex; flex-direction: column; line-height: 1.05; text-decoration: none; }
+  .site-header__logo-ja { font-family: var(--font-brand-display); font-size: 1.35rem; font-weight: 600; color: var(--color-ink); letter-spacing: 0.06em; }
+  .site-header__logo-en { font-family: var(--font-brand-meta); font-size: 0.62rem; letter-spacing: 0.28em; color: var(--color-soil); }
+
+  .site-header__nav { margin-inline-start: auto; }
+  .site-header__list { display: flex; gap: 1.6rem; list-style: none; }
+  .site-header__link {
+    color: var(--color-charcoal); text-decoration: none; font-size: 0.95rem;
+    padding-bottom: 2px; border-bottom: 1px solid transparent; transition: border-color 180ms ease, color 180ms ease;
+  }
+  .site-header__link:hover, .site-header__link:focus-visible { color: var(--color-tide); border-color: var(--color-tide); }
+
+  .site-header__utility { display: flex; align-items: center; gap: 1rem; }
+  .site-header__search {
+    background: none; border: 1px solid var(--color-mist); border-radius: var(--radius-xs);
+    padding: 0.4em 0.8em; font: inherit; font-size: 0.85rem; color: var(--color-soil); cursor: not-allowed;
+  }
+  .site-header__partner {
+    font-size: 0.85rem; color: var(--color-ink); text-decoration: none;
+    border-bottom: 1px solid var(--color-soil); padding-bottom: 1px;
+  }
+  .site-header__partner:hover, .site-header__partner:focus-visible { color: var(--color-tide); border-color: var(--color-tide); }
+
+  .site-header__mobile { display: none; margin-inline-start: auto; }
+  .site-header__mobile summary { cursor: pointer; font-size: 0.9rem; color: var(--color-ink); list-style: none; padding: 0.4em 0.6em; border: 1px solid var(--color-mist); border-radius: var(--radius-xs); }
+  .site-header__mobile summary::-webkit-details-marker { display: none; }
+  .site-header__mobile ul { list-style: none; display: grid; gap: 0.2rem; margin-top: 0.6rem; }
+  .site-header__mobile a { display: block; padding: 0.7em 0.6em; color: var(--color-charcoal); text-decoration: none; border-bottom: 1px solid var(--color-mist); }
+
+  @media (max-width: 820px) {
+    .site-header__nav, .site-header__utility { display: none; }
+    .site-header__mobile { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .site-header__link { transition: none; }
+  }
+</style>

@@ -3,6 +3,9 @@ import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
+import DisclosureBadge from '../../components/DisclosureBadge.astro';
+import ReportingMeta from '../../components/ReportingMeta.astro';
+import CorrectionHistory from '../../components/CorrectionHistory.astro';
 import { CATEGORIES, SITE_CONFIG } from '../../data/site';
 import { getArticles, getPlaces, formatDate } from '../../lib/content';
 import { reporterByName } from '../../data/reporters';
@@ -68,6 +71,7 @@ const jsonLd = {
         <a href="/">ホーム</a><span aria-hidden="true">/</span>
         <a href={`/${cat.path}/`}>{cat.label}</a>
       </nav>
+      <div class="post-disclosure"><DisclosureBadge type={data.disclosure} note={data.disclosureNote} /></div>
       <p class="post-cat chip" style={`--_a:${cat.accent};color:var(--_a);border-color:color-mix(in srgb,var(--_a) 50%,transparent)`}>{cat.label}</p>
       <h1 class="post-title display">{data.title}</h1>
       <p class="post-desc mincho">{data.description}</p>
@@ -86,6 +90,16 @@ const jsonLd = {
         <img src={data.cover} alt={data.coverAlt} loading="eager" />
       </figure>
     )}
+
+    <div class="post-reporting wrap">
+      <ReportingMeta
+        publishedAt={data.publishedAt}
+        updatedAt={data.updatedAt}
+        reportingDate={data.reportingDate}
+        onSiteReporting={data.onSiteReporting}
+        disclosureNote={data.disclosureNote}
+      />
+    </div>
 
     <div class="post-body wrap">
       {toc.length > 1 && (
@@ -150,6 +164,10 @@ const jsonLd = {
       </aside>
     )}
 
+    <div class="post-corrections wrap">
+      <CorrectionHistory corrections={data.corrections} />
+    </div>
+
     {related.length > 0 && (
       <section class="wrap section">
         <div class="sec-head sec-head--split">
@@ -211,6 +229,12 @@ const jsonLd = {
   .post-cover img { width: 100%; height: 100%; object-fit: cover; }
 
   .post-body { max-width: 720px; padding-top: 1rem; }
+
+  /* 2026刷新：開示・取材メタ・訂正履歴のプリミティブ配置 */
+  .post-disclosure { margin: 0.6rem 0 0.9rem; }
+  .post-reporting > :global(*), .post-corrections > :global(*) { max-width: 720px; margin-inline: auto; }
+  .post-reporting { margin-block: clamp(1.4rem, 4vw, 2.2rem); }
+  .post-corrections { margin-block: clamp(2rem, 5vw, 3rem); }
   .post-tags { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); }
 
   .place-cta {

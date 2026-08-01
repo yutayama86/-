@@ -1,92 +1,18 @@
 ---
-import Base from '../../layouts/Base.astro';
-import IbarakiMap from '../../components/IbarakiMap.astro';
-import { REGIONS, REGION_ORDER, municipalitiesByRegion } from '../../data/areas';
-import { getAreaCounts } from '../../lib/content';
-
-const counts = await getAreaCounts();
-const totalAreas = [...counts.keys()].length;
+import BrandBase from '../../layouts/BrandBase.astro';
+import AreaExplorer from '../../components/AreaExplorer.astro';
 ---
 
-<Base
-  title="エリアから探す｜茨城の市町村マップ"
-  description="茨城県の市町村から、グルメ・暮らし・遊び・美容・ものづくりの体験を探せます。地図をタップして、あなたの街の“いいとこ”へ。"
->
-  <section class="area-hero">
-    <div class="wrap">
-      <p class="eyebrow" data-reveal>Explore by Area</p>
-      <h1 class="display area-title" data-reveal>茨城を、街から探す。</h1>
-      <p class="area-lead mincho" data-reveal>
-        44市町村、5つのエリア。地図の点をタップすると、その街の体験レポートとお店へ。<br class="pc" />
-        {totalAreas > 0 ? `いま${totalAreas}のエリアに“いいとこ”が集まっています。` : 'これから、街ごとの“いいとこ”が集まっていきます。'}
-      </p>
-    </div>
-
-    <div class="wrap area-mapwrap" data-reveal>
-      <IbarakiMap counts={counts} />
-    </div>
-  </section>
-
-  <section class="wrap section">
-    {REGION_ORDER.map((rk) => {
-      const region = REGIONS[rk];
-      const munis = municipalitiesByRegion(rk);
-      return (
-        <div class="region" data-reveal style={`--_c:${region.color}`}>
-          <div class="region-head">
-            <span class="region-bar"></span>
-            <div>
-              <h2 class="region-name display">{region.label}<span class="region-reading latin"> / {region.reading}</span></h2>
-              <p class="region-note muted">{region.note}</p>
-            </div>
-          </div>
-          <ul class="muni-list">
-            {munis.map((m) => {
-              const c = counts.get(m.slug) ?? 0;
-              return (
-                <li>
-                  <a href={`/area/${m.slug}/`} class:list={["muni", { "has": c > 0 }]}>
-                    <span class="muni-name">{m.name}</span>
-                    {c > 0 && <span class="muni-count latin">{c}</span>}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      );
-    })}
-  </section>
-</Base>
+<BrandBase title="エリアから探す｜44市町村から茨城を読む｜イバトコ" description="茨城県44市町村を地図から選び、取材・確認を経た地域の記事、場所、人を探せます。">
+  <header class="area-index-head bp-wrap">
+    <p class="bp-kicker">EXPLORE IBARAKI</p>
+    <h1>44の街から、<br />茨城を読む。</h1>
+    <p>地図の一つひとつが、人と営みへの入口です。街を選ぶと、その地域で確認できた記事・場所・人を表示します。</p>
+  </header>
+  <section class="bp-wrap area-index-map"><AreaExplorer /></section>
+</BrandBase>
 
 <style>
-  .area-hero { padding-top: clamp(2.5rem, 6vw, 4.5rem); }
-  .area-title { font-size: var(--step-5); }
-  .area-lead { font-size: var(--step-1); color: var(--ink-soft); margin-top: 0.8rem; line-height: 1.9; }
-  .area-mapwrap { max-width: 680px; margin-top: clamp(1.5rem, 4vw, 2.5rem); }
-
-  .section { padding-block: clamp(2.5rem, 6vw, 4.5rem); display: grid; gap: clamp(2rem, 4vw, 3rem); }
-  .region-head { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.2rem; }
-  .region-bar { width: 5px; align-self: stretch; min-height: 2.4rem; background: var(--_c); border-radius: 3px; }
-  .region-name { font-size: var(--step-2); }
-  .region-reading { color: var(--ink-mute); font-size: 0.5em; }
-  .region-note { font-size: var(--step-0); margin-top: 0.1rem; }
-
-  .muni-list { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-  .muni {
-    display: inline-flex; align-items: center; gap: 0.5em; padding: 0.5em 1em;
-    border: 1px solid var(--line); border-radius: 999px; font-size: var(--step-0);
-    color: var(--ink-soft); background: var(--paper); transition: all 0.25s var(--ease);
-  }
-  .muni:hover { border-color: var(--_c); color: var(--_c); transform: translateY(-2px); }
-  .muni.has { border-color: color-mix(in srgb, var(--_c) 45%, transparent); color: var(--ink); font-weight: 700; }
-  .muni.has:hover { background: var(--_c); color: #fff; }
-  .muni-count {
-    display: inline-grid; place-items: center; min-width: 1.5em; height: 1.5em; padding: 0 0.3em;
-    background: var(--_c); color: #fff; border-radius: 999px; font-size: 0.72em;
-  }
-  .muni.has:hover .muni-count { background: rgba(255,255,255,.25); }
-
-  .pc { display: inline; }
-  @media (max-width: 640px) { .pc { display: none; } }
+  .area-index-head{padding-top:clamp(4rem,9vw,8rem)}.area-index-head h1{margin-top:1rem;font:600 clamp(2.6rem,7vw,6rem)/1.18 var(--font-brand-display);color:var(--color-ink)}.area-index-head>p:last-child{max-width:48ch;margin-top:1.5rem;line-height:2;color:var(--color-soil)}
+  .area-index-map{padding-block:clamp(4rem,8vw,7rem)}
 </style>

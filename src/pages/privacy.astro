@@ -1,10 +1,10 @@
 ---
-import Base from '../layouts/Base.astro';
+import BrandBase from '../layouts/BrandBase.astro';
 import { SITE_CONFIG } from '../data/site';
 const updated = '2026年7月';
 ---
 
-<Base title="プライバシーポリシー" description="イバトコのプライバシーポリシー。" noindex={true}>
+<BrandBase title="プライバシーポリシー｜イバトコ" description="イバトコのプライバシーポリシー。" noindex={true}>
   <section class="wrap pv">
     <h1 class="display pv-title">プライバシーポリシー</h1>
     <p class="muted">最終更新：{updated}</p>
@@ -14,13 +14,13 @@ const updated = '2026年7月';
       <h2>1. 取得する情報</h2>
       <p>当メディアは、以下の情報を取得することがあります。</p>
       <ul>
-        <li><b>お問い合わせ・予約フォームの入力情報</b>：お名前・店舗／企業名、メールアドレス、電話番号、ご相談・ご予約の内容など、ユーザーがフォームに入力された情報。</li>
+        <li><b>お問い合わせフォームの入力情報</b>：お名前・店舗／企業名、メールアドレス、電話番号、ご相談の内容など、ユーザーがフォームに入力された情報。</li>
         <li><b>アクセスに関する情報</b>：閲覧ページ、リファラー、おおよその地域、ブラウザ種別などの匿名の統計情報。個人を特定するものではありません。</li>
       </ul>
 
       <h2>2. 利用目的</h2>
       <ul>
-        <li>お問い合わせ・ご予約への対応、および掲載店舗・関係者との連絡のため</li>
+        <li>お問い合わせへの対応、および掲載店舗・関係者との連絡のため</li>
         <li>サービス内容・コンテンツの改善、利用状況の把握のため</li>
         <li>法令に基づく対応のため</li>
       </ul>
@@ -44,7 +44,7 @@ const updated = '2026年7月';
       <ul>
         <li><b>ホスティング／配信・アクセス解析</b>：Cloudflare, Inc.</li>
         <li><b>アクセス解析</b>：Google LLC（Google Analytics 4）</li>
-        <li><b>お問い合わせ・予約フォームの送信</b>：フォームの送信内容は、メール送信、または外部フォーム送信サービスを通じて当メディアの連絡先メールアドレスに届きます。</li>
+        <li><b>お問い合わせフォームの送信</b>：フォームの送信内容は、メール送信、または外部フォーム送信サービスを通じて当メディアの連絡先メールアドレスに届きます。</li>
       </ul>
 
       <h2>6. 第三者提供</h2>
@@ -63,7 +63,7 @@ const updated = '2026年7月';
       <p>当メディアは、法令の変更やサービス内容の変更に応じて、本ポリシーを改定することがあります。改定した場合は、本ページに最新の内容と最終更新日を掲載します。</p>
     </div>
   </section>
-</Base>
+</BrandBase>
 
 <style>
   .pv { max-width: 720px; padding-block: clamp(3rem, 8vw, 5rem); }

@@ -1,0 +1,46 @@
+---
+interface Props {
+  size?: number;
+  inverse?: boolean;
+  class?: string;
+}
+
+const { size = 34, inverse = false, class: className } = Astro.props;
+---
+
+<span
+  class:list={['brand-logo', { 'is-inverse': inverse }, className]}
+  style={`--brand-logo-size:${size}px`}
+>
+  <span class="brand-logo__wordmark">
+    <span class="brand-logo__ja">イバトコ</span>
+    <span class="brand-logo__en">IBATOCO</span>
+  </span>
+</span>
+
+<style>
+  .brand-logo {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-ink);
+    line-height: 1;
+  }
+  .brand-logo.is-inverse { color: var(--color-white); }
+  .brand-logo__wordmark { display: flex; flex-direction: column; gap: calc(var(--brand-logo-size) * .035); }
+  .brand-logo__ja {
+    font-family: var(--font-brand-display);
+    font-size: calc(var(--brand-logo-size) * .63);
+    font-weight: 600;
+    letter-spacing: .09em;
+    white-space: nowrap;
+  }
+  .brand-logo__en {
+    padding-left: .08em;
+    font-family: var(--font-brand-meta);
+    font-size: calc(var(--brand-logo-size) * .26);
+    font-weight: 600;
+    letter-spacing: .32em;
+    white-space: nowrap;
+    opacity: .68;
+  }
+</style>

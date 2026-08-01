@@ -1,28 +1,24 @@
 ---
 /**
- * SiteHeader — 2026刷新ブランドのヘッダー・プリミティブ。
- * Blueprintの情報設計：読む / 探す / 人を知る / イバトコについて / 検索、
- * 事業者導線は主ナビから分離し「地域事業者の方へ」をユーティリティに置く（赤い強調にしない）。
- *
- * ※Milestone 1：新プリミティブの定義。現行 Base.astro には未接続（新ブランドは
- *   記事・場所・編集者が揃うまで本番非公開）。リンク先はURL移行(M4)までは現行URLを指す。
+ * ブランドサイトの共通ヘッダー。
+ * 記事がない先行公開時も空一覧へ誘導せず、街・方針・About・連絡先を主導線にする。
+ * 事業者向け導線は主ナビから分離し、過度に強調しない。
  */
 import { SITE_CONFIG } from '../data/site';
+import BrandLogo from './BrandLogo.astro';
 
-// label → 現行URL（M4のURL移行で /stories /places /people /partners に付け替え）
 const primaryNav = [
-  { label: '読む', href: '/eat/' },
-  { label: '探す', href: '/place/' },
-  { label: '人を知る', href: '/reporters/' },
+  { label: '街を探す', href: '/area/' },
+  { label: '編集方針', href: '/about/editorial-policy/' },
   { label: 'イバトコについて', href: '/about/' },
+  { label: 'お問い合わせ', href: '/contact/' },
 ];
 ---
 
 <header class="site-header">
   <div class="site-header__inner">
     <a href="/" class="site-header__logo" aria-label={`${SITE_CONFIG.name} ホーム`}>
-      <span class="site-header__logo-ja">イバトコ</span>
-      <span class="site-header__logo-en">IBATOCO</span>
+      <BrandLogo size={34} />
     </a>
 
     <nav class="site-header__nav" aria-label="メインナビゲーション">
@@ -34,10 +30,6 @@ const primaryNav = [
     </nav>
 
     <div class="site-header__utility">
-      <!-- 検索は M6 で SearchDialog に接続。M1 では入口のみ用意。 -->
-      <button type="button" class="site-header__search" aria-label="サイト内を検索" disabled>
-        <span aria-hidden="true">⌕</span> 検索
-      </button>
       <a href="/biz/" class="site-header__partner">地域事業者の方へ</a>
     </div>
 
@@ -65,9 +57,7 @@ const primaryNav = [
     align-items: center;
     gap: 1.5rem;
   }
-  .site-header__logo { display: inline-flex; flex-direction: column; line-height: 1.05; text-decoration: none; }
-  .site-header__logo-ja { font-family: var(--font-brand-display); font-size: 1.35rem; font-weight: 600; color: var(--color-ink); letter-spacing: 0.06em; }
-  .site-header__logo-en { font-family: var(--font-brand-meta); font-size: 0.62rem; letter-spacing: 0.28em; color: var(--color-soil); }
+  .site-header__logo { display: inline-flex; align-items:center; line-height: 1.05; text-decoration: none; color:var(--color-ink) }
 
   .site-header__nav { margin-inline-start: auto; }
   .site-header__list { display: flex; gap: 1.6rem; list-style: none; }
@@ -78,10 +68,6 @@ const primaryNav = [
   .site-header__link:hover, .site-header__link:focus-visible { color: var(--color-tide); border-color: var(--color-tide); }
 
   .site-header__utility { display: flex; align-items: center; gap: 1rem; }
-  .site-header__search {
-    background: none; border: 1px solid var(--color-mist); border-radius: var(--radius-xs);
-    padding: 0.4em 0.8em; font: inherit; font-size: 0.85rem; color: var(--color-soil); cursor: not-allowed;
-  }
   .site-header__partner {
     font-size: 0.85rem; color: var(--color-ink); text-decoration: none;
     border-bottom: 1px solid var(--color-soil); padding-bottom: 1px;

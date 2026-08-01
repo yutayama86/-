@@ -1,10 +1,9 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import Base from '../../../layouts/Base.astro';
+import BrandBase from '../../../layouts/BrandBase.astro';
 import ArticleCard from '../../../components/ArticleCard.astro';
-import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS } from '../../../data/areas';
+import { MUNICIPALITIES, MUNI_BY_SLUG } from '../../../data/areas';
 import { CATEGORIES, CATEGORY_LIST, CATEGORY_PAGE_META, SITE_CONFIG } from '../../../data/site';
-import { MUNICIPALITY_CONTENT } from '../../../data/municipality-content';
 import { getArticles, getStores } from '../../../lib/content';
 import { areaToSlug } from '../../../data/areas';
 import type { CategoryKey } from '../../../content.config';
@@ -13,16 +12,11 @@ export const getStaticPaths = (async () => {
   const [articles, places] = await Promise.all([getArticles(), getStores()]);
   const paths: any[] = [];
   for (const m of MUNICIPALITIES) {
-    const content = MUNICIPALITY_CONTENT[m.slug] ?? {};
     for (const c of CATEGORY_LIST) {
       const arts = articles.filter((a) => a.data.category === c.key && areaToSlug(a.data.area) === m.slug);
       const plcs = places.filter((p) => p.data.category === c.key && areaToSlug(p.data.area) === m.slug);
-      const meta = CATEGORY_PAGE_META[c.key];
-      const muniItems =
-        meta.muniField === 'gourmet' ? content.gourmet ?? [] :
-        meta.muniField === 'spotsExp' ? [...(content.spots ?? []), ...(content.experiences ?? [])] : [];
-      // 中身のある組み合わせだけ生成（薄いページを作らない）
-      if (arts.length + plcs.length + muniItems.length === 0) continue;
+      // 公開確認済みの記事・場所がある組み合わせだけ生成する。
+      if (arts.length + plcs.length === 0) continue;
       paths.push({ params: { slug: m.slug, category: c.path }, props: { muniSlug: m.slug, catKey: c.key } });
     }
   }
@@ -32,26 +26,19 @@ export const getStaticPaths = (async () => {
 const { muniSlug, catKey } = Astro.props as { muniSlug: string; catKey: CategoryKey };
 const muni = MUNI_BY_SLUG.get(muniSlug)!;
 const cat = CATEGORIES[catKey];
-const region = REGIONS[muni.region];
 const meta = CATEGORY_PAGE_META[catKey];
-const content = MUNICIPALITY_CONTENT[muniSlug] ?? {};
 
 const [allArticles, allPlaces] = await Promise.all([getArticles(), getStores()]);
 const articles = allArticles.filter((a) => a.data.category === catKey && areaToSlug(a.data.area) === muniSlug);
 const places = allPlaces.filter((p) => p.data.category === catKey && areaToSlug(p.data.area) === muniSlug);
-const muniItems = meta.muniField === 'gourmet' ? content.gourmet ?? [] : meta.muniField === 'spotsExp' ? [...(content.spots ?? []), ...(content.experiences ?? [])] : [];
 
 // 他ジャンルへの相互リンク＝この市町村で「実際に生成される」ページのみ
 // （getStaticPaths と同じ判定。リンク切れ防止）
 const otherCats = CATEGORY_LIST.filter((c) => {
   if (c.key === catKey) return false;
-  const m = CATEGORY_PAGE_META[c.key];
   const arts = allArticles.filter((a) => a.data.category === c.key && areaToSlug(a.data.area) === muniSlug).length;
   const plcs = allPlaces.filter((p) => p.data.category === c.key && areaToSlug(p.data.area) === muniSlug).length;
-  const items =
-    m.muniField === 'gourmet' ? (content.gourmet?.length ?? 0) :
-    m.muniField === 'spotsExp' ? (content.spots?.length ?? 0) + (content.experiences?.length ?? 0) : 0;
-  return arts + plcs + items > 0;
+  return arts + plcs > 0;
 });
 
 const abs = (p: string) => new URL(p, Astro.site ?? SITE_CONFIG.domain).href;
@@ -73,7 +60,7 @@ const jsonLd = [
 ];
 ---
 
-<Base
+<BrandBase
   title={`${muni.name}の${cat.label}｜茨城${muni.name}${cat.label}まとめ`}
   description={`${meta.lead(muni.name)} イバトコが茨城県${muni.name}の${cat.label}を現地目線でまとめています。`}
   jsonLd={jsonLd}
@@ -92,17 +79,6 @@ const jsonLd = [
   </section>
 
   <section class="wrap section">
-    {muniItems.length > 0 && (
-      <div class="block" data-reveal>
-        <div class="sec-head"><h2>{muni.name}の{meta.heading}</h2></div>
-        <ul class="xc-items">
-          {muniItems.map((it) => (
-            <li class="xc-item"><b class="mincho">{it.name}</b><span>{it.desc}</span></li>
-          ))}
-        </ul>
-      </div>
-    )}
-
     {places.length > 0 && (
       <div class="block" data-reveal>
         <div class="sec-head"><h2>{muni.name}の{cat.label}のお店<span class="latin num"> / Places</span></h2></div>
@@ -142,13 +118,13 @@ const jsonLd = [
 
     <div class="mc-cta" data-reveal>
       <p class="mincho mc-cta-h">{muni.name}の{cat.label}、掲載しませんか。</p>
-      <p class="muted">お店の掲載・取材のご相談はこちら。無料掲載から始められます。</p>
+      <p class="muted">取材・情報掲載については、方針と関係性をご説明したうえでご相談を承ります。</p>
       <div class="mc-cta-btns">
         <a href="/biz/" class="btn btn--shu">掲載を相談する <span class="arw">→</span></a>
       </div>
     </div>
   </section>
-</Base>
+</BrandBase>
 
 <style>
   .xc-hero { position: relative; overflow: hidden; color: #fff; padding: clamp(2.8rem, 7vw, 4.5rem) 0 clamp(1.8rem, 4vw, 2.6rem);

@@ -141,9 +141,7 @@ export const GUIDES: Guide[] = [
   },
 ];
 
-// 本番ビルドでは draft を除外。dev/preview では全て表示。
-const isProd = import.meta.env.PROD;
-/** 公開対象のまとめ（本番では draft を除外） */
-export const VISIBLE_GUIDES = GUIDES.filter((g) => !(isProd && g.draft));
+// 環境に関係なく draft は公開導線から除外する。
+export const VISIBLE_GUIDES = GUIDES.filter((g) => !g.draft);
 
 export const GUIDE_BY_SLUG = new Map(VISIBLE_GUIDES.map((g) => [g.slug, g]));

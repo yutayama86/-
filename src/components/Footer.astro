@@ -2,12 +2,13 @@
 import { NAV, BIZ_NAV, SITE_CONFIG } from '../data/site';
 const year = new Date().getFullYear();
 // 公式アカウントの実URLが設定されているものだけ表示（汎用トップURLは出さない）
+const socialUrls: Record<string, string> = SITE_CONFIG.social;
 const socials = [
-  { label: 'Instagram', href: SITE_CONFIG.social.instagram },
-  { label: 'TikTok', href: SITE_CONFIG.social.tiktok },
-  { label: 'X', href: SITE_CONFIG.social.x },
-  { label: 'Threads', href: SITE_CONFIG.social.threads },
-].filter((s) => s.href && s.href.length > 0);
+  { label: 'Instagram', href: socialUrls.instagram },
+  { label: 'TikTok', href: socialUrls.tiktok },
+  { label: 'X', href: socialUrls.x },
+  { label: 'Threads', href: socialUrls.threads },
+].filter((s) => Boolean(s.href));
 ---
 
 <!-- 事業者向けの帯（階層4 制圧導線）を全ページ足元に -->
@@ -19,12 +20,12 @@ const socials = [
       その一歩を、いっしょに。
     </h2>
     <p class="biz-band-lead">
-      掲載は初期費用0円から。取材・撮影・専用ページ制作までワンストップ。<br class="pc" />
-      集客が動き出したら、公式HP・SNS運用・予約システムまで丸ごとお任せください。
+      取材・編集・情報整備について、目的と現状を確認したうえで支援内容をご提案します。<br class="pc" />
+      費用・範囲・関係性は、開始前と公開コンテンツ上で明確にします。
     </p>
     <div class="biz-band-actions">
-      <a href="/biz/" class="btn btn--shu btn--lg">無料掲載を相談する <span class="arw">→</span></a>
-      <a href="/agency/" class="btn btn--ghost btn--lg" style="--fg:#f5f1e8;border-color:rgba(245,241,232,.35)">WEB集客サポートを見る</a>
+      <a href="/biz/" class="btn btn--shu btn--lg">支援方針を確認する <span class="arw">→</span></a>
+      <a href="/contact/" class="btn btn--ghost btn--lg" style="--fg:#f5f1e8;border-color:rgba(245,241,232,.35)">相談する</a>
     </div>
   </div>
 </section>
@@ -57,7 +58,7 @@ const socials = [
       <h3 class="ft-h">イバトコについて</h3>
       <ul>
         <li><a href="/about/" class="ul-link">運営・編集方針</a></li>
-        <li><a href="/reporters/" class="ul-link">公式レポーター</a></li>
+        <li><a href="/reporters/" class="ul-link">ローカルエディター</a></li>
         <li><a href="/place/" class="ul-link">店舗ディレクトリ</a></li>
         <li><a href="/guide/" class="ul-link">まとめ・モデルコース</a></li>
         <li><a href="/privacy/" class="ul-link">プライバシーポリシー</a></li>

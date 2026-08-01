@@ -3,9 +3,9 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 
 /**
- * 店舗の「無料一括掲載」用CSVローダー（＝供給エンジンの初手）。
+ * 店舗基本情報のCSVローダー。
  * src/data/stores.csv を読み、1行=1店舗として stores コレクションに流し込みます。
- * 大量の無料掲載ページをビルド時に量産する用途。手書きの作り込み店舗は
+ * 基本情報をまとめて管理する用途。取材・編集した場所は
  * src/content/places/*.md（places コレクション）側で管理し、両者は getStores() で統合します。
  *
  * CSV仕様：1行目はヘッダー。features は「｜」または「|」区切り。値内にカンマを含む場合は
@@ -16,7 +16,7 @@ export function csvStoresLoader(path: string): Loader {
     name: 'csv-stores',
     load: async ({ store, parseData, logger }) => {
       if (!existsSync(path)) {
-        logger.warn(`stores.csv が見つかりません（${path}）。無料掲載0件として続行します。`);
+        logger.warn(`stores.csv が見つかりません（${path}）。店舗基本情報0件として続行します。`);
         store.clear();
         return;
       }
@@ -40,9 +40,11 @@ export function csvStoresLoader(path: string): Loader {
           features,
           plan: (row.plan?.trim() || 'free'),
           draft: row.draft?.trim() === 'true',
+          reviewed: row.reviewed?.trim() === 'true',
+          disclosure: row.disclosure?.trim() || 'editorial',
         };
         // 任意項目は値があるときだけ渡す（空文字でzod optionalを汚さない）
-        for (const key of ['kana', 'address', 'access', 'hours', 'holiday', 'tel', 'budget', 'website', 'instagram', 'map', 'cover', 'publishedAt'] as const) {
+        for (const key of ['kana', 'address', 'access', 'hours', 'holiday', 'tel', 'budget', 'website', 'instagram', 'map', 'cover', 'publishedAt', 'verifiedAt', 'disclosureNote'] as const) {
           const v = row[key]?.trim();
           if (v) raw2[key] = v;
         }
@@ -50,7 +52,7 @@ export function csvStoresLoader(path: string): Loader {
         store.set({ id: slug, data });
         n++;
       }
-      logger.info(`無料掲載店舗（CSV）を ${n} 件読み込みました。`);
+      logger.info(`店舗基本情報（CSV）を ${n} 件読み込みました。`);
     },
   };
 }

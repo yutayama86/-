@@ -43,12 +43,11 @@ for (const g of GUIDES) {
   pages[`guide/${g.slug}`] = {
     title: g.title.split('。')[0],
     description: `${g.lead}　—　まとめ・モデルコース｜IBATOCO`,
-    accent: hexRgb(g.accent ?? '#d8452b'),
+    accent: hexRgb(g.accent ?? '#46798b'),
   };
 }
 
-export const { getStaticPaths, GET } = OGImageRoute({
-  param: 'route',
+export const { getStaticPaths, GET } = await OGImageRoute({
   pages,
   getImageOptions: (_path, page: OgPage) => ({
     title: page.title,

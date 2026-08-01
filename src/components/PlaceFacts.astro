@@ -1,0 +1,7 @@
+---
+import type { Store } from '../lib/content';
+interface Props{store:Store}; const {store}=Astro.props; const d=store.data;
+const facts=[['所在地',d.address||d.area],['アクセス',d.access],['営業時間',d.hours],['定休日',d.holiday],['予算',d.budget],['電話',d.tel]].filter(([,v])=>v);
+---
+<dl class="pf">{facts.map(([k,v])=><div><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+<style>.pf{border-top:1px solid var(--color-mist)}.pf div{display:grid;grid-template-columns:7rem 1fr;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--color-mist)}.pf dt{color:var(--color-soil);font-size:.78rem;font-weight:600}.pf dd{color:var(--color-ink);font-size:.9rem}@media(max-width:480px){.pf div{grid-template-columns:5.5rem 1fr}}</style>

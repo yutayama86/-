@@ -1,312 +1,95 @@
 ---
-import Base from '../layouts/Base.astro';
-import ArticleCard from '../components/ArticleCard.astro';
-import IbarakiMap from '../components/IbarakiMap.astro';
-import { getArticles, getAreaCounts } from '../lib/content';
-import { CATEGORY_LIST, SITE_CONFIG } from '../data/site';
-import { VISIBLE_GUIDES as GUIDES } from '../data/guides';
+import BrandBase from '../layouts/BrandBase.astro';
+import BrandStoryCard from '../components/BrandStoryCard.astro';
+import ThemeNav from '../components/ThemeNav.astro';
+import EditorialProcess from '../components/EditorialProcess.astro';
+import AreaExplorer from '../components/AreaExplorer.astro';
+import PersonCard from '../components/PersonCard.astro';
+import { getPublishedArticles } from '../lib/content';
+import { VISIBLE_REPORTERS } from '../data/reporters';
 
-const articles = await getArticles();
-const areaCounts = await getAreaCounts();
-const latest = articles.slice(0, 3); // ヒーロー下：新着3カード
-const guidePicks = GUIDES.slice(0, 3); // 目的から選ぶ：まとめ・モデルコース
+const articles = await getPublishedArticles();
+const lead = articles[0];
+const latest = articles.slice(1, 4);
+const people = VISIBLE_REPORTERS.slice(0, 2);
 ---
 
-<Base hero title={undefined}>
-  <!-- ============ HERO ============ -->
-  <section class="hero">
-    <div class="hero-bg" aria-hidden="true">
-      <span class="orb orb-1"></span>
-      <span class="orb orb-2"></span>
+<BrandBase>
+  <section class="home-hero bp-wrap">
+    <div class="hero-copy">
+      <p class="bp-kicker">現地から、信頼を編む。</p>
+      <h1 class="bp-title">まだ知らない茨城を、<br />会って、聞いて、<span>確かめる。</span></h1>
+      <p class="hero-lead">イバトコは、編集部とローカルエディターが現地を歩き、人と営みを取材する地域価値編集ブランドです。</p>
+      <div class="hero-actions">
+        <a href={lead ? '#latest' : '/about/'}>{lead ? '最新の物語を読む →' : 'イバトコについて →'}</a>
+        <a href="/about/editorial-policy/">編集方針</a>
+      </div>
     </div>
-    <div class="wrap-wide hero-inner">
-      <div class="hero-copy">
-        <p class="eyebrow hero-eyebrow" data-reveal>Ibaraki Local Media</p>
-        <h1 class="hero-title display" data-reveal>
-          茨城の<span class="hl">いいとこ</span>、<br />
-          <span class="hero-sub">行った人の熱量で。</span>
-        </h1>
-        <p class="hero-lead" data-reveal>
-          ガイドブックには載らない、地元の“本物”だけを。<br class="pc" />
-          編集部とご当地レポーターが実際に足を運び、<br class="pc" />
-          食・暮らし・遊び・美容・ものづくりのリアルをお届けします。
-        </p>
-        <div class="hero-cta" data-reveal>
-          <a href="/eat/" class="btn btn--ai btn--lg">よみものを読む <span class="arw">→</span></a>
-          <a href="/biz/" class="btn btn--ghost btn--lg">お店を掲載したい方へ</a>
-        </div>
-      </div>
-
-      <div class="hero-map" aria-hidden="true" data-reveal>
-        <IbarakiMap decor />
-      </div>
+    <div class="hero-note">
+      <span>FIELD NOTE / 001</span>
+      <p>何気ない日常にこそ、その街らしさが残っている。私たちは、情報を集める前に、まず人の話を聞きます。</p>
     </div>
   </section>
 
-  <!-- ============ 新着のよみもの（3カード）============ -->
-  <section class="wrap section section--latest">
-    <div class="sec-head" data-reveal>
-      <h2>新着のよみもの<span class="latin num"> / Latest</span></h2>
-      <a href="/eat/" class="ul-link muted">すべて見る →</a>
-    </div>
-    {latest.length > 0 ? (
-      <div class="latest-grid">
-        {latest.map((a, i) => <ArticleCard article={a} size="lg" index={i} />)}
-      </div>
-    ) : (
-      <p class="empty muted mincho">ただいま最初の取材に出ています。記事はまもなく公開します。</p>
-    )}
-  </section>
-
-  <!-- ============ CATEGORIES ============ -->
-  <section class="wrap section">
-    <div class="sec-head" data-reveal>
-      <h2>よみもののジャンル<span class="latin num"> / Genres</span></h2>
-    </div>
-    <ul class="cat-grid">
-      {CATEGORY_LIST.map((c, i) => (
-        <li data-reveal style={`--delay:${i * 60}ms`}>
-          <a href={`/${c.path}/`} class="cat-card" style={`--_a:${c.accent}`}>
-            <span class="cat-num latin">0{i + 1}</span>
-            <div class="cat-text">
-              <span class="cat-reading mincho">{c.reading}</span>
-              <h3 class="cat-label">{c.label}</h3>
-            </div>
-            <span class="cat-arw" aria-hidden="true">→</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
-
-  <!-- ============ まとめ・モデルコース（目的から選ぶ）============ -->
-  {guidePicks.length > 0 && (
-    <section class="wrap section">
-      <div class="sec-head" data-reveal>
-        <h2>目的から選ぶ<span class="latin num"> / Model Course</span></h2>
-        <a href="/guide/" class="ul-link muted">まとめをすべて見る →</a>
-      </div>
-      <ul class="home-guides">
-        {guidePicks.map((g) => (
-          <li data-reveal>
-            <a href={`/guide/${g.slug}/`} class="home-guide" style={`--_c:${g.accent ?? '#d8452b'}`}>
-              <span class="home-guide-eyebrow latin">MODEL COURSE</span>
-              <h3 class="display home-guide-title">{g.title.split('。')[0]}</h3>
-              <p class="home-guide-lead mincho">{g.lead}</p>
-              <span class="home-guide-more">コースを見る <span class="arw" aria-hidden="true">→</span></span>
-            </a>
-          </li>
-        ))}
-      </ul>
+  {lead ? (
+    <section class="bp-wrap bp-section" id="latest">
+      <p class="bp-kicker">FEATURED STORY</p>
+      <div class="feature"><BrandStoryCard article={lead} featured /></div>
+    </section>
+  ) : (
+    <section class="bp-wrap bp-section story-empty" id="latest">
+      <p class="bp-kicker">FEATURED STORY</p>
+      <h2 class="bp-section-title">確かめ終えたものから、公開します。</h2>
+      <p>記事数を先に約束するのではなく、現地確認と掲載許諾を終えた物語から公開します。</p>
+      <a href="/contact/?subject=取材・掲載相談">街の情報を寄せる →</a>
     </section>
   )}
 
-  <!-- ============ AREA MAP ============ -->
-  <section class="areasec">
-    <div class="wrap areasec-inner">
-      <div class="areasec-copy" data-reveal>
-        <p class="eyebrow">Explore by Area</p>
-        <h2 class="display areasec-title">茨城を、<br />街から探す。</h2>
-        <p class="areasec-lead">
-          44市町村、5つのエリア。地図の点をタップすれば、その街の体験レポートとお店へ。
-          あなたの“地元のいいとこ”から、旅先の街まで。
-        </p>
-        <a href="/area/" class="btn btn--ai btn--lg">エリアマップを開く <span class="arw">→</span></a>
-      </div>
-      <div class="areasec-map" data-reveal>
-        <IbarakiMap counts={areaCounts} />
-      </div>
+  {latest.length > 0 && (
+    <section class="latest bp-wrap bp-section">
+      <header><div><p class="bp-kicker">LATEST STORIES</p><h2 class="bp-section-title">新しく届いた、地域の声。</h2></div><a class="bp-link" href="/eat/">すべて読む</a></header>
+      <div class="latest-grid">{latest.map((article) => <BrandStoryCard article={article} />)}</div>
+    </section>
+  )}
+
+  <section class="discover">
+    <div class="bp-wrap discover-grid">
+      <div><p class="bp-kicker">DISCOVER BY THEME</p><h2 class="bp-section-title">今日は、何から<br />出会いますか。</h2><p>目的地ではなく、気分や関心から茨城を探せます。</p></div>
+      <ThemeNav />
     </div>
   </section>
 
-  <!-- ============ 店舗ディレクトリ（条件から探す）============ -->
-  <section class="wrap section">
-    <a href="/place/" class="dir-band" data-reveal>
-      <div class="dir-band-copy">
-        <p class="eyebrow">Store Directory</p>
-        <h2 class="display dir-band-title">お店を、<br class="sp" />条件から探す。</h2>
-        <p class="dir-band-lead">エリア・ジャンル・特徴・キーワードで、茨城のお店をまるごと検索。行った人の熱量で選ぶ、あなたの一軒を。</p>
-      </div>
-      <div class="dir-band-fake" aria-hidden="true">
-        <span class="dir-band-search">🔍 店名・エリア・特徴で検索</span>
-        <span class="dir-band-chips">
-          <span class="chip">グルメ</span><span class="chip">サウナ</span><span class="chip">駐車場あり</span><span class="chip">個室あり</span>
-        </span>
-        <span class="dir-band-cta">店舗ディレクトリを開く <span class="arw">→</span></span>
-      </div>
-    </a>
+  <section class="bp-wrap bp-section area-home" id="area">
+    <header><p class="bp-kicker">EXPLORE IBARAKI</p><h2 class="bp-section-title">44の街から、茨城を読む。</h2><p>地図の一つひとつが、人と営みへの入口です。</p></header>
+    <AreaExplorer />
   </section>
 
-  <!-- ============ AMBASSADOR ============ -->
-  <section class="amb">
-    <div class="wrap amb-inner">
-      <div class="amb-copy" data-reveal>
-        <p class="eyebrow">Local Editors</p>
-        <h2 class="display amb-title">
-          その街を知る人と、<br />記録する。
-        </h2>
-        <p class="amb-lead">
-          イバトコのローカルエディターは、地域を歩き、人に会い、日々の営みを取材します。
-          フォロワー数ではなく、地域への理解と誠実な取材姿勢を大切にしています。
-        </p>
-        <a href="/reporters/" class="btn btn--ghost">ローカルエディターを知る <span class="arw">→</span></a>
-      </div>
-      <div class="amb-visual" data-reveal aria-hidden="true">
-        <div class="amb-quote mincho">地域を歩き、人に会い、確かめる。</div>
-      </div>
-    </div>
+  <section class="people bp-wrap bp-section" id="editors">
+    <header><div><p class="bp-kicker">LOCAL EDITORS</p><h2 class="bp-section-title">街を歩く人が、街を書く。</h2></div><p>フォロワー数ではなく、地域への理解と誠実な取材姿勢を大切にします。</p></header>
+    {people.length > 0 ? <div class="people-grid">{people.map((person) => <PersonCard person={person} />)}</div> : <div class="people-empty"><p>公開プロフィールは、本人確認と掲載許諾が完了したローカルエディターから順次掲載します。</p><a href="/about/team/">編集体制を知る →</a></div>}
   </section>
 
-  <!-- ============ SNS ============ -->
-  <section class="wrap section">
-    <div class="sns" data-reveal>
-      <div>
-        <p class="eyebrow">Follow Ibatoco</p>
-        <h2 class="display sns-title">現地のリアルは、<br class="sp" />SNSが一番早い。</h2>
-      </div>
-      <ul class="sns-list">
-        <li><a href={SITE_CONFIG.social.instagram} target="_blank" rel="noopener noreferrer" class="sns-btn">Instagram</a></li>
-        <li><a href={SITE_CONFIG.social.tiktok} target="_blank" rel="noopener noreferrer" class="sns-btn">TikTok</a></li>
-        <li><a href={SITE_CONFIG.social.x} target="_blank" rel="noopener noreferrer" class="sns-btn">X</a></li>
-        <li><a href={SITE_CONFIG.social.threads} target="_blank" rel="noopener noreferrer" class="sns-btn">Threads</a></li>
-      </ul>
-    </div>
+  <section class="bp-wrap bp-section"><EditorialProcess /></section>
+
+  <section class="partner">
+    <div class="bp-wrap"><p class="bp-kicker">FOR LOCAL BUSINESSES</p><h2>地域事業者の方へ</h2><p>取材・情報掲載・発信支援についてご案内します。</p><a href="/biz/">取り組みについて知る →</a></div>
   </section>
-</Base>
+</BrandBase>
 
 <style>
-  .section { padding-block: clamp(3.5rem, 8vw, 7rem); }
-
-  /* ---- Hero ---- */
-  .hero { position: relative; padding-top: 120px; overflow: hidden; }
-  .hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-  .orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.5; }
-  .orb-1 { width: 46vw; height: 46vw; background: radial-gradient(circle, rgba(216,69,43,.28), transparent 70%); top: -12vw; right: -8vw; }
-  .orb-2 { width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(107,155,209,.3), transparent 70%); top: 20vw; left: -12vw; }
-
-  .hero-inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; }
-  .hero-eyebrow { margin-bottom: 1.6rem; }
-  .hero-title { font-size: clamp(2.3rem, 1.4rem + 3.4vw, 4.5rem); font-weight: 700; letter-spacing: 0.01em; line-height: 1.28; }
-  .hero-title .hl {
-    position: relative; color: var(--shu); white-space: nowrap;
-  }
-  .hero-title .hl::after {
-    content: ""; position: absolute; left: -2%; right: -2%; bottom: 0.08em; height: 0.14em;
-    background: color-mix(in srgb, var(--shu) 35%, transparent); z-index: -1; border-radius: 2px;
-  }
-  .hero-sub { color: var(--ai); }
-  .hero-lead { margin-top: 2rem; font-size: var(--step-1); color: var(--ink-soft); line-height: 1.95; }
-  .hero-cta { margin-top: 2.6rem; display: flex; gap: 1rem; flex-wrap: wrap; }
-
-  /* ヒーロー右：薄緑の装飾地図 */
-  .hero-map { flex: 0 0 auto; width: clamp(220px, 30vw, 380px); margin-top: -1rem; }
-  .section--latest { padding-top: clamp(2rem, 5vw, 3.5rem); }
-
-  /* ---- Categories ---- */
-  .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 2.5rem; background: var(--line); border: 1px solid var(--line); }
-  .cat-card {
-    background: var(--paper); display: flex; flex-direction: column; gap: 2.5rem;
-    padding: 1.8rem 1.4rem; min-height: 220px; position: relative;
-    transition: background 0.4s var(--ease);
-  }
-  .cat-card:hover { background: var(--_a); color: #fff; }
-  .cat-num { font-size: var(--step-1); color: var(--ink-mute); transition: color 0.4s; }
-  .cat-card:hover .cat-num { color: rgba(255,255,255,.7); }
-  .cat-text { margin-top: auto; }
-  .cat-reading { display: block; font-size: var(--step--1); color: var(--ink-mute); letter-spacing: 0.2em; transition: color 0.4s; }
-  .cat-card:hover .cat-reading { color: rgba(255,255,255,.8); }
-  .cat-label { font-family: var(--font-display); font-weight: 600; font-size: var(--step-1); margin-top: 0.3rem; }
-  .cat-arw { position: absolute; top: 1.8rem; right: 1.4rem; opacity: 0; transform: translateX(-6px); transition: opacity 0.3s, transform 0.4s var(--ease); }
-  .cat-card:hover .cat-arw { opacity: 1; transform: none; }
-
-  /* ---- Area map section ---- */
-  .areasec { background: var(--paper-2); margin-top: clamp(2rem, 5vw, 4rem); }
-  .areasec-inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center; padding-block: clamp(3rem, 7vw, 5.5rem); }
-  .areasec-title { font-size: var(--step-4); margin: 0.6rem 0 1.2rem; }
-  .areasec-lead { color: var(--ink-soft); font-size: var(--step-1); line-height: 1.9; margin-bottom: 2rem; }
-  .areasec-map { max-width: 520px; margin-inline: auto; width: 100%; }
-  @media (max-width: 860px) {
-    .areasec-inner { grid-template-columns: 1fr; }
-    .areasec-map { max-width: 420px; }
-  }
-
-  /* ---- Ambassador ---- */
-  .amb { background: var(--paper-2); margin-block: clamp(2rem, 5vw, 4rem); }
-  .amb-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; padding-block: clamp(3.5rem, 8vw, 6rem); }
-  .amb-title { font-size: var(--step-4); margin: 0.8rem 0 1.4rem; }
-  .amb-lead { color: var(--ink-soft); font-size: var(--step-1); line-height: 1.95; margin-bottom: 2rem; }
-  .amb-lead b { color: var(--shu-deep); }
-  .amb-visual {
-    aspect-ratio: 4/3; border-radius: var(--radius); display: grid; place-items: center; padding: 2rem;
-    background: radial-gradient(120% 120% at 30% 20%, #234c6e, var(--ai-deep));
-    color: var(--paper); position: relative; overflow: hidden;
-  }
-  .amb-visual::after { content:""; position:absolute; inset:0; background: radial-gradient(50% 60% at 80% 100%, rgba(216,69,43,.4), transparent 70%); }
-  .amb-quote { font-size: var(--step-3); text-align: center; line-height: 1.6; position: relative; }
-
-  /* ---- Latest ---- */
-  .latest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: 2.5rem; }
-  .empty { margin-top: 2rem; font-size: var(--step-1); }
-
-  /* ---- まとめ・モデルコース ---- */
-  .home-guides { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem, 2.5vw, 1.8rem); margin-top: 2.5rem; }
-  .home-guide { position: relative; display: grid; gap: 0.6rem; align-content: start; padding: clamp(1.5rem, 3vw, 2rem);
-    border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
-    background: color-mix(in srgb, var(--_c) 5%, var(--paper));
-    transition: border-color 0.25s var(--ease), transform 0.25s var(--ease), box-shadow 0.25s var(--ease); }
-  .home-guide::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--_c); }
-  .home-guide:hover { border-color: var(--_c); transform: translateY(-3px); box-shadow: 0 10px 28px color-mix(in srgb, var(--_c) 16%, transparent); }
-  .home-guide-eyebrow { letter-spacing: 0.16em; font-size: var(--step--2); font-weight: 700; color: var(--_c); }
-  .home-guide-title { font-size: var(--step-2); line-height: 1.35; }
-  .home-guide-lead { color: var(--ink-soft); font-size: var(--step-0); line-height: 1.8; }
-  .home-guide-more { margin-top: 0.4rem; font-size: var(--step--1); font-weight: 700; color: var(--_c); }
-
-  /* ---- 店舗ディレクトリ band ---- */
-  .dir-band { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: center;
-    padding: clamp(1.8rem, 4vw, 3rem); border-radius: var(--radius);
-    background: linear-gradient(135deg, var(--ai), var(--ai-deep)); color: var(--paper);
-    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease); }
-  .dir-band:hover { transform: translateY(-3px); box-shadow: 0 16px 40px color-mix(in srgb, var(--ai) 30%, transparent); }
-  .dir-band .eyebrow { color: rgba(245,241,232,.7); }
-  .dir-band-title { font-size: var(--step-4); color: #fff; margin: 0.4rem 0 0.8rem; }
-  .dir-band-lead { color: rgba(245,241,232,.85); font-size: var(--step-0); line-height: 1.9; max-width: 46ch; }
-  .dir-band-fake { display: grid; gap: 0.9rem; background: rgba(255,255,255,.08); border: 1px solid rgba(245,241,232,.2); border-radius: var(--radius); padding: clamp(1.2rem, 3vw, 1.8rem); }
-  .dir-band-search { display: block; background: var(--paper); color: var(--ink-mute); border-radius: 999px; padding: 0.7em 1.1em; font-size: var(--step--1); }
-  .dir-band-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .dir-band-chips .chip { color: #fff; border-color: rgba(245,241,232,.4); background: rgba(255,255,255,.1); font-size: var(--step--1); }
-  .dir-band-cta { font-weight: 700; color: #fff; font-size: var(--step-0); }
-  .dir-band-cta .arw { display: inline-block; transition: transform 0.25s var(--ease); }
-  .dir-band:hover .dir-band-cta .arw { transform: translateX(4px); }
-
-  /* ---- SNS ---- */
-  .sns {
-    display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;
-    padding: clamp(2rem, 5vw, 3.5rem); background: var(--ink); color: var(--paper); border-radius: var(--radius);
-  }
-  .sns-title { font-size: var(--step-3); margin-top: 0.6rem; }
-  .sns-list { display: flex; gap: 0.8rem; flex-wrap: wrap; }
-  .sns-btn {
-    display: inline-block; padding: 0.7em 1.3em; border: 1px solid rgba(245,241,232,.3); border-radius: 999px;
-    font-size: var(--step--1); font-weight: 700; letter-spacing: 0.06em; transition: background 0.3s, color 0.3s;
-  }
-  .sns-btn:hover { background: var(--paper); color: var(--ink); }
-
-  .sp { display: none; }
-  @media (max-width: 1000px) {
-    .cat-grid { grid-template-columns: repeat(2, 1fr); }
-    .latest-grid { grid-template-columns: 1fr 1fr; }
-    .home-guides { grid-template-columns: 1fr; }
-    .hero-map { width: clamp(180px, 26vw, 260px); }
-  }
-  @media (max-width: 720px) {
-    .pc { display: none; }
-    .sp { display: inline; }
-    .hero { padding-top: 70px; }
-    .hero-map { display: none; }
-    .cat-grid { grid-template-columns: 1fr 1fr; }
-    .latest-grid { grid-template-columns: 1fr; }
-    .amb-inner { grid-template-columns: 1fr; }
-    .amb-visual { display: none; }
-    .dir-band { grid-template-columns: 1fr; }
-  }
+  .home-hero{min-height:72vh;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,.5fr);gap:clamp(3rem,6vw,6rem);align-items:end;padding-block:clamp(5rem,11vw,9rem);border-bottom:1px solid var(--color-mist)}
+  .hero-copy .bp-title{margin-top:1.2rem;font-size:clamp(2rem,4.35vw,4rem)}
+  .hero-lead{max-width:50ch;margin-top:1.6rem;font-size:clamp(1rem,1.5vw,1.15rem);line-height:2;color:var(--color-soil)}
+  .hero-actions{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:2rem}.hero-actions a{border-bottom:1px solid var(--color-tide);padding-bottom:.2rem;color:var(--color-ink);font-weight:600}
+  .hero-note{border-left:1px solid var(--color-tide);padding-left:1.4rem;color:var(--color-soil)}.hero-note span{font:.7rem var(--font-brand-meta);letter-spacing:.14em}.hero-note p{margin-top:.8rem;font:500 1rem/1.9 var(--font-brand-display)}
+  .feature{margin-top:2rem}.latest header,.people header{display:flex;justify-content:space-between;gap:2rem;align-items:end}.latest header h2,.people header h2,.area-home h2{margin-top:.6rem}
+  .latest-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.5rem,3vw,2.5rem);margin-top:2.5rem}
+  .story-empty{border-bottom:1px solid var(--color-mist)}.story-empty h2{margin-top:1rem}.story-empty>p:not(.bp-kicker){margin-top:1rem;color:var(--color-soil)}.story-empty>a{display:inline-block;margin-top:1.5rem;color:var(--color-tide);border-bottom:1px solid}
+  .discover{background:var(--color-white)}.discover-grid{display:grid;grid-template-columns:minmax(240px,.7fr) minmax(0,1.3fr);gap:clamp(3rem,8vw,8rem);padding-block:clamp(4rem,9vw,7rem)}.discover h2{margin-top:.7rem}.discover p:not(.bp-kicker),.area-home header>p:last-child,.people header>p{margin-top:1rem;color:var(--color-soil)}
+  .area-home>header{margin-bottom:2.5rem}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:2.5rem}
+  .people-empty{margin-top:2.5rem;padding-block:1.5rem;border-block:1px solid var(--color-mist);display:flex;justify-content:space-between;gap:2rem;color:var(--color-soil)}.people-empty a{flex:none;color:var(--color-tide);border-bottom:1px solid}
+  .partner{padding-block:3.5rem;border-top:1px solid var(--color-mist)}.partner .bp-wrap{display:grid;grid-template-columns:.5fr 1fr 1fr auto;gap:1.5rem;align-items:center}.partner h2{font:600 1.6rem var(--font-brand-display);color:var(--color-ink)}.partner p:not(.bp-kicker){color:var(--color-soil)}.partner a{border-bottom:1px solid var(--color-tide);font-weight:600}
+  @media(max-width:800px){.home-hero,.discover-grid{grid-template-columns:1fr}.home-hero{min-height:0;align-items:start}.hero-note{max-width:35rem}.latest-grid,.people-grid{grid-template-columns:1fr}.partner .bp-wrap{grid-template-columns:1fr}.latest header,.people header{display:block}.latest header>a{display:inline-block;margin-top:1rem}}
+  @media(max-width:480px){.home-hero{padding-block:4.5rem}.hero-copy .bp-title{font-size:2rem;line-height:1.35}.hero-copy .bp-title span{display:block}.people-empty{display:block}.people-empty a{display:inline-block;margin-top:1rem}}
+  @media(max-width:360px){.hero-copy .bp-title{font-size:1.8rem;line-height:1.4}}
 </style>

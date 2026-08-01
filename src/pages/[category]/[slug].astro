@@ -1,268 +1,73 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
-import Base from '../../layouts/Base.astro';
-import ArticleCard from '../../components/ArticleCard.astro';
+import BrandBase from '../../layouts/BrandBase.astro';
+import BrandStoryCard from '../../components/BrandStoryCard.astro';
 import DisclosureBadge from '../../components/DisclosureBadge.astro';
 import ReportingMeta from '../../components/ReportingMeta.astro';
 import CorrectionHistory from '../../components/CorrectionHistory.astro';
 import { CATEGORIES, SITE_CONFIG } from '../../data/site';
-import { getArticles, getPlaces, formatDate } from '../../lib/content';
+import { getPublishedArticles } from '../../lib/content';
 import { reporterByName } from '../../data/reporters';
 
-export const getStaticPaths = (async () => {
-  const articles = await getArticles();
-  return articles.map((a) => ({
-    params: { category: a.data.category, slug: a.id.split('/').pop() },
-    props: { article: a },
-  }));
-}) satisfies GetStaticPaths;
+export const getStaticPaths = (async () => (await getPublishedArticles()).map((article) => ({
+  params: { category: article.data.category, slug: article.id.split('/').pop() },
+  props: { article },
+}))) satisfies GetStaticPaths;
 
 const { article } = Astro.props;
 const { data } = article;
 const cat = CATEGORIES[data.category];
 const slug = article.id.split('/').pop();
-const ogImage = data.cover ?? `/og/${cat.path}/${slug}.png`;
-const { Content, headings } = await render(article);
-
-// 目次（h2/h3 のみ）
-const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
-
-// 著者＝公式レポーター（E-E-A-T：誰が実際に行ったか）
+const { Content } = await render(article);
 const reporter = reporterByName(data.reporter);
-
-// 紐づく店舗LP
-const places = await getPlaces();
-const place = data.place ? places.find((p) => p.id === data.place!.id) : undefined;
-
-// 関連記事
-const related = (await getArticles())
-  .filter((a) => a.id !== article.id && a.data.category === data.category)
-  .slice(0, 3);
-
-const abs = (p: string) => new URL(p, Astro.site ?? SITE_CONFIG.domain).href;
+const related = (await getPublishedArticles()).filter((item) => item.id !== article.id && item.data.category === data.category).slice(0, 2);
+const absolute = (path: string) => new URL(path, Astro.site ?? SITE_CONFIG.domain).href;
 const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: data.title,
-  description: data.description,
-  datePublished: data.publishedAt.toISOString(),
-  dateModified: (data.updatedAt ?? data.publishedAt).toISOString(),
-  // レポーターが登録済みなら Person（実体験の書き手）、なければ編集部＝Organization
-  author: reporter
-    ? { '@type': 'Person', name: reporter.name, jobTitle: reporter.role, url: abs(`/reporter/${reporter.slug}/`) }
-    : { '@type': 'Organization', name: data.author },
-  publisher: { '@type': 'Organization', name: SITE_CONFIG.name },
-  ...(data.cover ? { image: data.cover } : {}),
+  '@context': 'https://schema.org', '@type': 'Article', headline: data.title, description: data.description,
+  datePublished: data.publishedAt.toISOString(), dateModified: (data.updatedAt ?? data.publishedAt).toISOString(),
+  author: reporter ? { '@type': 'Person', name: reporter.name, jobTitle: reporter.role, url: absolute(`/reporter/${reporter.slug}/`) } : { '@type': 'Organization', name: data.author },
+  publisher: { '@type': 'Organization', name: SITE_CONFIG.name }, ...(data.cover ? { image: absolute(data.cover) } : {}),
 };
 ---
 
-<Base
-  title={data.title}
-  description={data.description}
-  image={ogImage}
-  type="article"
-  publishedAt={data.publishedAt}
-  jsonLd={jsonLd}
->
-  <article class="post">
-    <header class="post-hd wrap">
-      <nav class="crumbs" aria-label="パンくず">
-        <a href="/">ホーム</a><span aria-hidden="true">/</span>
-        <a href={`/${cat.path}/`}>{cat.label}</a>
-      </nav>
-      <div class="post-disclosure"><DisclosureBadge type={data.disclosure} note={data.disclosureNote} /></div>
-      <p class="post-cat chip" style={`--_a:${cat.accent};color:var(--_a);border-color:color-mix(in srgb,var(--_a) 50%,transparent)`}>{cat.label}</p>
-      <h1 class="post-title display">{data.title}</h1>
-      <p class="post-desc mincho">{data.description}</p>
-      <div class="post-meta">
-        {data.area && <span class="pm">📍 {data.area}</span>}
-        <span class="pm">🗓 <time datetime={data.publishedAt.toISOString()}>{formatDate(data.publishedAt)}</time></span>
-        {data.reporter && (reporter
-          ? <a class="pm pm--link" href={`/reporter/${reporter.slug}/`}>✍️ 取材：{data.reporter}</a>
-          : <span class="pm">✍️ 取材：{data.reporter}</span>)}
-        <span class="pm">{data.author}</span>
-      </div>
+<BrandBase title={`${data.title}｜イバトコ`} description={data.description} image={data.cover ?? `/og/${cat.path}/${slug}.png`} type="article" publishedAt={data.publishedAt} jsonLd={jsonLd}>
+  <article class="story">
+    <header class="story-head bp-reading">
+      <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><a href={`/${cat.path}/`}>{cat.label}</a></nav>
+      <DisclosureBadge type={data.disclosure} note={data.disclosureNote} />
+      <p class="story-label">{data.area} / {cat.label}</p>
+      <h1>{data.title}</h1>
+      <p class="story-deck">{data.description}</p>
     </header>
 
-    {data.cover && (
-      <figure class="post-cover wrap-wide">
-        <img src={data.cover} alt={data.coverAlt} loading="eager" />
-      </figure>
-    )}
+    {data.cover && <figure class="story-hero bp-wrap"><img src={data.cover} alt={data.coverAlt} loading="eager" /></figure>}
 
-    <div class="post-reporting wrap">
-      <ReportingMeta
-        publishedAt={data.publishedAt}
-        updatedAt={data.updatedAt}
-        reportingDate={data.reportingDate}
-        onSiteReporting={data.onSiteReporting}
-        disclosureNote={data.disclosureNote}
-      />
-    </div>
-
-    <div class="post-body wrap">
-      {toc.length > 1 && (
-        <nav class="post-toc" aria-label="目次">
-          <p class="post-toc-h">目次</p>
-          <ol>
-            {toc.map((h) => (
-              <li class={`toc-d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
-            ))}
-          </ol>
-        </nav>
-      )}
-
-      <div class="prose">
-        <Content />
-      </div>
-
-      {data.tags.length > 0 && (
-        <ul class="post-tags">
-          {data.tags.map((t) => (
-            <li><a href={`/tag/${encodeURIComponent(t)}/`} class="chip chip--link">#{t}</a></li>
-          ))}
-        </ul>
-      )}
-
-      {reporter && (
-        <a href={`/reporter/${reporter.slug}/`} class="byline">
-          <div class="byline-avatar" aria-hidden="true">
-            {reporter.avatar ? <img src={reporter.avatar} alt="" /> : <span class="mincho">{reporter.name.replace(/^(編集長|公式レポーター)\s*/, '').slice(0, 1)}</span>}
-          </div>
-          <div class="byline-body">
-            <p class="byline-role">この記事を取材した{reporter.role}</p>
-            <p class="byline-name display">{reporter.name}</p>
-            <p class="byline-bio muted">{reporter.bio}</p>
-            <span class="byline-more">プロフィール・他の記事を見る <span class="arw" aria-hidden="true">→</span></span>
-          </div>
-        </a>
-      )}
-    </div>
-
-    <!-- ============ PLACE CTA（Phase 1 導線の心臓部）============ -->
-    {place && (
-      <aside class="wrap">
-        <div class="place-cta" style={`--_a:${cat.accent}`}>
-          <div class="place-cta-info">
-            <p class="eyebrow">この記事のお店・企業</p>
-            <h2 class="display place-cta-name">{place.data.name}</h2>
-            <p class="place-cta-tag mincho">{place.data.tagline}</p>
-            <dl class="place-cta-meta">
-              {place.data.area && <div><dt>エリア</dt><dd>{place.data.area}</dd></div>}
-              {place.data.hours && <div><dt>営業</dt><dd>{place.data.hours}</dd></div>}
-              {place.data.budget && <div><dt>予算</dt><dd>{place.data.budget}</dd></div>}
-            </dl>
-          </div>
-          <div class="place-cta-action">
-            <a href={`/place/${place.id.split('/').pop()}/`} class="btn btn--shu btn--lg">
-              お店の詳細・予約へ <span class="arw">→</span>
-            </a>
-            <p class="place-cta-note muted">イバトコ取材班おすすめのお店です</p>
-          </div>
-        </div>
+    <div class="story-grid bp-wrap">
+      <aside>
+        <ReportingMeta publishedAt={data.publishedAt} updatedAt={data.updatedAt} reportingDate={data.reportingDate} onSiteReporting={data.onSiteReporting} disclosureNote={data.disclosureNote} />
+        <p class="story-by">取材・執筆<br /><strong>{data.reporter ?? data.author}</strong></p>
+        {reporter && <a class="story-person" href={`/reporter/${reporter.slug}/`}>取材者について →</a>}
       </aside>
-    )}
-
-    <div class="post-corrections wrap">
-      <CorrectionHistory corrections={data.corrections} />
+      <div class="story-body prose"><Content /></div>
     </div>
 
-    {related.length > 0 && (
-      <section class="wrap section">
-        <div class="sec-head sec-head--split">
-          <h2>あわせて読みたい<span class="latin num"> / Related</span></h2>
-          <a href={`/${cat.path}/`} class="ul-link muted">{cat.label}をもっと見る →</a>
-        </div>
-        <div class="rel-grid">
-          {related.map((a) => <ArticleCard article={a} size="sm" />)}
-        </div>
-      </section>
-    )}
-
-    <!-- 店舗ディレクトリへの導線 -->
-    <aside class="wrap">
-      <a href="/place/" class="post-dir">
-        <div>
-          <p class="post-dir-h mincho">茨城のお店を、条件から探す。</p>
-          <p class="post-dir-lead muted">エリア・ジャンル・特徴・キーワードで検索できる店舗ディレクトリ。</p>
-        </div>
-        <span class="btn btn--ghost">お店を探す <span class="arw" aria-hidden="true">→</span></span>
-      </a>
-    </aside>
+    {data.tags.length > 0 && <ul class="story-tags bp-reading">{data.tags.map((tag) => <li><a href={`/tag/${encodeURIComponent(tag)}/`}>#{tag}</a></li>)}</ul>}
+    <div class="story-corrections bp-reading"><CorrectionHistory corrections={data.corrections} /></div>
+    <footer class="story-footer bp-reading"><p>内容についてお気づきの点がある場合は、訂正・更新方針をご確認ください。</p><a href="/about/corrections/">訂正・更新方針 →</a></footer>
   </article>
-</Base>
+
+  {related.length > 0 && <section class="bp-wrap bp-section"><p class="bp-kicker">RELATED STORIES</p><h2 class="bp-section-title">続けて読みたい物語</h2><div class="related">{related.map((item) => <BrandStoryCard article={item} />)}</div></section>}
+</BrandBase>
 
 <style>
-  .post-hd { max-width: 820px; padding-top: clamp(2.5rem, 6vw, 4.5rem); text-align: center; }
-  .crumbs { display: flex; gap: 0.6rem; justify-content: center; font-size: var(--step--1); color: var(--ink-mute); margin-bottom: 1.5rem; }
-  .crumbs a:hover { color: var(--shu); }
-  .post-cat { margin-inline: auto; }
-  .post-title { font-size: var(--step-4); line-height: 1.28; margin: 1.2rem 0; }
-  .post-desc { font-size: var(--step-1); color: var(--ink-soft); }
-  .post-meta { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; margin-top: 1.8rem; font-size: var(--step--1); color: var(--ink-mute); }
-  .post-meta time { font-family: var(--font-latin); }
-  .pm--link { color: var(--matcha); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color 0.2s; }
-  .pm--link:hover { color: var(--matcha-deep, var(--shu)); }
-
-  /* 目次 */
-  .post-toc { background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.2rem 1.5rem; margin-bottom: 2.5rem; }
-  .post-toc-h { font-size: var(--step--1); font-weight: 700; color: var(--ink-soft); letter-spacing: 0.08em; margin-bottom: 0.7rem; }
-  .post-toc ol { list-style: none; display: grid; gap: 0.5rem; }
-  .post-toc a { color: var(--ink); font-size: var(--step-0); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s, color 0.2s; }
-  .post-toc a:hover { color: var(--shu); border-color: currentColor; }
-  .post-toc .toc-d3 { padding-left: 1.2em; font-size: var(--step--1); }
-  .post-toc .toc-d3 a { color: var(--ink-soft); }
-
-  /* 著者バイライン */
-  .byline { display: flex; gap: 1.2rem; align-items: flex-start; margin-top: 3rem; padding: 1.5rem; background: var(--paper-2); border-radius: var(--radius); border: 1px solid var(--line); transition: border-color 0.25s var(--ease), transform 0.25s var(--ease); }
-  .byline:hover { border-color: var(--matcha); transform: translateY(-2px); }
-  .byline-avatar { flex-shrink: 0; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: linear-gradient(135deg, var(--matcha), var(--ai-deep)); color: #fff; }
-  .byline-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .byline-avatar span { font-size: var(--step-2); }
-  .byline-role { font-size: var(--step--2); color: var(--matcha); font-weight: 700; letter-spacing: 0.05em; }
-  .byline-name { font-size: var(--step-1); margin: 0.15rem 0 0.5rem; color: var(--ink); }
-  .byline-bio { font-size: var(--step--1); line-height: 1.8; }
-  .byline-more { display: inline-block; margin-top: 0.7rem; font-size: var(--step--1); color: var(--shu); font-weight: 700; }
-
-  .post-cover { margin: clamp(2rem, 5vw, 3.5rem) auto; aspect-ratio: 16/9; overflow: hidden; border-radius: var(--radius); }
-  .post-cover img { width: 100%; height: 100%; object-fit: cover; }
-
-  .post-body { max-width: 720px; padding-top: 1rem; }
-
-  /* 2026刷新：開示・取材メタ・訂正履歴のプリミティブ配置 */
-  .post-disclosure { margin: 0.6rem 0 0.9rem; }
-  .post-reporting > :global(*), .post-corrections > :global(*) { max-width: 720px; margin-inline: auto; }
-  .post-reporting { margin-block: clamp(1.4rem, 4vw, 2.2rem); }
-  .post-corrections { margin-block: clamp(2rem, 5vw, 3rem); }
-  .post-tags { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); }
-
-  .place-cta {
-    display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem; align-items: center;
-    margin: clamp(2.5rem, 6vw, 4rem) 0; padding: clamp(1.8rem, 4vw, 3rem);
-    background: var(--paper-2); border-radius: var(--radius);
-    border-left: 5px solid var(--_a);
-  }
-  .place-cta-name { font-size: var(--step-2); margin: 0.4rem 0; }
-  .place-cta-tag { color: var(--ink-soft); }
-  .place-cta-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.2rem; }
-  .place-cta-meta dt { font-size: var(--step--1); color: var(--ink-mute); }
-  .place-cta-meta dd { font-weight: 700; }
-  .place-cta-action { text-align: center; display: grid; gap: 0.8rem; justify-items: center; }
-  .place-cta-note { font-size: var(--step--1); }
-
-  .section { padding-block: clamp(2.5rem, 6vw, 4rem); }
-  .sec-head--split { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
-  .rel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
-
-  .post-dir { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
-    margin: 0 0 clamp(2.5rem, 6vw, 4rem); padding: clamp(1.5rem, 3.5vw, 2.2rem);
-    background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius); transition: border-color 0.25s var(--ease); }
-  .post-dir:hover { border-color: var(--ai); }
-  .post-dir-h { font-size: var(--step-1); color: var(--ink); }
-  .post-dir-lead { font-size: var(--step--1); margin-top: 0.3rem; }
-  @media (max-width: 800px) {
-    .place-cta { grid-template-columns: 1fr; }
-    .rel-grid { grid-template-columns: 1fr; }
-  }
+  .story{padding-top:clamp(4rem,9vw,7rem)}.crumbs{display:flex;gap:.55rem;margin-bottom:1.5rem;color:var(--color-soil);font-size:.78rem}.crumbs a{border-bottom:1px solid transparent}.crumbs a:hover{border-color:var(--color-tide)}
+  .story-label{margin-top:1.5rem;color:var(--color-tide);font:.75rem var(--font-brand-meta);letter-spacing:.1em}.story-head h1{margin-top:.7rem;font:600 clamp(2rem,5.4vw,4.4rem)/1.3 var(--font-brand-display);color:var(--color-ink)}
+  .story-deck{margin-top:1.4rem;font:500 clamp(1rem,1.7vw,1.2rem)/2 var(--font-brand-display);color:var(--color-soil)}.story-hero{margin-top:3rem}.story-hero img{width:100%;max-height:70vh;object-fit:cover}
+  .story-grid{display:grid;grid-template-columns:230px minmax(0,700px);justify-content:center;gap:clamp(2rem,6vw,5rem);padding-block:4rem}.story-by{margin-top:1.5rem;color:var(--color-soil);font-size:.8rem;line-height:1.8}.story-by strong{color:var(--color-ink)}.story-person{display:inline-block;margin-top:1rem;color:var(--color-tide);font-size:.78rem;border-bottom:1px solid}
+  .story-body.prose h2{border-left:0;padding-left:0;color:var(--color-ink)}.story-body.prose a{color:var(--color-tide)}.story-body.prose li:before{background:var(--color-tide)}
+  .story-tags{display:flex;gap:.6rem;flex-wrap:wrap;padding-block:1.5rem;border-top:1px solid var(--color-mist)}.story-tags a{font-size:.78rem;color:var(--color-soil)}.story-corrections{padding-block:1.5rem}
+  .story-footer{border-block:1px solid var(--color-mist);padding-block:1.5rem;color:var(--color-soil);font-size:.82rem}.story-footer a{display:inline-block;margin-top:.5rem;color:var(--color-tide)}
+  .related{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:2rem}.bp-section-title{margin-top:.7rem}
+  @media(max-width:760px){.story-grid,.related{grid-template-columns:1fr}}
 </style>

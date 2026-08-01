@@ -105,12 +105,13 @@ collections:
           - { name: "note", label: "補足", widget: "string", required: false }
       - { name: "reserveUrl", label: "外部予約URL（任意）", widget: "string", required: false }
       - name: "plan"
-        label: "掲載プラン"
+        label: "情報区分"
         widget: "select"
         default: "free"
         options:
-          - { label: "無料掲載", value: "free" }
-          - { label: "ライト掲載", value: "listing" }
+          - { label: "基本情報", value: "free" }
+          - { label: "確認済み情報", value: "official" }
+          - { label: "発信支援", value: "growth" }
           - { label: "パートナー", value: "partner" }
       - { name: "publishedAt", label: "公開日", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false }
       - { name: "draft", label: "下書き", widget: "boolean", default: true }

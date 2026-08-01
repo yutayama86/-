@@ -1,0 +1,40 @@
+---
+import PreviewBrand from '../../layouts/PreviewBrand.astro';
+import BrandStoryCard from '../../components/BrandStoryCard.astro';
+import ThemeNav from '../../components/ThemeNav.astro';
+import EditorialProcess from '../../components/EditorialProcess.astro';
+import AreaExplorer from '../../components/AreaExplorer.astro';
+import PersonCard from '../../components/PersonCard.astro';
+import { getPublishedArticles } from '../../lib/content';
+import { VISIBLE_REPORTERS } from '../../data/reporters';
+const articles=await getPublishedArticles(); const lead=articles[0]; const latest=articles.slice(1,4); const people=VISIBLE_REPORTERS.slice(0,2);
+---
+<PreviewBrand title="新トップ preview｜イバトコ">
+  <section class="home-hero bp-wrap">
+    <div class="hero-copy"><p class="bp-kicker">現地から、信頼を編む。</p><h1 class="bp-title">まだ知らない茨城を、<br />会って、聞いて、確かめる。</h1><p class="hero-lead">イバトコは、編集部とローカルエディターが現地を歩き、人と営みを取材する地域価値編集ブランドです。</p><div class="hero-actions"><a href="#latest">最新の物語を読む →</a><a href="/about/editorial-policy/">編集方針</a></div></div>
+    <div class="hero-note"><span>FIELD NOTE / 001</span><p>何気ない日常にこそ、その街らしさが残っている。私たちは、情報を集める前に、まず人の話を聞きます。</p></div>
+  </section>
+
+  {lead?<section class="bp-wrap bp-section" id="latest"><p class="bp-kicker">FEATURED STORY</p><div class="feature"><BrandStoryCard article={lead} featured /></div></section>:<section class="bp-wrap bp-section story-empty" id="latest"><p class="bp-kicker">FEATURED STORY</p><h2 class="bp-section-title">最初の物語を、取材しています。</h2><p>公開確認が完了するまで、架空の記事や写真で埋めません。</p><a href="/about/editorial-policy/">編集方針を読む →</a></section>}
+
+  {latest.length>0 && <section class="latest bp-wrap bp-section"><header><div><p class="bp-kicker">LATEST STORIES</p><h2 class="bp-section-title">新しく届いた、地域の声。</h2></div><a class="bp-link" href="/eat/">すべて読む</a></header><div class="latest-grid">{latest.map(a=><BrandStoryCard article={a}/>)}</div></section>}
+
+  <section class="discover"><div class="bp-wrap discover-grid"><div><p class="bp-kicker">DISCOVER BY THEME</p><h2 class="bp-section-title">今日は、何から<br />出会いますか。</h2><p>目的地ではなく、気分や関心から茨城を探せます。</p></div><ThemeNav /></div></section>
+
+  <section class="bp-wrap bp-section area-home"><header><p class="bp-kicker">EXPLORE IBARAKI</p><h2 class="bp-section-title">44の街から、茨城を読む。</h2><p>地図の一つひとつが、人と営みへの入口です。</p></header><AreaExplorer /></section>
+
+  <section class="people bp-wrap bp-section"><header><div><p class="bp-kicker">LOCAL EDITORS</p><h2 class="bp-section-title">その街を知る人と、記録する。</h2></div><p>フォロワー数ではなく、地域への理解と誠実な取材姿勢を大切にします。</p></header>{people.length>0?<div class="people-grid">{people.map(p=><PersonCard person={p}/>)}</div>:<div class="people-empty"><p>公開プロフィールは、本人確認と掲載許諾が完了したローカルエディターから順次掲載します。</p><a href="/about/team/">編集体制を知る →</a></div>}</section>
+
+  <section class="bp-wrap bp-section"><EditorialProcess /></section>
+  <section class="partner"><div class="bp-wrap"><p class="bp-kicker">FOR LOCAL BUSINESSES</p><h2>地域事業者の方へ</h2><p>取材・情報掲載・発信支援についてご案内します。</p><a href="/biz/">取り組みについて知る →</a></div></section>
+</PreviewBrand>
+<style>
+  .home-hero{min-height:72vh;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,.55fr);gap:clamp(3rem,8vw,8rem);align-items:end;padding-block:clamp(5rem,11vw,9rem);border-bottom:1px solid var(--color-mist)}.hero-copy .bp-title{margin-top:1.2rem}.hero-lead{max-width:50ch;margin-top:1.6rem;font-size:clamp(1rem,1.5vw,1.15rem);line-height:2;color:var(--color-soil)}.hero-actions{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:2rem}.hero-actions a{border-bottom:1px solid var(--color-tide);padding-bottom:.2rem;color:var(--color-ink);font-weight:600}.hero-note{border-left:1px solid var(--color-tide);padding-left:1.4rem;color:var(--color-soil)}.hero-note span{font:.7rem var(--font-brand-meta);letter-spacing:.14em}.hero-note p{margin-top:.8rem;font:500 1rem/1.9 var(--font-brand-display)}.feature{margin-top:2rem}.latest header,.people header{display:flex;justify-content:space-between;gap:2rem;align-items:end}.latest header h2,.people header h2,.area-home h2{margin-top:.6rem}.latest-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.5rem,3vw,2.5rem);margin-top:2.5rem}.discover{background:var(--color-white)}.discover-grid{display:grid;grid-template-columns:minmax(240px,.7fr) minmax(0,1.3fr);gap:clamp(3rem,8vw,8rem);padding-block:clamp(4rem,9vw,7rem)}.discover h2{margin-top:.7rem}.discover p:not(.bp-kicker),.area-home header>p:last-child,.people header>p{margin-top:1rem;color:var(--color-soil)}.area-home>header{margin-bottom:2.5rem}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:2.5rem}.partner{padding-block:3.5rem;border-top:1px solid var(--color-mist)}.partner .bp-wrap{display:grid;grid-template-columns:.5fr 1fr 1fr auto;gap:1.5rem;align-items:center}.partner h2{font:600 1.6rem var(--font-brand-display);color:var(--color-ink)}.partner p:not(.bp-kicker){color:var(--color-soil)}.partner a{border-bottom:1px solid var(--color-tide);font-weight:600}@media(max-width:800px){.home-hero,.discover-grid{grid-template-columns:1fr}.home-hero{min-height:0;align-items:start}.hero-note{max-width:35rem}.latest-grid{grid-template-columns:1fr}.people-grid{grid-template-columns:1fr}.partner .bp-wrap{grid-template-columns:1fr}.latest header,.people header{display:block}.latest header>a{display:inline-block;margin-top:1rem}}@media(max-width:480px){.home-hero{padding-block:4.5rem}.bp-title br{display:none}}
+</style>
+<style>
+  @media (min-width:801px){.home-hero{grid-template-columns:minmax(0,1.65fr) minmax(250px,.5fr);gap:clamp(3rem,6vw,6rem)}.hero-copy .bp-title{font-size:clamp(2rem,4.35vw,4rem)}}
+  .people-empty{margin-top:2.5rem;padding-block:1.5rem;border-block:1px solid var(--color-mist);display:flex;justify-content:space-between;gap:2rem;color:var(--color-soil)}
+  .people-empty a{flex:none;color:var(--color-tide);border-bottom:1px solid}
+  .story-empty{border-bottom:1px solid var(--color-mist)}.story-empty h2{margin-top:1rem}.story-empty>p:not(.bp-kicker){margin-top:1rem;color:var(--color-soil)}.story-empty>a{display:inline-block;margin-top:1.5rem;color:var(--color-tide);border-bottom:1px solid}
+  @media(max-width:480px){.people-empty{display:block}.people-empty a{display:inline-block;margin-top:1rem}}
+</style>

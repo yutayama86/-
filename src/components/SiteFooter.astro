@@ -4,35 +4,36 @@
  * Blueprint：方針 / 訂正 / PR / 運営 / 連絡先。汎用SNS URLは載せない
  * （公式アカウントの実URLが SITE_CONFIG.social に入っているものだけ表示）。
  *
- * ※Milestone 1：新プリミティブの定義。現行 Base.astro には未接続。
- *   方針系リンクは M2 で /about/editorial-policy 等を作成後に付け替え。
+ * BrandBase から全公開ページへ接続。方針・連絡先は実在するURLだけを掲載する。
  */
 import { SITE_CONFIG } from '../data/site';
+import BrandLogo from './BrandLogo.astro';
 const year = new Date().getFullYear();
 
 const policyNav = [
-  { label: '編集方針', href: '/about/' },
-  { label: 'PR・広告の方針', href: '/about/' },
-  { label: '訂正・更新方針', href: '/about/' },
-  { label: '運営・チーム', href: '/about/' },
+  { label: '編集方針', href: '/about/editorial-policy/' },
+  { label: 'PR・広告の方針', href: '/about/pr-policy/' },
+  { label: '訂正・更新方針', href: '/about/corrections/' },
+  { label: '運営・チーム', href: '/about/team/' },
 ];
 const utilityNav = [
   { label: 'お問い合わせ', href: '/contact/' },
   { label: 'プライバシーポリシー', href: '/privacy/' },
   { label: '地域事業者の方へ', href: '/biz/' },
 ];
+const socialUrls: Record<string, string> = SITE_CONFIG.social;
 const officialSocials = [
-  { label: 'Instagram', href: SITE_CONFIG.social.instagram },
-  { label: 'X', href: SITE_CONFIG.social.x },
-  { label: 'TikTok', href: SITE_CONFIG.social.tiktok },
-  { label: 'Threads', href: SITE_CONFIG.social.threads },
-].filter((s) => s.href && s.href.length > 0);
+  { label: 'Instagram', href: socialUrls.instagram },
+  { label: 'X', href: socialUrls.x },
+  { label: 'TikTok', href: socialUrls.tiktok },
+  { label: 'Threads', href: socialUrls.threads },
+].filter((s) => Boolean(s.href));
 ---
 
 <footer class="site-footer2">
   <div class="site-footer2__inner">
     <div class="site-footer2__brand">
-      <p class="site-footer2__logo">イバトコ</p>
+      <BrandLogo size={38} inverse />
       <p class="site-footer2__tag">現地から、信頼を編む。</p>
       {officialSocials.length > 0 && (
         <ul class="site-footer2__social" aria-label="公式アカウント">
@@ -66,7 +67,6 @@ const officialSocials = [
     padding: clamp(2.5rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem);
     display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2rem;
   }
-  .site-footer2__logo { font-family: var(--font-brand-display); font-size: 1.4rem; letter-spacing: 0.08em; }
   .site-footer2__tag { font-family: var(--font-brand-display); color: var(--color-mist); margin-top: 0.4rem; font-size: 0.95rem; }
   .site-footer2__social { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.2rem; list-style: none; }
   .site-footer2__social a { color: var(--color-mist); font-size: 0.85rem; text-decoration: none; border-bottom: 1px solid transparent; }

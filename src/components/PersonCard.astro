@@ -1,0 +1,6 @@
+---
+import type { Reporter } from '../data/reporters'; interface Props{person:Reporter}; const {person}=Astro.props;
+const displayName=person.name.replace(/^公式レポーター\s*/, '');
+---
+<article class="person-card"><div class="pc-mark" aria-hidden="true">{displayName.slice(0,1)}</div><p>{person.role.replace('公式レポーター','ローカルエディター')}</p><h3><a href={`/reporter/${person.slug}/`}>{displayName}</a></h3><div class="pc-rule"></div><p class="pc-bio">{person.bio}</p><a class="pc-more" href={`/reporter/${person.slug}/`}>プロフィールを見る →</a></article>
+<style>.person-card{padding:1.5rem;border-top:1px solid var(--color-mist);border-bottom:1px solid var(--color-mist)}.pc-mark{width:3.5rem;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:var(--color-mist);font:600 1.45rem var(--font-brand-display);color:var(--color-ink)}.person-card>p:first-of-type{margin-top:1rem;color:var(--color-tide);font-size:.75rem;font-weight:600}.person-card h3{font:600 1.5rem var(--font-brand-display);color:var(--color-ink)}.pc-rule{width:2rem;border-top:1px solid var(--color-tide);margin:1rem 0}.pc-bio{color:var(--color-soil);font-size:.84rem;line-height:1.8;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.pc-more{display:inline-block;margin-top:1rem;font-size:.8rem;color:var(--color-tide)}</style>

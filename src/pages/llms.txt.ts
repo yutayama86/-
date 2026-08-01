@@ -4,7 +4,6 @@ import { getArticles, getStores } from '../lib/content';
 import { VISIBLE_GUIDES as GUIDES } from '../data/guides';
 import { VISIBLE_REPORTERS as REPORTERS } from '../data/reporters';
 import { MUNICIPALITIES } from '../data/areas';
-import { MUNICIPALITY_CONTENT } from '../data/municipality-content';
 
 /**
  * /llms.txt — AI検索(GEO)向けのサイト要約（llmstxt.org 準拠）。
@@ -23,8 +22,8 @@ export const GET: APIRoute = async () => {
   L.push(`> ${SITE_CONFIG.description}`);
   L.push('');
   L.push(
-    `${SITE_CONFIG.name}は茨城県44市町村の「食・暮らし・あそび・美容・泊まる・ものづくり」を、` +
-      `編集部と公式レポーターが実際に足を運んだ一次情報でまとめる体験型ローカルメディアです。` +
+    `${SITE_CONFIG.name}は茨城県44市町村の人・場所・営みを、` +
+      `編集部とローカルエディターが現地で取材・確認し、長く参照できる形に編集する地域価値編集ブランドです。` +
       `タグライン：${SITE_CONFIG.tagline}　サイト：${base}`
   );
   L.push('');
@@ -36,13 +35,10 @@ export const GET: APIRoute = async () => {
   }
   L.push('');
 
-  // エリア（コンテンツのある市町村）
+  // エリア（44市町村。未確認の観光コピーは載せない）
   L.push('## エリア（市町村ページ）');
   for (const m of MUNICIPALITIES) {
-    const content = MUNICIPALITY_CONTENT[m.slug];
-    if (!content?.intro && !content?.catch) continue;
-    const note = (content.catch ?? content.intro ?? '').replace(/\s+/g, ' ').slice(0, 60);
-    L.push(`- [${m.name}](${abs(`/area/${m.slug}/`)}): ${note}`);
+    L.push(`- [${m.name}](${abs(`/area/${m.slug}/`)}): 取材・確認済みの情報から順次掲載`);
   }
   L.push('');
 
@@ -80,9 +76,9 @@ export const GET: APIRoute = async () => {
     L.push('');
   }
 
-  // 公式レポーター（E-E-A-T）
+  // ローカルエディター（E-E-A-T）
   if (REPORTERS.length) {
-    L.push('## 公式レポーター（著者・一次情報の書き手）');
+    L.push('## ローカルエディター（著者・一次情報の書き手）');
     for (const r of REPORTERS) {
       L.push(`- [${r.name}](${abs(`/reporter/${r.slug}/`)}): ${r.role}${r.area ? `・担当${r.area}` : ''}`);
     }
@@ -91,8 +87,8 @@ export const GET: APIRoute = async () => {
 
   // 事業者向け
   L.push('## 事業者・関係者の方へ');
-  L.push(`- [掲載のご案内](${abs('/biz/')}): お店・企業の掲載（無料掲載から）`);
-  L.push(`- [公式レポーター募集](${abs('/reporters/')}): 茨城を発信する公式レポーターの募集`);
+  L.push(`- [地域事業者の方へ](${abs('/biz/')}): 情報整備・取材・制作・発信支援`);
+  L.push(`- [ローカルエディター](${abs('/reporters/')}): 著者と編集体制`);
   L.push(`- [お問い合わせ](${abs('/contact/')}): 取材・掲載・協業のご相談`);
   L.push('');
 

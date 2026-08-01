@@ -1,216 +1,33 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import Base from '../../layouts/Base.astro';
-import ArticleCard from '../../components/ArticleCard.astro';
-import { VISIBLE_REPORTERS, REPORTER_BY_SLUG } from '../../data/reporters';
+import BrandBase from '../../layouts/BrandBase.astro';
+import BrandStoryCard from '../../components/BrandStoryCard.astro';
+import { VISIBLE_REPORTERS } from '../../data/reporters';
 import { getArticlesByReporter } from '../../lib/content';
-import { SITE_CONFIG } from '../../data/site';
 
-export const getStaticPaths = (async () => {
-  return VISIBLE_REPORTERS.map((r) => ({ params: { slug: r.slug }, props: { slug: r.slug } }));
-}) satisfies GetStaticPaths;
-
-const { slug } = Astro.props as { slug: string };
-const reporter = REPORTER_BY_SLUG.get(slug)!;
-const articles = await getArticlesByReporter(reporter.name);
-
-const abs = (p: string) => new URL(p, Astro.site ?? SITE_CONFIG.domain).href;
-const profileUrl = abs(`/reporter/${reporter.slug}/`);
-const sns = Object.entries(reporter.sns ?? {}).filter(([, v]) => v) as [string, string][];
-
-// 実データで裏づく権威性の指標（水増ししない）
-const areaCount = new Set(articles.map((a) => a.data.area).filter(Boolean)).size;
-const stats = [
-  { n: String(articles.length), unit: '本', label: '取材記事' },
-  { n: String(areaCount || (reporter.area ? 1 : 0)), unit: 'エリア', label: '担当エリア' },
-  { n: String(reporter.expertise?.length ?? reporter.genres?.length ?? 0), unit: '分野', label: '専門' },
-];
-
-const knowsAbout = [...new Set([...(reporter.genres ?? []), ...(reporter.expertise ?? [])])];
-const description = [reporter.bio, reporter.philosophy].filter(Boolean).join(' ');
-
-const jsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'ProfilePage',
-    mainEntityOfPage: profileUrl,
-    mainEntity: {
-      '@type': 'Person',
-      '@id': `${profileUrl}#person`,
-      name: reporter.name,
-      jobTitle: reporter.role,
-      description,
-      url: profileUrl,
-      ...(knowsAbout.length ? { knowsAbout } : {}),
-      ...(reporter.area ? { homeLocation: { '@type': 'Place', name: `茨城県${reporter.area}` } } : {}),
-      ...(reporter.avatar ? { image: abs(reporter.avatar) } : {}),
-      ...(sns.length ? { sameAs: sns.map(([, v]) => v) } : {}),
-      worksFor: { '@type': 'Organization', name: SITE_CONFIG.name, url: abs('/') },
-    },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'ホーム', item: abs('/') },
-      { '@type': 'ListItem', position: 2, name: 'レポーター', item: abs('/reporters/') },
-      { '@type': 'ListItem', position: 3, name: reporter.name },
-    ],
-  },
-];
-
-const initial = reporter.name.replace(/^(編集長|公式レポーター)\s*/, '').slice(0, 1);
+export const getStaticPaths = (() => VISIBLE_REPORTERS.map((person) => ({ params: { slug: person.slug }, props: { person } }))) satisfies GetStaticPaths;
+const { person } = Astro.props;
+const articles = (await getArticlesByReporter(person.name)).filter((article) => !article.data.draft);
+const displayName = person.name.replace(/^公式レポーター\s*/, '');
+const role = person.role.replace('公式レポーター', 'ローカルエディター');
+const jsonLd = { '@context': 'https://schema.org', '@type': 'Person', name: displayName, jobTitle: role, description: person.bio, ...(person.avatar ? { image: person.avatar } : {}) };
 ---
 
-<Base
-  title={reporter.name}
-  description={`${reporter.role}・${reporter.name}のプロフィールと取材記事。${reporter.bio}`}
-  jsonLd={jsonLd}
->
-  <article class="rpp">
-    <header class="rpp-hero">
-      <div class="wrap rpp-hero-inner">
-        <nav class="crumbs" aria-label="パンくず">
-          <a href="/">ホーム</a><span aria-hidden="true">/</span>
-          <a href="/reporters/">レポーター</a>
-        </nav>
-        <div class="rpp-head">
-          <div class="rpp-avatar" aria-hidden={reporter.avatar ? undefined : 'true'}>
-            {reporter.avatar ? <img src={reporter.avatar} alt={reporter.name} /> : <span class="mincho">{initial}</span>}
-          </div>
-          <div class="rpp-id">
-            <p class="rpp-role">{reporter.role}</p>
-            <h1 class="display rpp-name">{reporter.name}</h1>
-            {reporter.title && <p class="rpp-title mincho">{reporter.title}</p>}
-            <div class="rpp-tags">
-              {reporter.area && <span class="chip">📍 {reporter.area}</span>}
-              {reporter.since && <span class="chip">{reporter.since}年〜</span>}
-              {reporter.genres?.map((g) => <span class="chip">{g}</span>)}
-            </div>
-          </div>
-        </div>
-
-        <!-- 実績サマリー（実データ） -->
-        <dl class="rpp-stats">
-          {stats.map((s) => (
-            <div class="rpp-stat">
-              <dt class="rpp-stat-n latin">{s.n}<span class="rpp-stat-u">{s.unit}</span></dt>
-              <dd class="rpp-stat-l">{s.label}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-    </header>
-
-    <div class="wrap rpp-body">
-      <p class="rpp-bio mincho">{reporter.bio}</p>
-      {sns.length > 0 && (
-        <ul class="rpp-sns">
-          {sns.map(([k, v]) => (
-            <li><a href={v} target="_blank" rel="noopener noreferrer" class="ul-link">{k} ↗</a></li>
-          ))}
-        </ul>
-      )}
-
-      <div class="rpp-detail">
-        {reporter.expertise && reporter.expertise.length > 0 && (
-          <section class="rpp-block">
-            <h2 class="rpp-block-h">専門分野</h2>
-            <ul class="rpp-expertise">
-              {reporter.expertise.map((e) => <li class="chip">{e}</li>)}
-            </ul>
-          </section>
-        )}
-
-        {reporter.philosophy && (
-          <section class="rpp-block rpp-stance">
-            <h2 class="rpp-block-h">取材のスタンス</h2>
-            <blockquote class="rpp-stance-body mincho">{reporter.philosophy}</blockquote>
-          </section>
-        )}
-
-        {reporter.credentials && reporter.credentials.length > 0 && (
-          <section class="rpp-block">
-            <h2 class="rpp-block-h">経歴・活動</h2>
-            <ul class="rpp-creds">
-              {reporter.credentials.map((c) => <li>{c}</li>)}
-            </ul>
-          </section>
-        )}
-      </div>
-
-      <p class="rpp-policy muted">
-        イバトコは、実際に足を運んだ一次情報だけを掲載する編集方針です。
-        <a href="/about/" class="ul-link">運営・編集方針について</a>
-      </p>
+<BrandBase title={`${displayName}｜${role}｜イバトコ`} description={person.bio} image={person.avatar} jsonLd={jsonLd}>
+  <article class="person">
+    <header class="person-head bp-wrap"><div class="person-initial" aria-hidden="true">{displayName.slice(0,1)}</div><div><p class="bp-kicker">{role}</p><h1>{displayName}</h1>{person.title && <p>{person.title}</p>}</div></header>
+    <div class="person-grid bp-wrap">
+      <main><p class="person-bio">{person.bio}</p>{person.philosophy && <blockquote>{person.philosophy}</blockquote>}</main>
+      <aside><dl>{person.area && <div><dt>担当</dt><dd>{person.area}</dd></div>}{person.expertise?.length && <div><dt>専門</dt><dd>{person.expertise.join('、')}</dd></div>}{person.since && <div><dt>活動開始</dt><dd>{person.since}年</dd></div>}</dl><a href="/about/editorial-policy/">編集方針を読む →</a></aside>
     </div>
-
-    <section class="wrap section">
-      <div class="sec-head">
-        <h2>{reporter.name}の取材記事<span class="latin num"> / Reports</span></h2>
-      </div>
-      {articles.length > 0 ? (
-        <div class="rpp-grid">
-          {articles.map((a, i) => <ArticleCard article={a} index={i} />)}
-        </div>
-      ) : (
-        <p class="muted mincho rpp-empty">このレポーターの記事は準備中です。</p>
-      )}
-    </section>
-
-    <div class="rpp-cta">
-      <div class="wrap rpp-cta-inner">
-        <p class="mincho rpp-cta-h">あなたも、好きな街のレポーターに。</p>
-        <p class="muted">イバトコは、茨城でファンを持つ公式レポーターを募集しています。</p>
-        <a href="/reporters/" class="btn btn--shu">レポーターについて知る <span class="arw">→</span></a>
-      </div>
-    </div>
+    {articles.length > 0 && <section class="bp-wrap bp-section"><p class="bp-kicker">STORIES</p><h2 class="bp-section-title">この人が取材した物語</h2><div class="person-stories">{articles.map((article) => <BrandStoryCard article={article} />)}</div></section>}
   </article>
-</Base>
+</BrandBase>
 
 <style>
-  .rpp-hero { background: radial-gradient(80% 120% at 100% 0%, color-mix(in srgb, var(--matcha) 14%, transparent), transparent 60%); padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(1.5rem, 4vw, 2.5rem); }
-  .crumbs { display: flex; gap: 0.6rem; font-size: var(--step--1); color: var(--ink-mute); margin-bottom: 1.8rem; }
-  .crumbs a:hover { color: var(--shu); }
-  .rpp-head { display: flex; align-items: center; gap: clamp(1.2rem, 3vw, 2rem); }
-  .rpp-avatar { flex-shrink: 0; width: clamp(76px, 14vw, 120px); aspect-ratio: 1; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: linear-gradient(135deg, var(--matcha), var(--ai-deep)); color: #fff; }
-  .rpp-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .rpp-avatar span { font-size: var(--step-4); }
-  .rpp-role { font-size: var(--step--1); color: var(--matcha); font-weight: 700; letter-spacing: 0.06em; }
-  .rpp-name { font-size: var(--step-4); margin: 0.2rem 0 0.3rem; }
-  .rpp-title { font-size: var(--step-1); color: var(--ink-soft); margin-bottom: 0.7rem; }
-  .rpp-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-
-  /* 実績サマリー */
-  .rpp-stats { display: flex; flex-wrap: wrap; gap: clamp(1.5rem, 5vw, 3.5rem); margin-top: clamp(1.5rem, 4vw, 2.4rem); padding-top: clamp(1.2rem, 3vw, 1.8rem); border-top: 1px solid var(--line); }
-  .rpp-stat-n { font-size: var(--step-4); font-weight: 700; color: var(--ink); line-height: 1; }
-  .rpp-stat-u { font-size: var(--step-0); font-weight: 500; color: var(--ink-soft); margin-left: 0.15em; }
-  .rpp-stat-l { font-size: var(--step--1); color: var(--ink-mute); margin-top: 0.3rem; }
-
-  .rpp-body { max-width: 760px; padding-top: clamp(1.5rem, 4vw, 2.5rem); }
-  .rpp-bio { font-size: var(--step-1); line-height: 2; color: var(--ink); }
-  .rpp-sns { display: flex; gap: 1.2rem; margin-top: 1.2rem; }
-
-  .rpp-detail { display: grid; gap: clamp(1.5rem, 4vw, 2.4rem); margin-top: clamp(2rem, 5vw, 3rem); }
-  .rpp-block-h { font-size: var(--step-0); font-weight: 700; color: var(--ink-soft); letter-spacing: 0.06em; padding-bottom: 0.6rem; margin-bottom: 1rem; border-bottom: 1px solid var(--line); }
-  .rpp-expertise { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .rpp-stance { background: var(--paper-2); border-left: 4px solid var(--matcha); border-radius: var(--radius); padding: clamp(1.3rem, 3vw, 1.8rem); }
-  .rpp-stance .rpp-block-h { border: 0; padding: 0; margin-bottom: 0.7rem; color: var(--matcha); }
-  .rpp-stance-body { font-size: var(--step-1); line-height: 1.9; color: var(--ink); }
-  .rpp-creds { display: grid; gap: 0.7rem; }
-  .rpp-creds li { position: relative; padding-left: 1.4em; color: var(--ink-soft); line-height: 1.7; }
-  .rpp-creds li::before { content: "—"; position: absolute; left: 0; color: var(--matcha); }
-
-  .rpp-policy { margin-top: clamp(1.8rem, 4vw, 2.4rem); font-size: var(--step--1); }
-
-  .section { padding-block: clamp(2.5rem, 6vw, 4rem); }
-  .rpp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: 1.5rem; }
-  .rpp-empty { padding-block: 2rem; }
-  @media (max-width: 1000px) { .rpp-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 640px) { .rpp-grid { grid-template-columns: 1fr; } .rpp-head { flex-direction: column; text-align: center; } .rpp-tags { justify-content: center; } .rpp-stats { justify-content: center; text-align: center; } }
-
-  .rpp-cta { background: var(--paper-2); margin-top: 2rem; }
-  .rpp-cta-inner { text-align: center; padding: clamp(2.5rem, 6vw, 4rem) 0; display: grid; gap: 0.5rem; justify-items: center; }
-  .rpp-cta-h { font-size: var(--step-2); color: var(--ink); }
-  .rpp-cta .btn { margin-top: 1rem; }
+  .person{padding-top:clamp(4rem,9vw,7rem)}.person-head{display:grid;grid-template-columns:clamp(90px,14vw,160px) 1fr;gap:clamp(1.5rem,5vw,4rem);align-items:center}.person-initial{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:var(--color-mist);font:600 clamp(2.5rem,6vw,5rem) var(--font-brand-display);color:var(--color-ink)}
+  .person-head h1{margin-top:.5rem;font:600 clamp(2.5rem,6vw,5rem) var(--font-brand-display);color:var(--color-ink)}.person-head div>p:last-child{margin-top:.5rem;color:var(--color-soil);font:500 1.1rem var(--font-brand-display)}
+  .person-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(260px,.7fr);gap:clamp(3rem,8vw,7rem);padding-top:4rem}.person-bio{font:500 clamp(1.1rem,2vw,1.35rem)/2 var(--font-brand-display);color:var(--color-ink)}.person blockquote{margin-top:2.5rem;padding:1.5rem 0;border-block:1px solid var(--color-mist);font:500 1rem/2 var(--font-brand-display);color:var(--color-soil)}
+  .person dl{border-top:1px solid var(--color-mist)}.person dl div{padding:1rem 0;border-bottom:1px solid var(--color-mist)}.person dt{font-size:.72rem;color:var(--color-soil)}.person dd{margin-top:.25rem;color:var(--color-ink);font-size:.88rem}.person aside>a{display:inline-block;margin-top:1.2rem;color:var(--color-tide);border-bottom:1px solid}.person-stories{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:2rem}.bp-section-title{margin-top:.7rem}
+  @media(max-width:700px){.person-head{grid-template-columns:80px 1fr}.person-grid,.person-stories{grid-template-columns:1fr}}
 </style>

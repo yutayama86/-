@@ -1,4 +1,5 @@
-import { defineCollection, z, reference } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 import { csvStoresLoader } from './loaders/csv-stores';
 
@@ -7,12 +8,12 @@ import { csvStoresLoader } from './loaders/csv-stores';
  * 企画書サイトマップに対応
  */
 export const CATEGORIES = {
-  eat: { label: 'グルメ', reading: 'たべる', path: 'eat', accent: '#d8452b' },
-  life: { label: '暮らし', reading: 'くらす', path: 'life', accent: '#3f7d5a' },
-  'sauna-play': { label: 'あそび・サウナ', reading: 'あそぶ', path: 'sauna-play', accent: '#2f6f9e' },
-  beauty: { label: 'ビューティ', reading: 'ととのう', path: 'beauty', accent: '#b0567e' },
-  stay: { label: '泊まる', reading: 'とまる', path: 'stay', accent: '#9a6b45' },
-  company: { label: '企業・技術', reading: 'つくる', path: 'company', accent: '#1f3a52' },
+  eat: { label: '食べる', reading: 'たべる', path: 'eat', accent: '#315c68' },
+  life: { label: '暮らす', reading: 'くらす', path: 'life', accent: '#315c68' },
+  'sauna-play': { label: '出かける', reading: 'でかける', path: 'sauna-play', accent: '#315c68' },
+  beauty: { label: '整える', reading: 'ととのえる', path: 'beauty', accent: '#315c68' },
+  stay: { label: '泊まる', reading: 'とまる', path: 'stay', accent: '#315c68' },
+  company: { label: '働く・つくる', reading: 'はたらく・つくる', path: 'company', accent: '#315c68' },
 } as const;
 
 export type CategoryKey = keyof typeof CATEGORIES;
@@ -24,8 +25,7 @@ const categoryKeys = Object.keys(CATEGORIES) as [CategoryKey, ...CategoryKey[]];
 const articles = defineCollection({
   // `_`始まりのファイル（テンプレート等）は公開対象から除外
   loader: glob({ pattern: '**/[!_]*.{md,mdx}', base: './src/content/articles' }),
-  schema: ({ image }) =>
-    z.object({
+  schema: z.object({
       title: z.string(),
       description: z.string(),
       category: z.enum(categoryKeys),
@@ -54,11 +54,18 @@ const articles = defineCollection({
       editor: z.string().optional(), // 編集担当
       // 出典（公式情報・一次資料）
       sources: z
-        .array(z.object({ label: z.string(), url: z.string().url().optional(), accessedAt: z.coerce.date().optional() }))
+        .array(z.object({ label: z.string(), url: z.url().optional(), accessedAt: z.coerce.date().optional() }))
         .default([]),
       // 訂正・更新履歴
       corrections: z.array(z.object({ date: z.coerce.date(), note: z.string() })).default([]),
-      reviewed: z.boolean().default(false), // 編集部の事実確認済みか
+      reviewed: z.boolean().default(false), // 編集部の事実確認済みか。trueでなければ公開しない
+    }).superRefine((data, ctx) => {
+      if (data.disclosure !== 'editorial' && !data.disclosureNote?.trim()) {
+        ctx.addIssue({ code: 'custom', path: ['disclosureNote'], message: 'Partner / PR は、関係性や対価の内容を具体的に記載してください。' });
+      }
+      if (!data.draft && !data.reviewed) {
+        ctx.addIssue({ code: 'custom', path: ['reviewed'], message: '公開には編集部の事実確認（reviewed: true）が必要です。' });
+      }
     }),
 });
 
@@ -87,9 +94,9 @@ const places = defineCollection({
     budget: z.string().optional(),
     // 特徴タグ（駐車場あり・個室・カード可 等）＝検索・絞り込み・AI検索用の構造化情報
     features: z.array(z.string()).default([]),
-    website: z.string().url().optional(),
+    website: z.url().optional(),
     instagram: z.string().optional(),
-    map: z.string().url().optional(), // Googleマップ埋め込み or リンク
+    map: z.url().optional(), // Googleマップ埋め込み or リンク
     // メニュー・料金表
     menu: z
       .array(z.object({ name: z.string(), price: z.string(), note: z.string().optional() }))
@@ -98,10 +105,22 @@ const places = defineCollection({
     faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
     // 予約・問い合わせ導線（階層3 /reserve へ）。未設定なら問い合わせフォームへ。
     reserveUrl: z.string().optional(),
-    // 掲載プラン：free=無料掲載 / official=公式店舗 / growth=集客 / partner=地域DX
+    // 内部区分（既存データとの互換性を維持）：free=基本情報 / official=確認済み情報 / growth=発信支援 / partner=パートナー
     plan: z.enum(['free', 'official', 'growth', 'partner']).default('free'),
     publishedAt: z.coerce.date(),
     draft: z.boolean().default(false),
+    reviewed: z.boolean().default(false),
+    verifiedAt: z.coerce.date().optional(),
+    disclosure: z.enum(['editorial', 'partner', 'pr']).default('editorial'),
+    disclosureNote: z.string().optional(),
+    sources: z.array(z.object({ label: z.string(), url: z.url().optional(), accessedAt: z.coerce.date().optional() })).default([]),
+  }).superRefine((data, ctx) => {
+    if (data.disclosure !== 'editorial' && !data.disclosureNote?.trim()) {
+      ctx.addIssue({ code: 'custom', path: ['disclosureNote'], message: 'Partner / PR は、関係性や対価の内容を具体的に記載してください。' });
+    }
+    if (!data.draft && !data.reviewed) {
+      ctx.addIssue({ code: 'custom', path: ['reviewed'], message: '公開には公式情報との照合（reviewed: true）が必要です。' });
+    }
   }),
 });
 
@@ -126,13 +145,24 @@ const stores = defineCollection({
     tel: z.string().optional(),
     budget: z.string().optional(),
     features: z.array(z.string()).default([]),
-    website: z.string().url().optional(),
+    website: z.url().optional(),
     instagram: z.string().optional(),
-    map: z.string().url().optional(),
+    map: z.url().optional(),
     plan: z.enum(['free', 'official', 'growth', 'partner']).default('free'),
     publishedAt: z.coerce.date().default(new Date('2026-07-01')),
     // 公開前の非表示フラグ（本番ビルドで除外）
     draft: z.boolean().default(false),
+    reviewed: z.boolean().default(false),
+    verifiedAt: z.coerce.date().optional(),
+    disclosure: z.enum(['editorial', 'partner', 'pr']).default('editorial'),
+    disclosureNote: z.string().optional(),
+  }).superRefine((data, ctx) => {
+    if (data.disclosure !== 'editorial' && !data.disclosureNote?.trim()) {
+      ctx.addIssue({ code: 'custom', path: ['disclosureNote'], message: 'Partner / PR は関係性を明記してください。' });
+    }
+    if (!data.draft && !data.reviewed) {
+      ctx.addIssue({ code: 'custom', path: ['reviewed'], message: '公開には確認済み（reviewed: true）が必要です。' });
+    }
   }),
 });
 

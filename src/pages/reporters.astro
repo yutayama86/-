@@ -1,111 +1,18 @@
 ---
-import Base from '../layouts/Base.astro';
+import BrandBase from '../layouts/BrandBase.astro';
+import PersonCard from '../components/PersonCard.astro';
 import { VISIBLE_REPORTERS } from '../data/reporters';
-import { getArticlesByReporter } from '../lib/content';
-
-const roster = await Promise.all(
-  VISIBLE_REPORTERS.map(async (r) => ({
-    r,
-    count: (await getArticlesByReporter(r.name)).length,
-    initial: r.name.replace(/^(編集長|公式レポーター)\s*/, '').slice(0, 1),
-  }))
-);
 ---
 
-<Base
-  title="ローカルエディターについて"
-  description="イバトコのローカルエディターは、地域を歩き、人に会い、日々の営みを取材します。フォロワー数ではなく、地域への理解と誠実な取材姿勢を大切にしています。"
->
-  <section class="rp-hero">
-    <div class="wrap">
-      <p class="eyebrow" data-reveal>Local Editors</p>
-      <h1 class="display rp-h1" data-reveal>その街を知る人と、<br />記録する。</h1>
-      <p class="rp-lead" data-reveal>
-        イバトコのローカルエディターは、地域を歩き、人に会い、日々の営みを取材します。
-        フォロワー数ではなく、地域への理解と誠実な取材姿勢を大切にしています。
-      </p>
-    </div>
-  </section>
-
-  {roster.length > 0 && (
-    <section class="wrap section">
-      <div class="sec-head" data-reveal><h2>いま活動中のローカルエディター<span class="latin num"> / Members</span></h2></div>
-      <ul class="rp-roster">
-        {roster.map(({ r, count, initial }) => (
-          <li data-reveal>
-            <a href={`/reporter/${r.slug}/`} class="rp-member">
-              <div class="rp-member-avatar" aria-hidden="true">
-                {r.avatar ? <img src={r.avatar} alt="" /> : <span class="mincho">{initial}</span>}
-              </div>
-              <p class="rp-member-role">{r.role}</p>
-              <p class="rp-member-name display">{r.name}</p>
-              {r.area && <p class="rp-member-area muted">📍 {r.area}</p>}
-              <p class="rp-member-count latin">{count} 記事</p>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
-
-  <section class="wrap section">
-    <div class="rp-merit">
-      <div class="rp-col" data-reveal>
-        <h2 class="display rp-col-h">ローカルエディターの関わり方</h2>
-        <ul class="rp-list">
-          <li><b>現地を歩いて取材する</b><span>人に会い、営みを聞き、確かめて記録する</span></li>
-          <li><b>担当者として明記される</b><span>取材・執筆・撮影の担当を記事に開示</span></li>
-          <li><b>編集部と協働する</b><span>企画・事実確認・訂正を一緒に進める</span></li>
-        </ul>
-      </div>
-      <div class="rp-col rp-col--dark" data-reveal>
-        <h2 class="display rp-col-h">こんな方と</h2>
-        <ul class="rp-list rp-list--light">
-          <li><b>地域を丁寧に見ている</b><span>その街の日常や仕事に関心がある方</span></li>
-          <li><b>誠実に取材できる</b><span>事実と印象を分け、出所を大切にできる方</span></li>
-          <li><b>利益相反を開示できる</b><span>取材先との関係をきちんと明らかにできる方</span></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="rp-cta" data-reveal>
-      <h2 class="display rp-cta-h">まずは、話を聞いてみませんか。</h2>
-      <a href="/contact/?subject=ローカルエディター" class="btn btn--ghost btn--lg">ローカルエディターについて相談する <span class="arw">→</span></a>
-    </div>
-  </section>
-</Base>
+<BrandBase title="ローカルエディター｜イバトコ" description="地域を歩き、人に会い、一次情報を記録するイバトコのローカルエディター。" noindex={VISIBLE_REPORTERS.length === 0}>
+  <header class="people-head bp-wrap"><p class="bp-kicker">LOCAL EDITORS</p><h1>街を歩き、<br />街を書く人。</h1><p>フォロワー数ではなく、地域への理解、取材への敬意、公開情報への責任を大切にします。</p></header>
+  {VISIBLE_REPORTERS.length > 0 ? <section class="people-list bp-wrap">{VISIBLE_REPORTERS.map((person) => <PersonCard person={person} />)}</section> : <section class="people-empty bp-reading"><p class="bp-kicker">PROFILE POLICY</p><h2>人物情報は、本人確認から。</h2><p>本人確認と掲載許諾が完了したローカルエディターだけを公開します。現在、公開可能なプロフィールはありません。</p><a href="/about/team/">編集体制を知る →</a></section>}
+  <section class="principles"><div class="bp-wrap"><p class="bp-kicker">OUR STANDARD</p><h2>現地へ行く。話を聞く。事実と印象を分ける。</h2><a href="/about/editorial-policy/">編集方針を読む →</a></div></section>
+</BrandBase>
 
 <style>
-  .section { padding-block: clamp(3rem, 7vw, 5rem); }
-  .rp-hero { padding: clamp(3.5rem, 9vw, 7rem) 0; background: radial-gradient(80% 100% at 100% 0%, color-mix(in srgb, var(--matcha) 14%, transparent), transparent 60%); }
-  .rp-h1 { font-size: var(--step-5); }
-  .rp-lead { margin-top: 1.6rem; font-size: var(--step-1); color: var(--ink-soft); line-height: 1.9; max-width: 55ch; }
-
-  .rp-roster { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem, 3vw, 2rem); margin-top: 1.8rem; }
-  .rp-member { display: grid; justify-items: center; text-align: center; gap: 0.3rem; padding: 2rem 1.5rem; background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius); transition: border-color 0.25s var(--ease), transform 0.25s var(--ease); }
-  .rp-member:hover { border-color: var(--matcha); transform: translateY(-3px); }
-  .rp-member-avatar { width: 88px; height: 88px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: linear-gradient(135deg, var(--matcha), var(--ai-deep)); color: #fff; margin-bottom: 0.6rem; }
-  .rp-member-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .rp-member-avatar span { font-size: var(--step-3); }
-  .rp-member-role { font-size: var(--step--2); color: var(--matcha); font-weight: 700; letter-spacing: 0.05em; }
-  .rp-member-name { font-size: var(--step-1); }
-  .rp-member-area { font-size: var(--step--1); }
-  .rp-member-count { font-size: var(--step--1); color: var(--ink-mute); margin-top: 0.3rem; }
-  @media (max-width: 760px) { .rp-roster { grid-template-columns: 1fr 1fr; } }
-
-  .rp-merit { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-  .rp-col { background: var(--paper-2); padding: clamp(1.8rem, 4vw, 2.8rem); border-radius: var(--radius); }
-  .rp-col--dark { background: var(--ai-deep); color: var(--paper); }
-  .rp-col-h { font-size: var(--step-2); margin-bottom: 1.5rem; }
-  .rp-list { display: grid; gap: 1.2rem; }
-  .rp-list li { display: flex; flex-direction: column; padding-bottom: 1.2rem; border-bottom: 1px solid var(--line); }
-  .rp-list--light li { border-color: rgba(245,241,232,.2); }
-  .rp-list b { font-size: var(--step-1); }
-  .rp-list span { color: var(--ink-mute); font-size: var(--step--1); margin-top: 0.2rem; }
-  .rp-list--light b { color: #fff; }
-  .rp-list--light span { color: rgba(245,241,232,.6); }
-
-  .rp-cta { text-align: center; margin-top: clamp(3rem, 7vw, 5rem); display: grid; gap: 1.5rem; justify-items: center; }
-  .rp-cta-h { font-size: var(--step-3); }
-  @media (max-width: 760px) { .rp-merit { grid-template-columns: 1fr; } }
+  .people-head{padding-block:clamp(5rem,11vw,9rem);border-bottom:1px solid var(--color-mist)}.people-head h1{margin-top:1rem;font:600 clamp(2.5rem,7vw,6rem)/1.2 var(--font-brand-display);color:var(--color-ink)}.people-head>p:last-child{max-width:44ch;margin-top:1.5rem;line-height:2;color:var(--color-soil)}
+  .people-list{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;padding-block:clamp(4rem,9vw,7rem)}.people-empty{padding-block:clamp(5rem,11vw,9rem)}.people-empty h2{margin-top:1rem;font:600 clamp(2rem,5vw,4rem)/1.3 var(--font-brand-display);color:var(--color-ink)}.people-empty>p:not(.bp-kicker){margin-top:1.5rem;line-height:2;color:var(--color-soil)}.people-empty a{display:inline-block;margin-top:2rem;color:var(--color-tide);border-bottom:1px solid}
+  .principles{padding-block:clamp(4rem,8vw,6rem);background:var(--color-white)}.principles h2{max-width:23ch;margin-top:1rem;font:600 clamp(1.8rem,4vw,3.4rem)/1.4 var(--font-brand-display);color:var(--color-ink)}.principles a{display:inline-block;margin-top:2rem;color:var(--color-tide);border-bottom:1px solid}
+  @media(max-width:700px){.people-list{grid-template-columns:1fr}}
 </style>

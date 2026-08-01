@@ -1,60 +1,19 @@
 ---
-import Base from '../layouts/Base.astro';
-import { SITE_CONFIG } from '../data/site';
+import BrandBase from '../layouts/BrandBase.astro'; import EditorialProcess from '../components/EditorialProcess.astro'; import { SITE_CONFIG } from '../data/site';
 ---
-
-<Base title="運営・編集方針" description="イバトコの運営者と編集方針について。">
-  <section class="wrap ab">
-    <p class="eyebrow" data-reveal>About Ibatoco</p>
-    <h1 class="display ab-title" data-reveal>
-      茨城の“いいとこ”を、<br />現地から編集して届けます。
-    </h1>
-
-    <div class="ab-body prose" data-reveal>
-      <p>
-        「イバトコ」は、茨城の“いいとこ”を、実際に行った人の熱量で伝える体験型ローカルメディアです。
-        ガイドブックやまとめサイトには載らない、一次情報とリアルな体験だけをお届けします。
-      </p>
-      <h2>編集方針</h2>
-      <p>
-        私たちは、可能な限り<strong>現地に足を運びます。</strong>
-        食べて、泊まって、体験して、人に会う。現地で確かめた一次情報を、出所とともに編集して届けます。
-      </p>
-      <p class="ab-policylink">
-        取材・区分・訂正の考え方は、
-        <a href="/about/editorial-policy/" class="ul-link">編集方針</a>・
-        <a href="/about/pr-policy/" class="ul-link">PR・広告の方針</a>・
-        <a href="/about/corrections/" class="ul-link">訂正・更新方針</a>・
-        <a href="/about/team/" class="ul-link">運営・チーム</a>
-        をご覧ください。
-      </p>
-      <h2>地域事業者の方へ</h2>
-      <p>
-        イバトコは、茨城のお店や企業の<strong>地域の情報発信を支えるパートナー</strong>でもあります。
-        取材・撮影・ページ制作から発信の運用まで、必要な範囲でお手伝いします。
-        編集記事とパートナーの関係は明確に区別し、対価によって編集評価を変えることはありません
-        （<a href="/about/pr-policy/" class="ul-link">PR・広告の方針</a>）。
-      </p>
-    </div>
-
-    <dl class="ab-info" data-reveal>
-      <div><dt>メディア名</dt><dd>{SITE_CONFIG.name}（{SITE_CONFIG.nameEn}）</dd></div>
-      <div><dt>エリア</dt><dd>茨城県全域</dd></div>
-      <div><dt>お問い合わせ</dt><dd><a href={`mailto:${SITE_CONFIG.contactEmail}`} class="ul-link">{SITE_CONFIG.contactEmail}</a></dd></div>
-    </dl>
-
-    <div class="ab-cta" data-reveal>
-      <a href="/biz/" class="btn btn--ghost btn--lg">地域事業者の方へ <span class="arw">→</span></a>
-      <a href="/contact/" class="btn btn--ghost btn--lg">お問い合わせ</a>
-    </div>
-  </section>
-</Base>
-
+<BrandBase title="イバトコについて｜現地から、信頼を編む。" description="イバトコは、茨城で続く人の仕事と営みを現地で取材し、確かめられる形で記録します。">
+  <header class="about-head bp-wrap"><p class="bp-kicker">ABOUT IBATOCO</p><h1>茨城で続く営みを、<br />きちんと残す。</h1><p>イバトコは、茨城で暮らし、働く人に会い、その言葉と仕事を記録します。店や場所の情報だけでなく、なぜここで続けているのかまで聞き、あとから確かめられる形で届けます。</p></header>
+  <section class="belief bp-wrap"><p class="bp-kicker">OUR BELIEF</p><div><h2>知らないことは、<br />知らないまま書かない。</h2><p>誰が、いつ、どのように確かめた情報なのかを大切にします。事実と現地での印象を分け、PRは明示し、誤りがあれば直した記録を残します。</p></div></section>
+  <section class="bp-wrap bp-section"><EditorialProcess /></section>
+  <section class="policies"><div class="bp-wrap"><p class="bp-kicker">POLICIES</p><h2>編集の約束を、公開しています。</h2><nav><a href="/about/editorial-policy/"><span>編集方針</span><small>取材・編集・AI利用</small></a><a href="/about/pr-policy/"><span>PR・広告の方針</span><small>Editorial / Partner / PR</small></a><a href="/about/corrections/"><span>訂正・更新方針</span><small>確認・判断・履歴公開</small></a><a href="/about/team/"><span>運営・チーム</span><small>公開責任と編集体制</small></a></nav></div></section>
+  <section class="about-info bp-wrap"><dl><div><dt>名称</dt><dd>{SITE_CONFIG.name}（{SITE_CONFIG.nameEn}）</dd></div><div><dt>対象地域</dt><dd>茨城県</dd></div><div><dt>連絡先</dt><dd><a href={`mailto:${SITE_CONFIG.contactEmail}`}>{SITE_CONFIG.contactEmail}</a></dd></div></dl><div><a href="/contact/">お問い合わせ →</a><a href="/biz/">地域事業者の方へ →</a></div></section>
+</BrandBase>
 <style>
-  .ab { max-width: 760px; padding-block: clamp(3rem, 8vw, 5rem); }
-  .ab-title { font-size: var(--step-4); margin: 0.6rem 0 2rem; }
-  .ab-info { margin-top: 3rem; display: grid; gap: 1rem; }
-  .ab-info div { display: grid; grid-template-columns: 10em 1fr; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
-  .ab-info dt { color: var(--ink-mute); font-size: var(--step--1); }
-  .ab-cta { margin-top: 3rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+  .about-head{padding-block:clamp(5rem,11vw,10rem);border-bottom:1px solid var(--color-mist)}.about-head h1{margin-top:1rem;font:600 clamp(2.7rem,7vw,6rem)/1.22 var(--font-brand-display);color:var(--color-ink)}.about-head>p:last-child{max-width:48ch;margin-top:2rem;font:500 clamp(1rem,1.7vw,1.2rem)/2 var(--font-brand-display);color:var(--color-soil)}
+  .belief{display:grid;grid-template-columns:.55fr 1.45fr;gap:clamp(2rem,8vw,8rem);padding-block:clamp(5rem,10vw,8rem)}.belief h2{font:600 clamp(2rem,5vw,4rem)/1.35 var(--font-brand-display);color:var(--color-ink)}.belief div>p{max-width:54ch;margin-top:2rem;line-height:2;color:var(--color-soil)}
+  .policies{padding-block:clamp(4rem,9vw,7rem);background:var(--color-white)}.policies h2{margin-top:1rem;font:600 clamp(2rem,4vw,3.5rem) var(--font-brand-display);color:var(--color-ink)}.policies nav{margin-top:2.5rem;border-top:1px solid var(--color-mist)}.policies a{display:flex;justify-content:space-between;gap:2rem;padding-block:1.3rem;border-bottom:1px solid var(--color-mist)}.policies span{font:600 1.2rem var(--font-brand-display);color:var(--color-ink)}.policies small{color:var(--color-soil)}
+  .about-info{display:grid;grid-template-columns:1fr auto;gap:3rem;padding-block:clamp(4rem,8vw,6rem)}.about-info dl{border-top:1px solid var(--color-mist)}.about-info dl div{display:grid;grid-template-columns:8rem 1fr;gap:1rem;padding-block:1rem;border-bottom:1px solid var(--color-mist)}.about-info dt{color:var(--color-soil);font-size:.78rem}.about-info>div{display:grid;align-content:start;gap:1rem}.about-info>div a{color:var(--color-tide);border-bottom:1px solid}
+  @media(max-width:700px){.belief,.about-info{grid-template-columns:1fr}.policies a{display:grid;gap:.4rem}}
+  @media(max-width:480px){.about-head h1{font-size:2.1rem;line-height:1.35}}
+  @media(max-width:360px){.about-head h1{font-size:1.8rem;line-height:1.4}}
 </style>

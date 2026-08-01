@@ -1,8 +1,10 @@
 # イバトコ (Ibatoco)
 
-> 茨城の“いいとこ”を、行った人の熱量で。 — 体験型ローカルメディア
+> 現地から、信頼を編む。— 茨城の地域価値編集ブランド
 
-Astro 製の高速・SEO最適化された静的サイトです。企画書「ローカルDX構想」のサイトマップ（4階層設計）とビジネス導線（Phase 1〜3）をそのまま実装しています。
+Astro 製の静的サイトです。現地取材、関係性の開示、事実確認、訂正履歴をコンテンツ構造に組み込んでいます。
+
+> 日々の更新、細かな文言調整、公開前確認は [`docs/UPDATE_GUIDE.md`](docs/UPDATE_GUIDE.md) を最初に参照してください。
 
 ---
 
@@ -19,6 +21,7 @@ npm run dev
 | --- | --- |
 | `npm run dev` | 開発サーバー起動（ホットリロード） |
 | `npm run build` | 本番ビルド（`dist/` に出力） |
+| `npm run check` | 型確認＋本番ビルド。公開前に必ず実行 |
 | `npm run preview` | ビルド結果をローカルで確認 |
 
 ---
@@ -32,14 +35,14 @@ npm run dev
 | `/eat/[slug]/` など | 体験レポート記事 | 階層1 |
 | `/place/` | 掲載店舗・企業 一覧 | 階層2 |
 | `/place/[id]/` | 店舗・企業専用LP（ペライチ） | 階層2 |
-| `/reserve/` | 予約・問い合わせフォーム | 階層3：予約・CRM |
-| `/biz/` | 掲載のご案内（料金・3フェーズ） | 階層4：BtoB制圧 |
-| `/agency/` | WEB集客・HP・SNS代行サポート | 階層4 |
+| `/reserve/` | 公式予約窓口への案内方針 | — |
+| `/biz/` | 地域事業者向けの支援方針 | — |
+| `/agency/` | `/biz/` への旧URLリダイレクト | — |
 | `/contact/` | お問い合わせ | 階層4 |
-| `/reporters/` | 公式レポーター募集 | 第5章 共創モデル |
+| `/reporters/` | 本人確認済みローカルエディター | — |
 | `/about/` `/privacy/` | 運営情報・ポリシー | — |
 
-**集客→予約の一気通貫導線**：記事 → 記事内の店舗LPカード → `/place/[id]/` → 「予約・お問い合わせ」ボタン → `/reserve/`
+予約は各施設の公式窓口へ案内します。イバトコは現在、予約の受付・仲介を行いません。
 
 ---
 
@@ -80,37 +83,30 @@ featured: true           # トップの特集に出す
 
 ---
 
-## 🌐 公開手順（GitHub → Cloudflare Pages）
+## 🌐 公開手順（Cloudflare Workers）
 
-### 1. GitHubにpush
+### 1. 初回ログイン
 
 ```bash
-# リポジトリ・初期コミット・リモートは設定済み。以下でpushするだけ:
-git push -u origin main
+npx wrangler login
 ```
 
-> 現在のリモートは `https://github.com/yutayama86/-.git`（リポジトリ名は「-」）。
-> 後で `ibatoco` などに改名する場合は、GitHubで改名 → `git remote set-url origin <新URL>` →
-> [`public/admin/config.yml`](public/admin/config.yml) の `repo:` も更新してください。
+### 2. 監査してデプロイ
 
-### 2. Cloudflare Pages に接続
+```bash
+npm run deploy
+```
 
-1. [Cloudflare ダッシュボード](https://dash.cloudflare.com/) → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
-2. `ibatoco` リポジトリを選択
-3. ビルド設定：
-   - **Framework preset**: `Astro`
-   - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-4. **Save and Deploy** → 数分で `https://ibatoco.pages.dev` が公開されます
-
-以降、`main` にpushするたび自動デプロイされます。
+`npm run deploy` は本番ビルドと品質監査に合格した場合だけ `npx wrangler deploy` を実行します。設定は [`wrangler.jsonc`](wrangler.jsonc)、配信対象は `dist/` です。
 
 ### 3. 独自ドメイン（ibatoco.jp）
 
 - **Cloudflare Registrar** または **お名前.com** でドメイン取得
-- Cloudflare の Worker「ibatoco」→ **ドメイン** → `ibatoco.jp` を追加
+- Cloudflare の Worker「ibatoco」→ **設定** → **ドメインとルート** → `ibatoco.jp` を追加
 - （お名前.com取得の場合）ネームサーバーをCloudflareに向けるか、CNAMEを設定
 - 取得したドメインに合わせて [`astro.config.mjs`](astro.config.mjs) の `SITE` と [`public/robots.txt`](public/robots.txt) のSitemap URLを更新
+
+詳細な最終手順は [`docs/TOMORROW_LAUNCH.md`](docs/TOMORROW_LAUNCH.md) を参照してください。
 
 ### 4. アクセス解析（Cloudflare Web Analytics）
 
@@ -129,10 +125,9 @@ GA4 と Search Console の所有権確認（HTMLタグ方式）は、**環境変
 | `PUBLIC_GSC_VERIFICATION` | Search Console 確認用 `<meta google-site-verification>` | `abc123...` |
 
 **挙動**
-- **GA4 は「本番ビルド かつ `PUBLIC_GA_ID` 設定あり」のときだけ**読み込まれます（`npm run dev` では無効）。
-- gtag.js は `<head>` に **async** で設置し、`preconnect` 済み。**表示速度・SEOに影響しません**。
+- GA4 は設定値がある場合だけ読み込まれます。導入後は実測値を確認し、表示速度への影響を監視してください。
 - `PUBLIC_GSC_VERIFICATION` を設定すると、全ページの `<head>` に確認用metaが入ります（DNS/インポートで確認済みなら不要）。
-- 実装は [`src/layouts/Base.astro`](src/layouts/Base.astro)。CSPは [`public/_headers`](public/_headers) で GA ドメインを許可済み。
+- 新ブランドのメタ情報は [`src/layouts/BrandBase.astro`](src/layouts/BrandBase.astro) が担当します。
 
 **ローカルで設定**
 
@@ -149,14 +144,13 @@ cp .env.example .env
 > ⚠️ GA4 は Cookie を使用します。導入時は [`/privacy/`](src/pages/privacy.astro) のプライバシーポリシー（Cookie/アクセス解析の項）が実態と一致しているか確認してください（本リポジトリでは記載済み）。
 > なお Cloudflare Web Analytics（Cookie不要）と併用も可能です。
 
-### 5. お問い合わせ・予約フォームの送信先（Formspree）
+### 5. お問い合わせフォームの送信先（Formspree）
 
-問い合わせ [`/contact/`](src/pages/contact.astro) と予約 [`/reserve/`](src/pages/reserve/index.astro) の
-送信先は [`src/data/site.ts`](src/data/site.ts) の `formEndpoint` で**一元管理**しています。
+問い合わせ [`/contact/`](src/pages/contact.astro) の送信先は [`src/data/site.ts`](src/data/site.ts) の `formEndpoint` で管理しています。`/reserve/` は予約フォームではありません。
 
 1. [Formspree](https://formspree.io/) に登録し、New Form を作成
 2. 発行された `https://formspree.io/f/xxxxxxx` を `formEndpoint` に貼り付け → commit & push
-3. 以降、両フォームは**ページ遷移なし**で送信され、完了メッセージが表示されます
+3. お問い合わせフォームからテスト送信し、受信先・自動返信・プライバシーポリシーとの整合を確認します
 
 > `formEndpoint` が空の間は、送信ボタンでメール下書き（mailto）が開くフォールバックになります。
 > 迷惑メール対策や自動返信は Formspree 側の設定で調整できます。
@@ -165,8 +159,8 @@ cp .env.example .env
 
 ## 🎨 デザインの調整ポイント
 
-- **ブランドカラー / タイポ / 余白**：すべて [`src/styles/global.css`](src/styles/global.css) の `:root` で一元管理
-  - `--shu`（朱・体験の熱量）/ `--ai`（藍墨・信頼）/ `--paper`（和紙の地色）
+- **ブランドカラー / タイポ / 余白**：[`src/styles/global.css`](src/styles/global.css) の `:root` で一元管理
+  - `--color-ink` / `--color-tide` / `--color-paper` などを使用します
 - **ジャンルのアクセント色**：[`src/content.config.ts`](src/content.config.ts) の `CATEGORIES`
 - **サイト名・SNS・連絡先**：[`src/data/site.ts`](src/data/site.ts)
 
@@ -186,9 +180,9 @@ cp .env.example .env
 
 - [ ] 実取材コンテンツの追加（モニター店舗10社 → 100社）
 - [ ] Cloudflare Images 連携（画像最適化・帯域削減）
-- [x] お問い合わせ/予約フォーム（Formspree対応・要エンドポイント設定）
+- [x] お問い合わせフォーム（Formspree対応・要エンドポイント設定）
 - [x] 記事・店舗ごとのOGP画像 自動生成
-- [ ] 自社予約システム（決済・CRM）への `/reserve/` 置き換え（Phase 3）
+- [ ] 予約機能を提供する場合は、責任範囲・規約・個人情報・施設連携を別途設計
 - [ ] Decap CMS の本番OAuth設定
 
 ---

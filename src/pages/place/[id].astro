@@ -1,340 +1,64 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
-import Base from '../../layouts/Base.astro';
-import { CATEGORIES, SITE_CONFIG } from '../../data/site';
-import { getStores, getArticles } from '../../lib/content';
-import { areaToSlug, MUNI_BY_SLUG } from '../../data/areas';
+import BrandBase from '../../layouts/BrandBase.astro';
+import PlaceFacts from '../../components/PlaceFacts.astro';
+import BrandStoryCard from '../../components/BrandStoryCard.astro';
+import DisclosureBadge from '../../components/DisclosureBadge.astro';
+import { SITE_CONFIG } from '../../data/site';
+import { getPublishedStores, getPublishedArticles } from '../../lib/content';
+import { areaToSlug } from '../../data/areas';
 
-export const getStaticPaths = (async () => {
-  const stores = await getStores();
-  return stores.map((s) => ({
-    params: { id: s.id },
-    props: { store: s },
-  }));
-}) satisfies GetStaticPaths;
+export const getStaticPaths = (async () => (await getPublishedStores()).map((store) => ({ params: { id: store.id }, props: { store } }))) satisfies GetStaticPaths;
 
 const { store } = Astro.props;
 const { data } = store;
-const cat = CATEGORIES[data.category as keyof typeof CATEGORIES];
-const slug = store.id;
-// 店舗ごとにOGP画像を個別生成（md/csv問わず）。写真があればそれを優先。
-const ogImage = data.cover ?? `/og/place/${slug}.png`;
-// 本文は md のみ。csv は description を段落表示。
 const Content = store.entry ? (await render(store.entry)).Content : null;
-
-// この店舗を紹介した記事（mdのみ紐付く）
-const articles = store.entry
-  ? (await getArticles()).filter((a) => a.data.place?.id === store.entry!.id)
-  : [];
-
-// 近隣情報：市町村ページへ紐付け
+const articles = store.entry ? (await getPublishedArticles()).filter((article) => article.data.place?.id === store.entry!.id) : [];
 const areaSlug = areaToSlug(data.area);
-const muni = areaSlug ? MUNI_BY_SLUG.get(areaSlug) : undefined;
-
-// 同じ市町村の他の店舗（関連スポット・回遊）
-const nearby = (await getStores())
-  .filter((p) => p.id !== store.id && areaToSlug(p.data.area) === areaSlug)
-  .slice(0, 4);
-
-const isOfficial = data.plan !== 'free';
-const planLabel = { free: '', official: '公式店舗', growth: '公式店舗', partner: '公式店舗' }[data.plan];
-
-// 予約導線：reserveUrl があればそこへ、なければ自社 /reserve/ フォームへ
-const reserveHref = data.reserveUrl ?? `/reserve/?place=${store.id}`;
-
-const abs = (path: string) => new URL(path, Astro.site ?? SITE_CONFIG.domain).href;
-
-// --- 構造化データ（LocalBusiness / FAQPage / BreadcrumbList）---
-const jsonLd: Record<string, unknown>[] = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: data.name,
-    description: data.description,
-    ...(data.cover ? { image: data.cover } : {}),
-    ...(data.address
-      ? { address: { '@type': 'PostalAddress', addressRegion: '茨城県', addressLocality: data.area, streetAddress: data.address, addressCountry: 'JP' } }
-      : { address: { '@type': 'PostalAddress', addressRegion: '茨城県', addressLocality: data.area, addressCountry: 'JP' } }),
-    ...(data.tel ? { telephone: data.tel } : {}),
-    ...(data.website ? { url: data.website } : {}),
-    ...(data.hours ? { openingHours: data.hours } : {}),
-    ...(data.budget ? { priceRange: data.budget } : {}),
-    ...(data.instagram ? { sameAs: [data.instagram] } : {}),
-    areaServed: `茨城県${data.area}`,
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'ホーム', item: abs('/') },
-      { '@type': 'ListItem', position: 2, name: '掲載店舗', item: abs('/place/') },
-      ...(muni ? [{ '@type': 'ListItem', position: 3, name: muni.name, item: abs(`/area/${areaSlug}/`) }] : []),
-      { '@type': 'ListItem', position: muni ? 4 : 3, name: data.name },
-    ],
-  },
-  ...(data.faq.length > 0
-    ? [{
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: data.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
-      }]
-    : []),
-];
+const absolute = (path: string) => new URL(path, Astro.site ?? SITE_CONFIG.domain).href;
+const jsonLd = {
+  '@context': 'https://schema.org', '@type': 'LocalBusiness', name: data.name, description: data.description,
+  ...(data.cover ? { image: absolute(data.cover) } : {}),
+  ...(data.address ? { address: { '@type': 'PostalAddress', addressRegion: '茨城県', addressLocality: data.area, streetAddress: data.address, addressCountry: 'JP' } } : {}),
+  ...(data.tel ? { telephone: data.tel } : {}), ...(data.website ? { url: data.website } : {}),
+};
 ---
 
-<Base title={data.name} description={data.description} image={ogImage} jsonLd={jsonLd}>
-  <article class="lp" style={`--_a:${cat.accent}`}>
-    <!-- Hero -->
-    <header class="lp-hero">
-      <div class="lp-hero-media">
-        {data.cover ? (
-          <img src={data.cover} alt={data.name} loading="eager" />
-        ) : (
-          <div class="lp-hero-fallback"><span class="mincho">{data.name}</span></div>
-        )}
-        <div class="lp-hero-scrim"></div>
+<BrandBase title={`${data.name}｜イバトコ`} description={data.description} image={data.cover} jsonLd={jsonLd}>
+  <article class="place">
+    <header class="place-head bp-wrap">
+      <div>
+        <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><a href="/place/">場所</a>{areaSlug && <><span>/</span><a href={`/area/${areaSlug}/`}>{data.area}</a></>}</nav>
+        <DisclosureBadge type={data.disclosure} note={data.disclosureNote} />
+        <p class="bp-kicker place-kicker">PLACE / {data.area}</p><h1>{data.name}</h1><p>{data.tagline}</p>
       </div>
-      <div class="wrap lp-hero-copy">
-        <nav class="crumbs" aria-label="パンくず">
-          <a href="/">ホーム</a><span>/</span>
-          {muni ? <><a href={`/area/${areaSlug}/`}>{muni.name}</a><span>/</span></> : null}
-          <a href="/place/">掲載店舗</a>
-        </nav>
-        <div class="lp-badges">
-          <span class="chip chip--solid">{cat.label}</span>
-          <span class="chip chip--solid">{data.area}</span>
-          {isOfficial && <span class="lp-official">✓ {planLabel}</span>}
-        </div>
-        <h1 class="display lp-name">{data.name}</h1>
-        {data.kana && <p class="lp-kana latin">{data.kana}</p>}
-        <p class="lp-tagline mincho">{data.tagline}</p>
-      </div>
+      <p class="place-note">掲載情報<br /><strong>公式情報と照合して掲載</strong>{data.verifiedAt && <><br />確認日：{data.verifiedAt.toLocaleDateString('ja-JP')}</>}</p>
     </header>
 
-    <div class="lp-grid wrap">
-      <div class="lp-main">
-        {data.recommend && (
-          <section class="recommend">
-            <p class="eyebrow" style="color:var(--_a)">Editor's Recommend</p>
-            <h2 class="display recommend-h">イバトコ取材班より</h2>
-            <blockquote class="recommend-body mincho">{data.recommend}</blockquote>
-          </section>
-        )}
+    {data.cover && <figure class="place-image bp-wrap"><img src={data.cover} alt={data.name} loading="eager" /></figure>}
 
-        <section class="lp-desc prose">
-          {Content ? <Content /> : <p>{data.description}</p>}
-        </section>
-
-        {data.features.length > 0 && (
-          <section class="lp-features">
-            <h2 class="display sec-title">特徴</h2>
-            <ul class="feature-chips">
-              {data.features.map((f) => <li class="chip">{f}</li>)}
-            </ul>
-          </section>
-        )}
-
-        {data.menu.length > 0 && (
-          <section class="menu">
-            <h2 class="display sec-title">メニュー・料金</h2>
-            <ul class="menu-list">
-              {data.menu.map((m) => (
-                <li class="menu-row">
-                  <div>
-                    <span class="menu-name">{m.name}</span>
-                    {m.note && <span class="menu-note muted">{m.note}</span>}
-                  </div>
-                  <span class="menu-price latin">{m.price}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {articles.length > 0 && (
-          <section class="lp-articles">
-            <h2 class="display sec-title">このお店の体験レポート</h2>
-            <ul class="lp-article-list">
-              {articles.map((a) => (
-                <li>
-                  <a href={`/${a.data.category}/${a.id.split('/').pop()}/`} class="lp-article ul-link">
-                    <span class="mincho">{a.data.title}</span>
-                    <span aria-hidden="true">→</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {data.faq.length > 0 && (
-          <section class="lp-faq">
-            <h2 class="display sec-title">よくある質問</h2>
-            <dl class="faq-list">
-              {data.faq.map((f) => (
-                <div class="faq-item">
-                  <dt>Q. {f.q}</dt>
-                  <dd>{f.a}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-        )}
-
-        <section class="lp-reviews">
-          <h2 class="display sec-title">口コミ</h2>
-          <div class="reviews-empty">
-            <p class="mincho">このお店の口コミは準備中です。</p>
-            <p class="muted">行った方の声を、これから集めていきます。</p>
-          </div>
-        </section>
-
-        {(muni || nearby.length > 0) && (
-          <section class="lp-nearby">
-            <h2 class="display sec-title">近隣・関連情報</h2>
-            {nearby.length > 0 && (
-              <ul class="nearby-list">
-                {nearby.map((p) => {
-                  const c = CATEGORIES[p.data.category];
-                  return (
-                    <li>
-                      <a href={`/place/${p.id.split('/').pop()}/`} class="nearby-row" style={`--_a:${c.accent}`}>
-                        <span class="nearby-tag" style={`background:${c.accent}`}>{c.label}</span>
-                        <span class="mincho">{p.data.name}</span>
-                        <span class="arw" aria-hidden="true">→</span>
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-            {muni && (
-              <a href={`/area/${areaSlug}/`} class="btn btn--ghost nearby-area">
-                {muni.name}の見どころ・グルメ・お店をもっと見る <span class="arw">→</span>
-              </a>
-            )}
-          </section>
-        )}
-
-        {!isOfficial && (
-          <section class="lp-upsell">
-            <p class="eyebrow">For Owners</p>
-            <h2 class="display lp-upsell-h">この店舗の関係者の方へ</h2>
-            <p class="lp-upsell-lead">
-              写真の追加、メニューやクーポンの掲載、アクセス分析、予約導線の強化——
-              <b>「公式店舗」</b>として情報を充実させ、検索からの来店を増やせます。掲載は無料から。
-            </p>
-            <a href="/biz/" class="btn btn--shu">公式店舗にする・情報を追加する <span class="arw">→</span></a>
-          </section>
-        )}
-      </div>
-
-      <!-- Sticky 予約サイドバー（階層3 導線） -->
-      <aside class="lp-side">
-        <div class="lp-card">
-          <a href={reserveHref} class="btn btn--shu btn--lg lp-reserve">
-            予約・お問い合わせ <span class="arw">→</span>
-          </a>
-          {data.tel && <a href={`tel:${data.tel.replace(/[^0-9+]/g, '')}`} class="btn btn--ghost lp-tel">☎ {data.tel}</a>}
-
-          <dl class="lp-info">
-            {data.address && <div><dt>住所</dt><dd>{data.address}</dd></div>}
-            {data.access && <div><dt>アクセス</dt><dd>{data.access}</dd></div>}
-            {data.hours && <div><dt>営業時間</dt><dd>{data.hours}</dd></div>}
-            {data.holiday && <div><dt>定休日</dt><dd>{data.holiday}</dd></div>}
-            {data.budget && <div><dt>予算</dt><dd>{data.budget}</dd></div>}
-          </dl>
-
-          <div class="lp-links">
-            {data.website && <a href={data.website} target="_blank" rel="noopener noreferrer" class="ul-link">公式サイト ↗</a>}
-            {data.instagram && <a href={data.instagram} target="_blank" rel="noopener noreferrer" class="ul-link">Instagram ↗</a>}
-            {data.map && <a href={data.map} target="_blank" rel="noopener noreferrer" class="ul-link">地図で見る ↗</a>}
-          </div>
-        </div>
-        <p class="lp-badge muted">Powered by {SITE_CONFIG.name}</p>
-      </aside>
+    <div class="place-grid bp-wrap">
+      <main>
+        <section><p class="bp-kicker">ABOUT</p><h2>この場所について</h2><div class="place-description">{Content ? <Content /> : <p>{data.description}</p>}</div></section>
+        {data.features.length > 0 && <section><p class="bp-kicker">FEATURES</p><ul class="features">{data.features.map((feature) => <li>{feature}</li>)}</ul></section>}
+        {data.faq.length > 0 && <section><p class="bp-kicker">QUESTIONS</p><h2>訪れる前に</h2><dl class="faq">{data.faq.map((item) => <div><dt>{item.q}</dt><dd>{item.a}</dd></div>)}</dl></section>}
+      </main>
+      <aside><p class="facts-label">基本情報</p><PlaceFacts store={store} />{data.website && <a class="official" href={data.website} target="_blank" rel="noopener noreferrer">公式サイトを確認する ↗</a>}<p class="fact-note">営業日時などは変更される場合があります。訪問前に公式情報をご確認ください。</p></aside>
     </div>
   </article>
-</Base>
+
+  {articles.length > 0 && <section class="bp-wrap bp-section"><p class="bp-kicker">REPORTED STORIES</p><h2 class="bp-section-title">この場所を取材した記事</h2><div class="related">{articles.slice(0,2).map((article) => <BrandStoryCard article={article} />)}</div></section>}
+</BrandBase>
 
 <style>
-  .lp-hero { position: relative; min-height: 56vh; display: flex; align-items: flex-end; color: #fff; }
-  .lp-hero-media { position: absolute; inset: 0; z-index: -1; }
-  .lp-hero-media img { width: 100%; height: 100%; object-fit: cover; }
-  .lp-hero-fallback {
-    width: 100%; height: 100%; display: grid; place-items: center;
-    background: linear-gradient(135deg, var(--_a), var(--ai-deep)); color: rgba(255,255,255,.5);
-  }
-  .lp-hero-fallback span { font-size: var(--step-4); letter-spacing: 0.15em; }
-  .lp-hero-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,20,25,.85) 0%, rgba(15,20,25,.15) 55%, transparent 100%); }
-  .lp-hero-copy { position: relative; padding-block: clamp(2.5rem, 6vw, 4.5rem); }
-  .lp-hero-copy .crumbs { color: rgba(255,255,255,.75); }
-  .lp-hero-copy .crumbs a:hover { color: #fff; }
-  .lp-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
-  .lp-official { display: inline-flex; align-items: center; gap: 0.3em; background: var(--gold); color: #3a2c0e; font-weight: 700; font-size: var(--step--1); padding: 0.3em 0.9em; border-radius: 999px; }
-
-  .lp-features { margin-top: 2.5rem; }
-  .feature-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.2rem; }
-  .feature-chips .chip { border-color: var(--line-strong); }
-
-  .lp-faq { margin-top: 2.5rem; }
-  .faq-list { display: grid; gap: 0.9rem; margin-top: 1.4rem; }
-  .faq-item { border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.3rem; background: var(--paper); }
-  .faq-item dt { font-weight: 700; color: var(--ink); }
-  .faq-item dd { color: var(--ink-soft); margin-top: 0.5rem; padding-left: 1.4em; }
-
-  .lp-reviews { margin-top: 2.5rem; }
-  .reviews-empty { border: 1px dashed var(--line-strong); border-radius: var(--radius); padding: clamp(1.5rem, 4vw, 2.5rem); text-align: center; margin-top: 1.4rem; }
-  .reviews-empty p:first-child { font-size: var(--step-1); color: var(--ink); }
-
-  .lp-nearby { margin-top: 2.5rem; }
-  .nearby-list { display: grid; gap: 0.7rem; margin-top: 1.4rem; }
-  .nearby-row { display: flex; align-items: center; gap: 0.9rem; padding: 0.9rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius); transition: all 0.25s var(--ease); }
-  .nearby-row:hover { border-color: var(--_a); transform: translateX(3px); }
-  .nearby-row .mincho { flex: 1; font-size: var(--step-1); }
-  .nearby-tag { color: #fff; font-size: var(--step--1); font-weight: 700; padding: 0.25em 0.7em; border-radius: 999px; }
-  .nearby-area { margin-top: 1.4rem; }
-
-  .lp-upsell { margin-top: 3rem; background: var(--paper-2); border-radius: var(--radius); padding: clamp(1.8rem, 4vw, 2.8rem); border-left: 4px solid var(--shu); }
-  .lp-upsell-h { font-size: var(--step-2); margin: 0.3rem 0 0.8rem; }
-  .lp-upsell-lead { color: var(--ink-soft); line-height: 1.9; margin-bottom: 1.5rem; }
-  .lp-upsell-lead b { color: var(--shu-deep); }
-
-  .lp-name { font-size: var(--step-5); margin: 1rem 0 0.3rem; }
-  .lp-kana { color: rgba(255,255,255,.8); letter-spacing: 0.2em; }
-  .lp-tagline { font-size: var(--step-2); margin-top: 0.8rem; color: rgba(255,255,255,.95); }
-
-  .lp-grid { display: grid; grid-template-columns: 1fr 360px; gap: clamp(2rem, 5vw, 4rem); padding-block: clamp(2.5rem, 6vw, 4.5rem); align-items: start; }
-
-  .recommend { background: var(--paper-2); padding: clamp(1.5rem, 4vw, 2.5rem); border-radius: var(--radius); border-top: 4px solid var(--_a); margin-bottom: 2.5rem; }
-  .recommend-h { font-size: var(--step-1); margin: 0.4rem 0 1rem; }
-  .recommend-body { font-size: var(--step-1); line-height: 1.9; color: var(--ink); font-style: italic; }
-
-  .sec-title { font-size: var(--step-2); margin: 2.5rem 0 1.4rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--ink); }
-
-  .menu-list { border-top: 1px solid var(--line); }
-  .menu-row { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; padding: 1rem 0; border-bottom: 1px solid var(--line); }
-  .menu-name { font-weight: 700; }
-  .menu-note { display: block; font-size: var(--step--1); }
-  .menu-price { font-size: var(--step-1); color: var(--shu-deep); white-space: nowrap; }
-
-  .lp-article-list { display: grid; gap: 0.4rem; }
-  .lp-article { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line); font-size: var(--step-1); }
-
-  .lp-side { position: sticky; top: 96px; }
-  .lp-card { background: var(--paper); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--shadow); display: grid; gap: 1rem; }
-  .lp-reserve { justify-content: center; }
-  .lp-tel { justify-content: center; }
-  .lp-info { display: grid; gap: 0.8rem; padding-top: 0.6rem; border-top: 1px solid var(--line); }
-  .lp-info div { display: grid; grid-template-columns: 5em 1fr; gap: 0.6rem; font-size: var(--step--1); }
-  .lp-info dt { color: var(--ink-mute); }
-  .lp-info dd { color: var(--ink); }
-  .lp-links { display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 0.8rem; border-top: 1px solid var(--line); font-size: var(--step--1); font-weight: 700; }
-  .lp-badge { text-align: center; margin-top: 1rem; font-size: var(--step--1); letter-spacing: 0.1em; }
-
-  @media (max-width: 900px) {
-    .lp-grid { grid-template-columns: 1fr; }
-    .lp-side { position: static; }
-  }
+  .place{padding-block:clamp(4rem,9vw,7rem)}.crumbs{display:flex;gap:.55rem;margin-bottom:1.5rem;color:var(--color-soil);font-size:.78rem}.crumbs a{border-bottom:1px solid transparent}.crumbs a:hover{border-color:var(--color-tide)}
+  .place-head{display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:end}.place-kicker{margin-top:1.2rem}.place-head h1{margin-top:.8rem;font:600 clamp(2.3rem,6vw,5rem)/1.15 var(--font-brand-display);color:var(--color-ink)}.place-head>div>p:last-child{margin-top:1rem;font:500 1.15rem var(--font-brand-display);color:var(--color-soil)}
+  .place-note{padding-left:1rem;border-left:1px solid var(--color-tide);font-size:.75rem;color:var(--color-soil)}.place-note strong{color:var(--color-ink)}.place-image{margin-top:3rem}.place-image img{width:100%;max-height:70vh;object-fit:cover}
+  .place-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:clamp(3rem,8vw,7rem);padding-top:4rem}.place-grid main section+section{margin-top:3.5rem}.place-grid h2{margin-top:.6rem;font:600 clamp(1.6rem,3vw,2.5rem) var(--font-brand-display);color:var(--color-ink)}
+  .place-description{margin-top:1.2rem;max-width:58ch;line-height:2;color:var(--color-soil)}.features{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}.features li{padding:.4rem .7rem;border:1px solid var(--color-mist);font-size:.78rem}
+  .facts-label{margin-bottom:.7rem;color:var(--color-tide);font-size:.75rem;font-weight:600}.official{display:inline-block;margin-top:1.5rem;border-bottom:1px solid var(--color-tide);font-size:.85rem}.fact-note{margin-top:1.2rem;color:var(--color-soil);font-size:.72rem;line-height:1.8}
+  .faq{margin-top:1.5rem;border-top:1px solid var(--color-mist)}.faq div{padding-block:1rem;border-bottom:1px solid var(--color-mist)}.faq dt{font-weight:600;color:var(--color-ink)}.faq dd{margin-top:.5rem;color:var(--color-soil);line-height:1.8}
+  .related{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:2rem}.bp-section-title{margin-top:.7rem}
+  @media(max-width:720px){.place-head,.place-grid,.related{grid-template-columns:1fr}.place-note{margin-top:1rem}}
 </style>

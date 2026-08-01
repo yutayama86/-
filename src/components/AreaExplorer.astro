@@ -1,7 +1,7 @@
 ---
 /**
- * AreaExplorer — 44市町村インタラクティブマップの「編集インターフェース」進化版（M3 preview）。
- * Blueprint §7「地図のビジュアル進化」＋Codex承認事項に基づく。※最終配色はCodex確認後に確定。
+ * AreaExplorer — 44市町村インタラクティブマップの編集インターフェース。
+ * Blueprint §7「地図のビジュアル進化」＋Codex承認事項に基づく。
  *
  * 保護（無変更で再利用）：ibaraki-geo.ts の境界データ・44市町村・5地域・地名。
  * 進化：Tide系の選択色／低彩度の5地域色／隣接情報パネル／二段階操作（概要→この街を読む）／
@@ -34,7 +34,12 @@ const panelData = Object.fromEntries(
   ])
 );
 
-const nodes = MUNICIPALITIES.map((m) => ({ ...m, ...IBARAKI_GEO[m.slug] })).filter((n) => n.d);
+const nodes = MUNICIPALITIES.map((m) => ({
+  ...m,
+  ...IBARAKI_GEO[m.slug],
+  lx: (IBARAKI_GEO[m.slug] as { lx?: number }).lx,
+  ly: (IBARAKI_GEO[m.slug] as { ly?: number }).ly,
+})).filter((n) => n.d);
 ---
 
 <section class="ax">
@@ -64,7 +69,12 @@ const nodes = MUNICIPALITIES.map((m) => ({ ...m, ...IBARAKI_GEO[m.slug] })).filt
     <!-- 隣接パネル（選択中の市町村の概要） -->
     <aside class="ax-panel" aria-live="polite">
       <div class="ax-panel-empty" data-panel-empty>
-        <p class="ax-panel-hint">地図または一覧から市町村を選ぶと、その街の概要が表示されます。</p>
+        <p class="ax-panel-kicker">EXPLORE IBARAKI</p>
+        <h3 class="ax-panel-empty-title">地図から、街を選ぶ。</h3>
+        <p class="ax-panel-hint">44市町村の一つひとつに、まだ知らない人と営みがあります。気になる街を選ぶと、記事・場所・人が表示されます。</p>
+        <ul class="ax-mini-legend" aria-label="5地域の凡例">
+          {REGION_ORDER.map((k) => <li><span class="ax-region-dot" data-region={k}></span>{REGIONS[k].label}</li>)}
+        </ul>
       </div>
       <div class="ax-panel-body" data-panel-body hidden>
         <p class="ax-panel-region" data-panel-region></p>
@@ -76,34 +86,38 @@ const nodes = MUNICIPALITIES.map((m) => ({ ...m, ...IBARAKI_GEO[m.slug] })).filt
     </aside>
   </div>
 
-  <!-- モバイル：地域タブ＋市町村リスト。SR等価リンク一覧も兼ねる -->
-  <nav class="ax-list" aria-label="地域と市町村の一覧">
-    {REGION_ORDER.map((k, i) => (
-      <details class="ax-region" open={i === 0}>
-        <summary><span class="ax-region-dot" data-region={k}></span>{REGIONS[k].label}</summary>
-        <ul>
-          {MUNICIPALITIES.filter((m) => m.region === k).map((m) => (
-            <li>
-              <button type="button" class="ax-list-btn" data-slug={m.slug}>{m.name}</button>
-              <a class="ax-list-read" href={`/area/${m.slug}/`} aria-label={`${m.name}を読む`}>読む</a>
-            </li>
-          ))}
-        </ul>
-      </details>
-    ))}
-  </nav>
+  <!-- モバイル：地図の補助となる市町村リンク一覧。必要なときだけ開ける。 -->
+  <details class="ax-list">
+    <summary class="ax-list-toggle">市町村名から選ぶ <span aria-hidden="true">＋</span></summary>
+    <nav aria-label="地域と市町村の一覧">
+      {REGION_ORDER.map((k, i) => (
+        <details class="ax-region" open={i === 0}>
+          <summary><span class="ax-region-dot" data-region={k}></span>{REGIONS[k].label}</summary>
+          <ul>
+            {MUNICIPALITIES.filter((m) => m.region === k).map((m) => (
+              <li>
+                <button type="button" class="ax-list-btn" data-slug={m.slug}>{m.name}</button>
+                <a class="ax-list-read" href={`/area/${m.slug}/`} aria-label={`${m.name}を読む`}>読む</a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ))}
+    </nav>
+  </details>
 
-  <script type="application/json" set:html={JSON.stringify(panelData)} data-ax-data></script>
+  <script is:inline type="application/json" set:html={JSON.stringify(panelData)} data-ax-data></script>
 </section>
 
 <style>
   .ax { font-family: var(--font-brand-body); color: var(--color-charcoal); }
-  .ax-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(1rem, 3vw, 2rem); align-items: start; }
+  .ax { width: 100%; min-width: 0; }
+  .ax-grid { display: grid; grid-template-columns: minmax(0, 1.62fr) minmax(280px, 1fr); gap: clamp(2rem, 4vw, 3rem); align-items: center; min-width: 0; }
 
-  .ax-mapwrap { margin: 0; }
+  .ax-mapwrap { margin: 0; min-width: 0; }
   .ax-map { width: 100%; height: auto; display: block; }
 
-  /* 5地域：低彩度のブランド派生色（原色分けを避ける）。最終色はCodex確認後に確定 */
+  /* 5地域：原色分けを避けた、低彩度のブランド派生色 */
   .ax-shape { stroke: color-mix(in srgb, var(--color-ink) 22%, var(--color-paper)); stroke-width: 0.8; stroke-linejoin: round;
     transition: fill .2s var(--ease), stroke-width .2s; }
   .ax-muni[data-region="kenpoku"] .ax-shape { fill: color-mix(in srgb, var(--color-tide) 14%, var(--color-mist)); }
@@ -119,13 +133,17 @@ const nodes = MUNICIPALITIES.map((m) => ({ ...m, ...IBARAKI_GEO[m.slug] })).filt
   .ax-muni:focus-visible .ax-shape { stroke: var(--color-ink); stroke-width: 2.4; }
   .ax-muni[aria-pressed="true"] .ax-shape { fill: var(--color-tide); stroke: var(--color-ink); stroke-width: 2.2; }
 
-  .ax-label { font-family: var(--font-brand-body); font-size: 8.5px; font-weight: 600; text-anchor: middle; dominant-baseline: central;
+  .ax-label { font-family: var(--font-brand-body); font-size: 9.4px; font-weight: 700; text-anchor: middle; dominant-baseline: central;
     fill: var(--color-ink); paint-order: stroke; stroke: color-mix(in srgb, var(--color-paper) 70%, transparent); stroke-width: 2px; pointer-events: none; }
   .ax-muni[aria-pressed="true"] + text, .ax-label { }
 
   /* パネル */
-  .ax-panel { border: 1px solid var(--color-mist); border-radius: var(--radius-sm); background: var(--color-white); padding: clamp(1.1rem, 3vw, 1.6rem); min-height: 220px; }
-  .ax-panel-hint { color: var(--color-soil); font-size: 0.9rem; }
+  .ax-panel { border-block: 1px solid var(--color-mist); background: transparent; padding: clamp(1.4rem, 3vw, 2rem) 0; min-height: 280px; }
+  .ax-panel-kicker { font-family: var(--font-brand-meta); font-size: .72rem; letter-spacing: .14em; color: var(--color-tide); }
+  .ax-panel-empty-title { margin-top: .5rem; font-family: var(--font-brand-display); font-size: clamp(1.5rem, 3vw, 2.2rem); color: var(--color-ink); }
+  .ax-panel-hint { margin-top: .8rem; color: var(--color-soil); font-size: 0.92rem; line-height: 1.9; }
+  .ax-mini-legend { margin-top: 1.4rem; display: flex; flex-wrap: wrap; gap: .55rem 1rem; font-size: .78rem; color: var(--color-soil); }
+  .ax-mini-legend li { display: inline-flex; align-items: center; gap: .4rem; }
   .ax-panel-region { font-family: var(--font-brand-meta); font-size: 0.75rem; letter-spacing: 0.08em; color: var(--color-tide); }
   .ax-panel-name { font-family: var(--font-brand-display); font-size: 1.5rem; color: var(--color-ink); margin: 0.2rem 0 0.3rem; }
   .ax-panel-updated { font-family: var(--font-brand-meta); font-size: 0.78rem; color: var(--color-soil); }
@@ -141,6 +159,12 @@ const nodes = MUNICIPALITIES.map((m) => ({ ...m, ...IBARAKI_GEO[m.slug] })).filt
 
   /* リスト（モバイル＋SR等価） */
   .ax-list { margin-top: 1.4rem; display: none; }
+  .ax-list-toggle { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;
+    border-block: 1px solid var(--color-mist); padding: 0.85rem 0; color: var(--color-ink); font-weight: 600; }
+  .ax-list-toggle::-webkit-details-marker { display: none; }
+  .ax-list-toggle span { color: var(--color-tide); font-size: 1.15rem; transition: transform .2s var(--ease); }
+  .ax-list[open] > .ax-list-toggle span { transform: rotate(45deg); }
+  .ax-list > nav { padding-top: 0.45rem; }
   .ax-region summary { cursor: pointer; font-weight: 600; color: var(--color-ink); padding: 0.6em 0; display: flex; align-items: center; gap: 0.5em; }
   .ax-region-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
   .ax-region-dot[data-region="kenpoku"] { background: color-mix(in srgb, var(--color-tide) 40%, var(--color-mist)); }
@@ -156,10 +180,14 @@ const nodes = MUNICIPALITIES.map((m) => ({ ...m, ...IBARAKI_GEO[m.slug] })).filt
 
   /* モバイル：地図は保持しつつ、地域タブ＋リストを併設（ピンチ依存にしない） */
   @media (max-width: 760px) {
-    .ax-grid { grid-template-columns: 1fr; }
+    .ax-grid { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
+    .ax-mapwrap { width: 100%; overflow: hidden; }
+    .ax-map { width: 100%; max-width: 100%; }
+    .ax-label { display: none; }
+    .ax-panel { min-height: 0; }
     .ax-list { display: block; }
   }
-  @media (prefers-reduced-motion: reduce) { .ax-shape { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .ax-shape, .ax-list-toggle span { transition: none; } }
 </style>
 
 <script>
@@ -190,9 +218,9 @@ const nodes = MUNICIPALITIES.map((m) => ({ ...m, ...IBARAKI_GEO[m.slug] })).filt
       const c = root!.querySelector<HTMLElement>('[data-panel-content]');
       if (c) {
         if (d.hasContent) {
-          const block = (label: string, items: any[], key: string) =>
+          const block = (label: string, items: any[]) =>
             items.length ? `<h4>${label}</h4><ul>${items.map((i) => `<li><a href="${i.href}">${i.title || i.name}</a></li>`).join('')}</ul>` : '';
-          c.innerHTML = block('記事', d.stories, 'title') + block('お店・場所', d.places, 'name') + block('人', d.people, 'name');
+          c.innerHTML = block('記事', d.stories) + block('お店・場所', d.places) + block('人', d.people);
         } else {
           c.innerHTML = `<div class="ax-panel-none">この街の情報は準備中です。<br /><a href="/contact/?subject=${encodeURIComponent('この街の情報を教える（' + d.name + '）')}">この街の“いいとこ”を教える →</a></div>`;
         }

@@ -13,7 +13,7 @@ const { type = 'editorial', note, compact = false } = Astro.props;
 
 const META = {
   editorial: { label: '編集記事', sub: '編集部の独立した取材・編集', cls: 'is-editorial' },
-  partner: { label: 'パートナー', sub: '支援関係のある取材コンテンツ', cls: 'is-partner' },
+  partner: { label: 'パートナー（関係を開示）', sub: '支援関係のある取材コンテンツ', cls: 'is-partner' },
   pr: { label: 'PR（広告）', sub: '費用を伴う広告コンテンツ', cls: 'is-pr' },
 } as const;
 const m = META[type];

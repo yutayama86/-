@@ -3,12 +3,11 @@ import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, REGION_ORDER } from '../data/are
 import { IBARAKI_GEO, GEO_VIEW } from '../data/ibaraki-geo';
 
 interface Props {
-  counts?: Map<string, number>;
   activeSlug?: string;
   compact?: boolean;
   decor?: boolean; // 装飾用：単色（薄緑）・ラベルなし・非対話
 }
-const { counts = new Map(), activeSlug, compact = false, decor = false } = Astro.props;
+const { activeSlug, compact = false, decor = false } = Astro.props;
 const { w: W, h: H } = GEO_VIEW;
 
 // 小さな町などラベルが海側にはみ出るものは手動で陸側へ微調整

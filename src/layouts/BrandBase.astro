@@ -1,0 +1,68 @@
+---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+interface Props { title?: string; description?: string; image?: string; type?: 'website'|'article'; publishedAt?: Date; jsonLd?: Record<string, unknown>|Record<string, unknown>[]; noindex?: boolean; }
+const {
+  title = 'イバトコ｜現地から、信頼を編む。',
+  description = '編集部とローカルエディターが現地を歩き、人と営みを取材する茨城の地域価値編集ブランド。',
+  image,
+  type = 'website',
+  publishedAt,
+  jsonLd,
+  noindex = false,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const absoluteImage = new URL(image ?? '/og-default.svg', Astro.site).href;
+---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f6f2e9" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={absoluteImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="イバトコ" />
+    <meta name="twitter:card" content="summary_large_image" />
+    {publishedAt && <meta property="article:published_time" content={publishedAt.toISOString()} />}
+    {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Source+Sans+3:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
+  </head>
+  <body class="brand-site">
+    <a href="#main-content" class="sr-only">本文へスキップ</a>
+    <SiteHeader />
+    <main id="main-content"><slot /></main>
+    <SiteFooter />
+  </body>
+</html>
+
+<style is:global>
+  .brand-site{margin:0;overflow-x:clip;background:var(--color-paper);color:var(--color-charcoal);font-family:var(--font-brand-body)}
+  .bp-wrap{width:min(calc(100% - 2rem),var(--content-wide));margin-inline:auto}
+  .bp-reading{width:min(calc(100% - 2rem),var(--content-reading));margin-inline:auto}
+  .bp-section{padding-block:clamp(4rem,9vw,7.5rem)}
+  .bp-kicker{font:600 .72rem/1 var(--font-brand-meta);letter-spacing:.16em;text-transform:uppercase;color:var(--color-tide)}
+  .bp-title{font-family:var(--font-brand-display);color:var(--color-ink);font-size:clamp(2rem,5vw,4.7rem);line-height:1.18;font-weight:600;letter-spacing:.01em}
+  .bp-section-title{font-family:var(--font-brand-display);color:var(--color-ink);font-size:clamp(1.7rem,3.2vw,3rem);line-height:1.3}
+  .bp-link{color:var(--color-ink);border-bottom:1px solid var(--color-tide);padding-bottom:.15rem}
+  .brand-site :focus-visible{outline-color:var(--color-tide)}
+  .brand-site ::selection{background:var(--color-tide);color:var(--color-white)}
+  .brand-site .eyebrow{color:var(--color-tide)}
+  .brand-site .prose h2{border-left-color:var(--color-tide)}
+  .brand-site .prose a{color:var(--color-tide)}
+  .brand-site .prose ul li::before{background:var(--color-tide)}
+  @media(max-width:480px){.bp-wrap,.bp-reading{width:min(calc(100% - 1.5rem),var(--content-wide))}.bp-section{padding-block:3.5rem}}
+</style>

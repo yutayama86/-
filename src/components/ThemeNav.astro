@@ -1,0 +1,7 @@
+---
+const themes=[['食べる','eat','店とつくり手の背景まで'],['出かける','sauna-play','休日に出会う場所と体験'],['泊まる','stay','土地の時間に身を置く'],['暮らす','life','日常を豊かにする営み'],['整える','beauty','心と身体を整える'],['働く・つくる','company','仕事、技術、受け継ぐ手']];
+---
+<nav class="theme-nav" aria-label="テーマから探す"><ol>{themes.map(([label,path,desc],i)=><li><a href={`/${path}/`}><span class="tn-num">0{i+1}</span><span class="tn-text"><strong>{label}</strong><small>{desc}</small></span><span aria-hidden="true">↗</span></a></li>)}</ol></nav>
+<style>
+  .theme-nav{border-top:1px solid var(--color-mist)}.theme-nav li{border-bottom:1px solid var(--color-mist)}.theme-nav a{display:grid;grid-template-columns:3rem 1fr auto;align-items:center;gap:1rem;padding:1.15rem .2rem;transition:padding .2s,color .2s}.theme-nav a:hover,.theme-nav a:focus-visible{padding-inline:.65rem;color:var(--color-tide)}.tn-num{font:400 .8rem var(--font-brand-serif-latin);color:var(--color-soil)}.tn-text{display:flex;align-items:baseline;gap:1rem;min-width:0}.tn-text strong{font:600 1.3rem var(--font-brand-display);color:var(--color-ink)}.tn-text small{color:var(--color-soil);font-size:.8rem}@media(max-width:560px){.tn-text{display:block}.tn-text small{display:block;margin-top:.2rem}.theme-nav a{grid-template-columns:2rem 1fr auto}}
+</style>

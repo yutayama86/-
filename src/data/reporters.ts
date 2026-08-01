@@ -79,10 +79,9 @@ export const REPORTERS: Reporter[] = [
   },
 ];
 
-// 本番ビルドでは draft を除外（＝実在レポーターのみ公開）。dev/preview では全員表示。
-const isProd = import.meta.env.PROD;
-/** 公開対象のレポーター（本番では draft を除外） */
-export const VISIBLE_REPORTERS = REPORTERS.filter((r) => !(isProd && r.draft));
+// 環境に関係なく draft は表示しない。
+// preview でも架空プロフィールを使わず、公開許諾済みの実在人物だけを扱う。
+export const VISIBLE_REPORTERS = REPORTERS.filter((r) => !r.draft);
 
 export const REPORTER_BY_SLUG = new Map(VISIBLE_REPORTERS.map((r) => [r.slug, r]));
 export const REPORTER_BY_NAME = new Map(VISIBLE_REPORTERS.map((r) => [r.name, r]));

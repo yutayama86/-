@@ -1,0 +1,58 @@
+import type { APIRoute } from 'astro';
+import { getAreaCounts, getArticles, getStores } from '../lib/content';
+import { CATEGORIES, SITE_CONFIG } from '../data/site';
+import { VISIBLE_GUIDES } from '../data/guides';
+import { VISIBLE_REPORTERS } from '../data/reporters';
+
+type SitemapEntry = { path: string; lastmod?: Date };
+
+const escapeXml = (value: string) =>
+  value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
+
+export const GET: APIRoute = async () => {
+  const [articles, stores, areaCounts] = await Promise.all([getArticles(), getStores(), getAreaCounts()]);
+  const entries: SitemapEntry[] = [
+    { path: '/' },
+    { path: '/about/' },
+    { path: '/about/editorial-policy/' },
+    { path: '/about/pr-policy/' },
+    { path: '/about/corrections/' },
+    { path: '/about/team/' },
+    { path: '/area/' },
+    { path: '/biz/' },
+    { path: '/contact/' },
+  ];
+
+  for (const article of articles) {
+    const slug = article.id.split('/').pop();
+    entries.push({
+      path: `/${CATEGORIES[article.data.category].path}/${slug}/`,
+      lastmod: article.data.updatedAt ?? article.data.publishedAt,
+    });
+  }
+
+  for (const category of Object.values(CATEGORIES)) {
+    if (articles.some((article) => CATEGORIES[article.data.category].path === category.path)) entries.push({ path: `/${category.path}/` });
+  }
+
+  if (stores.length > 0) entries.push({ path: '/place/' });
+  for (const store of stores) entries.push({ path: `/place/${store.id}/`, lastmod: store.data.verifiedAt ?? store.data.publishedAt });
+  for (const slug of areaCounts.keys()) entries.push({ path: `/area/${slug}/` });
+
+  if (VISIBLE_REPORTERS.length > 0) entries.push({ path: '/reporters/' });
+  for (const person of VISIBLE_REPORTERS) entries.push({ path: `/reporter/${person.slug}/` });
+
+  if (VISIBLE_GUIDES.length > 0) entries.push({ path: '/guide/' });
+  for (const guide of VISIBLE_GUIDES) entries.push({ path: `/guide/${guide.slug}/`, lastmod: new Date(guide.publishedAt) });
+
+  const unique = [...new Map(entries.map((entry) => [entry.path, entry])).values()];
+  const urls = unique.map((entry) => {
+    const loc = escapeXml(new URL(entry.path, SITE_CONFIG.domain).href);
+    const lastmod = entry.lastmod ? `<lastmod>${entry.lastmod.toISOString()}</lastmod>` : '';
+    return `<url><loc>${loc}</loc>${lastmod}</url>`;
+  }).join('');
+
+  return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`, {
+    headers: { 'Content-Type': 'application/xml; charset=utf-8' },
+  });
+};

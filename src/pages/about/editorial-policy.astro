@@ -1,9 +1,9 @@
 ---
-import Base from '../../layouts/Base.astro';
+import BrandBase from '../../layouts/BrandBase.astro';
 const updated = '2026年8月';
 ---
 
-<Base
+<BrandBase
   title="編集方針"
   description="イバトコの編集方針。現地取材主義、Editorial / Partner / PR の区分、事実と観察の分離、独立性、AIの扱いについて。"
 >
@@ -18,7 +18,7 @@ const updated = '2026年8月';
     <p class="policy-updated muted">最終更新：{updated}</p>
 
     <div class="policy-body prose">
-      <p>イバトコは、地域の価値が正しく伝わる仕組みをつくる編集ブランドです。信頼は宣言ではなく、出所・取材方法・利害関係を明らかにすることで示します。この方針は、私たちが記事をつくるときの約束です。</p>
+      <p>イバトコは、茨城で出会った人の言葉や仕事を、あとから確かめられる形で記録します。情報の出所、取材方法、取材先との関係を隠しません。この方針は、私たちが記事をつくるときの約束です。</p>
 
       <h2>1. 現地取材を基本とする</h2>
       <p>私たちは、可能な限り現地へ足を運び、人に会い、自分の目で確かめたことをもとに書きます。現地取材を行っていない記事は、その旨と情報の出所を明記します。</p>
@@ -58,12 +58,12 @@ const updated = '2026年8月';
       <p class="policy-foot muted">ご意見・お問い合わせは <a href="/contact/" class="ul-link">お問い合わせ</a> からお願いします。</p>
     </div>
   </section>
-</Base>
+</BrandBase>
 
 <style>
   .policy { max-width: 720px; padding-block: clamp(2.5rem, 7vw, 4.5rem); }
   .crumbs { display: flex; gap: 0.5rem; font-size: var(--step--1); color: var(--ink-mute); margin-bottom: 1.5rem; }
-  .crumbs a:hover { color: var(--shu); }
+  .crumbs a:hover { color: var(--color-tide); }
   .policy-title { font-size: var(--step-4); margin: 0.4rem 0 0.3rem; }
   .policy-updated { font-size: var(--step--1); }
   .policy-body { margin-top: 2rem; }

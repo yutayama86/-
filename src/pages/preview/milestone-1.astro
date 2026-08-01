@@ -7,7 +7,7 @@
 import '../../styles/global.css';
 import SiteHeader from '../../components/SiteHeader.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
-import LogoMark from '../../components/LogoMark.astro';
+import BrandLogo from '../../components/BrandLogo.astro';
 import DisclosureBadge from '../../components/DisclosureBadge.astro';
 import ReportingMeta from '../../components/ReportingMeta.astro';
 import BylineGroup from '../../components/BylineGroup.astro';
@@ -53,21 +53,15 @@ const tokens = [
       <h1 class="pv-h" style="margin-top:0">Milestone 1 / 2 — プリミティブ検証</h1>
       <p class="pv-note">このページは検証用（noindex）。新ブランドは本番トップに未接続です。</p>
 
-      <h2 class="pv-h">ロゴA案（EDITOR'S MARK・暫定プロトタイプ）</h2>
-      <p class="pv-note">⚠️ 未確定。Codexレビュー前に確定しません。二つの向かい合う不完全な角括弧＋中央の余白。片側の角をわずかに開く。モノクロ・16px成立・ワードマーク併用。</p>
+      <h2 class="pv-h">文字ロゴ</h2>
+      <p class="pv-note">シンボルを設けず、和文と英文の文字だけで構成します。</p>
       <div class="pv-row" style="gap:2rem; color:var(--color-ink)">
-        <LogoMark size={16} label="イバトコ ロゴ 16px" />
-        <LogoMark size={24} />
-        <LogoMark size={40} />
-        <LogoMark size={64} />
-        <span style="display:inline-flex; align-items:center; gap:0.6rem">
-          <LogoMark size={32} />
-          <span style="font-family:var(--font-brand-display); font-size:1.5rem; letter-spacing:0.08em; color:var(--color-ink)">イバトコ</span>
-        </span>
+        <BrandLogo size={28} />
+        <BrandLogo size={36} />
+        <BrandLogo size={48} />
       </div>
       <div class="pv-row" style="gap:2rem; margin-top:1rem; background:var(--color-ink); color:var(--color-white); padding:1rem 1.4rem; border-radius:var(--radius-sm)">
-        <LogoMark size={40} />
-        <span style="font-family:var(--font-brand-display); font-size:1.4rem; letter-spacing:0.08em">イバトコ</span>
+        <BrandLogo size={40} inverse />
       </div>
 
       <h2 class="pv-h">カラートークン</h2>

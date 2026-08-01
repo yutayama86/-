@@ -1,10 +1,8 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 
-const isProd = import.meta.env.PROD;
-
-/** 公開記事を新しい順に。draftは本番で除外。 */
+/** 公開記事を新しい順に。draft または未レビューは環境に関係なく除外。 */
 export async function getArticles(): Promise<CollectionEntry<'articles'>[]> {
-  const all = await getCollection('articles', ({ data }) => !(isProd && data.draft));
+  const all = await getCollection('articles', ({ data }) => !data.draft && data.reviewed);
   return all.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 }
 
@@ -17,7 +15,7 @@ export async function getFeatured() {
 }
 
 export async function getPlaces(): Promise<CollectionEntry<'places'>[]> {
-  const all = await getCollection('places', ({ data }) => !(isProd && data.draft));
+  const all = await getCollection('places', ({ data }) => !data.draft && data.reviewed);
   return all.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 }
 
@@ -57,6 +55,11 @@ export type Store = {
     reserveUrl?: string;
     plan: 'free' | 'official' | 'growth' | 'partner';
     publishedAt: Date;
+    reviewed: boolean;
+    verifiedAt?: Date;
+    disclosure: 'editorial' | 'partner' | 'pr';
+    disclosureNote?: string;
+    sources?: { label: string; url?: string; accessedAt?: Date }[];
   };
 };
 
@@ -64,7 +67,7 @@ export type Store = {
 export async function getStores(): Promise<Store[]> {
   const [mdPlaces, csvRows] = await Promise.all([
     getPlaces(),
-    getCollection('stores', ({ data }) => !(isProd && (data as { draft?: boolean }).draft)),
+    getCollection('stores', ({ data }) => !(data as { draft?: boolean }).draft && !!(data as { reviewed?: boolean }).reviewed),
   ]);
   const md: Store[] = mdPlaces.map((p) => ({
     id: p.id.split('/').pop()!,
@@ -80,6 +83,21 @@ export async function getStores(): Promise<Store[]> {
   const seen = new Set(md.map((s) => s.id));
   const merged = [...md, ...csv.filter((s) => !seen.has(s.id))];
   return merged.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+}
+
+/**
+ * preview を含め、公開確認済みデータだけを返す。
+ * 開発環境で draft の架空記事・店舗を視覚確認用に露出させないための境界。
+ */
+export async function getPublishedArticles(): Promise<CollectionEntry<'articles'>[]> {
+  return getArticles();
+}
+
+export async function getPublishedStores(): Promise<Store[]> {
+  return (await getStores()).filter((store) => {
+    if (store.source === 'md') return !store.entry?.data.draft && !!store.entry?.data.reviewed;
+    return !(store.data as Store['data'] & { draft?: boolean }).draft && !!store.data.reviewed;
+  });
 }
 
 export async function getStoresByArea(slug: string): Promise<Store[]> {
@@ -146,7 +164,9 @@ export interface AreaSummary {
 export async function getAreaSummary(slug: string): Promise<AreaSummary> {
   const muni = MUNI_BY_SLUG.get(slug);
   const regionLabel = muni ? REGIONS[muni.region].label : '';
-  const [stories, places] = await Promise.all([getArticlesByArea(slug), getStoresByArea(slug)]);
+  const [allStories, allPlaces] = await Promise.all([getPublishedArticles(), getPublishedStores()]);
+  const stories = allStories.filter((article) => areaToSlug(article.data.area) === slug);
+  const places = allPlaces.filter((store) => areaToSlug(store.data.area) === slug);
   // 担当エリアに市町村名・地域名・「全域」を含むレポーターを紐付け
   const people = VISIBLE_REPORTERS.filter((r) => {
     const a = r.area ?? '';

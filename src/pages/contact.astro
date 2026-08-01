@@ -1,127 +1,29 @@
 ---
-import Base from '../layouts/Base.astro';
-import { SITE_CONFIG } from '../data/site';
-
-// 送信先は src/data/site.ts の formEndpoint（Formspree）で一元管理。
-const FORM_ENDPOINT = SITE_CONFIG.formEndpoint;
+import BrandBase from '../layouts/BrandBase.astro'; import { SITE_CONFIG } from '../data/site'; const FORM_ENDPOINT=SITE_CONFIG.formEndpoint;
 ---
-
-<Base
-  title="お問い合わせ"
-  description="イバトコへのお問い合わせ。掲載のご相談、WEB集客サポート、取材依頼など、お気軽にどうぞ。"
->
-  <section class="wrap ct">
-    <div class="ct-intro">
-      <p class="eyebrow" data-reveal>Contact</p>
-      <h1 class="display ct-title" data-reveal>お気軽に、<br />ご相談ください。</h1>
-      <p class="ct-lead mincho" data-reveal>
-        掲載のご相談、WEB集客サポート、取材のご依頼など。<br />
-        茨城のことなら、まずはイバトコへ。
-      </p>
-      <ul class="ct-direct" data-reveal>
-        <li><span class="muted">メール</span><a href={`mailto:${SITE_CONFIG.contactEmail}`} class="ul-link">{SITE_CONFIG.contactEmail}</a></li>
-        {SITE_CONFIG.social.instagram && (
-          <li><span class="muted">SNS DM</span><a href={SITE_CONFIG.social.instagram} class="ul-link" target="_blank" rel="noopener noreferrer">Instagram</a></li>
-        )}
-      </ul>
-    </div>
-
-    <form class="ct-form" data-reveal method="POST" action={FORM_ENDPOINT || undefined} data-endpoint={FORM_ENDPOINT}>
-      <div class="field" hidden><input type="hidden" name="_subject" value="【イバトコ】お問い合わせ" /></div>
-      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
-      <div class="field">
-        <label for="subject">ご用件</label>
-        <select id="subject" name="subject" required>
-          <option value="">選択してください</option>
-          <option value="掲載相談">お店・企業の掲載相談（無料）</option>
-          <option value="WEB相談">WEB集客・HP・SNSの相談</option>
-          <option value="取材依頼">取材のご依頼</option>
-          <option value="レポーター">公式レポーターに興味がある</option>
-          <option value="協業希望">協業・提携のご相談</option>
-          <option value="営業の方">営業・売り込みのご連絡</option>
-          <option value="その他">その他</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="name">お名前 / 店舗・企業名</label>
-        <input id="name" name="name" type="text" required autocomplete="organization" />
-      </div>
-      <div class="row">
-        <div class="field">
-          <label for="email">メールアドレス</label>
-          <input id="email" name="email" type="email" required autocomplete="email" />
-        </div>
-        <div class="field">
-          <label for="tel">電話番号（任意）</label>
-          <input id="tel" name="tel" type="tel" autocomplete="tel" />
-        </div>
-      </div>
-      <div class="field">
-        <label for="message">ご相談内容</label>
-        <textarea id="message" name="message" rows="6" required></textarea>
-      </div>
-      <button type="submit" class="btn btn--shu btn--lg ct-submit">送信する <span class="arw">→</span></button>
-      <p class="ct-privacy muted">送信をもって<a href="/privacy/" class="ul-link">プライバシーポリシー</a>に同意いただいたものとします。</p>
-      <p class="form-status" data-status role="status" aria-live="polite" hidden></p>
+<BrandBase title="お問い合わせ｜イバトコ" description="取材、情報掲載、訂正、地域事業者向け支援など、イバトコへのお問い合わせ。">
+  <section class="contact bp-wrap">
+    <header><p class="bp-kicker">CONTACT</p><h1><span>話を聞くところから、</span><span>始めます。</span></h1><p>取材、掲載、訂正、発信支援など、ご用件をお知らせください。内容を確認し、必要な担当からご連絡します。</p><a href={`mailto:${SITE_CONFIG.contactEmail}`}>{SITE_CONFIG.contactEmail}</a></header>
+    <form class="contact-form" method="POST" action={FORM_ENDPOINT||undefined} data-endpoint={FORM_ENDPOINT}>
+      <input type="hidden" name="_subject" value="【イバトコ】お問い合わせ" />
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="honeypot" />
+      <div class="field"><label for="subject">ご用件</label><select id="subject" name="subject" required><option value="">選択してください</option><option value="取材・掲載相談">取材・情報掲載について</option><option value="地域事業者の相談">Web・発信支援について</option><option value="訂正・更新">掲載内容の訂正・更新</option><option value="ローカルエディター">ローカルエディターについて</option><option value="協業希望">協業・提携</option><option value="その他">その他</option></select></div>
+      <div class="field"><label for="name">お名前 / 店舗・企業名</label><input id="name" name="name" type="text" required autocomplete="organization" /></div>
+      <div class="field"><label for="email">メールアドレス</label><input id="email" name="email" type="email" required autocomplete="email" /></div>
+      <div class="field"><label for="tel">電話番号（任意）</label><input id="tel" name="tel" type="tel" autocomplete="tel" /></div>
+      <div class="field"><label for="message">お問い合わせ内容</label><textarea id="message" name="message" rows="7" required></textarea></div>
+      <button type="submit">内容を送信する →</button><p class="privacy">送信前に<a href="/privacy/">プライバシーポリシー</a>をご確認ください。</p><p class="form-status" data-status role="status" aria-live="polite" hidden></p>
     </form>
   </section>
-</Base>
-
+</BrandBase>
 <style>
-  .ct { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(2.5rem, 6vw, 5rem); padding-block: clamp(3rem, 8vw, 6rem); align-items: start; }
-  .ct-title { font-size: var(--step-4); margin: 0.5rem 0 1.2rem; }
-  .ct-lead { font-size: var(--step-1); color: var(--ink-soft); line-height: 1.9; }
-  .ct-direct { margin-top: 2.5rem; display: grid; gap: 1rem; }
-  .ct-direct li { display: grid; grid-template-columns: 6em 1fr; gap: 1rem; align-items: baseline; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
-
-  .ct-form { display: grid; gap: 1.4rem; }
-  .field { display: grid; gap: 0.5rem; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
-  label { font-size: var(--step--1); font-weight: 700; color: var(--ink-soft); letter-spacing: 0.04em; }
-  input, select, textarea {
-    font: inherit; font-size: var(--step-0); padding: 0.85em 1em; background: var(--paper);
-    border: 1px solid var(--line-strong); border-radius: var(--radius); color: var(--ink); width: 100%;
-    transition: border-color 0.25s, box-shadow 0.25s;
-  }
-  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--shu); box-shadow: 0 0 0 3px color-mix(in srgb, var(--shu) 18%, transparent); }
-  textarea { resize: vertical; }
-  .ct-submit { justify-content: center; margin-top: 0.4rem; }
-  .ct-privacy { font-size: var(--step--1); }
-
-  @media (max-width: 800px) { .ct { grid-template-columns: 1fr; } .row { grid-template-columns: 1fr; } }
+  .contact{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(3rem,8vw,8rem);padding-block:clamp(5rem,11vw,9rem)}.contact h1{margin-top:1rem;font:600 clamp(2rem,6vw,5rem)/1.3 var(--font-brand-display);color:var(--color-ink)}.contact h1 span{display:block}.contact header>p:not(.bp-kicker){margin-top:1.5rem;line-height:2;color:var(--color-soil)}.contact header>a{display:inline-block;margin-top:2rem;color:var(--color-tide);border-bottom:1px solid}
+  .contact-form{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}.field{display:grid;gap:.5rem}.field:first-of-type,.field:nth-of-type(2),.field:last-of-type{grid-column:1/-1}label{font-size:.78rem;font-weight:600;color:var(--color-soil)}input,select,textarea{width:100%;padding:.9rem 0;border:0;border-bottom:1px solid var(--color-mist);border-radius:0;background:transparent;color:var(--color-ink);font:inherit}input:focus,select:focus,textarea:focus{outline:0;border-color:var(--color-tide);box-shadow:0 2px 0 var(--color-tide)}textarea{resize:vertical}.contact-form button{justify-self:start;margin-top:.8rem;padding:.7rem 0;border:0;border-bottom:1px solid var(--color-tide);background:transparent;color:var(--color-ink);font:600 1rem var(--font-brand-body);cursor:pointer}.privacy{align-self:center;color:var(--color-soil);font-size:.72rem}.privacy a{border-bottom:1px solid}.form-status{grid-column:1/-1}.honeypot{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  @media(max-width:760px){.contact,.contact-form{grid-template-columns:1fr}.field{grid-column:1!important}}
+  @media(max-width:360px){.contact h1{font-size:1.8rem;line-height:1.4}}
 </style>
-
 <script>
-  import { submitForm } from '../lib/forms';
-  const form = document.querySelector<HTMLFormElement>('.ct-form');
-
-  // 遷移元ボタンの用件を「ご用件」に反映（例 /contact/?subject=公式店舗プランの相談）
-  const params = new URLSearchParams(location.search);
-  const subject = params.get('subject');
-  const select = document.getElementById('subject') as HTMLSelectElement | null;
-  if (subject && select) {
-    let opt = Array.from(select.options).find((o) => o.value === subject || o.textContent?.trim() === subject);
-    if (!opt) {
-      // 既存にない用件は動的に追加して選択（＝どのボタンから来ても反映される）
-      opt = new Option(subject, subject);
-      select.add(opt, 1);
-    }
-    select.value = opt.value;
-    // 具体的な内容（プラン名など）は本文にも下書きしておく
-    const detail = params.get('detail');
-    const msg = document.getElementById('message') as HTMLTextAreaElement | null;
-    if (detail && msg && !msg.value) msg.value = detail;
-  }
-
-  // 件名を「【ご用件】お名前 / 店舗・企業名」に動的生成（Formspreeは _subject を件名に使う）
-  if (form) {
-    form.addEventListener('submit', () => {
-      const yoken = (form.elements.namedItem('subject') as HTMLSelectElement | null)?.value || 'お問い合わせ';
-      const nm = ((form.elements.namedItem('name') as HTMLInputElement | null)?.value || '').trim();
-      const subjField = form.querySelector<HTMLInputElement>('input[name="_subject"]');
-      if (subjField) subjField.value = nm ? `【${yoken}】${nm}` : `【${yoken}】お問い合わせ`;
-    });
-  }
-
-  if (form) submitForm(form, { successText: 'お問い合わせを受け付けました。折り返しご連絡します。' });
+  import { submitForm } from '../lib/forms'; const form=document.querySelector<HTMLFormElement>('.contact-form'); const params=new URLSearchParams(location.search); const subject=params.get('subject'); const select=document.getElementById('subject') as HTMLSelectElement|null;
+  if(subject&&select){let option=Array.from(select.options).find((item)=>item.value===subject||item.textContent?.trim()===subject);if(!option){option=new Option(subject,subject);select.add(option,1)}select.value=option.value;const detail=params.get('detail');const message=document.getElementById('message') as HTMLTextAreaElement|null;if(detail&&message&&!message.value)message.value=detail}
+  if(form){form.addEventListener('submit',()=>{const type=(form.elements.namedItem('subject') as HTMLSelectElement|null)?.value||'お問い合わせ';const name=((form.elements.namedItem('name') as HTMLInputElement|null)?.value||'').trim();const field=form.querySelector<HTMLInputElement>('input[name="_subject"]');if(field)field.value=name?`【${type}】${name}`:`【${type}】お問い合わせ`});submitForm(form,{successText:'お問い合わせを受け付けました。内容を確認してご連絡します。'})}
 </script>

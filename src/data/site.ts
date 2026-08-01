@@ -4,9 +4,9 @@ export const SITE_CONFIG = {
   name: 'イバトコ',
   nameEn: 'IBATOCO',
   domain: 'https://ibatoco.jp',
-  tagline: '茨城の“いいとこ”を、行った人の熱量で。',
+  tagline: '現地から、信頼を編む。',
   description:
-    '茨城に一番くわしい体験型ローカルメディア「イバトコ」。編集部とご当地レポーターが実際に足を運び、食・暮らし・遊び・美容・ものづくりのリアルをお届けします。',
+    '編集部とローカルエディターが現地を歩き、人と営みを取材する茨城の地域価値編集ブランド「イバトコ」。',
   // Cloudflare Web Analytics のトークンをデプロイ後にここへ（空なら読み込みません）
   cfAnalyticsToken: '',
   // Google Analytics 4 の測定ID（G-XXXXXXXXXX）。ここに書くだけで有効化できます（本番のみ）。
@@ -43,28 +43,27 @@ export const CATEGORY_PAGE_META: Record<
   CategoryKey,
   { heading: string; lead: (n: string) => string; muniField: 'gourmet' | 'spotsExp' | null }
 > = {
-  eat: { heading: 'グルメ・名物', lead: (n) => `${n}の食。名物・ご当地グルメと、行った人が選ぶお店をまとめました。`, muniField: 'gourmet' },
+  eat: { heading: '食べる', lead: (n) => `${n}で食べる。店とつくり手の背景を、現地で確かめた情報から紹介します。`, muniField: 'gourmet' },
   life: { heading: '暮らし', lead: (n) => `${n}の暮らし・住まい。地元の日常に根ざした情報を。`, muniField: null },
-  'sauna-play': { heading: 'おでかけ・あそび', lead: (n) => `${n}のお出かけ・遊び・サウナ。見どころとアクティビティ。`, muniField: 'spotsExp' },
-  beauty: { heading: 'サロン・リラクゼーション', lead: (n) => `${n}のサロン・美容・リラクゼーション。`, muniField: null },
+  'sauna-play': { heading: '出かける', lead: (n) => `${n}へ出かける。休日に訪ねたい場所と体験を紹介します。`, muniField: 'spotsExp' },
+  beauty: { heading: '整える', lead: (n) => `${n}で心と身体を整える場所を紹介します。`, muniField: null },
   stay: { heading: '宿・温泉', lead: (n) => `${n}の宿・温泉。泊まって楽しむ${n}。`, muniField: null },
-  company: { heading: '企業・ものづくり', lead: (n) => `${n}の企業・技術・ものづくりの現場。`, muniField: null },
+  company: { heading: '働く・つくる', lead: (n) => `${n}で働く人、受け継がれる仕事と技術を紹介します。`, muniField: null },
 };
 
 // グローバルナビ（階層1 中心）
 export const NAV = [
-  { label: 'グルメ', href: '/eat/' },
-  { label: '暮らし', href: '/life/' },
-  { label: 'あそび・サウナ', href: '/sauna-play/' },
-  { label: 'ビューティ', href: '/beauty/' },
+  { label: '食べる', href: '/eat/' },
+  { label: '暮らす', href: '/life/' },
+  { label: '出かける', href: '/sauna-play/' },
+  { label: '整える', href: '/beauty/' },
   { label: '泊まる', href: '/stay/' },
-  { label: '企業・技術', href: '/company/' },
+  { label: '働く・つくる', href: '/company/' },
   { label: 'エリア', href: '/area/' },
 ] as const;
 
 // 事業者向け（階層4 制圧導線）
 export const BIZ_NAV = [
-  { label: '掲載のご案内', href: '/biz/' },
-  { label: 'WEB集客サポート', href: '/agency/' },
+  { label: '地域事業者の方へ', href: '/biz/' },
   { label: 'お問い合わせ', href: '/contact/' },
 ] as const;

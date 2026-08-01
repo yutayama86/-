@@ -1,16 +1,6 @@
 ---
-/**
- * ロゴ・プロトタイプ比較（noindex）。B案3種を主案、A案は比較用。
- * Codexレビュー用。正式決定前。
- */
 import '../../styles/global.css';
-import LogoMark from '../../components/LogoMark.astro';
-
-const mains = [
-  { v: 'B1', name: 'B1 — 最も簡潔な一本線', note: 'ゆるやかに上る道筋＋短い横線で終える' },
-  { v: 'B2', name: 'B2 — 紙の折り目を強調', note: '線が鋭く折れ、めくれた角を示す' },
-  { v: 'B3', name: 'B3 — 歩いた軌跡を強調', note: 'うねる道筋＋短い横線で終える' },
-] as const;
+import BrandLogo from '../../components/BrandLogo.astro';
 ---
 
 <!doctype html>
@@ -19,57 +9,61 @@ const mains = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>ロゴ プロトタイプ比較｜イバトコ 2026刷新</title>
+    <title>正式ロゴ｜イバトコ ブランドガイド</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
-    <style>
-      body { margin: 0; background: var(--color-paper); color: var(--color-charcoal); font-family: var(--font-brand-body); }
-      .pv { max-width: 900px; margin: 0 auto; padding: clamp(2rem, 6vw, 4rem) 1rem; }
-      h1 { font-family: var(--font-brand-display); color: var(--color-ink); font-size: 1.8rem; }
-      .note { font-family: var(--font-brand-meta); color: var(--color-soil); font-size: 0.85rem; }
-      .card { border: 1px solid var(--color-mist); border-radius: var(--radius-sm); background: var(--color-white); padding: 1.6rem; margin-top: 1.4rem; }
-      .card h2 { font-family: var(--font-brand-body); font-size: 1.05rem; color: var(--color-ink); margin: 0 0 0.3rem; }
-      .card .n { font-family: var(--font-brand-meta); color: var(--color-soil); font-size: 0.8rem; margin: 0 0 1.1rem; }
-      .row { display: flex; align-items: center; gap: 2.2rem; flex-wrap: wrap; color: var(--color-ink); }
-      .wm { display: inline-flex; align-items: center; gap: 0.6rem; }
-      .wm span { font-family: var(--font-brand-display); font-size: 1.5rem; letter-spacing: 0.08em; color: var(--color-ink); }
-      .inv { background: var(--color-ink); color: var(--color-white); border-radius: var(--radius-sm); padding: 0.8rem 1.2rem; display: inline-flex; align-items: center; gap: 0.6rem; }
-      .inv span { font-family: var(--font-brand-display); font-size: 1.35rem; letter-spacing: 0.08em; }
-      .cmp { opacity: 0.9; }
-    </style>
   </head>
   <body>
-    <main class="pv">
-      <h1>ロゴ プロトタイプ比較</h1>
-      <p class="note">⚠️ 未確定・Codexレビュー用。B案「FIELD NOTE」3種を主案、A案は比較用（C案は今回進めない）。すべてモノクロ・currentColor・16px成立・ワードマーク併用前提。</p>
+    <main class="guide">
+      <header class="intro">
+        <p class="kicker">IBATOCO VISUAL IDENTITY / 01</p>
+        <h1>WORDMARK</h1>
+        <p>記号を足さず、名前そのものをブランドの顔にする。和文と英文の比率・字間だけで設計した、イバトコの文字ロゴです。</p>
+      </header>
 
-      {mains.map((m) => (
-        <section class="card">
-          <h2>{m.name}</h2>
-          <p class="n">{m.note}</p>
-          <div class="row">
-            <LogoMark variant={m.v} size={16} label={`${m.name} 16px`} />
-            <LogoMark variant={m.v} size={28} />
-            <LogoMark variant={m.v} size={44} />
-            <LogoMark variant={m.v} size={72} />
-            <span class="wm"><LogoMark variant={m.v} size={34} /><span>イバトコ</span></span>
-            <span class="inv"><LogoMark variant={m.v} size={40} /><span>イバトコ</span></span>
+      <section class="panel primary">
+        <p class="label">PRIMARY LOCKUP</p>
+        <BrandLogo size={56} />
+      </section>
+
+      <div class="grid">
+        <section class="panel inverse">
+          <p class="label">REVERSE</p>
+          <BrandLogo size={48} inverse />
+        </section>
+        <section class="panel mark">
+          <p class="label">SIZE TEST</p>
+          <div class="sizes">
+            <BrandLogo size={28} />
+            <BrandLogo size={36} />
+            <BrandLogo size={48} />
           </div>
         </section>
-      ))}
+      </div>
 
-      <section class="card cmp">
-        <h2>A — EDITOR'S MARK（比較用・不採用寄り）</h2>
-        <p class="n">向かい合う不完全な角括弧＋中央余白</p>
-        <div class="row">
-          <LogoMark variant="A" size={16} />
-          <LogoMark variant="A" size={28} />
-          <LogoMark variant="A" size={44} />
-          <LogoMark variant="A" size={72} />
-          <span class="wm"><LogoMark variant="A" size={34} /><span>イバトコ</span></span>
-        </div>
+      <section class="rules">
+        <article><span>01</span><h2>文字が主役</h2><p>シンボルを添えず、名前そのものをブランドの顔にする。</p></article>
+        <article><span>02</span><h2>色に依存しない</h2><p>Inkと白の単色を基本にし、グラデーションを使わない。</p></article>
+        <article><span>03</span><h2>余白を守る</h2><p>文字ロゴの高さの半分以上を周囲の最低余白とする。</p></article>
+        <article><span>04</span><h2>小さくても読める</h2><p>ワードマークの基準高は28px以上とする。</p></article>
       </section>
     </main>
   </body>
 </html>
+
+<style>
+  body{margin:0;background:var(--color-paper);color:var(--color-charcoal);font-family:var(--font-brand-body)}
+  .guide{width:min(calc(100% - 2rem),1000px);margin:auto;padding:clamp(3rem,8vw,7rem) 0}
+  .intro{max-width:650px}.kicker,.label{font:600 .72rem var(--font-brand-meta);letter-spacing:.16em;color:var(--color-tide)}
+  h1{margin-top:.8rem;font:600 clamp(2.8rem,7vw,5.5rem)/1 var(--font-brand-serif-latin);letter-spacing:.02em;color:var(--color-ink)}
+  .intro>p:last-child{margin-top:1.5rem;max-width:45rem;line-height:2;color:var(--color-soil)}
+  .panel{margin-top:3rem;min-height:240px;padding:clamp(1.5rem,5vw,4rem);display:grid;align-content:space-between;border:1px solid var(--color-mist);background:var(--color-white)}
+  .primary :global(.brand-logo){align-self:center}.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}.grid .panel{margin-top:1.25rem}
+  .inverse{background:var(--color-ink)}.inverse .label{color:var(--color-mist)}.mark{background:var(--color-paper)}
+  .sizes{display:flex;align-items:center;gap:clamp(1rem,4vw,2.5rem);color:var(--color-ink);flex-wrap:wrap}
+  .rules{margin-top:4rem;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--color-mist)}
+  .rules article{padding:1.5rem 1rem 1.5rem 0;border-bottom:1px solid var(--color-mist)}.rules span{font:.7rem var(--font-brand-meta);color:var(--color-tide)}
+  .rules h2{margin-top:.7rem;font:600 1.15rem var(--font-brand-display);color:var(--color-ink)}.rules p{margin-top:.6rem;font-size:.82rem;line-height:1.8;color:var(--color-soil)}
+  @media(max-width:680px){.grid,.rules{grid-template-columns:1fr}.panel{min-height:190px}.primary :global(.brand-logo){--brand-logo-size:42px!important}}
+</style>

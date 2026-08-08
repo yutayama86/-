@@ -45,10 +45,10 @@
 
   /* 新ブランドのフォント指定（トークンとして定義。実フォント読込は新UIレンダ時。
      現行 coming-soon ページの Core Web Vitals を守るため全ページ一律読込はしない） */
-  --font-brand-display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
-  --font-brand-body: "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-  --font-brand-meta: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
-  --font-brand-serif-latin: "Source Serif 4", "Times New Roman", serif;
+  --font-brand-display: "IBATOCO Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-brand-body: "IBATOCO Gothic", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --font-brand-meta: "IBATOCO Gothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-brand-serif-latin: "IBATOCO Mincho", "Yu Mincho", serif;
 
   /* --- Type --------------------------------------------------- */
   --font-display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
@@ -77,6 +77,22 @@
   --shadow-sm: 0 1px 2px rgba(28, 26, 20, 0.06);
   --shadow: 0 10px 30px -12px rgba(28, 26, 20, 0.22);
   --shadow-lg: 0 30px 70px -30px rgba(15, 35, 52, 0.4);
+}
+
+@font-face {
+  font-family: "IBATOCO Mincho";
+  src: url("../assets/fonts/ShipporiMincho-Bold.ttf") format("truetype");
+  font-weight: 600 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBATOCO Gothic";
+  src: url("../assets/fonts/ZenKakuGothicNew-Medium.ttf") format("truetype");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
 }
 
 /* --- Reset ---------------------------------------------------- */

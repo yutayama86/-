@@ -1,7 +1,40 @@
 ---
-const themes=[['食べる','eat','店とつくり手の背景まで'],['出かける','sauna-play','休日に出会う場所と体験'],['泊まる','stay','土地の時間に身を置く'],['暮らす','life','日常を豊かにする営み'],['整える','beauty','心と身体を整える'],['働く・つくる','company','仕事、技術、受け継ぐ手']];
+interface Props { images?: Record<string, { src: string; alt: string }> }
+const { images = {} } = Astro.props;
+const themes = [
+  { label: '食べる', path: 'eat', desc: 'いつもの一皿から、店を続ける人の思いまで。', bg: '#D7B783', fg: '#26342F' },
+  { label: '出かける', path: 'sauna-play', desc: '海、山、湯、寄り道。休日の行き先を見つける。', bg: '#9DBDC3', fg: '#17303A' },
+  { label: '泊まる', path: 'stay', desc: '朝の光や土地の時間ごと、茨城に身を置く。', bg: '#A8AEC0', fg: '#1E2937' },
+  { label: '暮らす', path: 'life', desc: '住まい、市場、季節。地域の日常を訪ねる。', bg: '#B7C4A5', fg: '#26342F' },
+  { label: '整える', path: 'beauty', desc: '温浴、手当て、身体を動かす場所を知る。', bg: '#D6B4A7', fg: '#3D2D2A' },
+  { label: '働く・つくる', path: 'company', desc: '工房、農場、会社。受け継がれる技と仕事。', bg: '#8FA39D', fg: '#132B31' },
+];
 ---
-<nav class="theme-nav" aria-label="テーマから探す"><ol>{themes.map(([label,path,desc],i)=><li><a href={`/${path}/`}><span class="tn-num">0{i+1}</span><span class="tn-text"><strong>{label}</strong><small>{desc}</small></span><span aria-hidden="true">↗</span></a></li>)}</ol></nav>
+<nav class="theme-nav" aria-label="テーマから探す">
+  <ol>
+    {themes.map((theme, i) => (
+      <li style={`--theme-bg:${theme.bg};--theme-fg:${theme.fg}`}>
+        <a href={`/${theme.path}/`} class:list={{ 'has-image': Boolean(images[theme.path]) }}>
+          {images[theme.path] && <span class="tn-media"><img src={images[theme.path].src} alt={images[theme.path].alt} loading="lazy" /></span>}
+          <span class="tn-top"><span class="tn-num">0{i + 1}</span><span class="tn-arrow" aria-hidden="true">↗</span></span>
+          <span class="tn-title">{theme.label}</span>
+          <span class="tn-desc">{theme.desc}</span>
+          <span class="tn-read">このテーマを読む <span aria-hidden="true">→</span></span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
 <style>
-  .theme-nav{border-top:1px solid var(--color-mist)}.theme-nav li{border-bottom:1px solid var(--color-mist)}.theme-nav a{display:grid;grid-template-columns:3rem 1fr auto;align-items:center;gap:1rem;padding:1.15rem .2rem;transition:padding .2s,color .2s}.theme-nav a:hover,.theme-nav a:focus-visible{padding-inline:.65rem;color:var(--color-tide)}.tn-num{font:400 .8rem var(--font-brand-serif-latin);color:var(--color-soil)}.tn-text{display:flex;align-items:baseline;gap:1rem;min-width:0}.tn-text strong{font:600 1.3rem var(--font-brand-display);color:var(--color-ink)}.tn-text small{color:var(--color-soil);font-size:.8rem}@media(max-width:560px){.tn-text{display:block}.tn-text small{display:block;margin-top:.2rem}.theme-nav a{grid-template-columns:2rem 1fr auto}}
+  .theme-nav ol{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:1rem}
+  .theme-nav li{min-width:0;grid-column:span 4}.theme-nav li:nth-child(1),.theme-nav li:nth-child(6){grid-column:span 5}.theme-nav li:nth-child(2),.theme-nav li:nth-child(5){grid-column:span 3}
+  .theme-nav a{min-height:19rem;display:flex;flex-direction:column;padding:1.45rem;background:var(--theme-bg);color:var(--theme-fg);overflow:hidden;position:relative;transition:transform .25s ease,box-shadow .25s ease}
+  .tn-media{position:absolute;inset:0;overflow:hidden}.tn-media::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,31,36,.08),rgba(14,31,36,.78))}.tn-media img{width:100%;height:100%;object-fit:cover;filter:saturate(.78) contrast(.98);transition:transform .55s ease}.theme-nav a:hover .tn-media img,.theme-nav a:focus-visible .tn-media img{transform:scale(1.035)}
+  .tn-top,.tn-title,.tn-desc,.tn-read{position:relative;z-index:1}.tn-top{display:flex;justify-content:space-between;align-items:center}.tn-num,.tn-arrow{font:600 .72rem var(--font-brand-meta);color:inherit;letter-spacing:.08em}.tn-arrow{font-size:1rem;transition:transform .25s ease}
+  .tn-title{margin-top:auto;padding-top:4rem;font:600 clamp(1.65rem,2.5vw,2.4rem)/1.25 var(--font-brand-display);color:inherit}
+  .tn-desc{margin-top:.65rem;max-width:25rem;font-size:.88rem;line-height:1.75;color:inherit;opacity:.84}
+  .tn-read{display:flex;justify-content:space-between;gap:1rem;margin-top:1.35rem;padding-top:.8rem;border-top:1px solid currentColor;font-size:.78rem;font-weight:700}
+  .has-image{color:#fff}.theme-nav a:hover,.theme-nav a:focus-visible{transform:translateY(-4px);box-shadow:0 14px 30px rgba(18,36,42,.13)}.theme-nav a:hover .tn-arrow,.theme-nav a:focus-visible .tn-arrow{transform:translate(3px,-3px)}
+  @media(max-width:900px){.theme-nav ol{grid-template-columns:repeat(2,minmax(0,1fr))}.theme-nav li,.theme-nav li:nth-child(n){grid-column:span 1}.theme-nav a{min-height:16rem}}
+  @media(max-width:520px){.theme-nav ol{grid-template-columns:1fr;gap:.75rem}.theme-nav a{min-height:14.5rem;padding:1.2rem}.tn-title{padding-top:3rem}}
 </style>

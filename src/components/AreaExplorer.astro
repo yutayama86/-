@@ -61,7 +61,7 @@ const nodes = MUNICIPALITIES.map((m) => ({
           </g>
         ))}
         {nodes.map((n) => (
-          <text x={n.lx ?? n.cx} y={n.ly ?? n.cy} class="ax-label">{n.name}</text>
+          <text x={n.lx ?? n.cx} y={n.ly ?? n.cy} class="ax-label" data-label-slug={n.slug}>{n.name}</text>
         ))}
       </svg>
     </figure>
@@ -112,30 +112,30 @@ const nodes = MUNICIPALITIES.map((m) => ({
 <style>
   .ax { font-family: var(--font-brand-body); color: var(--color-charcoal); }
   .ax { width: 100%; min-width: 0; }
-  .ax-grid { display: grid; grid-template-columns: minmax(0, 1.62fr) minmax(280px, 1fr); gap: clamp(2rem, 4vw, 3rem); align-items: center; min-width: 0; }
+  .ax-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; min-width: 0; }
 
-  .ax-mapwrap { margin: 0; min-width: 0; }
-  .ax-map { width: 100%; height: auto; display: block; }
+  .ax-mapwrap { margin: 0; min-width: 0; display:flex;align-items:center;justify-content:center; }
+  .ax-map { width: auto; max-width: 100%; height: min(66vh, 620px); display: block; }
 
   /* 5地域：原色分けを避けた、低彩度のブランド派生色 */
-  .ax-shape { stroke: color-mix(in srgb, var(--color-ink) 22%, var(--color-paper)); stroke-width: 0.8; stroke-linejoin: round;
+  .ax-shape { stroke: color-mix(in srgb, var(--color-paper) 88%, var(--color-ink)); stroke-width: 1.15; stroke-linejoin: round; vector-effect: non-scaling-stroke;
     transition: fill .2s var(--ease), stroke-width .2s; }
-  .ax-muni[data-region="kenpoku"] .ax-shape { fill: color-mix(in srgb, var(--color-tide) 14%, var(--color-mist)); }
-  .ax-muni[data-region="keno"]    .ax-shape { fill: color-mix(in srgb, var(--color-soil) 16%, var(--color-mist)); }
-  .ax-muni[data-region="kennan"]  .ax-shape { fill: color-mix(in srgb, var(--color-tide) 22%, var(--color-paper)); }
-  .ax-muni[data-region="rokko"]   .ax-shape { fill: color-mix(in srgb, var(--color-ink) 12%, var(--color-mist)); }
-  .ax-muni[data-region="kensei"]  .ax-shape { fill: color-mix(in srgb, var(--color-brass) 14%, var(--color-mist)); }
+  .ax-muni[data-region="kenpoku"] .ax-shape { fill: #9ebfc3; }
+  .ax-muni[data-region="keno"]    .ax-shape { fill: #c6b7a0; }
+  .ax-muni[data-region="kennan"]  .ax-shape { fill: #adc2a8; }
+  .ax-muni[data-region="rokko"]   .ax-shape { fill: #88abb8; }
+  .ax-muni[data-region="kensei"]  .ax-shape { fill: #d5bd82; }
 
   /* hover / focus / selected は色だけに依存せず、境界線の太さでも識別 */
   .ax-muni { cursor: pointer; }
-  .ax-muni:hover .ax-shape { stroke: var(--color-ink); stroke-width: 1.6; }
+  .ax-muni:hover .ax-shape { stroke: var(--color-tide); stroke-width: 1.15; }
   .ax-muni:focus-visible { outline: none; }
-  .ax-muni:focus-visible .ax-shape { stroke: var(--color-ink); stroke-width: 2.4; }
-  .ax-muni[aria-pressed="true"] .ax-shape { fill: var(--color-tide); stroke: var(--color-ink); stroke-width: 2.2; }
+  .ax-muni:focus-visible .ax-shape { stroke: var(--color-ink); stroke-width: 1.6; }
+  .ax-muni[aria-pressed="true"] .ax-shape { fill: var(--color-tide); stroke: var(--color-ink); stroke-width: 2; }
 
   .ax-label { font-family: var(--font-brand-body); font-size: 9.4px; font-weight: 700; text-anchor: middle; dominant-baseline: central;
-    fill: var(--color-ink); paint-order: stroke; stroke: color-mix(in srgb, var(--color-paper) 70%, transparent); stroke-width: 2px; pointer-events: none; }
-  .ax-muni[aria-pressed="true"] + text, .ax-label { }
+    fill: var(--color-ink); paint-order: stroke; stroke: color-mix(in srgb, var(--color-paper) 82%, transparent); stroke-width: 2px; pointer-events: none; }
+  .ax-label.is-selected { fill: var(--color-white); stroke: color-mix(in srgb,var(--color-ink) 72%,transparent); }
 
   /* パネル */
   .ax-panel { border-block: 1px solid var(--color-mist); background: transparent; padding: clamp(1.4rem, 3vw, 2rem) 0; min-height: 280px; }
@@ -167,11 +167,11 @@ const nodes = MUNICIPALITIES.map((m) => ({
   .ax-list > nav { padding-top: 0.45rem; }
   .ax-region summary { cursor: pointer; font-weight: 600; color: var(--color-ink); padding: 0.6em 0; display: flex; align-items: center; gap: 0.5em; }
   .ax-region-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
-  .ax-region-dot[data-region="kenpoku"] { background: color-mix(in srgb, var(--color-tide) 40%, var(--color-mist)); }
-  .ax-region-dot[data-region="keno"] { background: color-mix(in srgb, var(--color-soil) 45%, var(--color-mist)); }
-  .ax-region-dot[data-region="kennan"] { background: color-mix(in srgb, var(--color-tide) 55%, var(--color-paper)); }
-  .ax-region-dot[data-region="rokko"] { background: color-mix(in srgb, var(--color-ink) 35%, var(--color-mist)); }
-  .ax-region-dot[data-region="kensei"] { background: color-mix(in srgb, var(--color-brass) 40%, var(--color-mist)); }
+  .ax-region-dot[data-region="kenpoku"] { background: #9ebfc3; }
+  .ax-region-dot[data-region="keno"] { background: #c6b7a0; }
+  .ax-region-dot[data-region="kennan"] { background: #adc2a8; }
+  .ax-region-dot[data-region="rokko"] { background: #88abb8; }
+  .ax-region-dot[data-region="kensei"] { background: #d5bd82; }
   .ax-region ul { list-style: none; padding: 0 0 0.6rem; margin: 0; }
   .ax-region li { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid var(--color-mist); }
   .ax-list-btn { background: none; border: 0; font: inherit; color: var(--color-charcoal); cursor: pointer; padding: 0.3em 0; text-align: left; }
@@ -182,7 +182,7 @@ const nodes = MUNICIPALITIES.map((m) => ({
   @media (max-width: 760px) {
     .ax-grid { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
     .ax-mapwrap { width: 100%; overflow: hidden; }
-    .ax-map { width: 100%; max-width: 100%; }
+    .ax-map { width: 100%; max-width: 100%; height:auto; }
     .ax-label { display: none; }
     .ax-panel { min-height: 0; }
     .ax-list { display: block; }
@@ -206,6 +206,9 @@ const nodes = MUNICIPALITIES.map((m) => ({
       root!.querySelectorAll<HTMLElement>('[data-slug]').forEach((el) => {
         const on = el.getAttribute('data-slug') === slug;
         if (el.hasAttribute('aria-pressed')) el.setAttribute('aria-pressed', String(on));
+      });
+      root!.querySelectorAll<SVGTextElement>('[data-label-slug]').forEach((el) => {
+        el.classList.toggle('is-selected', el.getAttribute('data-label-slug') === slug);
       });
       if (emptyEl) emptyEl.hidden = true;
       if (bodyEl) bodyEl.hidden = false;

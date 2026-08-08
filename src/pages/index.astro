@@ -12,22 +12,27 @@ const articles = await getPublishedArticles();
 const lead = articles[0];
 const latest = articles.slice(1, 4);
 const people = VISIBLE_REPORTERS.slice(0, 2);
+const themeImages = Object.fromEntries(
+  articles.filter((article) => article.data.cover).map((article) => [article.data.category, { src: article.data.cover!, alt: article.data.coverAlt }])
+);
 ---
 
 <BrandBase>
-  <section class="home-hero bp-wrap">
-    <div class="hero-copy">
-      <p class="bp-kicker">現地から、信頼を編む。</p>
-      <h1 class="bp-title">まだ知らない茨城を、<br />会って、聞いて、<span>確かめる。</span></h1>
-      <p class="hero-lead">イバトコは、編集部とローカルエディターが現地を歩き、人と営みを取材する地域価値編集ブランドです。</p>
-      <div class="hero-actions">
-        <a href={lead ? '#latest' : '/about/'}>{lead ? '最新の物語を読む →' : 'イバトコについて →'}</a>
-        <a href="/about/editorial-policy/">編集方針</a>
+  <section class="home-hero">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg/1280px-Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg" alt="大洗海岸から望む日の出" fetchpriority="high" />
+    <div class="hero-shade" aria-hidden="true"></div>
+    <div class="bp-wrap hero-inner">
+      <div class="hero-copy">
+        <p class="hero-place">茨城県・大洗海岸</p>
+        <p class="bp-kicker">茨城を歩いて、つくるメディア。</p>
+        <h1 class="bp-title">まだ知らない茨城へ、<br />会いに行く。</h1>
+        <p class="hero-lead">店を続ける人、受け継がれる仕事、いつもの風景。現地で会って、聞いて、確かめた茨城を届けます。</p>
+        <div class="hero-actions">
+          <a href={lead ? '#latest' : '#discover'}>{lead ? '最新の物語を読む →' : '気になる茨城を探す →'}</a>
+          <a href="/about/">イバトコについて</a>
+        </div>
       </div>
-    </div>
-    <div class="hero-note">
-      <span>FIELD NOTE / 001</span>
-      <p>何気ない日常にこそ、その街らしさが残っている。私たちは、情報を集める前に、まず人の話を聞きます。</p>
+      <p class="hero-credit">写真：t.kunikuni / CC BY-SA 2.0</p>
     </div>
   </section>
 
@@ -36,14 +41,7 @@ const people = VISIBLE_REPORTERS.slice(0, 2);
       <p class="bp-kicker">FEATURED STORY</p>
       <div class="feature"><BrandStoryCard article={lead} featured /></div>
     </section>
-  ) : (
-    <section class="bp-wrap bp-section story-empty" id="latest">
-      <p class="bp-kicker">FEATURED STORY</p>
-      <h2 class="bp-section-title">確かめ終えたものから、公開します。</h2>
-      <p>記事数を先に約束するのではなく、現地確認と掲載許諾を終えた物語から公開します。</p>
-      <a href="/contact/?subject=取材・掲載相談">街の情報を寄せる →</a>
-    </section>
-  )}
+  ) : null}
 
   {latest.length > 0 && (
     <section class="latest bp-wrap bp-section">
@@ -52,22 +50,27 @@ const people = VISIBLE_REPORTERS.slice(0, 2);
     </section>
   )}
 
-  <section class="discover">
+  <section class="discover" id="discover">
     <div class="bp-wrap discover-grid">
-      <div><p class="bp-kicker">DISCOVER BY THEME</p><h2 class="bp-section-title">今日は、何から<br />出会いますか。</h2><p>目的地ではなく、気分や関心から茨城を探せます。</p></div>
-      <ThemeNav />
+      <header class="discover-head">
+        <div>
+          <p class="bp-kicker">テーマから探す</p>
+          <h2 class="bp-section-title">気になる茨城から、<br />読みはじめる。</h2>
+        </div>
+        <p>食べること、働くこと、整えること。<br />土地の日常を、六つの入口からたどります。</p>
+      </header>
+      <ThemeNav images={themeImages} />
     </div>
   </section>
 
-  <section class="bp-wrap bp-section area-home" id="area">
-    <header><p class="bp-kicker">EXPLORE IBARAKI</p><h2 class="bp-section-title">44の街から、茨城を読む。</h2><p>地図の一つひとつが、人と営みへの入口です。</p></header>
-    <AreaExplorer />
+  <section class="area-home" id="area">
+    <div class="bp-wrap"><header><p class="bp-kicker">街から探す</p><h2 class="bp-section-title">44の街から、茨城を読む。</h2><p>市町村を選ぶと、その街の記事・場所・人が表示されます。</p></header><AreaExplorer /></div>
   </section>
 
-  <section class="people bp-wrap bp-section" id="editors">
-    <header><div><p class="bp-kicker">LOCAL EDITORS</p><h2 class="bp-section-title">街を歩く人が、街を書く。</h2></div><p>フォロワー数ではなく、地域への理解と誠実な取材姿勢を大切にします。</p></header>
-    {people.length > 0 ? <div class="people-grid">{people.map((person) => <PersonCard person={person} />)}</div> : <div class="people-empty"><p>公開プロフィールは、本人確認と掲載許諾が完了したローカルエディターから順次掲載します。</p><a href="/about/team/">編集体制を知る →</a></div>}
-  </section>
+  {people.length > 0 && <section class="people bp-wrap bp-section" id="editors">
+    <header><div><p class="bp-kicker">LOCAL EDITORS</p><h2 class="bp-section-title">街を歩く人が、街を書く。</h2></div><p>その街をよく知り、話を丁寧に聞ける人とつくります。</p></header>
+    <div class="people-grid">{people.map((person) => <PersonCard person={person} />)}</div>
+  </section>}
 
   <section class="bp-wrap bp-section"><EditorialProcess /></section>
 
@@ -77,19 +80,16 @@ const people = VISIBLE_REPORTERS.slice(0, 2);
 </BrandBase>
 
 <style>
-  .home-hero{min-height:72vh;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,.5fr);gap:clamp(3rem,6vw,6rem);align-items:end;padding-block:clamp(5rem,11vw,9rem);border-bottom:1px solid var(--color-mist)}
-  .hero-copy .bp-title{margin-top:1.2rem;font-size:clamp(2rem,4.35vw,4rem)}
-  .hero-lead{max-width:50ch;margin-top:1.6rem;font-size:clamp(1rem,1.5vw,1.15rem);line-height:2;color:var(--color-soil)}
-  .hero-actions{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:2rem}.hero-actions a{border-bottom:1px solid var(--color-tide);padding-bottom:.2rem;color:var(--color-ink);font-weight:600}
-  .hero-note{border-left:1px solid var(--color-tide);padding-left:1.4rem;color:var(--color-soil)}.hero-note span{font:.7rem var(--font-brand-meta);letter-spacing:.14em}.hero-note p{margin-top:.8rem;font:500 1rem/1.9 var(--font-brand-display)}
+  .home-hero{position:relative;min-height:min(780px,calc(100svh - 72px));display:flex;align-items:flex-end;overflow:hidden;background:var(--color-ink);color:#fff}.home-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 55%;filter:saturate(.82) contrast(1.04)}.hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,31,38,.82) 0%,rgba(11,31,38,.48) 48%,rgba(11,31,38,.08) 76%),linear-gradient(0deg,rgba(11,31,38,.46),transparent 55%)}.hero-inner{position:relative;z-index:1;width:100%;padding-block:clamp(4rem,9vw,7.5rem) 2rem}.hero-copy{max-width:52rem}.hero-place{margin-bottom:1.1rem;font-size:.78rem;letter-spacing:.08em}.hero-copy .bp-kicker{color:#fff}.hero-copy .bp-title{margin-top:1.1rem;font-size:clamp(2.5rem,5.4vw,5.3rem);line-height:1.22;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.18)}
+  .hero-lead{max-width:43ch;margin-top:1.5rem;font-size:clamp(.98rem,1.4vw,1.13rem);line-height:1.9;color:rgba(255,255,255,.9)}
+  .hero-actions{display:flex;gap:1.6rem;flex-wrap:wrap;margin-top:2rem}.hero-actions a{border-bottom:1px solid rgba(255,255,255,.85);padding-bottom:.25rem;color:#fff;font-weight:700}.hero-credit{position:absolute;right:0;bottom:2rem;font-size:.64rem;color:rgba(255,255,255,.7)}
   .feature{margin-top:2rem}.latest header,.people header{display:flex;justify-content:space-between;gap:2rem;align-items:end}.latest header h2,.people header h2,.area-home h2{margin-top:.6rem}
   .latest-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.5rem,3vw,2.5rem);margin-top:2.5rem}
-  .story-empty{border-bottom:1px solid var(--color-mist)}.story-empty h2{margin-top:1rem}.story-empty>p:not(.bp-kicker){margin-top:1rem;color:var(--color-soil)}.story-empty>a{display:inline-block;margin-top:1.5rem;color:var(--color-tide);border-bottom:1px solid}
-  .discover{background:var(--color-white)}.discover-grid{display:grid;grid-template-columns:minmax(240px,.7fr) minmax(0,1.3fr);gap:clamp(3rem,8vw,8rem);padding-block:clamp(4rem,9vw,7rem)}.discover h2{margin-top:.7rem}.discover p:not(.bp-kicker),.area-home header>p:last-child,.people header>p{margin-top:1rem;color:var(--color-soil)}
-  .area-home>header{margin-bottom:2.5rem}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:2.5rem}
+  .discover{background:#F6F1E7;border-top:8px solid var(--color-ink)}.discover-grid{padding-block:clamp(4rem,9vw,7rem)}.discover-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.55fr);gap:clamp(2rem,8vw,8rem);align-items:end;margin-bottom:clamp(2.4rem,5vw,4.25rem)}.discover h2{margin-top:.8rem}.discover-head>p,.area-home header>p:last-child,.people header>p{color:var(--color-soil);line-height:2}.discover-head>p{padding-bottom:.25rem}
+  .area-home{background:#E5E1D7;border-top:1px solid var(--color-ink);padding-block:clamp(4rem,8vw,6.5rem)}.area-home header{margin-bottom:2.5rem;display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.55fr);gap:1rem 5rem;align-items:end}.area-home header .bp-kicker{grid-column:1/-1}.area-home header>p:last-child{padding-bottom:.3rem}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:2.5rem}
   .people-empty{margin-top:2.5rem;padding-block:1.5rem;border-block:1px solid var(--color-mist);display:flex;justify-content:space-between;gap:2rem;color:var(--color-soil)}.people-empty a{flex:none;color:var(--color-tide);border-bottom:1px solid}
   .partner{padding-block:3.5rem;border-top:1px solid var(--color-mist)}.partner .bp-wrap{display:grid;grid-template-columns:.5fr 1fr 1fr auto;gap:1.5rem;align-items:center}.partner h2{font:600 1.6rem var(--font-brand-display);color:var(--color-ink)}.partner p:not(.bp-kicker){color:var(--color-soil)}.partner a{border-bottom:1px solid var(--color-tide);font-weight:600}
-  @media(max-width:800px){.home-hero,.discover-grid{grid-template-columns:1fr}.home-hero{min-height:0;align-items:start}.hero-note{max-width:35rem}.latest-grid,.people-grid{grid-template-columns:1fr}.partner .bp-wrap{grid-template-columns:1fr}.latest header,.people header{display:block}.latest header>a{display:inline-block;margin-top:1rem}}
-  @media(max-width:480px){.home-hero{padding-block:4.5rem}.hero-copy .bp-title{font-size:2rem;line-height:1.35}.hero-copy .bp-title span{display:block}.people-empty{display:block}.people-empty a{display:inline-block;margin-top:1rem}}
+  @media(max-width:800px){.discover-head,.area-home header{grid-template-columns:1fr}.home-hero{min-height:76svh}.hero-shade{background:linear-gradient(0deg,rgba(11,31,38,.8),rgba(11,31,38,.08) 78%)}.hero-credit{position:static;margin-top:2rem}.latest-grid,.people-grid{grid-template-columns:1fr}.partner .bp-wrap{grid-template-columns:1fr}.latest header,.people header{display:block}.latest header>a{display:inline-block;margin-top:1rem}}
+  @media(max-width:480px){.hero-inner{padding-block:5rem 1.4rem}.hero-copy .bp-title{font-size:2.45rem;line-height:1.32}.home-hero>img{object-position:62% center}}
   @media(max-width:360px){.hero-copy .bp-title{font-size:1.8rem;line-height:1.4}}
 </style>

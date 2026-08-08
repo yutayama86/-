@@ -2,6 +2,10 @@
 import type { GetStaticPaths } from 'astro';
 import BrandBase from '../../layouts/BrandBase.astro';
 import BrandStoryCard from '../../components/BrandStoryCard.astro';
+import HitachiAreaGuide from '../../components/HitachiAreaGuide.astro';
+import AreaGuide from '../../components/AreaGuide.astro';
+import { AREA_GUIDES, type AreaGuide as AreaGuideData } from '../../data/area-guides';
+import { MUNICIPALITY_CONTENT } from '../../data/municipality-content';
 import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, municipalitiesByRegion } from '../../data/areas';
 import { getPublishedArticles, getPublishedStores } from '../../lib/content';
 import { areaToSlug } from '../../data/areas';
@@ -17,15 +21,77 @@ const articles = allArticles.filter((article) => areaToSlug(article.data.area) =
 const stores = allStores.filter((store) => areaToSlug(store.data.area) === slug);
 const neighbors = municipalitiesByRegion(municipality.region).filter((item) => item.slug !== slug);
 const hasContent = articles.length + stores.length > 0;
-const metaDescription = `茨城県${municipality.name}の、取材・確認を経た記事と場所の情報。イバトコが現地の人と営みを記録します。`;
-const jsonLd = {
-  '@context': 'https://schema.org', '@type': 'CollectionPage', name: `${municipality.name}｜イバトコ`, description: metaDescription,
-  about: { '@type': 'Place', name: `茨城県${municipality.name}`, address: { '@type': 'PostalAddress', addressRegion: '茨城県', addressLocality: municipality.name, addressCountry: 'JP' } },
-};
+// 日立市＝出典・CCクレジット付きで作り込んだ旗艦ガイド（指示書 v1.0＋追補v1.1）。index。
+// 最終バッチ18市町村＝データ駆動の旅ガイド（text-forward）。「要確認」項目の人手検証まで noindex。
+// 残り25市町村は取材記事が付くまでミニマル表示（架空情報で埋めない）。
+const isHitachi = slug === 'hitachi';
+// 指示書のあるガイド（日立＝別コンポーネント／最終バッチ18）はそれを使用。
+// 残り25市町村は、既存の municipality-content.ts（catch/intro/spots/gourmet/experiences）を
+// そのままガイド形式へ変換して表示（＝架空の加筆はしない。写真・出典・季節等は持たないので出さない）。
+const explicitGuide = AREA_GUIDES[slug!];
+const mc = !explicitGuide && !isHitachi ? MUNICIPALITY_CONTENT[slug!] : undefined;
+const basicGuide: AreaGuideData | undefined = mc && (mc.catch || mc.spots?.length)
+  ? {
+      catch: mc.catch ?? '',
+      lead: mc.intro ? [mc.intro] : [],
+      highlights: (mc.spots ?? []).map((s) => ({ title: s.name, text: s.desc })),
+      tastes: mc.gourmet?.length ? mc.gourmet.map((g) => ({ title: g.name, text: g.desc })) : undefined,
+      experiences: mc.experiences?.length ? mc.experiences.map((e) => ({ title: e.name, text: e.desc })) : undefined,
+      metaDescription: `茨城県${municipality.name}の見どころ。${(mc.spots ?? []).map((s) => s.name).slice(0, 3).join('、')}${mc.spots?.length ? 'など' : ''}を、公開情報をもとに編集して紹介します。`,
+      checkedAt: '2026年8月7日',
+    }
+  : undefined;
+const guide = explicitGuide ?? basicGuide;
+const hasGuide = !!guide;
+// タイトル後半は実際にあるセクションだけを約束する（簡略ページで食・半日コースを謳わない）。
+const titleSuffix = guide
+  ? guide.titleSuffix ?? [
+      '見どころ',
+      (guide.tastes?.length || guide.tasteNote) ? '食' : null,
+      guide.route?.length ? '半日コース' : null,
+    ].filter(Boolean).join('・')
+  : '見どころ・食・半日コース';
+const metaDescription = isHitachi
+  ? '茨城県日立市の歩き方。海に張り出した日立駅、山岳信仰の御岩神社、桜と夜景のかみね公園、世界一だった大煙突。久慈浜しらすと味勝手丼、半日モデルコースまで。'
+  : hasGuide
+    ? guide.metaDescription
+    : `茨城県${municipality.name}の、取材・確認を経た記事と場所の情報。イバトコが現地の人と営みを記録します。`;
+const pageTitle = isHitachi
+  ? '日立市の歩き方｜見どころ・食・半日コース｜イバトコ'
+  : hasGuide
+    ? `${municipality.name}の歩き方｜${titleSuffix}｜イバトコ`
+    : `${municipality.name}｜茨城の街を読む｜イバトコ`;
+const ogTitle = isHitachi ? '日立市の歩き方｜海の駅と、桜の山｜イバトコ' : undefined;
+// noindex：旗艦=公開／ガイド18=要確認の裏取り完了まで非公開／ミニマル=記事が付くまで非公開。
+const shouldNoindex = isHitachi ? false : hasGuide ? true : !hasContent;
+// 構造化データ（44ページ共通・既存データから導出／創作なし）。
+// TouristDestination＋各見どころのTouristAttraction、半日コースのItemList、BreadcrumbList。
+const hitachiHighlights = ['日立駅', '御岩神社', 'かみね公園', '大煙突'];
+const hitachiRoute: [string, string][] = [['10:00', '日立駅'], ['10:40', '平和通り'], ['11:20', 'かみね公園'], ['12:40', '市街へ戻る']];
+const attractionNames = isHitachi ? hitachiHighlights : (guide?.highlights.map((h) => h.title) ?? []);
+const routeSteps: [string, string][] = isHitachi ? hitachiRoute : (guide?.route?.map((r) => [r.time, r.place] as [string, string]) ?? []);
+const routeName = isHitachi ? '海から高台へ、半日の歩き方。' : guide?.routeTitle;
+const homeUrl = new URL('/', Astro.site).href;
+const areaUrl = new URL('/area/', Astro.site).href;
+const pageUrl = new URL(`/area/${slug}/`, Astro.site).href;
+const jsonLd: Record<string, unknown>[] = [
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: homeUrl },
+    { '@type': 'ListItem', position: 2, name: 'エリア', item: areaUrl },
+    { '@type': 'ListItem', position: 3, name: region.label },
+    { '@type': 'ListItem', position: 4, name: municipality.name, item: pageUrl },
+  ] },
+  { '@context': 'https://schema.org', '@type': 'TouristDestination', name: `茨城県${municipality.name}`, description: metaDescription, url: pageUrl,
+    containedInPlace: { '@type': 'AdministrativeArea', name: '茨城県' },
+    ...(attractionNames.length ? { includesAttraction: attractionNames.map((n) => ({ '@type': 'TouristAttraction', name: n })) } : {}),
+  },
+  ...(routeSteps.length ? [{ '@context': 'https://schema.org', '@type': 'ItemList', name: routeName,
+    itemListElement: routeSteps.map(([t, p], i) => ({ '@type': 'ListItem', position: i + 1, name: `${t} ${p}` })) }] : []),
+];
 ---
 
-<BrandBase title={`${municipality.name}｜茨城の街を読む｜イバトコ`} description={metaDescription} jsonLd={jsonLd} noindex={!hasContent}>
-  <article class="area-page">
+<BrandBase title={pageTitle} ogTitle={ogTitle} description={metaDescription} jsonLd={jsonLd} noindex={shouldNoindex}>
+  {isHitachi ? <HitachiAreaGuide /> : hasGuide ? <AreaGuide slug={slug!} guide={guide!} /> : <article class="area-page">
     <header class="area-head bp-wrap">
       <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><a href="/area/">エリア</a><span>/</span><span>{region.label}</span></nav>
       <p class="bp-kicker">{region.label} / IBARAKI</p>
@@ -42,7 +108,7 @@ const jsonLd = {
     <section class="neighbors">
       <div class="bp-wrap"><p class="bp-kicker">NEARBY CITIES</p><h2>{region.label}の、ほかの街。</h2><ul>{neighbors.map((item) => <li><a href={`/area/${item.slug}/`}>{item.name}</a></li>)}</ul></div>
     </section>
-  </article>
+  </article>}
 </BrandBase>
 
 <style>

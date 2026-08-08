@@ -1,0 +1,160 @@
+---
+/**
+ * AreaGuide — データ駆動の「リッチ旅ガイド」（日立市以外）。
+ * 出典データ：src/data/area-guides.ts（Codex指示書 最終バッチ v1.0）。
+ * 写真素材が用意されていない市町村向け＝text-forward（写真枠を灰色で埋めない）。
+ * 情報量の少ない街は見どころ2〜3項目のまま、無理にセクションを増やさない。
+ * 阿見町・東海村（sensitive）は評価語を避け、「PLACES／この街にある場所。」の中立見出しにする。
+ */
+import { MUNI_BY_SLUG, REGIONS, municipalitiesByRegion } from '../data/areas';
+import type { AreaGuide } from '../data/area-guides';
+
+interface Props { slug: string; guide: AreaGuide; }
+const { slug, guide } = Astro.props;
+const municipality = MUNI_BY_SLUG.get(slug)!;
+const region = REGIONS[municipality.region];
+const neighbors = municipalitiesByRegion(municipality.region).filter((item) => item.slug !== slug);
+
+const placesKicker = guide.sensitive ? 'PLACES' : 'HIGHLIGHTS';
+const placesHeading = guide.sensitive ? 'この街にある場所。' : 'この街で、訪ねたい場所。';
+
+const jump: { href: string; label: string }[] = [
+  { href: '#highlights', label: guide.sensitive ? '場所' : '見どころ' },
+];
+if (guide.tastes?.length || guide.tasteNote) jump.push({ href: '#taste', label: '食べる' });
+if (guide.experiences?.length) jump.push({ href: '#experience', label: '体験する' });
+if (guide.route?.length || guide.visitBlock) jump.push({ href: '#route', label: guide.visitBlock ? '訪ね方' : '半日コース' });
+if (guide.seasons?.length) jump.push({ href: '#seasons', label: '季節' });
+if (guide.beforeYouGo?.length) jump.push({ href: '#plan', label: '旅の準備' });
+---
+
+<article class="area-guide">
+  <header class="ag-head">
+    <div class="ag-head-copy bp-wrap">
+      <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><a href="/area/">エリア</a><span>/</span><span>{region.label}</span></nav>
+      <p class="bp-kicker">{region.label} / IBARAKI</p>
+      <h1>{municipality.name}</h1>
+      <p class="ag-catch">{guide.catch}</p>
+      <div class="ag-lead">{guide.lead.map((p) => <p>{p}</p>)}</div>
+      <a class="map-back" href="/area/">44市町村の地図に戻る →</a>
+    </div>
+  </header>
+
+  {jump.length > 1 && (
+    <nav class="ag-jump" aria-label={`${municipality.name}のページ内ナビゲーション`}>
+      <div class="bp-wrap"><span>知りたいことから読む</span>{jump.map((j) => <a href={j.href}>{j.label}</a>)}</div>
+    </nav>
+  )}
+
+  <div class="ag-content bp-wrap">
+    <section id="highlights" class="ag-section">
+      <header><p class="bp-kicker">{placesKicker}</p><h2 class="bp-section-title">{placesHeading}</h2>{guide.highlightsLead && <p>{guide.highlightsLead}</p>}</header>
+      <div class="ag-grid">{guide.highlights.map((item, i) => (
+        <article class="ag-card">
+          <span class="ag-num">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+        </article>
+      ))}</div>
+    </section>
+
+    {(guide.tastes?.length || guide.tasteNote) && (
+      <section id="taste" class="ag-section">
+        <header><p class="bp-kicker">LOCAL TASTE</p><h2 class="bp-section-title">この街で、味わいたいもの。</h2></header>
+        {guide.tastes?.length ? (
+          <div class="ag-grid ag-grid-taste">{guide.tastes.map((item) => (
+            <article class="ag-card"><h3>{item.title}</h3><p>{item.text}</p></article>
+          ))}</div>
+        ) : (
+          <p class="ag-note-line">{guide.tasteNote}</p>
+        )}
+      </section>
+    )}
+
+    {guide.experiences?.length && (
+      <section id="experience" class="ag-section">
+        <header><p class="bp-kicker">EXPERIENCE</p><h2 class="bp-section-title">この街で、体験したいこと。</h2></header>
+        <div class="ag-grid ag-grid-3">{guide.experiences.map((item) => (
+          <article class="ag-card"><h3>{item.title}</h3><p>{item.text}</p></article>
+        ))}</div>
+      </section>
+    )}
+
+    {guide.route?.length && (
+      <section id="route" class="ag-section route-section">
+        <header><p class="bp-kicker">HALF-DAY ROUTE</p><h2 class="bp-section-title">{guide.routeTitle}</h2><p>移動時間は目安です。運行状況や各施設の最新情報を確認してお出かけください。</p></header>
+        <ol>{guide.route.map((stop) => (
+          <li><div class="route-copy"><span class="route-number">{stop.no}</span><time>{stop.time}</time><strong>{stop.place}</strong><span>{stop.text}</span></div></li>
+        ))}</ol>
+        {guide.routeExtra && <aside class="route-extra"><h3>もう半日あるなら</h3><p>{guide.routeExtra}</p></aside>}
+      </section>
+    )}
+
+    {guide.visitBlock && (
+      <section id="route" class="ag-section">
+        <header><p class="bp-kicker">HOW TO VISIT</p><h2 class="bp-section-title">{guide.visitBlock.title}</h2></header>
+        <div class="ag-reading">{guide.visitBlock.text.map((p) => <p>{p}</p>)}</div>
+      </section>
+    )}
+
+    {guide.seasons?.length && (
+      <section id="seasons" class="ag-section season-section">
+        <header><p class="bp-kicker">SEASONS</p><h2 class="bp-section-title">いつ訪れる？</h2><p>季節で変わる街の表情から、旅の時期を選びます。</p></header>
+        <div class="season-grid">{guide.seasons.map((s, i) => (
+          <article class={`tone-${['spring','summer','autumn','winter'][i] ?? 'spring'}`}><div class="season-copy"><strong>{s.title}</strong><p>{s.text}</p></div></article>
+        ))}</div>
+      </section>
+    )}
+
+    {guide.beforeYouGo?.length && (
+      <section id="plan" class="ag-section practical-section">
+        <header><p class="bp-kicker">BEFORE YOU GO</p><h2 class="bp-section-title">行く前に、知っておきたいこと。</h2></header>
+        <dl>{guide.beforeYouGo.map((n) => <div><dt>{n.label}</dt><dd>{n.text}</dd></div>)}</dl>
+      </section>
+    )}
+
+    <aside class="source-note" aria-labelledby="ag-source-title">
+      <div><p class="bp-kicker">INFORMATION</p><h2 id="ag-source-title">情報の確認について</h2><p>掲載内容は公開情報をもとに編集しています。営業時間・料金・交通・催事は変更されるため、訪問前に各施設・自治体の公式情報をご確認ください。</p></div>
+      <div><p>最終確認：<time>{guide.checkedAt}</time></p>{guide.sources?.length && <ul class="ag-sources">{guide.sources.map((s) => <li><a href={s.url} target="_blank" rel="noopener">{s.label}<span aria-hidden="true">↗</span></a></li>)}</ul>}</div>
+    </aside>
+  </div>
+
+  <section class="neighbors">
+    <div class="bp-wrap"><p class="bp-kicker">NEARBY CITIES</p><h2>{region.label}の、ほかの街。</h2><ul>{neighbors.map((item) => <li><a href={`/area/${item.slug}/`}>{item.name}</a></li>)}</ul></div>
+  </section>
+</article>
+
+<style>
+  .area-guide{padding-top:clamp(3rem,7vw,6rem)}
+  .ag-head{padding-bottom:clamp(2.5rem,6vw,5rem)}.crumbs{display:flex;gap:.55rem;margin-bottom:2.5rem;color:var(--color-soil);font-size:.78rem}.crumbs a{border-bottom:1px solid transparent}.crumbs a:hover{border-color:var(--color-tide)}
+  .ag-head h1{margin-top:1rem;font:600 clamp(3.4rem,8vw,6.5rem)/1 var(--font-brand-display);color:var(--color-ink)}
+  .ag-catch{margin-top:1.6rem;font:600 clamp(1.5rem,2.6vw,2.4rem)/1.5 var(--font-brand-display);color:var(--color-ink);max-width:24ch}
+  .ag-lead{display:grid;gap:1rem;margin-top:1.3rem;max-width:60ch;color:var(--color-soil);line-height:1.95}
+  .map-back{display:inline-block;margin-top:1.8rem;color:var(--color-tide);border-bottom:1px solid}
+  .ag-jump{position:sticky;top:0;z-index:5;border-block:1px solid var(--color-mist);background:color-mix(in srgb,var(--color-paper) 94%,transparent);backdrop-filter:blur(10px)}
+  .ag-jump>div{display:flex;gap:1.5rem;overflow:auto;padding-block:1rem;white-space:nowrap;font-size:.82rem}.ag-jump span{color:var(--color-soil)}.ag-jump a{color:var(--color-ink)}
+  .ag-content{display:grid;gap:clamp(4rem,8vw,7rem);padding-block:clamp(4rem,8vw,7rem)}
+  .ag-section>header{margin-bottom:2rem;max-width:60ch}.ag-section>header>p:last-child{margin-top:1rem;color:var(--color-soil);line-height:1.9}.bp-section-title{margin-top:.6rem}
+  .ag-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem}.ag-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ag-card{border-top:1px solid var(--color-ink);padding-top:1rem}.ag-num{font:600 .7rem var(--font-brand-meta);color:var(--color-tide)}
+  .ag-card h3{margin-top:.4rem;font:600 clamp(1.3rem,2.2vw,1.8rem) var(--font-brand-display);color:var(--color-ink)}
+  .ag-card p{margin-top:.7rem;color:var(--color-soil);line-height:1.85}
+  .ag-note-line{color:var(--color-soil);line-height:1.9;border-top:1px solid var(--color-mist);padding-top:1.2rem}
+  .ag-reading{display:grid;gap:1rem;max-width:60ch;color:var(--color-soil);line-height:1.95}
+  .route-section ol{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;padding:0;border-top:1px solid var(--color-ink)}
+  .route-section li{padding:1rem 1rem 1.4rem;border-right:1px solid var(--color-mist)}.route-section li:last-child{border-right:0}
+  .route-copy{display:grid;gap:.5rem}.route-number{font:600 .7rem var(--font-brand-meta);color:var(--color-tide)}.route-copy time{font-size:.75rem;color:var(--color-soil)}
+  .route-copy strong{font:600 1.2rem var(--font-brand-display);color:var(--color-ink)}.route-copy>span:last-child{color:var(--color-soil);font-size:.86rem;line-height:1.7}
+  .route-extra{display:grid;grid-template-columns:.45fr 1fr;gap:2rem;margin-top:2rem;padding:2rem;border:1px solid var(--color-mist);background:var(--color-white)}
+  .route-extra h3{font:600 1.4rem var(--font-brand-display);color:var(--color-ink)}.route-extra p{color:var(--color-soil);line-height:1.9}
+  .season-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+  .season-section article{background:var(--color-white);min-height:9rem}.season-copy{padding:1.4rem}.season-copy strong{font:600 1.35rem var(--font-brand-display);color:var(--color-ink)}.season-copy p{margin-top:.7rem;color:var(--color-soil);line-height:1.8}
+  .tone-spring{border-top:4px solid #c78b91}.tone-summer{border-top:4px solid #72aabb}.tone-autumn{border-top:4px solid #ad8b59}.tone-winter{border-top:4px solid #7e94a5}
+  .practical-section dl{display:grid;grid-template-columns:1fr;border-top:1px solid var(--color-mist)}.practical-section dl>div{padding:1.6rem 0;border-bottom:1px solid var(--color-mist)}.practical-section dt{font:600 1.05rem var(--font-brand-display);color:var(--color-ink)}.practical-section dd{margin:.6rem 0 0;color:var(--color-soil);line-height:1.8}
+  .source-note{display:grid;grid-template-columns:.7fr 1fr;gap:2.5rem;padding:clamp(2rem,5vw,3.5rem);background:var(--color-ink);color:var(--color-white)}
+  .source-note h2{margin-top:.8rem;font:600 1.4rem var(--font-brand-display)}.source-note p{margin-top:1rem;line-height:1.8}.source-note>div:last-child p{font-size:.85rem}
+  .ag-sources{margin-top:1rem;border-top:1px solid rgba(255,255,255,.2)}.ag-sources li a{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.2);color:var(--color-white);font-size:.82rem}
+  .neighbors{padding-block:clamp(4rem,8vw,6rem);background:var(--color-white)}.neighbors h2{margin-top:.8rem;font:600 clamp(1.8rem,4vw,3.3rem) var(--font-brand-display);color:var(--color-ink)}.neighbors ul{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;margin-top:2rem}.neighbors a{color:var(--color-soil);border-bottom:1px solid var(--color-mist);padding-bottom:.2rem}.neighbors a:hover{color:var(--color-tide);border-color:var(--color-tide)}
+  @media(max-width:900px){.ag-grid-3{grid-template-columns:1fr}.route-section ol{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:640px){.area-guide{padding-top:2.5rem}.ag-head h1{font-size:3.2rem}.ag-grid,.season-grid{grid-template-columns:1fr}.route-section ol{grid-template-columns:1fr}.route-section li{border-right:0;border-bottom:1px solid var(--color-mist)}.route-extra,.source-note{grid-template-columns:1fr}}
+</style>

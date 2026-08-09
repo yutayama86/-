@@ -1,95 +1,145 @@
 ---
 import BrandBase from '../layouts/BrandBase.astro';
-import BrandStoryCard from '../components/BrandStoryCard.astro';
-import ThemeNav from '../components/ThemeNav.astro';
-import EditorialProcess from '../components/EditorialProcess.astro';
-import AreaExplorer from '../components/AreaExplorer.astro';
-import PersonCard from '../components/PersonCard.astro';
-import { getPublishedArticles } from '../lib/content';
-import { VISIBLE_REPORTERS } from '../data/reporters';
+import HomeThemeNav from '../components/HomeThemeNav.astro';
+import HomeEditorialProcess from '../components/HomeEditorialProcess.astro';
+import HomeAreaExplorer from '../components/HomeAreaExplorer.astro';
 
-const articles = await getPublishedArticles();
-const lead = articles[0];
-const latest = articles.slice(1, 4);
-const people = VISIBLE_REPORTERS.slice(0, 2);
-const themeImages = Object.fromEntries(
-  articles.filter((article) => article.data.cover).map((article) => [article.data.category, { src: article.data.cover!, alt: article.data.coverAlt }])
-);
+const heroSlides = [
+  {
+    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg/1280px-Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg',
+    alt: '大洗海岸から望む日の出',
+    caption: '一日は、太平洋から始まる。',
+    place: '茨城県・大洗海岸',
+    credit: '写真：t.kunikuni / CC BY-SA 2.0',
+    position: 'center 58%',
+  },
+  {
+    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/2025_Hitachi_Seaside_Park.jpg/1280px-2025_Hitachi_Seaside_Park.jpg',
+    alt: '国営ひたち海浜公園に咲くネモフィラ',
+    caption: '四月下旬、丘が青くなる。',
+    place: '茨城県・国営ひたち海浜公園',
+    credit: '写真：Kakidai / CC BY-SA 4.0',
+    position: 'center 48%',
+  },
+  {
+    src: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Fukuroda%20Falls%2042.jpg?width=1280',
+    alt: '大子町の袋田の滝',
+    caption: '冬、滝は凍る。',
+    place: '茨城県・袋田の滝',
+    credit: '写真：Σ64 / CC BY 3.0',
+    position: 'center 42%',
+  },
+];
 ---
 
 <BrandBase>
   <section class="home-hero">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg/1280px-Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg" alt="大洗海岸から望む日の出" fetchpriority="high" />
+    <div class="hero-slides" aria-live="off">
+      {heroSlides.map((slide, index) => (
+        <figure class:list={['hero-slide', { 'is-active': index === 0 }]} data-hero-slide aria-hidden={index !== 0}>
+          <img
+            src={slide.src}
+            alt={slide.alt}
+            fetchpriority={index === 0 ? 'high' : 'auto'}
+            loading={index === 0 ? 'eager' : 'lazy'}
+            decoding={index === 0 ? 'sync' : 'async'}
+            width="1280"
+            height="853"
+            style={`object-position:${slide.position}`}
+          />
+          <figcaption><strong>{slide.caption}</strong><span>{slide.place}</span><small>{slide.credit}</small></figcaption>
+        </figure>
+      ))}
+    </div>
     <div class="hero-shade" aria-hidden="true"></div>
     <div class="bp-wrap hero-inner">
       <div class="hero-copy">
-        <p class="hero-place">茨城県・大洗海岸</p>
-        <p class="bp-kicker">茨城を歩いて、つくるメディア。</p>
-        <h1 class="bp-title">まだ知らない茨城へ、<br />会いに行く。</h1>
-        <p class="hero-lead">店を続ける人、受け継がれる仕事、いつもの風景。現地で会って、聞いて、確かめた茨城を届けます。</p>
+        <p class="bp-kicker">44市町村を、歩いて書く。</p>
+        <h1 class="bp-title"><span>うまいものは、</span><br class="hero-pc-break" /><span>たいてい茨城から</span><span>来ている。</span></h1>
+        <p class="hero-lead">
+          <span>れんこん、ピーマン、メロン、栗。全国一位の品目がいくつもある。</span>
+          <span>海も山も滝も、車で二時間の中にある。</span>
+          <span>それでも茨城の店は、検索してもなかなか出てきません。</span>
+          <span>だから私たちが、歩いて書きます。</span>
+        </p>
         <div class="hero-actions">
-          <a href={lead ? '#latest' : '#discover'}>{lead ? '最新の物語を読む →' : '気になる茨城を探す →'}</a>
-          <a href="/about/">イバトコについて</a>
+          <a class="hero-primary" href="#discover">気になる茨城を探す <span aria-hidden="true">→</span></a>
+          <a class="hero-secondary" href="/about/">イバトコについて</a>
         </div>
       </div>
-      <p class="hero-credit">写真：t.kunikuni / CC BY-SA 2.0</p>
+      <div class="hero-controls" aria-label="FV写真を切り替える">
+        {heroSlides.map((slide, index) => (
+          <button type="button" class:list={{ 'is-active': index === 0 }} data-hero-dot={index} aria-label={`${index + 1}枚目：${slide.place}`} aria-pressed={index === 0}><span>{String(index + 1).padStart(2, '0')}</span></button>
+        ))}
+      </div>
     </div>
   </section>
 
-  {lead ? (
-    <section class="bp-wrap bp-section" id="latest">
-      <p class="bp-kicker">FEATURED STORY</p>
-      <div class="feature"><BrandStoryCard article={lead} featured /></div>
-    </section>
-  ) : null}
-
-  {latest.length > 0 && (
-    <section class="latest bp-wrap bp-section">
-      <header><div><p class="bp-kicker">LATEST STORIES</p><h2 class="bp-section-title">新しく届いた、地域の声。</h2></div><a class="bp-link" href="/eat/">すべて読む</a></header>
-      <div class="latest-grid">{latest.map((article) => <BrandStoryCard article={article} />)}</div>
-    </section>
-  )}
+  <section class="brand-origin">
+    <div class="bp-wrap origin-grid">
+      <div><p class="bp-kicker">イバトコをつくった理由</p><h2 class="bp-section-title"><span>検索しても、</span><span>出てこない店がある。</span></h2></div>
+      <div class="origin-copy">
+        <p>朝五時の那珂湊で競りを見て、昼は笠間で蕎麦を手繰り、夕方は大子の湯に浸かって帰る。それができる県なのに、調べて出てくるのはいつも同じ数軒です。</p>
+        <p>星の数や短い投稿では、その店が何十年続いてきた理由も、この土地でしか採れないものの話も残りません。だからイバトコは、現地へ行き、人に会い、聞いた言葉を書き残します。確かめた事実と、その場で感じたことは、分けて書きます。</p>
+        <strong>知られていないものを、知られている状態にする。</strong>
+        <a href="/about/">イバトコについて →</a>
+      </div>
+    </div>
+  </section>
 
   <section class="discover" id="discover">
     <div class="bp-wrap discover-grid">
-      <header class="discover-head">
-        <div>
-          <p class="bp-kicker">テーマから探す</p>
-          <h2 class="bp-section-title">気になる茨城から、<br />読みはじめる。</h2>
-        </div>
-        <p>食べること、働くこと、整えること。<br />土地の日常を、六つの入口からたどります。</p>
-      </header>
-      <ThemeNav images={themeImages} />
+      <header class="discover-head"><div><p class="bp-kicker">テーマから探す</p><h2 class="bp-section-title">気になる茨城から、<br />読みはじめる。</h2></div><p>食べること、出かけること、働くこと。<br />土地の日常を、六つの入口からたどります。</p></header>
+      <HomeThemeNav />
     </div>
   </section>
 
-  <section class="area-home" id="area">
-    <div class="bp-wrap"><header><p class="bp-kicker">街から探す</p><h2 class="bp-section-title">44の街から、茨城を読む。</h2><p>市町村を選ぶと、その街の記事・場所・人が表示されます。</p></header><AreaExplorer /></div>
-  </section>
-
-  {people.length > 0 && <section class="people bp-wrap bp-section" id="editors">
-    <header><div><p class="bp-kicker">LOCAL EDITORS</p><h2 class="bp-section-title">街を歩く人が、街を書く。</h2></div><p>その街をよく知り、話を丁寧に聞ける人とつくります。</p></header>
-    <div class="people-grid">{people.map((person) => <PersonCard person={person} />)}</div>
-  </section>}
-
-  <section class="bp-wrap bp-section"><EditorialProcess /></section>
+  <section class="area-home" id="area"><div class="bp-wrap"><HomeAreaExplorer /></div></section>
+  <section class="process-home"><div class="bp-wrap"><HomeEditorialProcess /></div></section>
 
   <section class="partner">
-    <div class="bp-wrap"><p class="bp-kicker">FOR LOCAL BUSINESSES</p><h2>地域事業者の方へ</h2><p>取材・情報掲載・発信支援についてご案内します。</p><a href="/biz/">取り組みについて知る →</a></div>
+    <div class="bp-wrap"><p class="bp-kicker">FOR LOCAL BUSINESSES</p><h2>あなたの街の、まだ書かれていない話を。</h2><p>続けてきた理由、こだわりの理由。伝えきれていないことを、取材して言葉にします。掲載・取材・発信支援についてご案内します。</p><a href="/biz/">取り組みについて知る →</a></div>
   </section>
 </BrandBase>
 
+<script>
+  const hero = document.querySelector<HTMLElement>('.home-hero');
+  if (hero) {
+    const slides = [...hero.querySelectorAll<HTMLElement>('[data-hero-slide]')];
+    const dots = [...hero.querySelectorAll<HTMLButtonElement>('[data-hero-dot]')];
+    let current = 0;
+    let timer: number | undefined;
+    const show = (next: number) => {
+      current = (next + slides.length) % slides.length;
+      slides.forEach((slide, index) => {
+        slide.classList.toggle('is-active', index === current);
+        slide.setAttribute('aria-hidden', String(index !== current));
+      });
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('is-active', index === current);
+        dot.setAttribute('aria-pressed', String(index === current));
+      });
+    };
+    const stop = () => { if (timer) window.clearInterval(timer); timer = undefined; };
+    const start = () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      stop();
+      timer = window.setInterval(() => show(current + 1), 5000);
+    };
+    dots.forEach((dot, index) => dot.addEventListener('click', () => { show(index); start(); }));
+    hero.addEventListener('focusin', stop);
+    hero.addEventListener('focusout', start);
+    document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+    start();
+  }
+</script>
+
 <style>
-  .home-hero{position:relative;min-height:min(780px,calc(100svh - 72px));display:flex;align-items:flex-end;overflow:hidden;background:var(--color-ink);color:#fff}.home-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 55%;filter:saturate(.82) contrast(1.04)}.hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,31,38,.82) 0%,rgba(11,31,38,.48) 48%,rgba(11,31,38,.08) 76%),linear-gradient(0deg,rgba(11,31,38,.46),transparent 55%)}.hero-inner{position:relative;z-index:1;width:100%;padding-block:clamp(4rem,9vw,7.5rem) 2rem}.hero-copy{max-width:52rem}.hero-place{margin-bottom:1.1rem;font-size:.78rem;letter-spacing:.08em}.hero-copy .bp-kicker{color:#fff}.hero-copy .bp-title{margin-top:1.1rem;font-size:clamp(2.5rem,5.4vw,5.3rem);line-height:1.22;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.18)}
-  .hero-lead{max-width:43ch;margin-top:1.5rem;font-size:clamp(.98rem,1.4vw,1.13rem);line-height:1.9;color:rgba(255,255,255,.9)}
-  .hero-actions{display:flex;gap:1.6rem;flex-wrap:wrap;margin-top:2rem}.hero-actions a{border-bottom:1px solid rgba(255,255,255,.85);padding-bottom:.25rem;color:#fff;font-weight:700}.hero-credit{position:absolute;right:0;bottom:2rem;font-size:.64rem;color:rgba(255,255,255,.7)}
-  .feature{margin-top:2rem}.latest header,.people header{display:flex;justify-content:space-between;gap:2rem;align-items:end}.latest header h2,.people header h2,.area-home h2{margin-top:.6rem}
-  .latest-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.5rem,3vw,2.5rem);margin-top:2.5rem}
-  .discover{background:#F6F1E7;border-top:8px solid var(--color-ink)}.discover-grid{padding-block:clamp(4rem,9vw,7rem)}.discover-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.55fr);gap:clamp(2rem,8vw,8rem);align-items:end;margin-bottom:clamp(2.4rem,5vw,4.25rem)}.discover h2{margin-top:.8rem}.discover-head>p,.area-home header>p:last-child,.people header>p{color:var(--color-soil);line-height:2}.discover-head>p{padding-bottom:.25rem}
-  .area-home{background:#E5E1D7;border-top:1px solid var(--color-ink);padding-block:clamp(4rem,8vw,6.5rem)}.area-home header{margin-bottom:2.5rem;display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.55fr);gap:1rem 5rem;align-items:end}.area-home header .bp-kicker{grid-column:1/-1}.area-home header>p:last-child{padding-bottom:.3rem}.people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:2.5rem}
-  .people-empty{margin-top:2.5rem;padding-block:1.5rem;border-block:1px solid var(--color-mist);display:flex;justify-content:space-between;gap:2rem;color:var(--color-soil)}.people-empty a{flex:none;color:var(--color-tide);border-bottom:1px solid}
-  .partner{padding-block:3.5rem;border-top:1px solid var(--color-mist)}.partner .bp-wrap{display:grid;grid-template-columns:.5fr 1fr 1fr auto;gap:1.5rem;align-items:center}.partner h2{font:600 1.6rem var(--font-brand-display);color:var(--color-ink)}.partner p:not(.bp-kicker){color:var(--color-soil)}.partner a{border-bottom:1px solid var(--color-tide);font-weight:600}
-  @media(max-width:800px){.discover-head,.area-home header{grid-template-columns:1fr}.home-hero{min-height:76svh}.hero-shade{background:linear-gradient(0deg,rgba(11,31,38,.8),rgba(11,31,38,.08) 78%)}.hero-credit{position:static;margin-top:2rem}.latest-grid,.people-grid{grid-template-columns:1fr}.partner .bp-wrap{grid-template-columns:1fr}.latest header,.people header{display:block}.latest header>a{display:inline-block;margin-top:1rem}}
-  @media(max-width:480px){.hero-inner{padding-block:5rem 1.4rem}.hero-copy .bp-title{font-size:2.45rem;line-height:1.32}.home-hero>img{object-position:62% center}}
+  .home-hero{position:relative;height:clamp(600px,calc(100svh - 72px),740px);display:flex;align-items:flex-end;overflow:hidden;background:#233f4a;color:#fff}.hero-slides,.hero-slide,.hero-slide img{position:absolute;inset:0;width:100%;height:100%}.hero-slide{margin:0;opacity:0;visibility:hidden;transition:opacity 1.15s,visibility 1.15s}.hero-slide.is-active{opacity:1;visibility:visible}.hero-slide img{object-fit:cover;filter:saturate(.88) contrast(1.03)}.hero-slide figcaption{position:absolute;z-index:3;right:clamp(1rem,4vw,3rem);bottom:1.5rem;display:grid;text-align:right;color:rgba(255,255,255,.9);text-shadow:0 1px 8px rgba(0,0,0,.5);font-size:.72rem}.hero-slide figcaption strong{margin-bottom:.35rem;font:600 clamp(.92rem,1.4vw,1.2rem)/1.45 var(--font-brand-display);color:#fff}.hero-slide figcaption small{margin-top:.15rem;font-size:.6rem;color:rgba(255,255,255,.7)}.hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,28,35,.88) 0%,rgba(9,28,35,.62) 38%,rgba(9,28,35,.2) 68%,rgba(9,28,35,.04) 100%),linear-gradient(0deg,rgba(9,28,35,.52),transparent 52%)}.hero-inner{position:relative;z-index:2;width:min(calc(100% - clamp(3rem,10vw,13rem)),92rem);padding-block:clamp(3.5rem,7vw,5.5rem) 1.8rem}.hero-copy{max-width:48rem}.hero-copy .bp-kicker{font-size:clamp(.78rem,1vw,.9rem);letter-spacing:.08em;color:#fff}.hero-copy .bp-title{margin-top:1rem;font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:clamp(2.4rem,4.2vw,4.15rem);line-height:1.26;letter-spacing:.015em;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.22)}.hero-copy .bp-title span{white-space:nowrap}.hero-lead{max-width:58rem;margin-top:1.5rem;font-size:clamp(.88rem,1.15vw,1.02rem);line-height:1.85;color:rgba(255,255,255,.9)}.hero-lead span{display:block}.hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;margin-top:2rem}.hero-actions a{font-weight:700;color:#fff}.hero-primary{display:inline-flex;align-items:center;justify-content:space-between;gap:2rem;min-width:14rem;padding:.9rem 1.1rem;border:2px solid #fff;background:#fff;color:var(--color-ink)!important}.hero-primary:hover,.hero-primary:focus-visible{background:transparent;color:#fff!important}.hero-secondary{padding-bottom:.25rem;border-bottom:1px solid rgba(255,255,255,.85)}.hero-controls{display:flex;gap:.4rem;margin-top:2.4rem}.hero-controls button{width:3rem;padding:.45rem 0;border:0;border-top:2px solid rgba(255,255,255,.35);background:transparent;color:rgba(255,255,255,.55);cursor:pointer;text-align:left}.hero-controls button.is-active{border-color:#fff;color:#fff}.hero-controls span{font:.65rem var(--font-brand-meta)}
+  .brand-origin{border-top:1px solid rgba(255,255,255,.2);background:var(--color-ink);color:#fff}.origin-grid{display:grid;grid-template-columns:minmax(300px,.72fr) minmax(0,1.28fr);gap:clamp(3rem,9vw,9rem);padding-block:clamp(4rem,8vw,7rem)}.brand-origin .bp-kicker{color:#aac7ca}.brand-origin h2{margin-top:.9rem;font-size:clamp(1.7rem,2.7vw,2.35rem);color:#fff}.brand-origin h2 span{display:block;white-space:nowrap}.origin-copy{max-width:46rem}.origin-copy p{font-size:clamp(.95rem,1.2vw,1.05rem);line-height:2;color:rgba(255,255,255,.8)}.origin-copy p+p{margin-top:1.1rem}.origin-copy strong{display:block;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.28);font:600 clamp(1.25rem,2vw,1.75rem)/1.6 var(--font-brand-display);color:#fff}.origin-copy a{display:inline-block;margin-top:1.5rem;border-bottom:1px solid #aac7ca;font-weight:700}
+  .discover{border-top:1px solid color-mix(in srgb,var(--color-ink) 28%,transparent);background:#f6f1e7}.discover-grid{padding-block:clamp(3rem,6vw,4.75rem)}.discover-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.55fr);align-items:end;gap:clamp(2rem,8vw,8rem);margin-bottom:clamp(1.5rem,3vw,2.25rem)}.discover h2{margin-top:.8rem}.discover-head>p{padding-bottom:.25rem;color:var(--color-soil);line-height:2}.area-home{border-top:1px solid color-mix(in srgb,var(--color-ink) 28%,transparent);background:#e5e1d7;padding-block:clamp(3rem,6vw,4.75rem)}.process-home{background:var(--color-white)}.partner{padding-block:3.5rem;border-top:1px solid var(--color-mist)}.partner .bp-wrap{display:grid;grid-template-columns:.42fr 1.2fr 1.1fr auto;align-items:center;gap:1.5rem}.partner h2{font:600 1.55rem/1.5 var(--font-brand-display);color:var(--color-ink)}.partner p:not(.bp-kicker){font-size:.86rem;line-height:1.75;color:var(--color-soil)}.partner a{border-bottom:1px solid var(--color-tide);font-weight:600}
+  @media(max-width:800px){.discover-head,.origin-grid{grid-template-columns:1fr}.brand-origin h2 span{white-space:normal}.home-hero{height:min(720px,82svh);min-height:610px}.hero-inner{width:min(calc(100% - 2rem),92rem)}.hero-shade{background:linear-gradient(rgba(9,28,35,.08) 12%,rgba(9,28,35,.54) 52%,rgba(9,28,35,.9) 100%)}.partner .bp-wrap{grid-template-columns:1fr}}
+  @media(max-width:480px){.home-hero{min-height:590px}.hero-inner{width:min(calc(100% - 1.5rem),92rem);padding-block:4rem 1.25rem}.hero-copy .bp-title{font-size:clamp(2rem,10vw,2.55rem);line-height:1.34}.hero-pc-break{display:none}.hero-copy .bp-title span{display:inline-block}.hero-lead{font-size:.78rem;line-height:1.72}.hero-actions{gap:1rem;margin-top:1.5rem}.hero-controls{margin-top:1.8rem}.hero-slide figcaption{right:.8rem;bottom:.7rem;max-width:58%;font-size:.62rem}.hero-slide figcaption strong{font-size:.83rem}.hero-slide figcaption small{font-size:.5rem}}
+  @media(prefers-reduced-motion:reduce){.hero-slide{transition:none}}
   @media(max-width:360px){.hero-copy .bp-title{font-size:1.8rem;line-height:1.4}}
 </style>

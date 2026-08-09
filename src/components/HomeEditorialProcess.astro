@@ -1,0 +1,33 @@
+<section class="ep">
+  <header>
+    <p class="bp-kicker">取材と編集</p>
+    <h2 class="bp-section-title">なぜ、わざわざ現地まで行くのか。</h2>
+    <p>記事の向こうにいる人に失礼のないように。読者が迷わないように。</p>
+    <a href="/about/editorial-policy/">編集方針を読む →</a>
+  </header>
+
+  <div class="notes" aria-label="イバトコの取材姿勢">
+    <article>
+      <i aria-hidden="true"><svg viewBox="0 0 56 40"><path d="M4 33c9-1 13-8 21-8s12 7 22 8M12 24l10-14 8 11 5-7 9 12" /><path d="M26 5v8" /></svg></i>
+      <div><h3>その場へ行く。</h3><p>景色だけでなく、声の調子や店の空気まで受け取ります。</p></div>
+    </article>
+    <article>
+      <i aria-hidden="true"><svg viewBox="0 0 56 40"><path d="M5 7h28v20H18L8 35l2-8H5V7Z" /><path d="M16 15h12M16 20h8M37 15h14v14h-5l2 6-8-6h-3" /></svg></i>
+      <div><h3>事実と、印象を分ける。</h3><p>確認できたことと、取材者が感じたことを混ぜません。</p></div>
+    </article>
+    <article>
+      <i aria-hidden="true"><svg viewBox="0 0 56 40"><path d="M9 5h25l6 6v24H9V5ZM34 5v8h6" /><path d="M16 18h16M16 24h12M38 31c6-1 9-5 9-10M43 18l4 3 3-4" /></svg></i>
+      <div><h3>公開して、終わりにしない。</h3><p>店や街に変化があれば確かめ、記事を更新します。</p></div>
+    </article>
+  </div>
+</section>
+
+<style>
+  .ep{display:grid;grid-template-columns:minmax(260px,.78fr) minmax(0,1.22fr);gap:clamp(2.5rem,6vw,6rem);padding-block:clamp(2.5rem,4vw,3.75rem)}
+  .ep h2{margin-top:.55rem}.ep header>p:not(.bp-kicker){max-width:33rem;margin-top:1rem;color:var(--color-soil);line-height:1.9}.ep header>a{display:inline-block;margin-top:1.15rem;border-bottom:1px solid var(--color-tide);font-size:.82rem;font-weight:700}
+  .notes{border-top:1px solid var(--color-ink)}
+  .notes article{display:grid;grid-template-columns:4.5rem 1fr;gap:1.25rem;align-items:center;padding:1.15rem .2rem 1.15rem 0;border-bottom:1px solid color-mix(in srgb,var(--color-ink) 22%,transparent)}
+  .notes i{display:block;font-style:normal}.notes svg{display:block;width:3.5rem;height:2.5rem;fill:none;stroke:var(--color-tide);stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round}
+  .notes h3{font:600 1.08rem/1.5 var(--font-brand-display);letter-spacing:.02em;color:var(--color-ink)}.notes p{margin-top:.22rem;font-size:.76rem;line-height:1.75;color:var(--color-soil)}
+  @media(max-width:760px){.ep{grid-template-columns:1fr;gap:1.8rem;padding-block:2.5rem}.notes article{grid-template-columns:3.75rem 1fr;gap:.9rem}.notes svg{width:3rem}}
+</style>

@@ -1,39 +1,49 @@
-# IBATOCO Rebrand 2026 — Claude Code Instructions
+# IBATOCO — 現行版の実装ルール
 
-You are the implementation lead. The visual/brand direction is owned by ChatGPT/Codex; do not redesign it independently.
+## 現行TOPは固定版
 
-Before changing code, read these two source-of-truth documents completely:
+2026年8月9日に本番確認したTOPページを唯一の正とします。旧プレビュー、旧バックアップ、過去の設計書、git履歴上の旧`index.astro`からTOPを復元してはいけません。
 
-- `/Users/yamanobeyuuta/Documents/Codex/2026-08-01/referenced-chatgpt-conversation-this-is-untrusted/outputs/IBATOCO_RENEWAL_BLUEPRINT.md`
-- `/Users/yamanobeyuuta/Documents/Codex/2026-08-01/referenced-chatgpt-conversation-this-is-untrusted/outputs/CLAUDE_IMPLEMENTATION_BRIEF.md`
+TOPを変更する前に、必ず次の現行ファイルをすべて確認してください。
 
-## First task
+- `src/pages/index.astro`
+- `src/components/HomeThemeNav.astro`
+- `src/components/HomeAreaExplorer.astro`
+- `src/components/HomeEditorialProcess.astro`
 
-1. Inspect the Astro project, content collections, routes, components, styles, public assets, integrations, deployment configuration, and current git status.
-2. Do not overwrite unrelated or existing user changes.
-3. Compare the codebase with the blueprint and implementation brief.
-4. Produce a concise implementation plan grouped into safe milestones.
-5. Then implement Milestone 1 only:
-   - content disclosure/reporting metadata model;
-   - design tokens and typography foundations;
-   - new header/footer primitives;
-   - Editorial / Partner / PR visual separation;
-   - removal of generic social-network homepage URLs from visible UI and structured data.
-6. Build, typecheck, lint, and test whatever the repository supports.
-7. Report changed files, test results, design deviations, and questions requiring creative-director review.
+現行TOPに必須の構成：
 
-## Non-negotiable constraints
+- 5秒間隔のFVスライド3枚
+- 「イバトコをつくった理由」
+- 横一列のテーマカード6件
+- PCではテキスト左・地図右の44市町村マップ
+- TOPの市町村選択は概要表示ではなく、各`/area/[slug]/`へ直接遷移
+- 「取材と編集」は3項目
+- 地域事業者向け導線
 
-- Do not invent photos, people, reviews, reporting history, social URLs, metrics, or claims.
-- Do not publish empty article/store/category blocks.
-- Do not use orange-red pill CTAs as the primary brand language.
-- Do not use unverified claims such as `地域No.1`, `本物だけ`, `必ず集客`, or `爆発力`.
-- Do not treat paid relationships as editorial endorsement.
-- Do not make broad URL changes without redirects.
-- Keep mobile accessibility, semantic HTML, Core Web Vitals, and reduced-motion support mandatory.
-- If a visual decision is not covered by the source documents, stop and ask ChatGPT/Codex for design direction rather than improvising a new brand direction.
-- The existing interactive map of all 44 Ibaraki municipalities is a protected core product asset. Never remove it, replace it with a generic prefecture silhouette, or reduce it to five plain links. Preserve the accurate municipal boundaries, labels, and five-region grouping in `IbarakiMap.astro` and `ibaraki-geo.ts`. Evolve it into an accessible editorial explorer that connects each municipality to its stories, people, places, and last-updated state. The instruction to remove the prefecture silhouette applies only to decorative hero artwork, not this interactive map.
+これらを削除、旧版へ置換、別コンポーネントへ差し戻す変更は禁止します。変更が必要な場合は、現在の実装へ最小差分で加えてください。
 
-## Working method
+## ブランドと品質
 
-Commit-sized, reversible changes. Build after each milestone. Preserve current content URLs until redirects are implemented and verified.
+- ブランドの中核は「信頼」「地域の一次情報」「地域の価値が正しく伝わる仕組み」。
+- 地域情報の羅列ではなく、地域価値編集ブランドとして設計する。
+- 短期PVより長期的な信頼と紹介を優先する。
+- 架空の写真、人、口コミ、取材履歴、SNS URL、数値、実績、順位表現を作らない。
+- PR・Partner・Editorialを混同しない。広告・提供・招待は明示する。
+- `地域No.1`、`本物だけ`、`必ず集客`など、根拠のない断定を使わない。
+- 既存URLを変更する場合はリダイレクトを用意し、確認する。
+- モバイル、キーボード操作、セマンティックHTML、Core Web Vitals、reduced-motionを守る。
+
+## 地図の保護
+
+44市町村の正確な境界、地名、5地域分類は中核資産です。`IbarakiMap.astro`と`ibaraki-geo.ts`のデータを、汎用シルエットや5地域だけのリンクへ置き換えてはいけません。
+
+TOP専用の挙動は`HomeAreaExplorer.astro`、下層・一覧用の二段階操作は`AreaExplorer.astro`です。用途を混同しないでください。
+
+## 作業方法
+
+- 既存のユーザー変更を上書きしない。
+- 作業前後に`git diff`を確認する。
+- `npm run check`を通し、エラー・警告0件を確認する。
+- TOP変更時は、FV3枚、ブランド背景、テーマ6件、地図44件、取材と編集3件が残っているか確認する。
+- 視覚判断を独断で変えず、未定義の変更はCodex／クリエイティブディレクターへ確認する。

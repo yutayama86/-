@@ -1,18 +1,18 @@
 ---
 import BrandBase from '../../layouts/BrandBase.astro';
-import AreaExplorer from '../../components/AreaExplorer.astro';
+import HomeAreaExplorer from '../../components/HomeAreaExplorer.astro';
 ---
 
 <BrandBase title="エリアから探す｜44市町村から茨城を読む｜イバトコ" description="茨城県44市町村を地図から選び、取材・確認を経た地域の記事、場所、人を探せます。">
-  <header class="area-index-head bp-wrap">
-    <p class="bp-kicker">EXPLORE IBARAKI</p>
-    <h1>44の街から、<br />茨城を読む。</h1>
-    <p>地図の一つひとつが、人と営みへの入口です。街を選ぶと、その地域で確認できた記事・場所・人を表示します。</p>
-  </header>
-  <section class="bp-wrap area-index-map"><AreaExplorer /></section>
+  <main class="area-index-main">
+    <div class="bp-wrap"><HomeAreaExplorer /></div>
+  </main>
 </BrandBase>
 
 <style>
-  .area-index-head{padding-top:clamp(4rem,9vw,8rem)}.area-index-head h1{margin-top:1rem;font:600 clamp(2.6rem,7vw,6rem)/1.18 var(--font-brand-display);color:var(--color-ink)}.area-index-head>p:last-child{max-width:48ch;margin-top:1.5rem;line-height:2;color:var(--color-soil)}
-  .area-index-map{padding-block:clamp(4rem,8vw,7rem)}
+  .area-index-main{
+    min-height:calc(100svh - 76px);
+    padding-block:clamp(3rem,7vw,6.5rem);
+    background:color-mix(in srgb,var(--color-sand) 42%,var(--color-paper));
+  }
 </style>

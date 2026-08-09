@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getAreaCounts, getArticles, getStores } from '../lib/content';
+import { getAreaCounts, getArticles, getIndexableNews, getStores } from '../lib/content';
 import { CATEGORIES, SITE_CONFIG } from '../data/site';
 import { VISIBLE_GUIDES } from '../data/guides';
 import { VISIBLE_REPORTERS } from '../data/reporters';
@@ -10,7 +10,7 @@ const escapeXml = (value: string) =>
   value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
 export const GET: APIRoute = async () => {
-  const [articles, stores, areaCounts] = await Promise.all([getArticles(), getStores(), getAreaCounts()]);
+  const [articles, stores, areaCounts, news] = await Promise.all([getArticles(), getStores(), getAreaCounts(), getIndexableNews()]);
   const entries: SitemapEntry[] = [
     { path: '/' },
     { path: '/about/' },
@@ -21,6 +21,7 @@ export const GET: APIRoute = async () => {
     { path: '/area/' },
     { path: '/biz/' },
     { path: '/contact/' },
+    { path: '/news/' },
   ];
 
   for (const article of articles) {
@@ -30,6 +31,8 @@ export const GET: APIRoute = async () => {
       lastmod: article.data.updatedAt ?? article.data.publishedAt,
     });
   }
+
+  for (const item of news) entries.push({ path: `/news/${item.id.split('/').pop()}/`, lastmod: item.data.updatedDate ?? item.data.pubDate });
 
   for (const category of Object.values(CATEGORIES)) {
     if (articles.some((article) => CATEGORIES[article.data.category].path === category.path)) entries.push({ path: `/${category.path}/` });

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">茨城ニュース解説</title>
+  <desc id="desc">紙面を思わせる罫線と茨城ブルーで構成したニュース用画像</desc>
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="70" y="70" width="1060" height="490" fill="#fffdf8" stroke="#dce6e2" stroke-width="2"/>
+  <rect x="70" y="70" width="24" height="490" fill="#315c68"/>
+  <path d="M154 184h760M154 232h650M154 389h890M154 437h730" stroke="#dce6e2" stroke-width="8"/>
+  <circle cx="1000" cy="220" r="88" fill="#dce6e2"/>
+  <path d="M958 220h84M1000 178v84" stroke="#315c68" stroke-width="10"/>
+  <text x="154" y="340" fill="#172b35" font-family="serif" font-size="70" font-weight="700">茨城ニュース解説</text>
+  <text x="158" y="505" fill="#75695a" font-family="sans-serif" font-size="24" letter-spacing="6">IBATOCO NEWS EXPLAINED</text>
+</svg>

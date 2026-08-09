@@ -1,6 +1,7 @@
 import { OGImageRoute } from 'astro-og-canvas';
-import { getArticles, getStores } from '../../lib/content';
+import { getArticles, getNews, getStores } from '../../lib/content';
 import { CATEGORIES } from '../../data/site';
+import { NEWS_CATEGORIES } from '../../data/news';
 import { VISIBLE_GUIDES as GUIDES } from '../../data/guides';
 
 /**
@@ -12,6 +13,7 @@ import { VISIBLE_GUIDES as GUIDES } from '../../data/guides';
  */
 const articles = await getArticles();
 const places = await getStores();
+const news = await getNews();
 
 type OgPage = { title: string; description: string; accent: [number, number, number] };
 
@@ -29,6 +31,13 @@ for (const a of articles) {
     title: a.data.title,
     description: a.data.area ? `${a.data.area}｜${cat.label}｜IBATOCO` : `${cat.label}｜IBATOCO`,
     accent: hexRgb(cat.accent),
+  };
+}
+for (const item of news) {
+  pages[`news/${item.id.split('/').pop()}`] = {
+    title: item.data.title,
+    description: `${NEWS_CATEGORIES[item.data.category].label}｜茨城ニュース解説｜IBATOCO`,
+    accent: hexRgb('#315c68'),
   };
 }
 for (const p of places) {

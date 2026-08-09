@@ -2,6 +2,8 @@ import { defineCollection, reference } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 import { csvStoresLoader } from './loaders/csv-stores';
+import { MUNICIPALITIES } from './data/areas';
+import { NEWS_CATEGORY_KEYS } from './data/news';
 
 /**
  * カテゴリ（階層1：集客メディア）
@@ -18,6 +20,7 @@ export const CATEGORIES = {
 
 export type CategoryKey = keyof typeof CATEGORIES;
 const categoryKeys = Object.keys(CATEGORIES) as [CategoryKey, ...CategoryKey[]];
+const municipalitySlugs = MUNICIPALITIES.map((municipality) => municipality.slug) as [string, ...string[]];
 
 /**
  * 体験レポート記事（/eat /life /sauna-play /beauty /company）
@@ -166,4 +169,70 @@ const stores = defineCollection({
   }),
 });
 
-export const collections = { articles, places, stores };
+/**
+ * 茨城ニュース解説（/news/）。
+ * AIや外部ワークフローからMarkdownを追加する場合も、公開前に同じ検証を通す。
+ */
+const news = defineCollection({
+  loader: glob({ pattern: '**/[!_]*.{md,mdx}', base: './src/content/news' }),
+  schema: z.object({
+    title: z.string().min(1),
+    description: z.string().min(40).max(180),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    author: z.string().default('イバトコ編集部'),
+    category: z.enum(NEWS_CATEGORY_KEYS),
+    tags: z.array(z.string().min(1)).default([]),
+    prefecture: z.literal('茨城県').default('茨城県'),
+    municipalities: z.array(z.enum(municipalitySlugs)).default([]),
+    featured: z.boolean().default(false),
+    draft: z.boolean().default(true),
+    reviewed: z.boolean().default(false),
+    sample: z.boolean().default(false),
+    noindex: z.boolean().default(false),
+    ogImage: z.string().optional(),
+    ogImageAlt: z.string().default(''),
+    conclusion: z.string().min(1),
+    keyPoints: z.array(z.string().min(1)).min(1),
+    whatHappened: z.string().min(1),
+    whatChanges: z.string().min(1),
+    editorialAnalysis: z.string().min(1),
+    regionalImpact: z.string().min(1),
+    businessImplications: z.array(z.string().min(1)).min(1),
+    faq: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).default([]),
+    sourceUrls: z.array(z.object({
+      label: z.string().min(1),
+      url: z.url(),
+      accessedAt: z.coerce.date().optional(),
+    })).default([]),
+    relatedArticleUrls: z.array(z.string().startsWith('/')).default([]),
+    event: z.object({
+      name: z.string(),
+      startDate: z.coerce.date(),
+      endDate: z.coerce.date().optional(),
+      url: z.url().optional(),
+      placeName: z.string().optional(),
+      address: z.string().optional(),
+    }).optional(),
+    place: z.object({
+      name: z.string(),
+      address: z.string().optional(),
+      url: z.url().optional(),
+    }).optional(),
+  }).superRefine((data, ctx) => {
+    if (!data.draft && !data.reviewed) {
+      ctx.addIssue({ code: 'custom', path: ['reviewed'], message: 'ニュース公開には編集部の事実確認（reviewed: true）が必要です。' });
+    }
+    if (!data.draft && data.sourceUrls.length === 0) {
+      ctx.addIssue({ code: 'custom', path: ['sourceUrls'], message: '公開ニュースには一次情報または信頼できる情報源URLが必要です。' });
+    }
+    if (data.sample && !data.noindex) {
+      ctx.addIssue({ code: 'custom', path: ['noindex'], message: '実装確認用サンプルは noindex: true にしてください。' });
+    }
+    if (data.ogImage && !data.ogImageAlt.trim()) {
+      ctx.addIssue({ code: 'custom', path: ['ogImageAlt'], message: 'OG画像を指定する場合は代替テキストが必要です。' });
+    }
+  }),
+});
+
+export const collections = { articles, places, stores, news };

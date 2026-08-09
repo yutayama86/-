@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { SITE_CONFIG, CATEGORY_LIST, CATEGORY_PAGE_META } from '../data/site';
-import { getArticles, getStores } from '../lib/content';
+import { getArticles, getIndexableNews, getStores } from '../lib/content';
 import { VISIBLE_GUIDES as GUIDES } from '../data/guides';
 import { VISIBLE_REPORTERS as REPORTERS } from '../data/reporters';
 import { MUNICIPALITIES } from '../data/areas';
@@ -14,10 +14,17 @@ import { MUNICIPALITIES } from '../data/areas';
 export const GET: APIRoute = async () => {
   const base = SITE_CONFIG.domain.replace(/\/$/, '');
   const abs = (p: string) => `${base}${p}`;
-  const [articles, stores] = await Promise.all([getArticles(), getStores()]);
+  const [articles, stores, news] = await Promise.all([getArticles(), getStores(), getIndexableNews()]);
 
   const L: string[] = [];
   L.push(`# ${SITE_CONFIG.name} (${SITE_CONFIG.nameEn})`);
+  L.push('');
+
+  L.push('## 茨城ニュース解説');
+  L.push(`- [茨城ニュース解説](${abs('/news/')}): 自治体、観光、地域経済、交通、スポーツ、DXなどの重要ニュースを地域への影響とともに解説`);
+  for (const item of news.slice(0, 30)) {
+    L.push(`- [${item.data.title}](${abs(`/news/${item.id.split('/').pop()}/`)}): ${item.data.description}`);
+  }
   L.push('');
   L.push(`> ${SITE_CONFIG.description}`);
   L.push('');

@@ -19,6 +19,35 @@ export async function getPlaces(): Promise<CollectionEntry<'places'>[]> {
   return all.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 }
 
+/** 公開可能なニュースを新しい順に。サンプルは表示できるが、検索面では noindex とする。 */
+export async function getNews(): Promise<CollectionEntry<'news'>[]> {
+  const all = await getCollection('news', ({ data }) => !data.draft && data.reviewed);
+  return all.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+}
+
+/** sitemap / RSS / TOPに載せられる通常ニュース。 */
+export async function getIndexableNews(): Promise<CollectionEntry<'news'>[]> {
+  return (await getNews()).filter((item) => !item.data.noindex && !item.data.sample);
+}
+
+export async function getRelatedNews(current: CollectionEntry<'news'>, limit = 3) {
+  const municipalitySet = new Set(current.data.municipalities);
+  const tagSet = new Set(current.data.tags);
+  return (await getIndexableNews())
+    .filter((item) => item.id !== current.id)
+    .map((item) => ({
+      item,
+      score:
+        item.data.municipalities.filter((slug) => municipalitySet.has(slug)).length * 4 +
+        item.data.tags.filter((tag) => tagSet.has(tag)).length * 2 +
+        (item.data.category === current.data.category ? 1 : 0),
+    }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score || b.item.data.pubDate.valueOf() - a.item.data.pubDate.valueOf())
+    .slice(0, limit)
+    .map(({ item }) => item);
+}
+
 import { areaToSlug } from '../data/areas';
 
 /**

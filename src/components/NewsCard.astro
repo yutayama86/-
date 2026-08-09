@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { NEWS_CATEGORIES } from '../data/news';
+import { MUNI_BY_SLUG } from '../data/areas';
+import { formatDate } from '../lib/content';
+
+interface Props {
+  item: CollectionEntry<'news'>;
+  compact?: boolean;
+}
+
+const { item, compact = false } = Astro.props;
+const slug = item.id.split('/').pop();
+const municipalities = item.data.municipalities.map((value) => MUNI_BY_SLUG.get(value)?.name).filter(Boolean);
+const image = item.data.ogImage ?? '/images/news/news-placeholder.svg';
+const imageAlt = item.data.ogImageAlt || '茨城ニュース解説のイメージ';
+---
+
+<article class:list={['news-card', { compact }]}>
+  <a class="news-card__image" href={`/news/${slug}/`} tabindex="-1" aria-hidden="true">
+    <img src={image} alt={imageAlt} loading="lazy" width="1200" height="630" />
+  </a>
+  <div class="news-card__body">
+    <div class="news-card__meta">
+      <span>{NEWS_CATEGORIES[item.data.category].label}</span>
+      {municipalities.length > 0 && <span>{municipalities.join('・')}</span>}
+      {item.data.sample && <span class="news-card__sample">実装確認用</span>}
+    </div>
+    <h3><a href={`/news/${slug}/`}>{item.data.title}</a></h3>
+    {!compact && <p>{item.data.description}</p>}
+    <div class="news-card__dates">
+      <time datetime={item.data.pubDate.toISOString()}>公開 {formatDate(item.data.pubDate)}</time>
+      {item.data.updatedDate && <time datetime={item.data.updatedDate.toISOString()}>更新 {formatDate(item.data.updatedDate)}</time>}
+    </div>
+  </div>
+</article>
+
+<style>
+  .news-card{display:grid;grid-template-rows:auto 1fr;height:100%;background:var(--color-white);border:1px solid color-mix(in srgb,var(--color-tide) 18%,transparent)}
+  .news-card__image{display:block;overflow:hidden;aspect-ratio:16/9;background:var(--color-mist)}.news-card__image img{width:100%;height:100%;object-fit:cover;transition:transform .45s ease}.news-card:hover .news-card__image img{transform:scale(1.025)}
+  .news-card__body{display:flex;flex-direction:column;padding:1.25rem}.news-card__meta{display:flex;flex-wrap:wrap;gap:.45rem .8rem;color:var(--color-tide);font:.68rem/1.5 var(--font-brand-meta);letter-spacing:.08em}.news-card__sample{color:var(--color-signal)}
+  h3{margin-top:.75rem;font:600 clamp(1.15rem,2vw,1.45rem)/1.55 var(--font-brand-display);color:var(--color-ink)}h3 a{text-decoration:none}h3 a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
+  p{margin-top:.75rem;color:var(--color-soil);font-size:.84rem;line-height:1.8}.news-card__dates{display:flex;flex-wrap:wrap;gap:.35rem 1rem;margin-top:auto;padding-top:1.2rem;color:var(--color-soil);font-size:.68rem}
+  .compact{grid-template-columns:minmax(140px,.42fr) minmax(0,.58fr);grid-template-rows:1fr}.compact .news-card__image{aspect-ratio:auto}.compact .news-card__body{padding:1rem}.compact h3{font-size:1rem}
+  @media(max-width:560px){.compact{grid-template-columns:1fr;grid-template-rows:auto 1fr}.compact .news-card__image{aspect-ratio:16/9}}
+  @media(prefers-reduced-motion:reduce){.news-card__image img{transition:none}}
+</style>

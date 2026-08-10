@@ -8,6 +8,16 @@ import { getIndexableNews } from '../lib/content';
 
 const latestNews = (await getIndexableNews()).slice(0, 3);
 
+// TOP修正指示書 §5：title に「茨城」を含める（ブランドタグライン「現地から、信頼を編む。」はフッター/Aboutで維持）。
+const pageTitle = 'イバトコ｜茨城を歩いてつくるローカルメディア';
+const pageDescription = '茨城の44市町村を歩いて取材するローカルメディア。食べる、出かける、泊まる、暮らす、整える、働く。現地で会って聞いた茨城を届けます。';
+// §6：Organization / WebSite の構造化データ。
+const siteUrl = new URL('/', Astro.site).href;
+const homeJsonLd = [
+  { '@context': 'https://schema.org', '@type': 'Organization', name: 'イバトコ', url: siteUrl, areaServed: { '@type': 'AdministrativeArea', name: '茨城県' } },
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'イバトコ', url: siteUrl },
+];
+
 const heroSlides = [
   {
     src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg/1280px-Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg',
@@ -36,7 +46,7 @@ const heroSlides = [
 ];
 ---
 
-<BrandBase>
+<BrandBase title={pageTitle} description={pageDescription} jsonLd={homeJsonLd}>
   <section class="home-hero">
     <div class="hero-slides" aria-live="off">
       {heroSlides.map((slide, index) => (

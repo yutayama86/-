@@ -62,8 +62,13 @@ const pageTitle = isHitachi
     ? `${municipality.name}の歩き方｜${titleSuffix}｜イバトコ`
     : `${municipality.name}｜茨城の街を読む｜イバトコ`;
 const ogTitle = isHitachi ? '日立市の歩き方｜海の駅と、桜の山｜イバトコ' : undefined;
-// noindex：旗艦=公開／ガイド18=要確認の裏取り完了まで非公開／ミニマル=記事が付くまで非公開。
-const shouldNoindex = isHitachi ? false : hasGuide ? true : !hasContent;
+// noindex 方針：
+//  ・日立（旗艦）＝index。
+//  ・公式出典で裏取り済みの執筆ページ（guide.sources あり＝水戸・つくば等25）＝index解除。
+//  ・最終バッチ18（sources なし／「要確認」項目が残る）＝人手検証まで noindex 維持。
+//  ・ガイドなし（記事が付くまで）＝noindex。
+const isVerifiedGuide = hasGuide && !!guide?.sources?.length;
+const shouldNoindex = isHitachi ? false : isVerifiedGuide ? false : hasGuide ? true : !hasContent;
 // 構造化データ（44ページ共通・既存データから導出／創作なし）。
 // TouristDestination＋各見どころのTouristAttraction、半日コースのItemList、BreadcrumbList。
 const hitachiHighlights = ['日立駅', '御岩神社', 'かみね公園', '大煙突'];

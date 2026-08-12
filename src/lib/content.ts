@@ -148,16 +148,27 @@ export async function getAreaCounts(): Promise<Map<string, number>> {
   return counts;
 }
 
-/** 全記事のタグ一覧（重複除去・件数付き） */
+/** 通常記事とニュースを横断したタグ一覧（重複除去・件数付き）。 */
 export async function getAllTags(): Promise<{ tag: string; count: number }[]> {
-  const articles = await getArticles();
+  const [articles, news] = await Promise.all([getArticles(), getIndexableNews()]);
   const map = new Map<string, number>();
   for (const a of articles) for (const t of a.data.tags) map.set(t, (map.get(t) ?? 0) + 1);
+  for (const item of news) for (const t of item.data.tags) map.set(t, (map.get(t) ?? 0) + 1);
   return [...map.entries()].map(([tag, count]) => ({ tag, count })).sort((a, b) => b.count - a.count);
 }
 
 export async function getArticlesByTag(tag: string) {
   return (await getArticles()).filter((a) => a.data.tags.includes(tag));
+}
+
+export async function getNewsByTag(tag: string) {
+  return (await getIndexableNews()).filter((item) => item.data.tags.includes(tag));
+}
+
+/** Cloudflare静的配信でも安定するASCIIタグslug。表示名は元の日本語を使う。 */
+export function tagToSlug(tag: string): string {
+  const bytes = new TextEncoder().encode(tag.normalize('NFC'));
+  return `t-${Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')}`;
 }
 
 export async function getArticlesByArea(slug: string) {

@@ -7,7 +7,7 @@ import DisclosureBadge from '../../components/DisclosureBadge.astro';
 import ReportingMeta from '../../components/ReportingMeta.astro';
 import CorrectionHistory from '../../components/CorrectionHistory.astro';
 import { CATEGORIES, SITE_CONFIG } from '../../data/site';
-import { getPublishedArticles } from '../../lib/content';
+import { getPublishedArticles, tagToSlug } from '../../lib/content';
 import { reporterByName } from '../../data/reporters';
 
 export const getStaticPaths = (async () => (await getPublishedArticles()).map((article) => ({
@@ -52,7 +52,7 @@ const jsonLd = {
       <div class="story-body prose"><Content /></div>
     </div>
 
-    {data.tags.length > 0 && <ul class="story-tags bp-reading">{data.tags.map((tag) => <li><a href={`/tag/${encodeURIComponent(tag)}/`}>#{tag}</a></li>)}</ul>}
+    {data.tags.length > 0 && <ul class="story-tags bp-reading">{data.tags.map((tag) => <li><a href={`/tag/${tagToSlug(tag)}/`}>#{tag}</a></li>)}</ul>}
     <div class="story-corrections bp-reading"><CorrectionHistory corrections={data.corrections} /></div>
     <footer class="story-footer bp-reading"><p>内容についてお気づきの点がある場合は、訂正・更新方針をご確認ください。</p><a href="/about/corrections/">訂正・更新方針 →</a></footer>
   </article>

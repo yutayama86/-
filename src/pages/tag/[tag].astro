@@ -2,20 +2,22 @@
 import type { GetStaticPaths } from 'astro';
 import BrandBase from '../../layouts/BrandBase.astro';
 import BrandStoryCard from '../../components/BrandStoryCard.astro';
-import { getAllTags, getArticlesByTag } from '../../lib/content';
+import NewsCard from '../../components/NewsCard.astro';
+import { getAllTags, getArticlesByTag, getNewsByTag, tagToSlug } from '../../lib/content';
 
 export const getStaticPaths = (async () => {
   const tags = await getAllTags();
-  return tags.map(({ tag }) => ({ params: { tag }, props: { tag } }));
+  return tags.map(({ tag }) => ({ params: { tag: tagToSlug(tag) }, props: { tag } }));
 }) satisfies GetStaticPaths;
 
 const { tag } = Astro.props;
-const articles = await getArticlesByTag(tag);
+const [articles, news] = await Promise.all([getArticlesByTag(tag), getNewsByTag(tag)]);
+const total = articles.length + news.length;
 ---
 
 <BrandBase
   title={`#${tag}の記事`}
-  description={`「${tag}」に関する茨城の体験レポート・お店をイバトコがまとめました。`}
+  description={`「${tag}」に関する茨城の記事とニュース解説をイバトコがまとめました。`}
 >
   <section class="wrap tag-hero">
     <nav class="crumbs" aria-label="パンくず" data-reveal>
@@ -23,17 +25,13 @@ const articles = await getArticlesByTag(tag);
     </nav>
     <p class="eyebrow" data-reveal>Tag</p>
     <h1 class="display tag-title" data-reveal>#{tag}</h1>
-    <p class="tag-lead muted" data-reveal>「{tag}」の記事 {articles.length}件</p>
+    <p class="tag-lead muted" data-reveal>「{tag}」の記事・ニュース {total}件</p>
   </section>
 
   <section class="wrap section">
-    {articles.length > 0 ? (
-      <div class="tag-grid">
-        {articles.map((a) => <BrandStoryCard article={a} />)}
-      </div>
-    ) : (
-      <p class="empty muted mincho">この タグの記事はまだありません。</p>
-    )}
+    {news.length > 0 && <div class="tag-group"><p class="eyebrow">News</p><h2>ニュース解説</h2><div class="tag-grid tag-grid--news">{news.map((item) => <NewsCard item={item} />)}</div></div>}
+    {articles.length > 0 && <div class="tag-group"><p class="eyebrow">Stories</p><h2>記事</h2><div class="tag-grid">{articles.map((a) => <BrandStoryCard article={a} />)}</div></div>}
+    {total === 0 && <p class="empty muted mincho">このタグの記事はまだありません。</p>}
   </section>
 </BrandBase>
 
@@ -44,6 +42,8 @@ const articles = await getArticlesByTag(tag);
   .tag-title { font-size: var(--step-4); margin: 0.4rem 0; color: var(--ink); }
   .tag-lead { font-size: var(--step-0); }
   .section { padding-block: clamp(2rem, 5vw, 3.5rem); }
+  .tag-group + .tag-group { margin-top: clamp(3rem, 7vw, 5rem); padding-top: clamp(2rem, 5vw, 3.5rem); border-top: 1px solid var(--color-mist); }
+  .tag-group h2 { margin: .4rem 0 1.5rem; font: 600 clamp(1.5rem, 3vw, 2.2rem)/1.35 var(--font-brand-display); color: var(--color-ink); }
   .tag-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); }
   .empty { font-size: var(--step-1); padding-block: 2rem; }
   @media (max-width: 1000px) { .tag-grid { grid-template-columns: 1fr 1fr; } }

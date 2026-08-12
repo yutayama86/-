@@ -2,7 +2,7 @@
 import type { GetStaticPaths } from 'astro';
 import BrandBase from '../../layouts/BrandBase.astro';
 import { VISIBLE_GUIDES as GUIDES, GUIDE_BY_SLUG } from '../../data/guides';
-import { getStores, getAllTags } from '../../lib/content';
+import { getStores, getAllTags, tagToSlug } from '../../lib/content';
 import { CATEGORIES, SITE_CONFIG } from '../../data/site';
 import { MUNI_BY_SLUG } from '../../data/areas';
 
@@ -68,7 +68,7 @@ const jsonLd = [
         {guide.tags.map((t) => (
           <li>
             {tagSet.has(t)
-              ? <a href={`/tag/${encodeURIComponent(t)}/`} class="chip chip--link">#{t}</a>
+              ? <a href={`/tag/${tagToSlug(t)}/`} class="chip chip--link">#{t}</a>
               : <span class="chip">#{t}</span>}
           </li>
         ))}

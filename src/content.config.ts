@@ -200,6 +200,13 @@ const news = defineCollection({
     keyPoints: z.array(z.string().min(1)).min(1),
     whatHappened: z.string().min(1),
     whatChanges: z.string().min(1),
+    accessGuide: z.object({
+      location: z.string().min(1),
+      homeUseStarts: z.string().min(1),
+      parking: z.array(z.object({ heading: z.string().min(1), detail: z.string().min(1) })).min(1),
+      publicTransport: z.array(z.object({ heading: z.string().min(1), detail: z.string().min(1) })).min(1),
+      returnTrip: z.string().min(1),
+    }).optional(),
     editorialAnalysis: z.string().min(1),
     regionalImpact: z.string().min(1),
     businessImplications: z.array(z.string().min(1)).min(1),

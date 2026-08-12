@@ -22,10 +22,10 @@ export const SITE_CONFIG = {
   // 実在する公式URLのみをここに入れると、フッター・構造化データ(sameAs)に反映される。
   // 例: instagram: 'https://www.instagram.com/ibatoco_official/'
   social: {
-    instagram: '',
+    instagram: 'https://www.instagram.com/ibatoco/',
     tiktok: '',
-    x: '',
-    threads: '',
+    x: 'https://x.com/ibatoco',
+    threads: 'https://www.threads.com/@ibatoco',
   },
   contactEmail: 'info@ibatoco.jp',
 } as const;

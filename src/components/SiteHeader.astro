@@ -1,91 +1,209 @@
 ---
 /**
  * ブランドサイトの共通ヘッダー。
- * 記事がない先行公開時も空一覧へ誘導せず、街・方針・About・連絡先を主導線にする。
- * 事業者向け導線は主ナビから分離し、過度に強調しない。
+ * 「44市町村」と、自然・季節・目的の各入口をひとつの探索メニューにまとめる。
  */
 import { SITE_CONFIG } from '../data/site';
 import BrandLogo from './BrandLogo.astro';
 
-const primaryNav = [
-  { label: 'ニュース', href: '/news/' },
-  { label: '街を探す', href: '/area/' },
+const discoveryGroups = [
+  {
+    label: '自然から探す',
+    items: [
+      { label: '海', note: '太平洋と海辺の町', href: '/sauna-play/' },
+      { label: '川・湖', note: '霞ヶ浦、那珂川、鬼怒川', href: '/sauna-play/' },
+      { label: '山', note: '筑波山、八溝山地', href: '/sauna-play/' },
+      { label: '公園', note: '季節の花と大きな空', href: '/sauna-play/' },
+    ],
+  },
+  {
+    label: '季節から探す',
+    items: [
+      { label: '花火', note: '県内の大会とつくり手', href: '/hanabi/' },
+      { label: '花', note: '梅、桜、ネモフィラ', href: '/sauna-play/' },
+      { label: '祭り', note: '土地に残る行事', href: '/sauna-play/' },
+      { label: '紅葉', note: '渓谷と山の秋', href: '/sauna-play/' },
+    ],
+  },
+  {
+    label: '目的から探す',
+    items: [
+      { label: '食べる', note: '畑、港、店の物語', href: '/eat/' },
+      { label: '出かける', note: '休日の行き先', href: '/sauna-play/' },
+      { label: '泊まる', note: '朝の光ごと身を置く', href: '/stay/' },
+      { label: '暮らす', note: 'この土地の日常を訪ねる', href: '/life/' },
+      { label: '整える', note: '温泉とサウナ', href: '/beauty/' },
+      { label: '働く・つくる', note: '仕事、技、人の物語', href: '/company/' },
+    ],
+  },
+];
+
+const aboutLinks = [
+  { label: '私たちについて', href: '/about/' },
   { label: '編集方針', href: '/about/editorial-policy/' },
-  { label: 'イバトコについて', href: '/about/' },
-  { label: 'お問い合わせ', href: '/contact/' },
+  { label: '運営・チーム', href: '/about/team/' },
 ];
 ---
 
-<header class="site-header">
+<header class="site-header" data-site-header>
   <div class="site-header__inner">
     <a href="/" class="site-header__logo" aria-label={`${SITE_CONFIG.name} ホーム`}>
       <BrandLogo size={34} />
     </a>
 
-    <nav class="site-header__nav" aria-label="メインナビゲーション">
-      <ul class="site-header__list">
-        {primaryNav.map((n) => (
-          <li><a href={n.href} class="site-header__link">{n.label}</a></li>
-        ))}
-      </ul>
+    <nav class="desktop-nav" aria-label="メインナビゲーション">
+      <a href="/news/">ニュース</a>
+      <button type="button" data-menu-trigger="discover" aria-expanded="false" aria-controls="discover-menu">
+        茨城を探す <span aria-hidden="true">⌄</span>
+      </button>
+      <button type="button" data-menu-trigger="about" aria-expanded="false" aria-controls="about-menu">
+        イバトコについて <span aria-hidden="true">⌄</span>
+      </button>
+      <a href="/contact/">お問い合わせ</a>
     </nav>
 
-    <div class="site-header__utility">
-      <a href="/biz/" class="site-header__partner">地域事業者の方へ</a>
-    </div>
+    <a class="business-link" href="/biz/">地域事業者の方へ <span aria-hidden="true">↗</span></a>
 
-    <details class="site-header__mobile">
-      <summary aria-label="メニューを開閉">メニュー</summary>
-      <ul>
-        {primaryNav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
-        <li><a href="/biz/">地域事業者の方へ</a></li>
-      </ul>
-    </details>
+    <button class="mobile-trigger" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="mobile-menu" data-mobile-trigger>
+      <span></span><span></span>
+    </button>
+  </div>
+
+  <div class="mega-menu" id="discover-menu" data-menu-panel="discover" aria-hidden="true">
+    <div class="mega-menu__inner">
+      <div class="mega-intro">
+        <span class="menu-number">01</span>
+        <p class="en-label">DISCOVER IBARAKI</p>
+        <h2>知らなかった茨城へ。</h2>
+        <p>自然、季節、目的。いまの気分に近い入口から、土地の話をたどれます。</p>
+        <a class="area-gateway" href="/area/">
+          <span><small>IBARAKI 44 CITIES</small>44市町村から探す</span>
+          <b aria-hidden="true">→</b>
+        </a>
+      </div>
+      <div class="mega-columns">
+        {discoveryGroups.map((group) => (
+          <section>
+            <h3>{group.label}</h3>
+            <ul>
+              {group.items.map((item) => (
+                <li><a href={item.href}><span>{item.label}</span><small>{item.note}</small><b aria-hidden="true">↗</b></a></li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="about-menu" id="about-menu" data-menu-panel="about" aria-hidden="true">
+    {aboutLinks.map((item, index) => <a href={item.href}><span>0{index + 1}</span>{item.label}</a>)}
+  </div>
+
+  <div class="mobile-panel" id="mobile-menu" data-mobile-panel aria-hidden="true">
+    <div class="mobile-panel__inner">
+      <p class="en-label">MENU</p>
+      <a class="mobile-main-link" href="/news/">ニュース <span aria-hidden="true">→</span></a>
+      <details open>
+        <summary>茨城を探す <span aria-hidden="true">＋</span></summary>
+        <div class="mobile-discovery">
+          <a class="mobile-area" href="/area/"><small>IBARAKI 44 CITIES</small><strong>44市町村から探す</strong><span aria-hidden="true">→</span></a>
+          {discoveryGroups.map((group) => (
+            <section>
+              <h3>{group.label}</h3>
+              <div>{group.items.map((item) => <a href={item.href}>{item.label}</a>)}</div>
+            </section>
+          ))}
+        </div>
+      </details>
+      <details>
+        <summary>イバトコについて <span aria-hidden="true">＋</span></summary>
+        <div class="mobile-sub-links">{aboutLinks.map((item) => <a href={item.href}>{item.label}</a>)}</div>
+      </details>
+      <a class="mobile-main-link" href="/contact/">お問い合わせ <span aria-hidden="true">→</span></a>
+      <a class="mobile-business" href="/biz/">地域事業者の方へ <span aria-hidden="true">↗</span></a>
+    </div>
   </div>
 </header>
 
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  if (header) {
+    const triggers = [...header.querySelectorAll<HTMLButtonElement>('[data-menu-trigger]')];
+    const panels = [...header.querySelectorAll<HTMLElement>('[data-menu-panel]')];
+    const mobileTrigger = header.querySelector<HTMLButtonElement>('[data-mobile-trigger]');
+    const mobilePanel = header.querySelector<HTMLElement>('[data-mobile-panel]');
+
+    const closeDesktop = () => {
+      triggers.forEach((trigger) => { trigger.classList.remove('is-active'); trigger.setAttribute('aria-expanded', 'false'); });
+      panels.forEach((panel) => { panel.classList.remove('is-open'); panel.setAttribute('aria-hidden', 'true'); });
+    };
+    const closeMobile = () => {
+      mobileTrigger?.classList.remove('is-active');
+      mobileTrigger?.setAttribute('aria-expanded', 'false');
+      mobileTrigger?.setAttribute('aria-label', 'メニューを開く');
+      mobilePanel?.classList.remove('is-open');
+      mobilePanel?.setAttribute('aria-hidden', 'true');
+      document.documentElement.classList.remove('menu-is-open');
+    };
+
+    triggers.forEach((trigger) => trigger.addEventListener('click', () => {
+      const name = trigger.dataset.menuTrigger;
+      const wasOpen = trigger.getAttribute('aria-expanded') === 'true';
+      closeDesktop();
+      if (!wasOpen) {
+        const panel = panels.find((item) => item.dataset.menuPanel === name);
+        trigger.classList.add('is-active');
+        trigger.setAttribute('aria-expanded', 'true');
+        panel?.classList.add('is-open');
+        panel?.setAttribute('aria-hidden', 'false');
+      }
+    }));
+
+    mobileTrigger?.addEventListener('click', () => {
+      const shouldOpen = mobileTrigger.getAttribute('aria-expanded') !== 'true';
+      closeDesktop();
+      if (!shouldOpen) { closeMobile(); return; }
+      mobileTrigger.classList.add('is-active');
+      mobileTrigger.setAttribute('aria-expanded', 'true');
+      mobileTrigger.setAttribute('aria-label', 'メニューを閉じる');
+      mobilePanel?.classList.add('is-open');
+      mobilePanel?.setAttribute('aria-hidden', 'false');
+      document.documentElement.classList.add('menu-is-open');
+    });
+
+    document.addEventListener('pointerdown', (event) => { if (!header.contains(event.target as Node)) closeDesktop(); });
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      closeDesktop(); closeMobile();
+      if (event.target instanceof HTMLElement) event.target.blur();
+    });
+    window.addEventListener('resize', () => { if (window.innerWidth > 1040) closeMobile(); });
+  }
+</script>
+
 <style>
-  .site-header {
-    background: var(--color-paper);
-    border-bottom: 1px solid var(--color-mist);
-    font-family: var(--font-brand-body);
-  }
-  .site-header__inner {
-    max-width: var(--content-wide);
-    margin-inline: auto;
-    padding: 0.9rem clamp(1rem, 4vw, 2rem);
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  .site-header__logo { display: inline-flex; align-items:center; line-height: 1.05; text-decoration: none; color:var(--color-ink) }
-
-  .site-header__nav { margin-inline-start: auto; }
-  .site-header__list { display: flex; gap: 1.6rem; list-style: none; }
-  .site-header__link {
-    color: var(--color-charcoal); text-decoration: none; font-size: 0.95rem;
-    padding-bottom: 2px; border-bottom: 1px solid transparent; transition: border-color 180ms ease, color 180ms ease;
-  }
-  .site-header__link:hover, .site-header__link:focus-visible { color: var(--color-tide); border-color: var(--color-tide); }
-
-  .site-header__utility { display: flex; align-items: center; gap: 1rem; }
-  .site-header__partner {
-    font-size: 0.85rem; color: var(--color-ink); text-decoration: none;
-    border-bottom: 1px solid var(--color-soil); padding-bottom: 1px;
-  }
-  .site-header__partner:hover, .site-header__partner:focus-visible { color: var(--color-tide); border-color: var(--color-tide); }
-
-  .site-header__mobile { display: none; margin-inline-start: auto; }
-  .site-header__mobile summary { cursor: pointer; font-size: 0.9rem; color: var(--color-ink); list-style: none; padding: 0.4em 0.6em; border: 1px solid var(--color-mist); border-radius: var(--radius-xs); }
-  .site-header__mobile summary::-webkit-details-marker { display: none; }
-  .site-header__mobile ul { list-style: none; display: grid; gap: 0.2rem; margin-top: 0.6rem; }
-  .site-header__mobile a { display: block; padding: 0.7em 0.6em; color: var(--color-charcoal); text-decoration: none; border-bottom: 1px solid var(--color-mist); }
-
-  @media (max-width: 820px) {
-    .site-header__nav, .site-header__utility { display: none; }
-    .site-header__mobile { display: block; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .site-header__link { transition: none; }
-  }
+  :global(html.menu-is-open){overflow:hidden}
+  .site-header{position:sticky;top:0;z-index:50;height:88px;background:color-mix(in srgb,var(--color-paper) 97%,transparent);border-top:2px solid #dce4e3;border-bottom:1px solid color-mix(in srgb,var(--color-ink) 14%,transparent);font-family:var(--font-brand-body);backdrop-filter:blur(12px)}
+  .site-header__inner{width:100%;height:100%;padding-inline:clamp(1.75rem,5vw,5.75rem);display:grid;grid-template-columns:minmax(150px,1fr) auto minmax(190px,1fr);align-items:center}
+  .site-header__logo{display:inline-flex;align-items:center;justify-self:start;color:var(--color-ink);line-height:1.05;text-decoration:none}
+  .desktop-nav{height:100%;display:flex;align-items:stretch;gap:clamp(1.5rem,2.7vw,3rem)}
+  .desktop-nav>a,.desktop-nav button{position:relative;display:flex;align-items:center;padding:0;border:0;background:none;color:var(--color-ink);font:700 .88rem/1 var(--font-brand-body);letter-spacing:.035em;white-space:nowrap;cursor:pointer}
+  .desktop-nav>a::after,.desktop-nav button::after{content:'';position:absolute;left:0;right:100%;bottom:1.3rem;height:1px;background:var(--color-ink);transition:right .25s ease}
+  .desktop-nav>a:hover::after,.desktop-nav>a:focus-visible::after,.desktop-nav button:hover::after,.desktop-nav button:focus-visible::after,.desktop-nav button.is-active::after{right:0}
+  .desktop-nav button>span{margin-left:.45rem;transition:transform .2s ease}.desktop-nav button.is-active>span{transform:rotate(180deg)}
+  .business-link{justify-self:end;padding-bottom:.45rem;border-bottom:1px solid var(--color-ink);color:var(--color-ink);font-size:.86rem;font-weight:700;white-space:nowrap}.business-link span{margin-left:.65rem}
+  .mobile-trigger{display:none}
+  .mega-menu{position:absolute;top:87px;left:0;right:0;max-height:calc(100svh - 87px);overflow-y:auto;background:var(--color-paper);border-top:1px solid color-mix(in srgb,var(--color-ink) 16%,transparent);box-shadow:0 1.5rem 3rem rgba(11,30,35,.14);opacity:0;visibility:hidden;transform:translateY(-.5rem);transition:opacity .22s ease,visibility .22s ease,transform .22s ease}
+  .mega-menu.is-open,.about-menu.is-open{opacity:1;visibility:visible;transform:translateY(0)}
+  .mega-menu__inner{display:grid;grid-template-columns:minmax(250px,.72fr) minmax(660px,2.3fr);gap:clamp(2.6rem,6vw,6.25rem);padding:2.6rem clamp(2.1rem,6vw,6.9rem) 3rem}
+  .menu-number{font:600 .72rem/1 var(--font-brand-meta);color:#789095}.en-label{font:800 .62rem/1 var(--font-brand-meta);letter-spacing:.2em;color:#668087}.mega-intro>.en-label{margin-top:.7rem}
+  .mega-intro h2{margin:1rem 0;font:500 clamp(1.6rem,2.1vw,2.25rem)/1.5 var(--font-brand-display);letter-spacing:.04em}.mega-intro>p:not(.en-label){max-width:18rem;color:var(--color-soil);font-size:.8rem;line-height:2}
+  .area-gateway{display:flex;align-items:center;justify-content:space-between;gap:1rem;max-width:20rem;margin-top:1.6rem;padding:1rem 1.1rem;background:var(--color-ink);color:#fff;transition:transform .22s ease,box-shadow .22s ease}.area-gateway span{display:grid;gap:.35rem;font:700 1rem/1.4 var(--font-brand-display)}.area-gateway small{font:700 .55rem/1 var(--font-brand-meta);letter-spacing:.14em;color:#9db4b7}.area-gateway b{display:grid;place-items:center;width:2rem;height:2rem;border:1px solid rgba(255,255,255,.45);border-radius:50%;font-weight:400}.area-gateway:hover,.area-gateway:focus-visible{transform:translateY(-3px);box-shadow:0 .8rem 1.4rem rgba(22,45,51,.18)}
+  .mega-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.4rem,3vw,3.25rem)}.mega-columns h3{margin:0 0 .9rem;padding-bottom:.75rem;border-bottom:1px solid var(--color-ink);font:600 .95rem/1.4 var(--font-brand-display)}.mega-columns ul{list-style:none;margin:0;padding:0}.mega-columns li{border-bottom:1px solid color-mix(in srgb,var(--color-ink) 14%,transparent)}.mega-columns a{position:relative;display:flex;min-height:3.65rem;flex-direction:column;justify-content:center;padding:.6rem 2.35rem .6rem .65rem;transition:background-color .22s ease,padding-left .22s ease}.mega-columns a span{font:700 1.02rem/1.3 var(--font-brand-display)}.mega-columns a small{margin-top:.25rem;color:var(--color-soil);font-size:.62rem}.mega-columns a b{position:absolute;right:.2rem;top:1.3rem;font-weight:400;transition:transform .2s ease}.mega-columns a:hover,.mega-columns a:focus-visible{padding-left:1rem;background:color-mix(in srgb,var(--color-tide) 7%,transparent)}.mega-columns a:hover b,.mega-columns a:focus-visible b{transform:translate(.25rem,-.25rem)}
+  .about-menu{position:absolute;top:87px;left:50%;width:19.5rem;padding:.85rem 1.5rem;background:var(--color-paper);border:1px solid color-mix(in srgb,var(--color-ink) 16%,transparent);box-shadow:0 1.1rem 2.5rem rgba(11,30,35,.13);opacity:0;visibility:hidden;transform:translate(-15%,-.5rem);transition:opacity .2s ease,visibility .2s ease,transform .2s ease}.about-menu.is-open{transform:translate(-15%,0)}.about-menu a{display:flex;align-items:center;min-height:3.6rem;border-bottom:1px solid color-mix(in srgb,var(--color-ink) 14%,transparent);font:600 .92rem var(--font-brand-display)}.about-menu a:last-child{border-bottom:0}.about-menu span{margin-right:1rem;color:#789095;font:.62rem var(--font-brand-meta)}
+  .mobile-panel{display:none}
+  @media(max-width:1040px){.site-header{height:76px}.site-header__inner{grid-template-columns:1fr auto;padding-inline:1.5rem}.desktop-nav,.business-link{display:none}.mobile-trigger{z-index:2;display:flex;width:2.75rem;height:2.75rem;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;padding:0;border:0;background:transparent;cursor:pointer}.mobile-trigger span{display:block;width:1.7rem;height:1px;background:var(--color-ink);transition:transform .25s ease}.mobile-trigger.is-active span:first-child{transform:translateY(.28rem) rotate(45deg)}.mobile-trigger.is-active span:last-child{transform:translateY(-.28rem) rotate(-45deg)}.mega-menu,.about-menu{display:none}.mobile-panel{position:fixed;top:76px;inset-inline:0;display:block;height:calc(100svh - 76px);overflow-y:auto;background:var(--color-paper);opacity:0;visibility:hidden;transform:translateY(-.5rem);transition:opacity .23s ease,visibility .23s ease,transform .23s ease}.mobile-panel.is-open{opacity:1;visibility:visible;transform:none}.mobile-panel__inner{padding:2rem 1.6rem 3.75rem}.mobile-main-link,.mobile-panel summary{display:flex;min-height:4rem;align-items:center;justify-content:space-between;border-bottom:1px solid var(--color-ink);font:600 1.2rem var(--font-brand-display);cursor:pointer;list-style:none}.mobile-panel summary::-webkit-details-marker{display:none}.mobile-panel details[open] summary span{transform:rotate(45deg)}.mobile-discovery{padding:1.2rem 0 1.6rem}.mobile-area{display:grid;grid-template-columns:1fr auto;gap:.35rem 1rem;align-items:center;margin-bottom:1.4rem;padding:1rem 1.1rem;background:var(--color-ink);color:#fff}.mobile-area small{font:.55rem var(--font-brand-meta);letter-spacing:.14em;color:#9db4b7}.mobile-area strong{grid-column:1;font:700 1rem var(--font-brand-display)}.mobile-area span{grid-column:2;grid-row:1/3}.mobile-discovery section{margin-bottom:1.15rem}.mobile-discovery h3{margin:0 0 .55rem;color:#668087;font-size:.62rem;letter-spacing:.12em}.mobile-discovery section div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;border:1px solid color-mix(in srgb,var(--color-ink) 14%,transparent);background:color-mix(in srgb,var(--color-ink) 14%,transparent)}.mobile-discovery section a{padding:.85rem;background:var(--color-paper);font:600 .9rem var(--font-brand-display)}.mobile-sub-links{display:grid;padding:.5rem 0 1.1rem 1rem}.mobile-sub-links a{padding:.75rem 0;color:var(--color-soil);font-size:.85rem}.mobile-business{display:flex;justify-content:space-between;margin-top:1.75rem;padding:1.2rem;background:var(--color-ink);color:#fff;font-size:.86rem;font-weight:700}}
+  @media(max-width:560px){.site-header{height:68px}.site-header__inner{padding-inline:1.1rem}.site-header__logo :global(svg){max-width:8.5rem}.mobile-panel{top:68px;height:calc(100svh - 68px)}.mobile-panel__inner{padding-inline:1.2rem}}
+  @media(prefers-reduced-motion:reduce){.desktop-nav>a::after,.desktop-nav button::after,.desktop-nav button>span,.mega-menu,.about-menu,.area-gateway,.mega-columns a,.mega-columns a b,.mobile-trigger span,.mobile-panel{transition:none}}
 </style>

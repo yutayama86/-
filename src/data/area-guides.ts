@@ -1460,11 +1460,16 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
       '静峰ふるさと公園は八重桜の名所として知られています。八重桜はソメイヨシノより遅く咲くため、県内の桜が終わったあとに見頃を迎えます。花見の季節を一度延長できる場所です。',
     ],
     highlights: [
-      { title: '静峰ふるさと公園', text: '八重桜の名所。ソメイヨシノより遅い時期に見頃を迎えます。八重桜まつりの期間は日程を確認してから。' },
+      { title: '静峰ふるさと公園', text: '「日本さくら名所100選」の一つ。約2,000本の八重桜が、ソメイヨシノより遅い時期に見頃を迎えます。八重桜まつりの期間は日程を確認してから。' },
       { title: '一乗院', text: '市内の寺。大きな仁王像で知られています。' },
     ],
     metaDescription: '茨城県那珂市の街の記録。ソメイヨシノより遅く咲く八重桜の名所・静峰ふるさと公園、仁王像で知られる一乗院。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: '静峰ふるさと公園｜那珂市', url: 'https://www.city.naka.lg.jp/event-kankou/kankou-spot/page000275.html' },
+      { label: '八重桜まつり｜那珂市観光協会', url: 'https://www.naka-kanko.jp/page/page000133.html' },
+      { label: '静峰ふるさと公園｜観光いばらき', url: 'https://ibarakiguide.jp/spot.php?code=509&mode=detail' },
+    ],
   },
 
   tokai: {
@@ -1476,10 +1481,15 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
     ],
     highlights: [
       { title: '原子力関連の展示施設', text: '村内には原子力に関する展示施設があります。日本の原子力研究がどこから始まり、いま何が行われているかを知る場になっています。見学の可否と予約要否は施設ごとに確認を。' },
-      { title: '村松虚空蔵堂', text: '海に近い場所にある古い堂。松林に囲まれています。' },
+      { title: '村松山虚空蔵堂', text: '大同年間(807年)創建と伝わる古刹。伊勢・会津と並ぶ日本三大虚空蔵尊の一つに数えられ、十三詣りで知られます。' },
     ],
-    metaDescription: '茨城県東海村の街の記録。日本の原子力研究が始まった土地であり、海岸線と村松虚空蔵堂のある古い村。公開情報をもとに編集しています。',
+    metaDescription: '茨城県東海村の街の記録。日本の原子力研究が始まった土地であり、日本三大虚空蔵尊の一つ村松山虚空蔵堂のある村。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: '原子力施設の展示館｜東海村', url: 'https://www.vill.tokai.ibaraki.jp/section/gensiryoku/03kengaku/kengaku.htm' },
+      { label: '村松山虚空蔵堂｜観光いばらき', url: 'https://ibarakiguide.jp/spot.php?code=424&mode=detail' },
+      { label: '東海村｜観光いばらき', url: 'https://www.ibarakiguide.jp/site/ibaraki-map/central/tokai.html' },
+    ],
   },
 
   shirosato: {
@@ -1490,10 +1500,14 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
     ],
     highlights: [
       { title: '那珂川沿いの風景', text: '町を那珂川が流れます。川沿いには景勝地とされる区間があります。' },
-      { title: '温泉施設', text: '町内には日帰りで入れる温泉施設があります。営業状況は事前に確認を。' },
+      { title: '温泉施設', text: '町内には日帰り温泉「ホロルの湯」があります。営業状況は事前に確認を。' },
     ],
-    metaDescription: '茨城県城里町の街の記録。那珂川と山あいの地形、川沿いの景勝地と日帰り温泉施設。公開情報をもとに編集しています。',
+    metaDescription: '茨城県城里町の街の記録。那珂川と山あいの地形、川沿いの景勝地と日帰り温泉「ホロルの湯」。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: '健康増進施設「ホロルの湯」｜城里町', url: 'https://www.town.shirosato.lg.jp/page/page000581.html' },
+      { label: '城里町｜観光いばらき', url: 'https://www.ibarakiguide.jp/site/ibaraki-map/central/shirosato.html' },
+    ],
   },
 
   'ibaraki-machi': {
@@ -1503,12 +1517,17 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
       '町の南には涸沼があります。海水と淡水がまじる汽水湖で、ラムサール条約に登録された湿地です。渡り鳥が集まり、シジミが獲れます。観光地というより、生きものの場所です。',
     ],
     highlights: [
-      { title: '涸沼', text: '海水と淡水がまじる汽水湖。ラムサール条約の登録湿地です。渡り鳥の飛来地であり、シジミの産地でもあります。' },
+      { title: '涸沼', text: '海水と淡水がまじる汽水湖。2015年にラムサール条約に登録された湿地で、鉾田市・大洗町にまたがります。渡り鳥の飛来地であり、ヤマトシジミの産地でもあります。' },
       { title: '涸沼周辺の水辺', text: '湖岸には公園やキャンプ場があります。水面と空の広さが、この町の風景の中心です。' },
     ],
-    tasteNote: '涸沼のシジミ。汽水湖で育つため、独特の風味があるとされます。',
-    metaDescription: '茨城県茨城町の街の記録。ラムサール条約に登録された汽水湖・涸沼、渡り鳥とシジミ。公開情報をもとに編集しています。',
+    tasteNote: '涸沼のヤマトシジミ。汽水湖で育つため、独特の風味があるとされます。',
+    metaDescription: '茨城県茨城町の街の記録。2015年にラムサール条約に登録された汽水湖・涸沼、渡り鳥とヤマトシジミ。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: '涸沼がラムサール条約に登録されました｜茨城町', url: 'https://www.town.ibaraki.lg.jp/gyousei/kurashitetuduki/gomirisaikle/ramsar/001468.html' },
+      { label: '涸沼水鳥・湿地センター｜環境省', url: 'https://www.env.go.jp/nature/ramsar/conv/waterfowl/hinuma.html' },
+      { label: '茨城町｜観光いばらき', url: 'https://www.ibarakiguide.jp/site/ibaraki-map/central/ibarakitown.html' },
+    ],
   },
 
   ami: {
@@ -1539,12 +1558,17 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
       '村内には日本中央競馬会の美浦トレーニング・センターがあり、多くの競走馬が調教されています。一方、湖岸には陸平貝塚という縄文時代の遺跡が残ります。七千年前の生活の跡と、現代の競走馬の調教場が、同じ湖のほとりにあります。',
     ],
     highlights: [
-      { title: '美浦トレーニング・センター', text: '日本中央競馬会の調教施設。東日本の競走馬が集まります。見学の可否と条件はJRAの情報で確認を。' },
-      { title: '陸平貝塚', text: '霞ヶ浦南岸に残る縄文時代の貝塚。国の史跡です。公園として整備されています。' },
+      { title: '美浦トレーニング・センター', text: '日本中央競馬会の調教施設で、日本最大級の規模。東日本の約2,000頭の競走馬が集まります。見学の可否と条件はJRAの情報で確認を。' },
+      { title: '陸平貝塚', text: '霞ヶ浦南岸に残る縄文時代の貝塚。1879年に日本人による初の考古学的発掘が行われ、「日本考古学発祥の地」とされます。1998年に国の史跡に指定され、公園として整備されています。' },
       { title: '霞ヶ浦の南岸', text: '湖に面した村で、湖岸から対岸まで見渡せます。' },
     ],
-    metaDescription: '茨城県美浦村の街の記録。JRA美浦トレーニング・センターと、七千年前の陸平貝塚。霞ヶ浦の南岸。公開情報をもとに編集しています。',
+    metaDescription: '茨城県美浦村の街の記録。日本最大級のJRA美浦トレーニング・センターと、日本考古学発祥の地とされる陸平貝塚。霞ヶ浦の南岸。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: 'JRA美浦トレーニング・センター', url: 'https://www.jra.go.jp/facilities/tc/miho/' },
+      { label: '陸平貝塚公園｜美浦村', url: 'https://www.vill.miho.lg.jp/page/page000466.html' },
+      { label: '美浦村｜観光いばらき', url: 'https://www.ibarakiguide.jp/site/ibaraki-map/south/miho.html' },
+    ],
   },
 
   inashiki: {
@@ -1554,12 +1578,17 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
       '大杉神社は「あんばさま」の名で親しまれ、厄除けの信仰を集めてきました。水運の盛んだった時代、この神への信仰は船で各地へ運ばれ、関東から東北にかけて広がったと伝えられます。川と湖にはさまれた土地ならではの信仰の伝わり方です。',
     ],
     highlights: [
-      { title: '大杉神社', text: '「あんばさま」と呼ばれ、厄除けの信仰を集めてきた神社。極彩色の社殿で知られます。' },
+      { title: '大杉神社', text: '「あんばさま」と呼ばれ、全国約670社の大杉神社の総本宮。厄除けの信仰を集め、「茨城の日光東照宮」とも呼ばれる極彩色の社殿で知られます。' },
       { title: '水郷の地形', text: '利根川と霞ヶ浦にはさまれた低地です。田が広がり、水路が通っています。' },
     ],
-    tasteNote: '江戸崎かぼちゃ。市内で育てられているかぼちゃです。',
-    metaDescription: '茨城県稲敷市の街の記録。「あんばさま」と親しまれる大杉神社、利根川と霞ヶ浦にはさまれた水郷の地形。公開情報をもとに編集しています。',
+    tasteNote: '江戸崎かぼちゃ。完熟させてから収穫するほくほくのかぼちゃで、2015年に地理的表示（GI）に登録されました。',
+    metaDescription: '茨城県稲敷市の街の記録。「あんばさま」と親しまれる大杉神社、利根川と霞ヶ浦にはさまれた水郷の地形、江戸崎かぼちゃ。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: '大杉神社（公式）', url: 'https://oosugi-jinja.or.jp/' },
+      { label: '大杉神社｜稲敷市', url: 'https://www.city.inashiki.lg.jp/page/page000030.html' },
+      { label: '江戸崎かぼちゃ｜稲敷市', url: 'https://www.city.inashiki.lg.jp/page/page000071.html' },
+    ],
   },
 
   tsukubamirai: {
@@ -1589,12 +1618,16 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
       '撞舞(つくまい)は、およそ450年続くとされる龍ケ崎の伝統行事です。撞柱と呼ばれる高さ14メートルの柱に、全身を深緑色の装束で包み、蛙の面をかぶった舞男が登ります。そして柱の上で綱渡りや逆立ちを披露します。7月、年に一度だけ行われます。',
     ],
     highlights: [
-      { title: '撞舞', text: '高さ14メートルの撞柱に登り、蛙の面をかぶった舞男が曲芸を演じる行事。およそ450年続くとされます。例年7月に行われ、その日にしか見られません。日程は市の情報で確認を。' },
+      { title: '撞舞', text: '高さ14メートルの撞柱に登り、蛙の面をかぶった舞男が曲芸を演じる行事。およそ450年続くとされ、国選択・茨城県指定の無形民俗文化財です。例年7月に行われ、その日にしか見られません。日程は市の情報で確認を。' },
       { title: '市街と歴史民俗資料館', text: '市内の資料館では、撞舞をはじめとする地域の歴史資料を見られます。撞舞の日でなくても、行事の内容を知ることができます。' },
     ],
     tasteNote: '龍ケ崎コロッケ。市内で親しまれてきた一品とされます。',
-    metaDescription: '茨城県龍ケ崎市の街の記録。高さ14メートルの柱で舞男が曲芸を演じる撞舞、歴史民俗資料館。公開情報をもとに編集しています。',
+    metaDescription: '茨城県龍ケ崎市の街の記録。高さ14メートルの柱で舞男が曲芸を演じる撞舞（国選択・県指定無形民俗文化財）、歴史民俗資料館。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: '伝統芸能「撞舞」｜龍ケ崎市', url: 'https://www.city.ryugasaki.ibaraki.jp/kanko/bunka/bunkazai/tukumai.html' },
+      { label: '龍ケ崎市｜観光いばらき', url: 'https://www.ibarakiguide.jp/site/ibaraki-map/south/ryugasaki.html' },
+    ],
   },
 
   moriya: {
@@ -1609,6 +1642,10 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
     ],
     metaDescription: '茨城県守谷市の街の記録。都心に近い暮らしの街。利根川・鬼怒川の水辺とサイクリングロード、市内の公園。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: 'つくばエクスプレス（TX）｜守谷市', url: 'https://www.city.moriya.ibaraki.jp/kurashi_tetsuzuki/koutsu/1002163/1002198/1002200.html' },
+      { label: '守谷市へのアクセス｜守谷市', url: 'https://www.city.moriya.ibaraki.jp/shisei/profile/1004316/1004320.html' },
+    ],
   },
 
   toride: {
@@ -1618,26 +1655,34 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
       '取手市には美術大学の校地があり、市民と大学と市が連携したアートの取り組みが長年続いています。展示や作品が街なかに現れることがあり、美術館の中だけで完結しない形をとってきました。利根川の堤防が、街の南の縁になっています。',
     ],
     highlights: [
-      { title: '取手のアートの取り組み', text: '市民、大学、行政が連携したアートプロジェクトが続いています。開催時期や会場は年によって変わるため、事前に確認を。' },
+      { title: '取手のアートの取り組み', text: '1999年から、市民・取手市・東京藝術大学の三者が続けているアートプロジェクト（取手アートプロジェクト）です。開催時期や会場は年によって変わるため、事前に確認を。' },
       { title: '利根川の堤防', text: '市の南を利根川が流れます。堤防に出ると対岸の千葉県まで見渡せます。' },
     ],
-    metaDescription: '茨城県取手市の街の記録。市民・大学・行政が続けるアートの取り組みと、利根川の堤防。公開情報をもとに編集しています。',
+    metaDescription: '茨城県取手市の街の記録。1999年から市民・大学・行政が続ける取手アートプロジェクトと、利根川の堤防。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: '取手アートプロジェクト（公式）', url: 'https://toride-ap.gr.jp/' },
+      { label: 'アートのある団地｜取手市', url: 'https://zetsumyo.city.toride.ibaraki.jp/art/tap/art_housing/' },
+    ],
   },
 
   kawachi: {
     catch: '利根川と新利根川にはさまれた、干拓地の町。',
     lead: [
       '茨城県の南端、利根川に接する町。',
-      '観光施設はほとんどありません。かわりに、干拓によってつくられた平坦な農地が広がります。米といちじくの産地で、川の堤防からは、条件がよければ富士山や筑波山が見えます。',
+      '観光施設はほとんどありません。かわりに、利根川と新利根川がつくった平坦な農地が広がります。米やれんこんの産地で、川の堤防からは、条件がよければ富士山や筑波山が見えます。',
     ],
     highlights: [
       { title: '利根川の堤防', text: '町の南を利根川が流れます。堤防に出ると視界が開け、条件がよければ遠くの山が見えます。' },
       { title: '干拓地の風景', text: '平坦な農地が続きます。この土地がどうつくられたかが、地形から読み取れます。' },
     ],
-    tasteNote: 'いちじくと米。町の産品です。直売所で確認を。',
-    metaDescription: '茨城県河内町の街の記録。干拓によってつくられた平坦な農地、利根川の堤防、米といちじく。公開情報をもとに編集しています。',
+    tasteNote: '米とれんこん。利根川の肥沃な土地が育む産品です。直売所で確認を。',
+    metaDescription: '茨城県河内町の街の記録。利根川と新利根川がつくった平坦な農地、利根川の堤防、米とれんこん。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: '河内町（公式）', url: 'https://www.town.ibaraki-kawachi.lg.jp/' },
+      { label: '河内町｜観光いばらき', url: 'https://www.ibarakiguide.jp/site/ibaraki-map/south/kawachi.html' },
+    ],
   },
 
   tone: {
@@ -1653,6 +1698,11 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
     ],
     metaDescription: '茨城県利根町の街の記録。柳田國男が少年期を過ごした記念公苑、『利根川図志』の赤松宗旦居跡、利根川の岸。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: '柳田國男記念公苑｜利根町', url: 'https://www.town.tone.ibaraki.jp/kanko-bunka/rekisibunka/bunkashisetsu/page003532.html' },
+      { label: '民俗学の父・柳田國男｜利根町', url: 'https://www.town.tone.ibaraki.jp/kanko-bunka/rekisibunka/yanagidakunio/page000175.html' },
+      { label: '赤松宗旦旧居跡｜利根町', url: 'https://www.town.tone.ibaraki.jp/sp/page/page000170.html' },
+    ],
   },
 
   goka: {
@@ -1667,5 +1717,10 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
     ],
     metaDescription: '茨城県五霞町の街の記録。利根川と江戸川が分かれる地点にある、県内で唯一利根川の南側にある町。道の駅ごか。公開情報をもとに編集しています。',
     checkedAt: CHECKED,
+    sources: [
+      { label: '川と共に歩んだ五霞の軌跡｜五霞町', url: 'https://www.town.goka.lg.jp/gokanabi/youkoso/town-profile/town-history/page000083.html' },
+      { label: '町の概要｜五霞町', url: 'https://www.town.goka.lg.jp/kurashi-machi-shigoto/gyousei/gyousei-notice/town-information/page000085.html' },
+      { label: '五霞町｜観光いばらき', url: 'https://www.ibarakiguide.jp/site/ibaraki-map/west/goka.html' },
+    ],
   },
 };

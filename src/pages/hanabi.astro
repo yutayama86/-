@@ -1,0 +1,163 @@
+---
+/**
+ * 茨城の花火（編集ページ）。
+ * 参考：物語型の花火コンテンツ。イバトコらしく「つくり手（花火師）」と「なぜ打つのか」を軸に。
+ * 事実は公式・観光いばらきで裏取り。日程・打ち上げ数・有料席は年で変わるため
+ *   「例年◯月」表記＋各公式リンクで最新確認を促す常緑設計。
+ */
+import BrandBase from '../layouts/BrandBase.astro';
+
+interface Hanabi {
+  name: string;
+  areaSlug?: string;   // 該当エリアページへリンク
+  area: string;
+  season: string;      // 例年の時期
+  venue: string;
+  scale: string;
+  maker?: string;      // つくり手（花火師）※判明分のみ
+  story: string;
+  officialLabel: string;
+  officialUrl: string;
+}
+
+const events: Hanabi[] = [
+  {
+    name: '土浦全国花火競技大会',
+    areaSlug: 'tsuchiura',
+    area: '土浦市',
+    season: '例年10〜11月ごろ',
+    venue: '桜川畔',
+    scale: '日本三大花火のひとつ',
+    maker: '全国の花火師が出場（競技）',
+    story: '大正14年(1925年)、霞ヶ浦海軍航空隊の殉職者を弔い、関東大震災のあとの街を励ますために始まりました。全国の花火師が新作と技を競う「競技大会」で、優れた作品には内閣総理大臣賞などが贈られます。',
+    officialLabel: '土浦全国花火競技大会（公式）',
+    officialUrl: 'https://www.tsuchiura-hanabi.jp/',
+  },
+  {
+    name: '大洗海上花火大会',
+    areaSlug: 'oarai',
+    area: '大洗町',
+    season: '例年9月ごろ',
+    venue: '大洗サンビーチ沖（海上）',
+    scale: '約2万発規模',
+    story: '海の上に大きく開く海上花火。水面に映る光がこの大会ならではです。年によってはブルーインパルスの展示飛行も行われます。',
+    officialLabel: '大洗海上花火大会｜大洗観光協会',
+    officialUrl: 'https://www.oarai-info.jp/season/postid_2653/',
+  },
+  {
+    name: '常総きぬ川花火大会',
+    areaSlug: 'joso',
+    area: '常総市',
+    season: '例年9月ごろ',
+    venue: '橋本運動公園（鬼怒川畔）',
+    scale: '約2万発規模',
+    story: '鬼怒川のほとりで打ち上がる、県内でも規模の大きな花火大会。広い河川敷を生かした構成が見どころです。',
+    officialLabel: '常総市観光物産協会',
+    officialUrl: 'https://www.joso-kankou.com/',
+  },
+  {
+    name: '古河花火大会',
+    areaSlug: 'koga',
+    area: '古河市',
+    season: '例年8月ごろ',
+    venue: '渡良瀬川河川敷（古河ゴルフリンクス）',
+    scale: '三尺玉ほか',
+    maker: '野村花火工業',
+    story: '渡良瀬川の広い河川敷を生かした大玉が見どころ。内閣総理大臣賞を最多で受賞してきた名門・野村花火工業による三尺玉が上がります。',
+    officialLabel: '古河花火大会｜古河市',
+    officialUrl: 'https://www.city.ibaraki-koga.lg.jp/soshiki/kanko/4_1/2026hanabi.html',
+  },
+  {
+    name: '水戸黄門まつり 水戸偕楽園花火大会',
+    areaSlug: 'mito',
+    area: '水戸市',
+    season: '例年7〜8月ごろ',
+    venue: '千波湖',
+    scale: '約5,000発',
+    maker: '野村花火工業',
+    story: '千波湖の水面に映る花火。内閣総理大臣賞を最多で受賞してきた名門・野村花火工業が手がけます。水戸黄門まつりの幕開けを飾ります。',
+    officialLabel: '水戸黄門まつり 花火大会（公式）',
+    officialUrl: 'https://mitokoumon.com/koumon/hanabi.html',
+  },
+];
+
+const pageTitle = '茨城の花火｜日本三大花火・土浦をはじめとする主な花火大会｜イバトコ';
+const pageDescription = '日本三大花火のひとつ土浦全国花火競技大会をはじめ、大洗の海上花火、常総・古河・水戸偕楽園まで。茨城の主な花火大会を、成り立ちとつくり手（花火師）とともに紹介します。日程は年で変わるため最新は各公式で確認を。';
+---
+
+<BrandBase title={pageTitle} description={pageDescription}>
+  <article class="hanabi">
+    <header class="hanabi-head bp-wrap">
+      <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><span aria-current="page">茨城の花火</span></nav>
+      <p class="bp-kicker">IBARAKI FIREWORKS</p>
+      <h1>茨城の花火</h1>
+      <p class="hanabi-lead">茨城の花火は、ただ打ち上げるだけのものではありません。土浦は、全国の花火師が新作と技を競う「競技大会」。しかもその始まりは、弔いと、震災からの復興でした。海の上に開く大洗、水面に映る水戸。花火を「つくる人」に目を向けると、この県の夜空の見え方が変わります。</p>
+    </header>
+
+    <section class="hanabi-angle bp-wrap">
+      <div class="hanabi-angle__grid">
+        <div><p class="bp-kicker">01 / 競技</p><h2>見せるためだけじゃない。競い合う花火。</h2><p>土浦全国花火競技大会は、全国の花火師が集まり、新作と技を競う場です。一発ごとの完成度が高く、優れた作品には内閣総理大臣賞などが贈られます。花火は「大きさ」ではなく「作品」として見られています。</p></div>
+        <div><p class="bp-kicker">02 / つくり手</p><h2>名門花火師の仕事を、名前で追う。</h2><p>古河と水戸偕楽園の花火を手がけるのは、内閣総理大臣賞を最多で受賞してきた名門・野村花火工業。誰が打ち上げたのかを知ると、同じ夜空でも見え方が変わります。イバトコは、花火を「つくった人」まで記録します。</p></div>
+      </div>
+    </section>
+
+    <section class="hanabi-list bp-wrap" aria-labelledby="hanabi-major">
+      <div class="hanabi-list__head"><p class="bp-kicker">MAJOR EVENTS</p><h2 id="hanabi-major">茨城の主な花火大会</h2><p>いずれも例年の時期です。開催日・打ち上げ数・有料席は年で変わります。訪ねる前に各公式の最新情報を確認してください。</p></div>
+      <div class="hanabi-grid">
+        {events.map((e) => (
+          <article class="hanabi-card">
+            <div class="hanabi-card__meta"><span class="hanabi-card__season">{e.season}</span><span class="hanabi-card__scale">{e.scale}</span></div>
+            <h3>{e.name}</h3>
+            <dl class="hanabi-card__facts">
+              <div><dt>場所</dt><dd>{e.areaSlug ? <><a href={`/area/${e.areaSlug}/`}>{e.area}</a>・{e.venue}</> : `${e.area}・${e.venue}`}</dd></div>
+              {e.maker && <div><dt>つくり手</dt><dd>{e.maker}</dd></div>}
+            </dl>
+            <p class="hanabi-card__story">{e.story}</p>
+            <a class="hanabi-card__link" href={e.officialUrl} target="_blank" rel="noopener">{e.officialLabel} <span aria-hidden="true">↗</span></a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <aside class="hanabi-note bp-wrap">
+      <p class="bp-kicker">INFORMATION</p>
+      <h2>日程と最新情報について</h2>
+      <p>花火大会の開催日・時間・打ち上げ数・有料観覧席・雨天中止の扱いは、毎年変わります。このページは例年の時期をまとめた常緑の案内です。今年の日程と詳細は、各大会の公式情報でご確認ください。県内の花火の一覧は、茨城県公式の観光サイトでも確認できます。</p>
+      <ul class="hanabi-note__links">
+        <li><a href="https://www.ibarakiguide.jp/special/hanabi.html" target="_blank" rel="noopener">茨城の花火（観光いばらき・県公式）<span aria-hidden="true">↗</span></a></li>
+      </ul>
+    </aside>
+
+    <section class="hanabi-related">
+      <div class="bp-wrap"><p class="bp-kicker">RELATED</p><h2>花火の街を、もっと読む。</h2><ul>
+        <li><a href="/area/tsuchiura/">土浦市</a></li>
+        <li><a href="/area/oarai/">大洗町</a></li>
+        <li><a href="/area/joso/">常総市</a></li>
+        <li><a href="/area/koga/">古河市</a></li>
+        <li><a href="/area/mito/">水戸市</a></li>
+      </ul></div>
+    </section>
+  </article>
+</BrandBase>
+
+<style>
+  .hanabi{padding-top:clamp(3rem,7vw,6rem)}
+  .hanabi-head{padding-bottom:clamp(2.5rem,6vw,4.5rem);border-bottom:1px solid var(--color-mist)}
+  .crumbs{display:flex;gap:.55rem;margin-bottom:2rem;color:var(--color-soil);font-size:.74rem}.crumbs a{border-bottom:1px solid transparent}.crumbs a:hover{border-color:var(--color-tide)}
+  .hanabi-head h1{margin-top:.8rem;font:600 clamp(2.6rem,7vw,5.5rem)/1.1 var(--font-brand-display);color:var(--color-ink)}
+  .hanabi-lead{max-width:60ch;margin-top:1.6rem;color:var(--color-soil);line-height:2;font-size:clamp(.98rem,1.5vw,1.12rem)}
+  .hanabi-angle{padding-block:clamp(3rem,7vw,6rem)}.hanabi-angle__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(2rem,5vw,4rem)}
+  .hanabi-angle__grid h2{margin-top:.6rem;font:600 clamp(1.4rem,2.6vw,2.1rem)/1.4 var(--font-brand-display);color:var(--color-ink)}.hanabi-angle__grid p:last-child{margin-top:1rem;color:var(--color-soil);line-height:1.95}
+  .hanabi-list{padding-block:clamp(2rem,5vw,4rem)}.hanabi-list__head{max-width:60ch}.hanabi-list__head h2{margin-top:.6rem;font:600 clamp(1.7rem,3.4vw,2.8rem) var(--font-brand-display);color:var(--color-ink)}.hanabi-list__head>p:last-child{margin-top:1rem;color:var(--color-soil);line-height:1.9;font-size:.9rem}
+  .hanabi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem;margin-top:2.5rem}
+  .hanabi-card{display:flex;flex-direction:column;padding:1.6rem;background:var(--color-white);border-top:3px solid var(--color-signal)}
+  .hanabi-card__meta{display:flex;justify-content:space-between;gap:1rem;font:600 .72rem var(--font-brand-meta);letter-spacing:.06em}.hanabi-card__season{color:var(--color-tide)}.hanabi-card__scale{color:var(--color-soil)}
+  .hanabi-card h3{margin-top:.8rem;font:600 clamp(1.25rem,2.2vw,1.7rem)/1.35 var(--font-brand-display);color:var(--color-ink)}
+  .hanabi-card__facts{margin-top:1rem;display:grid;gap:.5rem}.hanabi-card__facts>div{display:grid;grid-template-columns:5.5em 1fr;gap:.6rem;font-size:.86rem}.hanabi-card__facts dt{color:var(--color-soil)}.hanabi-card__facts dd{margin:0;color:var(--color-ink)}.hanabi-card__facts a{color:var(--color-tide);border-bottom:1px solid}
+  .hanabi-card__story{margin-top:1rem;color:var(--color-soil);line-height:1.85;font-size:.9rem}
+  .hanabi-card__link{margin-top:auto;padding-top:1.2rem;color:var(--color-tide);font-size:.82rem;border-bottom:0}.hanabi-card__link:hover{text-decoration:underline}
+  .hanabi-note{padding-block:clamp(3rem,6vw,5rem)}.hanabi-note h2{margin-top:.6rem;font:600 clamp(1.4rem,2.6vw,2rem) var(--font-brand-display);color:var(--color-ink)}.hanabi-note>p{max-width:64ch;margin-top:1rem;color:var(--color-soil);line-height:1.95}
+  .hanabi-note__links{margin-top:1.2rem;list-style:none}.hanabi-note__links a{color:var(--color-tide);border-bottom:1px solid}
+  .hanabi-related{padding-block:clamp(3rem,6vw,5rem);background:var(--color-white)}.hanabi-related h2{margin-top:.6rem;font:600 clamp(1.6rem,3.2vw,2.6rem) var(--font-brand-display);color:var(--color-ink)}.hanabi-related ul{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;margin-top:1.6rem}.hanabi-related a{color:var(--color-soil);border-bottom:1px solid var(--color-mist);padding-bottom:.2rem}.hanabi-related a:hover{color:var(--color-tide);border-color:var(--color-tide)}
+  @media(max-width:760px){.hanabi-angle__grid,.hanabi-grid{grid-template-columns:1fr}}
+</style>

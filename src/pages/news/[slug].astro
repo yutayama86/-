@@ -24,6 +24,11 @@ const municipalitySet = new Set(data.municipalities);
 const [relatedNews, allArticles, allStores] = await Promise.all([getRelatedNews(item), getArticles(), getStores()]);
 const relatedArticles = allArticles.filter((article) => municipalitySet.has(areaToSlug(article.data.area) ?? '')).slice(0, 3);
 const relatedPlaces = allStores.filter((store) => municipalitySet.has(areaToSlug(store.data.area) ?? '')).slice(0, 3);
+const internalLinkLabels: Record<string, string> = {
+  '/news/': '茨城ニュース解説の新着記事',
+  '/area/naka/': '那珂市の地域情報',
+  '/area/tokai/': '東海村の地域情報',
+};
 
 const organizationId = `${SITE_CONFIG.domain}/#organization`;
 const jsonLd: Record<string, unknown>[] = [
@@ -62,6 +67,15 @@ const jsonLd: Record<string, unknown>[] = [
 ];
 if (data.event) jsonLd.push({ '@context': 'https://schema.org', '@type': 'Event', name: data.event.name, startDate: data.event.startDate.toISOString(), ...(data.event.endDate ? { endDate: data.event.endDate.toISOString() } : {}), ...(data.event.url ? { url: data.event.url } : {}), ...(data.event.placeName ? { location: { '@type': 'Place', name: data.event.placeName, ...(data.event.address ? { address: data.event.address } : {}) } } : {}) });
 if (data.place) jsonLd.push({ '@context': 'https://schema.org', '@type': 'Place', name: data.place.name, ...(data.place.address ? { address: data.place.address } : {}), ...(data.place.url ? { url: data.place.url } : {}) });
+if (data.faq.length > 0) jsonLd.push({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: data.faq.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+});
 ---
 
 <BrandBase title={`${data.title}｜イバトコ`} description={data.description} image={imagePath} imageAlt={data.ogImageAlt} type="article" publishedAt={data.pubDate} updatedAt={data.updatedDate ?? data.pubDate} jsonLd={jsonLd} noindex={data.noindex}>
@@ -84,7 +98,14 @@ if (data.place) jsonLd.push({ '@context': 'https://schema.org', '@type': 'Place'
         <section id="conclusion" class="news-conclusion"><p class="section-number">01 / CONCLUSION</p><h2>結論</h2><p>{data.conclusion}</p></section>
         <section id="points"><p class="section-number">02 / KEY POINTS</p><h2>この記事でわかること</h2><ul>{data.keyPoints.map((point) => <li>{point}</li>)}</ul></section>
         <section id="what-happened"><p class="section-number">03 / WHAT HAPPENED</p><h2>何が起きた？</h2><p>{data.whatHappened}</p></section>
-        <section id="changes"><p class="section-number">04 / CHANGES</p><h2>具体的に何が変わる？</h2><p>{data.whatChanges}</p></section>
+        <section id="changes"><p class="section-number">04 / CHANGES</p><h2>アクセス・駐車場・公共交通</h2><p>{data.whatChanges}</p>
+          {data.accessGuide && <div class="access-guide">
+            <div><h3>場所とホーム利用開始時期</h3><dl><dt>場所</dt><dd>{data.accessGuide.location}</dd><dt>いつから</dt><dd>{data.accessGuide.homeUseStarts}</dd></dl></div>
+            <div><h3>車・駐車場</h3><dl>{data.accessGuide.parking.map((item) => <><dt>{item.heading}</dt><dd>{item.detail}</dd></>)}</dl></div>
+            <div><h3>電車・無料シャトルバス</h3><dl>{data.accessGuide.publicTransport.map((item) => <><dt>{item.heading}</dt><dd>{item.detail}</dd></>)}</dl></div>
+            <div><h3>帰りの動線</h3><p>{data.accessGuide.returnTrip}</p></div>
+          </div>}
+        </section>
         <section id="analysis"><p class="section-number">05 / EDITORIAL VIEW</p><h2>イバトコ編集部の解説</h2><p>{data.editorialAnalysis}</p></section>
         <section id="impact"><p class="section-number">06 / LOCAL IMPACT</p><h2>地域への影響</h2><p>{data.regionalImpact}</p></section>
         <section id="business"><p class="section-number">07 / FOR BUSINESSES</p><h2>地域事業者への示唆</h2><ul>{data.businessImplications.map((point) => <li>{point}</li>)}</ul></section>
@@ -98,6 +119,7 @@ if (data.place) jsonLd.push({ '@context': 'https://schema.org', '@type': 'Place'
     {municipalities.length > 0 && <div class="municipality-links">{municipalities.map((value) => <a href={`/area/${value!.slug}/`}>{value!.name}を知る →</a>)}</div>}
     {relatedNews.length > 0 && <div class="news-related__grid">{relatedNews.map((related) => <NewsCard item={related} compact />)}</div>}
     {(relatedArticles.length > 0 || relatedPlaces.length > 0) && <div class="local-links">{relatedArticles.map((article) => <a href={`/${CATEGORIES[article.data.category].path}/${article.id.split('/').pop()}/`}><span>記事</span>{article.data.title}</a>)}{relatedPlaces.map((place) => <a href={`/place/${place.id}/`}><span>場所</span>{place.data.name}</a>)}</div>}
+    {data.relatedArticleUrls.length > 0 && <nav class="editorial-links" aria-label="編集部が選んだ関連記事">{data.relatedArticleUrls.map((url) => <a href={url}>{internalLinkLabels[url] ?? '関連情報'} →</a>)}</nav>}
   </section>}
 </BrandBase>
 
@@ -106,7 +128,9 @@ if (data.place) jsonLd.push({ '@context': 'https://schema.org', '@type': 'Place'
   .news-detail__meta{display:flex;gap:1rem;color:var(--color-tide);font:.72rem var(--font-brand-meta);letter-spacing:.08em}.news-detail__head h1{max-width:19em;margin-top:1rem;font:600 clamp(2rem,4vw,3.35rem)/1.38 var(--font-brand-display);color:var(--color-ink)}.news-detail__deck{max-width:46rem;margin-top:1.3rem;color:var(--color-soil);font-size:clamp(1rem,1.6vw,1.15rem);line-height:1.9}.news-detail__tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.25rem;list-style:none}.news-detail__tags a{display:block;padding:.4rem .7rem;background:color-mix(in srgb,var(--color-tide) 8%,var(--color-white));color:var(--color-tide);font-size:.72rem;transition:background-color .2s,color .2s}.news-detail__tags a:hover,.news-detail__tags a:focus-visible{background:var(--color-tide);color:var(--color-white)}.news-detail__dates{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;margin-top:1.25rem;color:var(--color-soil);font-size:.72rem}.news-detail__hero{margin-top:3rem}.news-detail__hero img{width:100%;aspect-ratio:1.9/1;object-fit:cover}.news-detail__hero figcaption{margin-top:.55rem;color:var(--color-soil);font-size:.68rem;text-align:right}.news-detail__hero figcaption a{text-decoration:underline;text-underline-offset:.15em}
   .news-detail__layout{display:grid;grid-template-columns:210px minmax(0,700px);justify-content:center;gap:clamp(2rem,6vw,5rem);padding-block:clamp(3.5rem,7vw,6rem)}.news-detail__toc{position:sticky;top:1rem;align-self:start;padding-top:.5rem;color:var(--color-soil);font-size:.72rem}.news-detail__toc>p{padding-bottom:.65rem;border-bottom:1px solid var(--color-mist);font-weight:700;color:var(--color-ink)}.news-detail__toc ol{display:grid;gap:.5rem;margin-top:.75rem;list-style:decimal;padding-left:1.2rem}.news-detail__toc a:hover{color:var(--color-tide)}
   .news-detail__body section{scroll-margin-top:1rem}.news-detail__body section+section{margin-top:4rem;padding-top:3rem;border-top:1px solid var(--color-mist)}.section-number{color:var(--color-tide);font:.68rem var(--font-brand-meta);letter-spacing:.12em}.news-detail__body h2{margin-top:.6rem;font:600 clamp(1.55rem,3vw,2.25rem)/1.4 var(--font-brand-display);color:var(--color-ink)}.news-detail__body h2+p,.news-detail__body h2+ul,.news-faq,.source-list{margin-top:1.3rem}.news-detail__body p,.news-detail__body li,.news-detail__body dd{color:var(--color-charcoal);font-size:1rem;line-height:2}.news-detail__body ul:not(.source-list){display:grid;gap:.65rem}.news-detail__body ul:not(.source-list) li{position:relative;padding-left:1.1rem}.news-detail__body ul:not(.source-list) li:before{content:'';position:absolute;left:0;top:.9em;width:5px;height:5px;background:var(--color-tide)}.news-conclusion{padding:1.5rem!important;background:var(--color-white);border:1px solid var(--color-mist)!important}
+  .access-guide{display:grid;gap:1px;margin-top:2rem;background:var(--color-mist);border:1px solid var(--color-mist)}.access-guide>div{padding:1.25rem;background:var(--color-white)}.access-guide h3{font:600 1.15rem/1.5 var(--font-brand-display);color:var(--color-ink)}.access-guide dl{display:grid;grid-template-columns:minmax(7rem,.7fr) minmax(0,2fr);gap:.65rem 1rem;margin-top:1rem}.access-guide dt{font-weight:700;color:var(--color-tide)}.access-guide dd{margin:0}.access-guide h3+p{margin-top:.75rem}
   .news-faq{border-top:1px solid var(--color-mist)}.news-faq div{padding-block:1.2rem;border-bottom:1px solid var(--color-mist)}.news-faq dt{font-weight:700;color:var(--color-ink)}.news-faq dd{margin-top:.45rem}.source-list{display:grid;gap:1rem}.source-list li{display:grid}.source-list a{color:var(--color-tide);text-decoration:underline;text-underline-offset:.2em}.source-list small{margin-top:.2rem;color:var(--color-soil);font-size:.68rem}.source-note{margin-top:1.5rem;padding:1rem;background:var(--color-white);font-size:.78rem!important;color:var(--color-soil)!important}
   .news-related{border-top:1px solid var(--color-mist)}.news-related .bp-section-title{margin-top:.6rem}.municipality-links{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.5rem}.municipality-links a{padding:.65rem .9rem;border:1px solid var(--color-tide);color:var(--color-tide);font-size:.78rem}.news-related__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:2rem}.local-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin-top:2rem;background:var(--color-mist)}.local-links a{display:grid;gap:.3rem;padding:1rem;background:var(--color-white);font-weight:600;color:var(--color-ink)}.local-links span{color:var(--color-tide);font-size:.66rem;letter-spacing:.1em}
-  @media(max-width:760px){.news-detail__layout{grid-template-columns:1fr}.news-detail__toc{position:static}.news-related__grid,.local-links{grid-template-columns:1fr}.news-detail__head h1{font-size:clamp(1.85rem,9vw,2.75rem)}}
+  .editorial-links{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.25rem}.editorial-links a{padding:.65rem .9rem;background:var(--color-white);border:1px solid var(--color-mist);color:var(--color-tide);font-size:.78rem}
+  @media(max-width:760px){.news-detail__layout{grid-template-columns:1fr}.news-detail__toc{position:static}.news-related__grid,.local-links{grid-template-columns:1fr}.news-detail__head h1{font-size:clamp(1.85rem,9vw,2.75rem)}.access-guide dl{grid-template-columns:1fr}.access-guide dd+dt{margin-top:.5rem}}
 </style>

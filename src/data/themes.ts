@@ -9,7 +9,7 @@ export interface ThemeImage { src: string; alt: string; credit: string; creditUr
 export interface ThemeSpot { name: string; area: string; areaSlug?: string; desc: string; image?: ThemeImage; mapQuery?: string; }
 export interface ThemeSection { kicker: string; title: string; body: string; }
 export interface Theme {
-  slug: 'umi' | 'kawa' | 'koen' | 'yama';
+  slug: 'umi' | 'kawa' | 'koen' | 'yama' | 'hana' | 'matsuri' | 'kouyou';
   kicker: string;
   title: string;
   lead: string;
@@ -34,6 +34,7 @@ const IMG_NEMOPHILA: ThemeImage = { src: 'https://upload.wikimedia.org/wikipedia
 const IMG_TSUKUBA: ThemeImage = { src: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Mt.Tsukuba.jpg', alt: '筑波山', credit: '写真：RESPITE / パブリックドメイン', creditUrl: 'https://commons.wikimedia.org/wiki/File:Mt.Tsukuba.jpg' };
 const IMG_HITACHI_STATION: ThemeImage = { src: '/images/area/hitachi/station.jpg', alt: '海に張り出した日立駅', credit: '写真：Σ64 / CC BY 4.0', creditUrl: 'https://commons.wikimedia.org/wiki/File:Hitachi_Station,_Ibaraki_01.jpg' };
 const IMG_KAMINE: ThemeImage = { src: '/images/area/hitachi/kamine-park.jpg', alt: '日立市かみね公園', credit: '写真：Σ64 / CC BY 4.0', creditUrl: 'https://commons.wikimedia.org/wiki/File:Kamine_Park,_Ibaraki_07.jpg' };
+const IMG_SAKURA: ThemeImage = { src: '/images/area/hitachi/sakura-festival.jpg', alt: '日立さくらまつりの平和通り', credit: '写真：Σ64 / CC BY 4.0', creditUrl: 'https://commons.wikimedia.org/wiki/File:Hitachi_Sakura_Festival,_Ibaraki_01.jpg' };
 const IMG_OIWA: ThemeImage = { src: '/images/area/hitachi/oiwa-jinja.jpg', alt: '日立市・御岩神社の随神門', credit: '写真：Taisuke.Kasuya / CC BY-SA 4.0', creditUrl: 'https://commons.wikimedia.org/wiki/File:Zuishinmon_of_Oiwa-jinja_(Hitachi).jpg' };
 
 export const THEMES: Record<Theme['slug'], Theme> = {
@@ -80,15 +81,16 @@ export const THEMES: Record<Theme['slug'], Theme> = {
 
   kawa: {
     slug: 'kawa',
-    kicker: 'IBARAKI RIVERS',
-    title: '茨城の川',
-    lead: '茨城には、性格の違う川が流れています。関東随一の清流とされる那珂川、日本三名瀑・袋田の滝を生む久慈川の流域、県境をなす大河・利根川。滝や渓谷、河川敷の花火まで、この県の水辺の風景をまとめました。',
+    kicker: 'IBARAKI RIVERS & LAKES',
+    title: '茨城の川と湖',
+    lead: '茨城には、性格の違う水辺があります。関東随一の清流とされる那珂川、日本三名瀑・袋田の滝を生む久慈川の流域、県境をなす大河・利根川。そして、琵琶湖に次ぐ日本第2の湖・霞ヶ浦。滝や渓谷から湖の帆引き船まで、この県の水辺の風景をまとめました。',
     hero: IMG_FUKURODA,
     sections: [
       { kicker: '清流', title: '那珂川と、久慈川の滝。', body: '那珂川は関東随一の清流とされ、鮎やカヌーの川。久慈川の流域には、大岩壁を四段に落ちる日本三名瀑・袋田の滝がかかります。山あいには、渓谷と吊橋、滝が集まっています。' },
       { kicker: '大河', title: '県境をなす、利根川。', body: '県南から県西の県境をなす利根川と、その支流の鬼怒川・小貝川。広い河川敷は花火大会の舞台にもなり、田園には花畑が広がります。' },
+      { kicker: '湖', title: '日本第2の湖、霞ヶ浦。', body: '県南に広がる霞ヶ浦は、琵琶湖に次いで日本で2番目に広い湖。かつての漁法を復活させた観光帆引き船が、夏から秋にかけて湖上を進みます。海と淡水がまじる汽水湖・涸沼もあります。' },
     ],
-    spotsHeading: '川と滝、渓谷',
+    spotsHeading: '川と湖、滝と渓谷',
     spots: [
       { name: '袋田の滝', area: '大子町', areaSlug: 'daigo', desc: '高さ120メートル、幅73メートル。大岩壁を四段に落ちることから「四度（よど）の滝」とも呼ばれ、日本三名瀑のひとつ、国の名勝に数えられます。厳冬期には全体が凍る「氷瀑」が見られることもあります。', mapQuery: '袋田の滝 大子町' },
       { name: '竜神峡・竜神大吊橋', area: '常陸太田市', areaSlug: 'hitachiota', desc: '竜神峡にかかる、全長375メートルの歩行者専用吊橋（歩行者専用としては日本最大級）。橋の上からは高さ100メートルの日本一高いバンジージャンプもでき、新緑と紅葉の渓谷が広がります。', mapQuery: '竜神大吊橋 常陸太田市' },
@@ -98,6 +100,8 @@ export const THEMES: Record<Theme['slug'], Theme> = {
       { name: '利根川', area: '境町', areaSlug: 'sakai', desc: '県南から県西の県境をなす大河。広い河川敷は花火大会の舞台にもなり、境町・古河・取手・利根町などに水辺の風景が続きます。' },
       { name: '小貝川ふれあい公園', area: '下妻市', areaSlug: 'shimotsuma', desc: '小貝川のほとりの公園。春はポピー、秋はコスモスが一面に咲く花畑で知られます。' },
       { name: '渡良瀬遊水地', area: '古河市', areaSlug: 'koga', desc: 'ラムサール条約に登録された広大な湿地。ヨシ原と水辺が広がり、サイクリングや熱気球で親しまれています。栃木・群馬・埼玉と接する、県の西端の水辺です。' },
+      { name: '霞ヶ浦（帆引き船）', area: 'かすみがうら市', areaSlug: 'kasumigaura', desc: '琵琶湖に次いで日本で2番目に広い湖。もとは漁のための帆引き船が、いまは観光用として夏から秋に操業され、行方・土浦・かすみがうらの3市で見られます。湖岸にはつくば霞ヶ浦りんりんロードが延びています。', mapQuery: '霞ヶ浦 帆引き船' },
+      { name: '涸沼', area: '茨城町', areaSlug: 'ibaraki-machi', desc: '海水と淡水がまじる汽水湖。2015年にラムサール条約に登録された湿地で、鉾田市・大洗町にまたがります。渡り鳥の飛来地であり、ヤマトシジミの産地でもあります。' },
     ],
     practical: [
       ['滝の見頃', '袋田の滝は新緑・紅葉・氷瀑と季節で姿が変わります。氷瀑は年により凍らないこともあるため、大子町観光協会の凍結情報で確認してください。'],
@@ -110,13 +114,14 @@ export const THEMES: Record<Theme['slug'], Theme> = {
       { label: '大子町観光協会（袋田の滝・氷瀑情報）', url: 'https://www.daigo-kanko.jp/' },
       { label: '竜神大吊橋（公式）', url: 'https://ohtsuribashi.ryujinkyo.jp/' },
       { label: '御前山ハイキングコース｜常陸大宮市', url: 'https://www.city.hitachiomiya.lg.jp/kankou_guide/activity/hiking/page002934.html' },
+      { label: '霞ヶ浦観光帆引き船｜観光いばらき', url: 'https://www.ibarakiguide.jp/special/kasumigaura_hobikisen.html' },
     ],
     related: [
-      { slug: 'daigo', name: '大子町' }, { slug: 'hitachiota', name: '常陸太田市' }, { slug: 'hitachiomiya', name: '常陸大宮市' }, { slug: 'takahagi', name: '高萩市' }, { slug: 'sakai', name: '境町' }, { slug: 'koga', name: '古河市' }, { slug: 'shimotsuma', name: '下妻市' }, { slug: 'joso', name: '常総市' },
+      { slug: 'daigo', name: '大子町' }, { slug: 'hitachiota', name: '常陸太田市' }, { slug: 'hitachiomiya', name: '常陸大宮市' }, { slug: 'takahagi', name: '高萩市' }, { slug: 'sakai', name: '境町' }, { slug: 'koga', name: '古河市' }, { slug: 'shimotsuma', name: '下妻市' }, { slug: 'kasumigaura', name: 'かすみがうら市' }, { slug: 'ibaraki-machi', name: '茨城町' },
     ],
     checkedAt: CHECKED,
-    metaTitle: '茨城の川｜日本三名瀑・袋田の滝と那珂川の清流・渓谷ガイド｜イバトコ',
-    metaDescription: '日本三名瀑・袋田の滝（大子）、日本一高いバンジーの竜神大吊橋（常陸太田）、関東随一の清流・那珂川、紅葉トンネルの花貫渓谷、利根川と渡良瀬遊水地まで。茨城の川・滝・渓谷の名所と、訪ねる前の注意点をまとめました。',
+    metaTitle: '茨城の川と湖｜袋田の滝・那珂川の清流・日本第2の湖 霞ヶ浦ガイド｜イバトコ',
+    metaDescription: '日本三名瀑・袋田の滝（大子）、日本一高いバンジーの竜神大吊橋（常陸太田）、関東随一の清流・那珂川、日本第2の湖・霞ヶ浦の帆引き船、利根川と渡良瀬遊水地まで。茨城の川と湖・滝・渓谷の名所と、訪ねる前の注意点をまとめました。',
   },
 
   koen: {
@@ -197,5 +202,126 @@ export const THEMES: Record<Theme['slug'], Theme> = {
     checkedAt: CHECKED,
     metaTitle: '茨城の山｜日本百名山最低峰の筑波山と奥久慈の渓谷ガイド｜イバトコ',
     metaDescription: '日本百名山で最も低い筑波山（標高877m）、山そのものを信仰する御岩山、鎖場の奥久慈男体山、日本最大級の竜神大吊橋、紅葉の花貫渓谷・御前山まで。茨城の山と渓谷の名所、登山前の注意点をまとめました。',
+  },
+
+  hana: {
+    slug: 'hana',
+    kicker: 'IBARAKI FLOWERS',
+    title: '茨城の花',
+    lead: '茨城は、花の見頃がリレーのように続く県です。早春の梅から、桜、ネモフィラ、つつじ、初夏のあやめ・あじさいへ。世界的に知られるネモフィラの丘、日本三名園の梅、遅咲きの八重桜。茨城の花の名所を、季節の順にまとめました。',
+    hero: IMG_NEMOPHILA,
+    sections: [
+      { kicker: '見頃のリレー', title: '梅から、あじさいまで。', body: '2月の梅（偕楽園）にはじまり、4月の桜、4〜5月のネモフィラとつつじ、6月のあやめ・あじさいへ。花の見頃が途切れずに続くのが、茨城の花のめぐり方です。' },
+      { kicker: '色を変える丘', title: '同じ丘が、春は青、秋は赤。', body: '国営ひたち海浜公園のみはらしの丘は、春は約530万本のネモフィラで青く、秋は約3万2千本のコキアで赤く染まります。季節をずらして、二度訪ねたい場所です。' },
+    ],
+    spotsHeading: '花の名所（季節順）',
+    spots: [
+      { name: '偕楽園の梅', area: '水戸市', areaSlug: 'mito', desc: '例年2月中旬から3月。金沢の兼六園、岡山の後楽園と並ぶ日本三名園のひとつで、約100品種3,000本の梅が、早咲き・中咲き・遅咲きと順に咲きます。水戸の梅まつりの会場です。', mapQuery: '偕楽園 水戸市' },
+      { name: '福岡堰の桜', area: 'つくばみらい市', areaSlug: 'tsukubamirai', desc: '例年4月。関東三大堰のひとつ、福岡堰の水辺に約1.8キロメートルの桜並木が続きます。', mapQuery: '福岡堰 つくばみらい市' },
+      { name: '静峰ふるさと公園の八重桜', area: '那珂市', areaSlug: 'naka', desc: '例年4月下旬。約2,000本の八重桜が、ソメイヨシノより遅い時期に見頃を迎えます。「日本さくら名所100選」の一つで、県内の桜が終わったあとに花見を延ばせます。' },
+      { name: 'ひたち海浜公園のネモフィラ', area: 'ひたちなか市', areaSlug: 'hitachinaka', desc: '例年4月中旬から5月上旬。「みはらしの丘」を約530万本のネモフィラが青く染めます。秋には同じ丘が、約3万2千本のコキアで赤く紅葉します。', mapQuery: '国営ひたち海浜公園' },
+      { name: '笠間のつつじ', area: '笠間市', areaSlug: 'kasama', desc: '例年春。笠間つつじ公園では、市街を見下ろす高台の山肌をつつじが彩ります。' },
+      { name: '雨引観音のあじさい', area: '桜川市', areaSlug: 'sakuragawa', desc: '例年6月10日から7月20日のあじさい祭。雨引山楽法寺の境内に100種5,000株のあじさいが咲き、水に浮かべる「水中華」でも知られます。' },
+      { name: '水郷潮来のあやめ', area: '潮来市', areaSlug: 'itako', desc: '例年5月下旬から6月下旬の水郷潮来あやめまつり。前川の水郷潮来あやめ園に約500種100万株の花菖蒲が咲き、伝統の「嫁入り舟」も行われます。', mapQuery: '水郷潮来あやめ園' },
+      { name: '小貝川のポピー・コスモス', area: '下妻市', areaSlug: 'shimotsuma', desc: '小貝川ふれあい公園では、春にポピー、秋にコスモスが一面に咲きます。' },
+    ],
+    practical: [
+      ['花ごとの見頃', '梅は2月中旬〜3月、桜は3月下旬〜4月、八重桜は4月下旬、ネモフィラは4月中旬〜5月上旬、つつじは4〜5月、あやめ・あじさいは6月、コキアの紅葉は10月中旬。見頃は年で動くため、公式の開花情報を確認してください。'],
+      ['混雑', 'ネモフィラや梅まつりの最盛期は、周辺道路と駐車場が大変混雑します。臨時駐車場や公共交通の案内を確認して。'],
+      ['入園料', '国営ひたち海浜公園や偕楽園は、時期・区域によって入園料がかかります。'],
+      ['雨と花', 'あじさいは梅雨に見頃を迎える花です。足元と天候に注意して訪ねてください。'],
+    ],
+    sources: [
+      { label: '国営ひたち海浜公園（公式）', url: 'https://www.hitachikaihin.jp/' },
+      { label: '日本三名園 偕楽園（公式）', url: 'https://ibaraki-kairakuen.jp/' },
+      { label: '水郷潮来あやめまつり｜潮来市', url: 'https://www.city.itako.lg.jp/kankou/kankou-event/kankou-mainevent/kankou-ayamefes/page005638.html' },
+      { label: 'あじさい祭｜雨引観音（雨引山楽法寺）', url: 'http://www.amabiki.or.jp/annualevents/ajisai/' },
+    ],
+    related: [
+      { slug: 'mito', name: '水戸市' }, { slug: 'hitachinaka', name: 'ひたちなか市' }, { slug: 'naka', name: '那珂市' }, { slug: 'sakuragawa', name: '桜川市' }, { slug: 'tsukubamirai', name: 'つくばみらい市' }, { slug: 'kasama', name: '笠間市' }, { slug: 'itako', name: '潮来市' }, { slug: 'shimotsuma', name: '下妻市' },
+    ],
+    checkedAt: CHECKED,
+    metaTitle: '茨城の花｜梅・桜・ネモフィラ・あやめ・あじさいの見頃と名所ガイド｜イバトコ',
+    metaDescription: '偕楽園の梅、静峰の八重桜、ひたち海浜公園の約530万本のネモフィラ、雨引観音のあじさい、水郷潮来のあやめまで。早春から初夏へ、見頃がリレーのように続く茨城の花の名所を季節順にまとめました。',
+  },
+
+  matsuri: {
+    slug: 'matsuri',
+    kicker: 'IBARAKI FESTIVALS',
+    title: '茨城の祭り',
+    lead: '茨城の祭りは、「担い手」で読めます。ユネスコ無形文化遺産のからくり山車、住民が3年に一度組み立てる舞台、蛙の面で柱に登る舞。40万人が集まる関東三大祭から、その日にしか見られない小さな行事まで。土地に受け継がれてきた行事をまとめました。',
+    hero: IMG_SAKURA,
+    sections: [
+      { kicker: '受け継ぐ人', title: '住民の手で、組み立て、演じる。', body: '日立風流物、大塚戸の綱火、西塩子の回り舞台。茨城の祭りの多くは、地域の人の手で組み立て、演じられてきました。誰がつないできたのかに目を向けると、行事の重みが見えてきます。' },
+      { kicker: 'その日だけ', title: '年に一度、あるいは三年に一度。', body: '撞舞は7月、大塚戸の綱火は9月13日、西塩子の回り舞台はおよそ3年に一度の秋。見たい行事があるなら、その日に合わせて予定を組むしかありません。' },
+    ],
+    spotsHeading: '土地に残る行事',
+    spots: [
+      { name: '石岡のおまつり（常陸國總社宮例大祭）', area: '石岡市', areaSlug: 'ishioka', desc: '例年9月、敬老の日を最終日とする三連休。創建千年の常陸國總社宮の例大祭で、幌獅子と山車が町を巡り、およそ40万人が訪れます。関東三大祭のひとつです。', mapQuery: '常陸國總社宮 石岡市' },
+      { name: '日立風流物（日立さくらまつり）', area: '日立市', areaSlug: 'hitachi', desc: '例年4月の日立さくらまつりなどで公開。高さ15メートル、重さ5トンの山車の上部が5層に開き、それぞれが舞台になってからくり人形が芝居を演じます。ユネスコ無形文化遺産です。' },
+      { name: '水戸黄門まつり', area: '水戸市', areaSlug: 'mito', desc: '例年8月。千波湖の花火（名門・野村花火工業）で幕を開ける、夏の水戸の祭りです。' },
+      { name: '笠間の陶炎祭（ひまつり）', area: '笠間市', areaSlug: 'kasama', desc: '例年ゴールデンウィーク。約200人の陶芸家や窯元が笠間芸術の森公園に集う、県内最大の陶器市です。' },
+      { name: '撞舞（つくまい）', area: '龍ケ崎市', areaSlug: 'ryugasaki', desc: '例年7月。高さ14メートルの撞柱に、蛙の面をかぶった舞男が登り、曲芸を演じます。およそ450年続くとされ、国選択・茨城県指定の無形民俗文化財です。' },
+      { name: '大塚戸の綱火', area: '常総市', areaSlug: 'joso', desc: '9月13日、一言主神社の秋季例大祭で奉納される、からくり花火の行事。人形を綱で操りながら花火を使います。年に一度、この日にしか見られません。' },
+      { name: '水郷潮来あやめまつり（嫁入り舟）', area: '潮来市', areaSlug: 'itako', desc: '例年5月下旬から6月下旬。あやめの咲く水郷で、花嫁が手こぎのろ舟で嫁ぐ伝統の「嫁入り舟」が行われます。' },
+      { name: '西塩子の回り舞台', area: '常陸大宮市', areaSlug: 'hitachiomiya', desc: 'およそ3年に一度の秋。江戸時代後期から伝わる組み立て式の農村歌舞伎の舞台を、住民が組み立て、地芝居を演じます。' },
+    ],
+    practical: [
+      ['開催日', '祭りの開催日は毎年変わり、雨天で中止・順延になることもあります。撞舞は7月、大塚戸の綱火は9月13日、回り舞台は3年に一度など、事前に各公式で確認を。'],
+      ['混雑・交通規制', '石岡のおまつりや水戸黄門まつりなどは、市街で交通規制が敷かれ大変混雑します。公共交通の利用がおすすめです。'],
+      ['花火の行事', '土浦全国花火競技大会など花火が中心の行事は、〈茨城の花火〉のページでまとめています。'],
+      ['見られない年もある', '西塩子の回り舞台は毎年ではなく、綱火や撞舞も年に一度だけ。開催の年・日を調べてから予定を組んでください。'],
+    ],
+    sources: [
+      { label: '石岡のおまつり｜石岡市観光協会', url: 'https://www.ishioka-kankou.com/events/ishioka-matsuri/' },
+      { label: '水戸黄門まつり（公式）', url: 'https://mitokoumon.com/koumon/' },
+      { label: '西塩子の回り舞台｜常陸大宮市', url: 'https://www.city.hitachiomiya.lg.jp/kankou_guide/festival_event/page003004.html' },
+      { label: '観光いばらき（県公式）', url: 'https://www.ibarakiguide.jp/' },
+    ],
+    related: [
+      { slug: 'ishioka', name: '石岡市' }, { slug: 'hitachi', name: '日立市' }, { slug: 'mito', name: '水戸市' }, { slug: 'kasama', name: '笠間市' }, { slug: 'ryugasaki', name: '龍ケ崎市' }, { slug: 'joso', name: '常総市' }, { slug: 'itako', name: '潮来市' }, { slug: 'hitachiomiya', name: '常陸大宮市' },
+    ],
+    checkedAt: CHECKED,
+    metaTitle: '茨城の祭り｜石岡のおまつり・日立風流物・撞舞など土地の行事ガイド｜イバトコ',
+    metaDescription: '約40万人が訪れる関東三大祭「石岡のおまつり」、ユネスコ無形文化遺産の日立風流物、約450年続く龍ケ崎の撞舞、常総の大塚戸の綱火、潮来の嫁入り舟まで。担い手が受け継ぐ茨城の祭りと、その開催時期をまとめました。',
+  },
+
+  kouyou: {
+    slug: 'kouyou',
+    kicker: 'IBARAKI AUTUMN LEAVES',
+    title: '茨城の紅葉',
+    lead: '秋の茨城は、山あいが色づきます。日本三名瀑・袋田の滝、日本最大級の吊橋がかかる竜神峡、橋を包む花貫渓谷の紅葉のトンネル。奥久慈から筑波山まで、渓谷と滝と吊橋に紅葉が重なる、茨城の秋をまとめました。',
+    hero: IMG_FUKURODA,
+    sections: [
+      { kicker: '渓谷と吊橋', title: '橋の上から、色づいた谷を見る。', body: '竜神峡の大吊橋、花貫渓谷の汐見滝吊り橋。橋の上から紅葉の渓谷を見下ろせるのが、茨城の紅葉のおもしろさです。' },
+      { kicker: '滝と紅葉', title: '滝の白と、紅葉の赤。', body: '袋田の滝や奥久慈の水辺では、滝の白と紅葉の赤が重なります。見頃は例年11月ごろ。山あいに、秋がいっせいに降りてきます。' },
+    ],
+    spotsHeading: '紅葉の名所',
+    spots: [
+      { name: '袋田の滝', area: '大子町', areaSlug: 'daigo', desc: '高さ120メートル、幅73メートルの日本三名瀑。周囲の大岩壁を紅葉が彩ります。例年11月ごろが見頃です。', mapQuery: '袋田の滝 大子町' },
+      { name: '竜神峡・竜神大吊橋', area: '常陸太田市', areaSlug: 'hitachiota', desc: '全長375メートルの歩行者専用吊橋（日本最大級）から、紅葉の渓谷を見下ろせます。竜神峡紅葉まつりも開かれます。', mapQuery: '竜神大吊橋 常陸太田市' },
+      { name: '花貫渓谷・汐見滝吊り橋', area: '高萩市', areaSlug: 'takahagi', desc: '汐見滝吊り橋のあたりで、赤や黄に色づいた木々が橋を包む「紅葉のトンネル」になります。まつり期間にはライトアップも。' },
+      { name: '御前山（関東の嵐山）', area: '常陸大宮市', areaSlug: 'hitachiomiya', desc: '「関東の嵐山」と呼ばれる、茨城百景のひとつ。那珂川ごしに見る紅葉が知られます。' },
+      { name: '奥久慈（男体山・月待の滝）', area: '大子町', areaSlug: 'daigo', desc: '奥久慈男体山の岩山や、裏側から眺められる月待の滝など、奥久慈一帯が色づきます。' },
+      { name: '筑波山', area: 'つくば市', areaSlug: 'tsukuba', desc: '日本百名山で最も低い筑波山も、秋には山肌が色づきます。ケーブルカーやロープウェイから紅葉を見られます。', mapQuery: '筑波山' },
+    ],
+    practical: [
+      ['見頃', 'いずれも例年11月ごろが見頃です。標高や年で前後するため、各公式・観光いばらきの紅葉情報を確認してください。'],
+      ['混雑・交通規制', '竜神峡・花貫渓谷・袋田の紅葉まつり期間は、周辺道路と駐車場が大変混雑します。シャトルバスや交通規制になることもあります。'],
+      ['足元と日没', '渓谷や山は日が暮れるのが早く、足元も不安定です。歩きやすい靴と、早めの行動を。'],
+      ['冬の氷瀑へ', '袋田の滝は、冬にかけて全体が凍る「氷瀑」になることもあります（→〈茨城の川と湖〉）。'],
+    ],
+    sources: [
+      { label: '大子町観光協会（袋田の滝・紅葉情報）', url: 'https://www.daigo-kanko.jp/' },
+      { label: '竜神大吊橋（公式）', url: 'https://ohtsuribashi.ryujinkyo.jp/' },
+      { label: '高萩市観光協会（花貫渓谷）', url: 'https://www.takahagi-kanko.jp/' },
+      { label: '観光いばらき（県公式）', url: 'https://www.ibarakiguide.jp/' },
+    ],
+    related: [
+      { slug: 'daigo', name: '大子町' }, { slug: 'hitachiota', name: '常陸太田市' }, { slug: 'takahagi', name: '高萩市' }, { slug: 'hitachiomiya', name: '常陸大宮市' }, { slug: 'tsukuba', name: 'つくば市' }, { slug: 'hitachi', name: '日立市' },
+    ],
+    checkedAt: CHECKED,
+    metaTitle: '茨城の紅葉｜袋田の滝・竜神大吊橋・花貫渓谷など渓谷の秋ガイド｜イバトコ',
+    metaDescription: '日本三名瀑・袋田の滝、日本最大級の竜神大吊橋、紅葉のトンネルの花貫渓谷、「関東の嵐山」御前山、奥久慈から筑波山まで。橋の上から谷を見下ろす茨城の紅葉の名所と、例年11月の見頃・注意点をまとめました。',
   },
 };

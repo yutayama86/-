@@ -1,0 +1,107 @@
+---
+/**
+ * ThemeGuide — 茨城の「海／川／公園／山」テーマ特集の共通レンダラ。
+ * データ：src/data/themes.ts（事実は公式・観光いばらきで裏取り）。
+ * 画像はCCライセンス／PDで帰属が確認できたもののみ。figcaptionのクレジットは削除しない。
+ * 画像のないスポットは写真枠を灰色で埋めず text-forward で成立させる。
+ */
+import type { Theme } from '../data/themes';
+interface Props { theme: Theme; }
+const { theme } = Astro.props;
+---
+
+<article class="tg">
+  <header class="tg-head">
+    <div class="tg-head__copy bp-wrap">
+      <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><span aria-current="page">{theme.title}</span></nav>
+      <p class="bp-kicker">{theme.kicker}</p>
+      <h1>{theme.title}</h1>
+      <p class="tg-lead">{theme.lead}</p>
+    </div>
+    {theme.hero && (
+      <figure class="tg-hero">
+        <img src={theme.hero.src} alt={theme.hero.alt} loading="eager" fetchpriority="high" width="1280" height="854" />
+        <figcaption><a href={theme.hero.creditUrl} target="_blank" rel="license noopener">{theme.hero.credit}</a></figcaption>
+      </figure>
+    )}
+  </header>
+
+  {theme.sections.length > 0 && (
+    <section class="tg-angle bp-wrap">
+      <div class="tg-angle__grid">
+        {theme.sections.map((s, i) => (
+          <div><p class="bp-kicker">{String(i + 1).padStart(2, '0')} / {s.kicker}</p><h2>{s.title}</h2><p>{s.body}</p></div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="tg-spots bp-wrap" aria-labelledby="tg-spots-h">
+    <div class="tg-spots__head"><p class="bp-kicker">SPOTS</p><h2 id="tg-spots-h">{theme.spotsHeading}</h2></div>
+    <div class="tg-grid">
+      {theme.spots.map((sp) => (
+        <article class:list={['tg-card', !sp.image && 'tg-card--noimg']}>
+          {sp.image && (
+            <figure class="tg-card__fig">
+              <img src={sp.image.src} alt={sp.image.alt} loading="lazy" decoding="async" width="1280" height="854" />
+              <figcaption><a href={sp.image.creditUrl} target="_blank" rel="license noopener">{sp.image.credit}</a></figcaption>
+            </figure>
+          )}
+          <div class="tg-card__body">
+            <p class="tg-card__area">{sp.areaSlug ? <a href={`/area/${sp.areaSlug}/`}>{sp.area}</a> : sp.area}</p>
+            <h3>{sp.name}</h3>
+            <p class="tg-card__desc">{sp.desc}</p>
+            {sp.mapQuery && <a class="tg-card__map" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(sp.mapQuery)}`} target="_blank" rel="noopener">Google マップで見る <span aria-hidden="true">↗</span></a>}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  {theme.practical.length > 0 && (
+    <section class="tg-practical bp-wrap">
+      <div class="tg-practical__head"><p class="bp-kicker">BEFORE YOU GO</p><h2>訪ねる前に</h2></div>
+      <dl>{theme.practical.map(([t, d]) => <div><dt>{t}</dt><dd>{d}</dd></div>)}</dl>
+    </section>
+  )}
+
+  <aside class="tg-info bp-wrap" aria-labelledby="tg-info-h">
+    <div><p class="bp-kicker">INFORMATION</p><h2 id="tg-info-h">情報の確認について</h2><p>掲載内容は公開情報をもとに編集しています。開花・見頃・営業・催事・遊泳可否などは年や天候で変わります。訪ねる前に各施設・自治体の公式情報をご確認ください。</p></div>
+    <div><p>最終確認：<time>{theme.checkedAt}</time></p>{theme.sources.length > 0 && <ul class="tg-info__links">{theme.sources.map((s) => <li><a href={s.url} target="_blank" rel="noopener">{s.label}<span aria-hidden="true">↗</span></a></li>)}</ul>}</div>
+  </aside>
+
+  <section class="tg-related">
+    <div class="bp-wrap"><p class="bp-kicker">RELATED AREAS</p><h2>関わる街を、読む。</h2><ul>{theme.related.map((r) => <li><a href={`/area/${r.slug}/`}>{r.name}</a></li>)}</ul></div>
+  </section>
+</article>
+
+<style>
+  .tg{padding-top:clamp(2.5rem,6vw,5rem)}
+  .tg-head__copy{padding-bottom:clamp(2rem,5vw,3.5rem)}
+  .crumbs{display:flex;gap:.55rem;margin-bottom:1.8rem;color:var(--color-soil);font-size:.74rem}.crumbs a{border-bottom:1px solid transparent}.crumbs a:hover{border-color:var(--color-tide)}
+  .tg-head h1{margin-top:.7rem;font:600 clamp(2.6rem,7vw,5.5rem)/1.05 var(--font-brand-display);color:var(--color-ink)}
+  .tg-lead{max-width:64ch;margin-top:1.5rem;color:var(--color-soil);line-height:2;font-size:clamp(.98rem,1.5vw,1.14rem)}
+  .tg-hero{position:relative;margin:0}.tg-hero img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block}
+  figure figcaption{position:absolute;right:.6rem;bottom:.5rem;padding:.15rem .4rem;background:rgba(13,39,50,.72);font-size:.65rem;color:#fff}figure figcaption a{color:inherit}
+  .tg-angle{padding-block:clamp(3rem,7vw,6rem)}.tg-angle__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(2rem,5vw,4rem)}
+  .tg-angle__grid h2{margin-top:.6rem;font:600 clamp(1.4rem,2.6vw,2.1rem)/1.4 var(--font-brand-display);color:var(--color-ink)}.tg-angle__grid p:last-child{margin-top:1rem;color:var(--color-soil);line-height:1.95}
+  .tg-spots{padding-block:clamp(1rem,3vw,2.5rem)}.tg-spots__head h2{margin-top:.6rem;font:600 clamp(1.7rem,3.4vw,2.8rem) var(--font-brand-display);color:var(--color-ink)}
+  .tg-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.8rem;margin-top:2.5rem}
+  .tg-card{display:flex;flex-direction:column;background:var(--color-white)}
+  .tg-card__fig{position:relative;margin:0;aspect-ratio:3/2;overflow:hidden}.tg-card__fig img{width:100%;height:100%;object-fit:cover}
+  .tg-card--noimg{border-top:3px solid var(--color-tide)}
+  .tg-card__body{padding:1.3rem}
+  .tg-card__area{font:600 .72rem var(--font-brand-meta);letter-spacing:.08em;color:var(--color-tide)}.tg-card__area a{color:inherit;border-bottom:1px solid}
+  .tg-card h3{margin-top:.5rem;font:600 clamp(1.2rem,2vw,1.55rem)/1.4 var(--font-brand-display);color:var(--color-ink)}
+  .tg-card__desc{margin-top:.7rem;color:var(--color-soil);line-height:1.85;font-size:.9rem}
+  .tg-card__map{display:inline-block;margin-top:.9rem;color:var(--color-tide);font-size:.8rem;border-bottom:1px solid}
+  .tg-practical{padding-block:clamp(3rem,6vw,5rem)}.tg-practical__head h2{margin-top:.6rem;font:600 clamp(1.5rem,2.8vw,2.2rem) var(--font-brand-display);color:var(--color-ink)}
+  .tg-practical dl{margin-top:2rem;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--color-mist)}.tg-practical dl>div{padding:1.5rem;border-bottom:1px solid var(--color-mist)}.tg-practical dl>div:nth-child(odd){border-right:1px solid var(--color-mist)}
+  .tg-practical dt{font:600 1.05rem var(--font-brand-display);color:var(--color-ink)}.tg-practical dd{margin:.5rem 0 0;color:var(--color-soil);line-height:1.8;font-size:.9rem}
+  .tg-info{display:grid;grid-template-columns:.7fr 1fr;gap:2.5rem;padding:clamp(2rem,5vw,3.5rem);background:var(--color-ink);color:var(--color-white);margin-block:clamp(2rem,5vw,4rem);border-radius:var(--radius-sm)}
+  .tg-info h2{margin-top:.6rem;font:600 1.4rem var(--font-brand-display)}.tg-info p{margin-top:1rem;line-height:1.85}.tg-info>div:last-child p{font-size:.85rem}
+  .tg-info__links{margin-top:1rem;border-top:1px solid rgba(255,255,255,.2)}.tg-info__links li a{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.2);color:var(--color-white);font-size:.82rem}
+  .tg-related{padding-block:clamp(3rem,6vw,5rem);background:var(--color-white)}.tg-related h2{margin-top:.6rem;font:600 clamp(1.6rem,3.2vw,2.6rem) var(--font-brand-display);color:var(--color-ink)}.tg-related ul{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;margin-top:1.6rem}.tg-related a{color:var(--color-soil);border-bottom:1px solid var(--color-mist);padding-bottom:.2rem}.tg-related a:hover{color:var(--color-tide);border-color:var(--color-tide)}
+  @media(max-width:960px){.tg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:680px){.tg-angle__grid,.tg-grid,.tg-practical dl{grid-template-columns:1fr}.tg-practical dl>div:nth-child(odd){border-right:0}.tg-info{grid-template-columns:1fr}}
+</style>

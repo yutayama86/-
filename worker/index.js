@@ -8,6 +8,16 @@
  */
 export default {
   async fetch(request, env) {
+    const url = new URL(request.url);
+
+    // HSTSだけに頼らず、検索評価を https://ibatoco.jp に集約する。
+    if (url.protocol !== 'https:' || url.hostname !== 'ibatoco.jp') {
+      url.protocol = 'https:';
+      url.hostname = 'ibatoco.jp';
+      url.port = '';
+      return Response.redirect(url.toString(), 301);
+    }
+
     const password = env.SITE_PASSWORD;
 
     // パスワードが設定されている時だけ認証をかける

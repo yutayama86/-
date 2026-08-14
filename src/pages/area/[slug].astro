@@ -3,6 +3,7 @@ import type { GetStaticPaths } from 'astro';
 import BrandBase from '../../layouts/BrandBase.astro';
 import BrandStoryCard from '../../components/BrandStoryCard.astro';
 import HitachiAreaGuide from '../../components/HitachiAreaGuide.astro';
+import DaigoAreaGuide from '../../components/DaigoAreaGuide.astro';
 import AreaGuide from '../../components/AreaGuide.astro';
 import { AREA_GUIDES, type AreaGuide as AreaGuideData } from '../../data/area-guides';
 import { MUNICIPALITY_CONTENT } from '../../data/municipality-content';
@@ -25,6 +26,7 @@ const hasContent = articles.length + stores.length > 0;
 // 最終バッチ18市町村＝データ駆動の旅ガイド（text-forward）。「要確認」項目の人手検証まで noindex。
 // 残り25市町村は取材記事が付くまでミニマル表示（架空情報で埋めない）。
 const isHitachi = slug === 'hitachi';
+const isDaigo = slug === 'daigo';
 // 指示書のあるガイド（日立＝別コンポーネント／最終バッチ18）はそれを使用。
 // 残り25市町村は、既存の municipality-content.ts（catch/intro/spots/gourmet/experiences）を
 // そのままガイド形式へ変換して表示（＝架空の加筆はしない。写真・出典・季節等は持たないので出さない）。
@@ -53,29 +55,42 @@ const titleSuffix = guide
   : '見どころ・食・半日コース';
 const metaDescription = isHitachi
   ? '茨城県日立市の歩き方。海に張り出した日立駅、山岳信仰の御岩神社、桜と夜景のかみね公園、世界一だった大煙突。久慈浜しらすと味勝手丼、半日モデルコースまで。'
+  : isDaigo
+    ? '茨城県大子町の歩き方。高さ120m幅73mの袋田の滝と冬の氷瀑、裏見の月待の滝、奥久慈しゃも・常陸秋そば・奥久慈りんご。半日モデルコースとアクセス、よくある質問まで。'
   : hasGuide
     ? guide.metaDescription
     : `茨城県${municipality.name}の、取材・確認を経た記事と場所の情報。イバトコが現地の人と営みを記録します。`;
 const pageTitle = isHitachi
   ? '日立市の歩き方｜見どころ・食・半日コース｜イバトコ'
+  : isDaigo
+    ? '大子町の歩き方｜袋田の滝と奥久慈・半日コース｜イバトコ'
   : hasGuide
     ? `${municipality.name}の歩き方｜${titleSuffix}｜イバトコ`
     : `${municipality.name}｜茨城の街を読む｜イバトコ`;
-const ogTitle = isHitachi ? '日立市の歩き方｜海の駅と、桜の山｜イバトコ' : undefined;
+const ogTitle = isHitachi ? '日立市の歩き方｜海の駅と、桜の山｜イバトコ' : isDaigo ? '大子町の歩き方｜四度の滝と、奥久慈の実り｜イバトコ' : undefined;
 // noindex 方針：
 //  ・日立（旗艦）＝index。
 //  ・公式出典で裏取り済みの執筆ページ（guide.sources あり＝水戸・つくば等25）＝index解除。
 //  ・最終バッチ18（sources なし／「要確認」項目が残る）＝人手検証まで noindex 維持。
 //  ・ガイドなし（記事が付くまで）＝noindex。
 const isVerifiedGuide = hasGuide && !!guide?.sources?.length;
-const shouldNoindex = isHitachi ? false : isVerifiedGuide ? false : hasGuide ? true : !hasContent;
+const shouldNoindex = (isHitachi || isDaigo) ? false : isVerifiedGuide ? false : hasGuide ? true : !hasContent;
 // 構造化データ（44ページ共通・既存データから導出／創作なし）。
 // TouristDestination＋各見どころのTouristAttraction、半日コースのItemList、BreadcrumbList。
 const hitachiHighlights = ['日立駅', '御岩神社', 'かみね公園', '大煙突'];
 const hitachiRoute: [string, string][] = [['10:00', '日立駅'], ['10:40', '平和通り'], ['11:20', 'かみね公園'], ['12:40', '市街へ戻る']];
-const attractionNames = isHitachi ? hitachiHighlights : (guide?.highlights.map((h) => h.title) ?? []);
-const routeSteps: [string, string][] = isHitachi ? hitachiRoute : (guide?.route?.map((r) => [r.time, r.place] as [string, string]) ?? []);
-const routeName = isHitachi ? '海から高台へ、半日の歩き方。' : guide?.routeTitle;
+const daigoHighlights = ['袋田の滝', '月待の滝', '生瀬滝', '奥久慈の実り（りんご・そば）'];
+const daigoRoute: [string, string][] = [['09:30', '袋田の滝'], ['10:30', '生瀬滝'], ['12:00', 'そば処で昼食'], ['13:30', '月待の滝']];
+// AIO/SEO：大子町のFAQ（DaigoAreaGuideの表示内容と一致）。FAQPage構造化データに使用。
+const daigoFaq: [string, string][] = [
+  ['袋田の滝の高さと大きさは？', '高さ120メートル、幅73メートルです。大岩壁を四段に落ちることから「四度（よど）の滝」とも呼ばれ、日本三名瀑のひとつ、国の名勝に数えられます。'],
+  ['袋田の滝の氷瀑（凍った滝）はいつ見られますか？', '例年12月下旬から2月ごろの厳冬期に凍ることがあります。ただし凍り方はその年の寒さ次第で、見られない年もあります。凍結状況は大子町観光協会の情報でご確認ください。'],
+  ['大子町の名物・味覚は？', '奥久慈しゃも（ブランド地鶏）、常陸秋そば、奥久慈りんごが知られます。秋にはりんご狩りや、そば処の新そばが楽しめます。'],
+  ['袋田の滝へのアクセスは？', 'JR水郡線・袋田駅が最寄りで、滝まではバスやタクシーが便利です。車の場合は常磐自動車道・那珂ICから国道118号を経由します。観瀑台へはトンネルを通り、入場料が必要です。'],
+];
+const attractionNames = isHitachi ? hitachiHighlights : isDaigo ? daigoHighlights : (guide?.highlights.map((h) => h.title) ?? []);
+const routeSteps: [string, string][] = isHitachi ? hitachiRoute : isDaigo ? daigoRoute : (guide?.route?.map((r) => [r.time, r.place] as [string, string]) ?? []);
+const routeName = isHitachi ? '海から高台へ、半日の歩き方。' : isDaigo ? '滝から、山里へ。' : guide?.routeTitle;
 const homeUrl = new URL('/', Astro.site).href;
 const areaUrl = new URL('/area/', Astro.site).href;
 const pageUrl = new URL(`/area/${slug}/`, Astro.site).href;
@@ -88,15 +103,18 @@ const jsonLd: Record<string, unknown>[] = [
   ] },
   { '@context': 'https://schema.org', '@type': 'TouristDestination', name: `茨城県${municipality.name}`, description: metaDescription, url: pageUrl,
     containedInPlace: { '@type': 'AdministrativeArea', name: '茨城県' },
+    ...(isDaigo ? { image: new URL('/images/area/daigo/cover.jpg', Astro.site).href } : {}),
     ...(attractionNames.length ? { includesAttraction: attractionNames.map((n) => ({ '@type': 'TouristAttraction', name: n })) } : {}),
   },
   ...(routeSteps.length ? [{ '@context': 'https://schema.org', '@type': 'ItemList', name: routeName,
     itemListElement: routeSteps.map(([t, p], i) => ({ '@type': 'ListItem', position: i + 1, name: `${t} ${p}` })) }] : []),
+  ...(isDaigo ? [{ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: daigoFaq.map(([q, a]) => ({
+    '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) }] : []),
 ];
 ---
 
 <BrandBase title={pageTitle} ogTitle={ogTitle} description={metaDescription} jsonLd={jsonLd} noindex={shouldNoindex}>
-  {isHitachi ? <HitachiAreaGuide /> : hasGuide ? <AreaGuide slug={slug!} guide={guide!} /> : <article class="area-page">
+  {isHitachi ? <HitachiAreaGuide /> : isDaigo ? <DaigoAreaGuide /> : hasGuide ? <AreaGuide slug={slug!} guide={guide!} /> : <article class="area-page">
     <header class="area-head bp-wrap">
       <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><a href="/area/">エリア</a><span>/</span><span>{region.label}</span></nav>
       <p class="bp-kicker">{region.label} / IBARAKI</p>

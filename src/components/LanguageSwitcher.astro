@@ -1,0 +1,51 @@
+---
+/**
+ * 言語切替UI。
+ *  - 同じ内容の他言語版があればそのページへ、無ければその言語のトップへ自然にフォールバック。
+ *  - 現在の言語は aria-current="true" と視覚表現の両方で示す。
+ *  - IP・ブラウザ言語による自動リダイレクトはしない（ユーザーが明示的に選ぶ）。
+ */
+import { LOCALES, LOCALE_META, TRANSLATIONS, localeHome, type Locale } from '../data/i18n';
+
+interface Props { locale: Locale; translationKey?: string; compact?: boolean; }
+const { locale, translationKey, compact = false } = Astro.props;
+
+const map = translationKey ? TRANSLATIONS[translationKey] : undefined;
+const items = LOCALES.map((code) => ({
+  code,
+  label: LOCALE_META[code].label,
+  htmlLang: LOCALE_META[code].htmlLang,
+  // 対応ページがなければ、その言語のトップへ
+  href: map?.[code] ?? localeHome(code),
+  translated: Boolean(map?.[code]),
+  current: code === locale,
+}));
+---
+
+<nav class:list={['lang-switch', { compact }]} aria-label="Language / 言語切替">
+  <ul>
+    {items.map((item) => (
+      <li>
+        <a
+          href={item.href}
+          hreflang={item.htmlLang}
+          lang={item.htmlLang}
+          aria-current={item.current ? 'true' : undefined}
+          data-fallback={!item.translated && !item.current ? 'true' : undefined}
+        >{item.label}</a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .lang-switch ul{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem;margin:0;padding:0;list-style:none}
+  .lang-switch li+li::before{content:'|';margin-inline:.5rem;color:var(--color-mist)}
+  .lang-switch li{display:flex;align-items:center}
+  .lang-switch a{display:inline-block;padding:.35rem .1rem;color:var(--color-soil);font-size:.82rem;line-height:1.4;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+  .lang-switch a:hover{color:var(--color-tide);border-color:var(--color-tide)}
+  .lang-switch a:focus-visible{outline:2px solid var(--color-tide);outline-offset:3px;border-radius:2px}
+  .lang-switch a[aria-current='true']{color:var(--color-ink);font-weight:600;border-color:var(--color-ink)}
+  .compact a{font-size:.78rem}
+  @media(max-width:520px){.lang-switch li+li::before{margin-inline:.35rem}.lang-switch a{font-size:.76rem}}
+</style>

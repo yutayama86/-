@@ -3,6 +3,7 @@ import { getAreaCounts, getArticles, getIndexableNews, getStores } from '../lib/
 import { CATEGORIES, SITE_CONFIG } from '../data/site';
 import { VISIBLE_GUIDES } from '../data/guides';
 import { VISIBLE_REPORTERS } from '../data/reporters';
+import { TRANSLATIONS, DEFAULT_LOCALE } from '../data/i18n';
 
 type SitemapEntry = { path: string; lastmod?: Date };
 
@@ -47,6 +48,14 @@ export const GET: APIRoute = async () => {
 
   if (VISIBLE_GUIDES.length > 0) entries.push({ path: '/guide/' });
   for (const guide of VISIBLE_GUIDES) entries.push({ path: `/guide/${guide.slug}/`, lastmod: new Date(guide.publishedAt) });
+
+  // 多言語ページ（TRANSLATIONS に登録＝実在するものだけ）。日本語は上で既に列挙済み。
+  for (const locales of Object.values(TRANSLATIONS)) {
+    for (const [locale, path] of Object.entries(locales)) {
+      if (locale === DEFAULT_LOCALE || !path) continue;
+      entries.push({ path });
+    }
+  }
 
   const unique = [...new Map(entries.map((entry) => [entry.path, entry])).values()];
   const urls = unique.map((entry) => {

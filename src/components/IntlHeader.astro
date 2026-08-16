@@ -1,0 +1,74 @@
+---
+/**
+ * 海外向け（日本語以外）ページのヘッダー。
+ * 日本語サイトのナビをそのまま出さず、各言語で独立した回遊導線をつくる。
+ * リンクは TRANSLATIONS に登録済み＝実在するページだけを出す（リンク切れが構造上できない）。
+ */
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { TRANSLATIONS, localeHome, type Locale } from '../data/i18n';
+
+interface Props { locale: Locale; translationKey?: string; }
+const { locale, translationKey } = Astro.props;
+
+/** 各言語のナビ表記。translationKey は TRANSLATIONS のキー。 */
+const NAV: Record<Locale, { key: string; label: string }[]> = {
+  ja: [],
+  en: [
+    { key: 'home', label: 'Ibaraki Travel' },
+    { key: 'hitachi-seaside-park-from-tokyo', label: 'Hitachi Seaside Park' },
+  ],
+  'zh-tw': [
+    { key: 'home', label: '茨城旅遊' },
+    { key: 'hitachi-seaside-park-from-tokyo', label: '常陸海濱公園' },
+  ],
+  ko: [
+    { key: 'home', label: '이바라키 여행' },
+    { key: 'hitachi-seaside-park-from-tokyo', label: '히타치 해변공원' },
+  ],
+};
+
+const TAGLINE: Record<Locale, string> = {
+  ja: '茨城のローカルメディア',
+  en: 'Local media from Ibaraki, Japan',
+  'zh-tw': '來自日本茨城的在地媒體',
+  ko: '일본 이바라키의 로컬 미디어',
+};
+
+const nav = (NAV[locale] ?? []).flatMap((item) => {
+  const href = TRANSLATIONS[item.key]?.[locale];
+  return href ? [{ href, label: item.label }] : [];
+});
+const home = localeHome(locale);
+---
+
+<header class="intl-header">
+  <div class="bp-wrap">
+    <a class="intl-brand" href={home}>
+      <span class="intl-brand__name">IBATOCO</span>
+      <span class="intl-brand__tag">{TAGLINE[locale]}</span>
+    </a>
+    <div class="intl-header__right">
+      {nav.length > 0 && (
+        <nav class="intl-nav" aria-label={locale === 'en' ? 'Main navigation' : locale === 'ko' ? '주요 메뉴' : '主要選單'}>
+          {nav.map((item) => <a href={item.href} aria-current={Astro.url.pathname === item.href ? 'page' : undefined}>{item.label}</a>)}
+        </nav>
+      )}
+      <LanguageSwitcher locale={locale} translationKey={translationKey} compact />
+    </div>
+  </div>
+</header>
+
+<style>
+  .intl-header{border-bottom:1px solid var(--color-mist);background:color-mix(in srgb,var(--color-paper) 96%,transparent);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20}
+  .intl-header>div{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding-block:1rem;flex-wrap:wrap}
+  .intl-brand{display:grid;gap:.15rem;color:var(--color-ink)}
+  .intl-brand__name{font:600 1.15rem/1 var(--font-brand-display);letter-spacing:.12em}
+  .intl-brand__tag{color:var(--color-soil);font-size:.68rem;letter-spacing:.04em}
+  .intl-header__right{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+  .intl-nav{display:flex;gap:1.2rem;flex-wrap:wrap}
+  .intl-nav a{color:var(--color-ink);font-size:.85rem;border-bottom:1px solid transparent;padding-bottom:.15rem}
+  .intl-nav a:hover{color:var(--color-tide);border-color:var(--color-tide)}
+  .intl-nav a:focus-visible{outline:2px solid var(--color-tide);outline-offset:3px}
+  .intl-nav a[aria-current='page']{border-color:var(--color-ink)}
+  @media(max-width:640px){.intl-header>div{gap:.75rem}.intl-header__right{width:100%;justify-content:space-between;gap:.75rem}.intl-nav{gap:.9rem}}
+</style>

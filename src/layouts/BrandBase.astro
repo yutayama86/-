@@ -2,8 +2,11 @@
 import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import IntlHeader from '../components/IntlHeader.astro';
+import IntlFooter from '../components/IntlFooter.astro';
 import { SITE_CONFIG } from '../data/site';
-interface Props { title?: string; ogTitle?: string; description?: string; image?: string; imageAlt?: string; type?: 'website'|'article'; publishedAt?: Date; updatedAt?: Date; jsonLd?: Record<string, unknown>|Record<string, unknown>[]; noindex?: boolean; }
+import { DEFAULT_LOCALE, LOCALE_META, alternatesFor, xDefaultFor, type Locale } from '../data/i18n';
+interface Props { title?: string; ogTitle?: string; description?: string; image?: string; imageAlt?: string; type?: 'website'|'article'; publishedAt?: Date; updatedAt?: Date; jsonLd?: Record<string, unknown>|Record<string, unknown>[]; noindex?: boolean; locale?: Locale; translationKey?: string; }
 const {
   title = 'イバトコ｜現地から、信頼を編む。',
   ogTitle,
@@ -15,14 +18,23 @@ const {
   updatedAt,
   jsonLd,
   noindex = false,
+  locale = DEFAULT_LOCALE,
+  translationKey,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// 多言語：実在する翻訳だけを相互参照する（存在しないURLは出さない）。
+const localeMeta = LOCALE_META[locale];
+const alternates = alternatesFor(translationKey);
+const xDefault = xDefaultFor(translationKey);
+const isIntl = locale !== DEFAULT_LOCALE;
+const absolute = (path: string) => new URL(path, Astro.site).href;
+const SKIP_LABEL: Record<Locale, string> = { ja: '本文へスキップ', en: 'Skip to content', 'zh-tw': '跳至主要內容', ko: '본문으로 건너뛰기' };
 const absoluteImage = new URL(image ?? '/og-default.svg', Astro.site).href;
 const GA_ID = (import.meta.env.PUBLIC_GA_ID as string | undefined) || SITE_CONFIG.gaMeasurementId;
 const enableGA = import.meta.env.PROD && !!GA_ID;
 ---
 <!doctype html>
-<html lang="ja">
+<html lang={localeMeta.htmlLang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -32,7 +44,11 @@ const enableGA = import.meta.env.PROD && !!GA_ID;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={absolute(alt.path)} />)}
+    {xDefault && <link rel="alternate" hreflang="x-default" href={absolute(xDefault)} />}
     <meta property="og:type" content={type} />
+    <meta property="og:locale" content={localeMeta.ogLocale} />
+    {alternates.filter((alt) => alt.locale !== locale).map((alt) => <meta property="og:locale:alternate" content={LOCALE_META[alt.locale].ogLocale} />)}
     <meta property="og:title" content={ogTitle ?? title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -58,10 +74,10 @@ const enableGA = import.meta.env.PROD && !!GA_ID;
     )}
   </head>
   <body class="brand-site">
-    <a href="#main-content" class="sr-only">本文へスキップ</a>
-    <SiteHeader />
+    <a href="#main-content" class="sr-only">{SKIP_LABEL[locale]}</a>
+    {isIntl ? <IntlHeader locale={locale} translationKey={translationKey} /> : <SiteHeader translationKey={translationKey} />}
     <main id="main-content"><slot /></main>
-    <SiteFooter />
+    {isIntl ? <IntlFooter locale={locale} /> : <SiteFooter />}
   </body>
 </html>
 

@@ -1,0 +1,18 @@
+---
+import BrandBase from '../../layouts/BrandBase.astro';
+import IntlTravelGuide from '../../components/IntlTravelGuide.astro';
+import { HITACHI_SEASIDE_PARK, guideJsonLd } from '../../data/intl-guides';
+
+const guide = HITACHI_SEASIDE_PARK['zh-tw'];
+const jsonLd = guideJsonLd(guide, 'zh-tw', Astro.site);
+---
+<BrandBase
+  title={`${guide.title}｜IBATOCO`}
+  description={guide.description}
+  locale="zh-tw"
+  translationKey={guide.translationKey}
+  type="article"
+  jsonLd={jsonLd}
+>
+  <IntlTravelGuide guide={guide} />
+</BrandBase>

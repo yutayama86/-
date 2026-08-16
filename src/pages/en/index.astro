@@ -1,0 +1,18 @@
+---
+import BrandBase from '../../layouts/BrandBase.astro';
+import IntlHomeView from '../../components/IntlHomeView.astro';
+import { INTL_HOME } from '../../data/intl-home';
+
+const home = INTL_HOME.en;
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'IBATOCO',
+  url: new URL('/en/', Astro.site).href,
+  inLanguage: 'en',
+  description: home.description,
+}];
+---
+<BrandBase title={home.title} description={home.description} locale="en" translationKey="home" jsonLd={jsonLd}>
+  <IntlHomeView home={home} locale="en" />
+</BrandBase>

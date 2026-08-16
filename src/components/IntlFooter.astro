@@ -1,0 +1,80 @@
+---
+/**
+ * 海外向けページのフッター。
+ * E-E-A-T（誰が・どう確かめて出しているか）を各言語で明示する。
+ * 運営ポリシーの詳細ページは現状日本語のみのため、日本語であることを明記してリンクする。
+ */
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { SITE_CONFIG } from '../data/site';
+import { localeHome, type Locale } from '../data/i18n';
+
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+
+const COPY: Record<Locale, {
+  about: string; aboutBody: string; policyLabel: string; contactLabel: string; jaNote: string; langHeading: string;
+}> = {
+  ja: { about: 'イバトコについて', aboutBody: '', policyLabel: '編集方針', contactLabel: 'お問い合わせ', jaNote: '', langHeading: '言語' },
+  en: {
+    about: 'About IBATOCO',
+    aboutBody: 'IBATOCO is a local media outlet based in Ibaraki, Japan. Our editors visit places in person, talk to the people who run them, and publish only what we can confirm. Prices, opening hours and transport schedules change — always check the official website before you travel.',
+    policyLabel: 'Editorial policy',
+    contactLabel: 'Contact',
+    jaNote: 'in Japanese',
+    langHeading: 'Language',
+  },
+  'zh-tw': {
+    about: '關於 IBATOCO',
+    aboutBody: 'IBATOCO 是位於日本茨城的在地媒體。我們的編輯親自走訪現場、與當地經營者對話，只刊登能夠查證的內容。票價、開放時間與交通班次可能變動，出發前請務必確認官方網站。',
+    policyLabel: '編輯方針',
+    contactLabel: '聯絡我們',
+    jaNote: '日文',
+    langHeading: '語言',
+  },
+  ko: {
+    about: 'IBATOCO 소개',
+    aboutBody: 'IBATOCO는 일본 이바라키를 기반으로 하는 로컬 미디어입니다. 편집부가 직접 현장을 찾아가 지역 사람들의 이야기를 듣고, 확인된 내용만 싣습니다. 요금과 운영 시간, 교통 시간표는 바뀔 수 있으니 출발 전에 공식 홈페이지에서 확인해 주세요.',
+    policyLabel: '편집 방침',
+    contactLabel: '문의',
+    jaNote: '일본어',
+    langHeading: '언어',
+  },
+};
+
+const c = COPY[locale];
+const year = new Date().getFullYear();
+---
+
+<footer class="intl-footer">
+  <div class="bp-wrap">
+    <section class="intl-footer__about">
+      <h2>{c.about}</h2>
+      <p>{c.aboutBody}</p>
+      <ul class="intl-footer__links">
+        <li><a href="/about/editorial-policy/" hreflang="ja" lang="ja">{c.policyLabel} <span>（{c.jaNote}）</span></a></li>
+        <li><a href="/contact/" hreflang="ja" lang="ja">{c.contactLabel} <span>（{c.jaNote}）</span></a></li>
+        <li><a href={localeHome('ja')} hreflang="ja" lang="ja">日本語サイト</a></li>
+      </ul>
+    </section>
+    <section class="intl-footer__lang">
+      <h2>{c.langHeading}</h2>
+      <LanguageSwitcher locale={locale} translationKey="home" />
+    </section>
+  </div>
+  <p class="intl-footer__copy">© {year} {SITE_CONFIG.name}</p>
+</footer>
+
+<style>
+  .intl-footer{margin-top:clamp(4rem,9vw,7rem);padding-block:clamp(3rem,7vw,5rem) 1.5rem;border-top:1px solid var(--color-mist);background:var(--color-white)}
+  .intl-footer>div{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,.6fr);gap:clamp(2rem,6vw,5rem);align-items:start}
+  .intl-footer h2{font:600 1.05rem var(--font-brand-display);color:var(--color-ink)}
+  .intl-footer__about p{max-width:62ch;margin-top:.9rem;color:var(--color-soil);font-size:.88rem;line-height:1.9}
+  .intl-footer__links{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;margin-top:1.4rem;list-style:none;padding:0}
+  .intl-footer__links a{color:var(--color-tide);font-size:.82rem;border-bottom:1px solid var(--color-mist);padding-bottom:.15rem}
+  .intl-footer__links a:hover{border-color:var(--color-tide)}
+  .intl-footer__links a:focus-visible{outline:2px solid var(--color-tide);outline-offset:3px}
+  .intl-footer__links span{color:var(--color-soil);font-size:.72rem}
+  .intl-footer__lang h2{margin-bottom:.7rem}
+  .intl-footer__copy{width:min(calc(100% - 2rem),var(--content-wide));margin:clamp(2.5rem,5vw,4rem) auto 0;padding-top:1.2rem;border-top:1px solid var(--color-mist);color:var(--color-soil);font-size:.72rem}
+  @media(max-width:760px){.intl-footer>div{grid-template-columns:1fr;gap:2.5rem}}
+</style>

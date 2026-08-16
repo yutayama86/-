@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="13,226人が集まった水戸ホーリーホックJ1ホーム開幕戦。試合の外に広がる地域の可能性">
+  <defs>
+    <style>
+      .serif{font-family:'Shippori Mincho','Hiragino Mincho ProN','Yu Mincho',serif;}
+      .sans{font-family:'Source Sans 3','Helvetica Neue',Arial,sans-serif;}
+    </style>
+  </defs>
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="36" y="36" width="1128" height="558" fill="none" stroke="#d9d0c0" stroke-width="1.5"/>
+
+  <!-- kicker -->
+  <text x="80" y="108" class="sans" fill="#315c68" font-size="22" letter-spacing="4" font-weight="600">IBATOCO ・ 茨城ニュース解説</text>
+
+  <!-- crowd flowing out of the stadium into the surrounding towns -->
+  <g>
+    <ellipse cx="180" cy="200" rx="52" ry="34" fill="none" stroke="#172b35" stroke-width="3"/>
+    <ellipse cx="180" cy="200" rx="26" ry="15" fill="none" stroke="#75695a" stroke-width="2"/>
+    <path d="M244 190 C 400 150, 520 232, 680 186" fill="none" stroke="#315c68" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round"/>
+    <path d="M244 212 C 400 250, 560 214, 700 246" fill="none" stroke="#315c68" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round"/>
+    <circle cx="680" cy="186" r="8" fill="#a63f32"/>
+    <circle cx="700" cy="246" r="8" fill="#315c68"/>
+    <circle cx="812" cy="206" r="8" fill="#75695a"/>
+    <circle cx="924" cy="182" r="8" fill="#172b35"/>
+    <text x="180" y="262" class="sans" fill="#75695a" font-size="18" letter-spacing="2" text-anchor="middle">STADIUM</text>
+    <text x="1010" y="212" class="sans" fill="#75695a" font-size="18" letter-spacing="2">まちへ</text>
+  </g>
+
+  <!-- headline -->
+  <text x="80" y="392" class="serif" fill="#172b35" font-size="112" font-weight="700">13,226人<tspan font-size="72" fill="#a63f32">。</tspan></text>
+  <text x="80" y="472" class="serif" fill="#172b35" font-size="52" font-weight="700">「試合の外」に広がる、地域の可能性</text>
+
+  <!-- sub copy -->
+  <text x="82" y="532" class="serif" fill="#315c68" font-size="34" font-weight="500">水戸ホーリーホック J1ホーム開幕戦</text>
+
+  <!-- footnote -->
+  <text x="1120" y="574" class="sans" fill="#75695a" font-size="19" text-anchor="end">クラブ史上ホーム最多入場者数 ／ 2026年8月15日</text>
+</svg>

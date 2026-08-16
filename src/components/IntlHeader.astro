@@ -4,7 +4,7 @@
  * 日本語サイトのナビをそのまま出さず、各言語で独立した回遊導線をつくる。
  * リンクは TRANSLATIONS に登録済み＝実在するページだけを出す（リンク切れが構造上できない）。
  */
-import LanguageSwitcher from './LanguageSwitcher.astro';
+import LanguageMenu from './LanguageMenu.astro';
 import { TRANSLATIONS, localeHome, type Locale } from '../data/i18n';
 
 interface Props { locale: Locale; translationKey?: string; }
@@ -53,7 +53,7 @@ const home = localeHome(locale);
           {nav.map((item) => <a href={item.href} aria-current={Astro.url.pathname === item.href ? 'page' : undefined}>{item.label}</a>)}
         </nav>
       )}
-      <LanguageSwitcher locale={locale} translationKey={translationKey} compact />
+      <LanguageMenu locale={locale} translationKey={translationKey} id="lang-menu-intl" />
     </div>
   </div>
 </header>

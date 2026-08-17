@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="今どこで買えるを解決する。常陸太田市の観光果樹園検索アプリKAJUALに見る地域観光DX">
+  <defs>
+    <style>
+      .serif{font-family:'Shippori Mincho','Hiragino Mincho ProN','Yu Mincho',serif;}
+      .sans{font-family:'Source Sans 3','Helvetica Neue',Arial,sans-serif;}
+    </style>
+  </defs>
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="36" y="36" width="1128" height="558" fill="none" stroke="#d9d0c0" stroke-width="1.5"/>
+
+  <!-- kicker -->
+  <text x="80" y="108" class="sans" fill="#315c68" font-size="22" letter-spacing="4" font-weight="600">IBATOCO ・ 茨城ニュース解説</text>
+
+  <!-- from a screen in the hand, to the farms that are open today -->
+  <g>
+    <rect x="150" y="158" width="62" height="98" rx="7" fill="none" stroke="#172b35" stroke-width="2.5"/>
+    <line x1="164" y1="182" x2="198" y2="182" stroke="#75695a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="164" y1="200" x2="198" y2="200" stroke="#75695a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="164" y1="218" x2="184" y2="218" stroke="#75695a" stroke-width="2" stroke-linecap="round"/>
+    <path d="M232 207 C 420 150, 560 250, 720 196 T 1030 186" fill="none" stroke="#315c68" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round"/>
+    <g fill="#75695a">
+      <path d="M720 176 a13 13 0 1 1 0.01 0 M720 176 l0 22" stroke="#75695a" stroke-width="2" fill="none"/>
+      <circle cx="720" cy="176" r="5" fill="#75695a"/>
+    </g>
+    <g>
+      <path d="M876 166 a14 14 0 1 1 0.01 0 M876 166 l0 24" stroke="#a63f32" stroke-width="2.5" fill="none"/>
+      <circle cx="876" cy="166" r="6" fill="#a63f32"/>
+      <text x="876" y="222" class="sans" fill="#a63f32" font-size="17" letter-spacing="1" text-anchor="middle">営業中</text>
+    </g>
+    <g>
+      <path d="M1030 176 a13 13 0 1 1 0.01 0 M1030 176 l0 22" stroke="#75695a" stroke-width="2" fill="none"/>
+      <circle cx="1030" cy="176" r="5" fill="#75695a"/>
+    </g>
+    <text x="181" y="286" class="sans" fill="#75695a" font-size="17" letter-spacing="1" text-anchor="middle">探す</text>
+  </g>
+
+  <!-- headline -->
+  <text x="80" y="382" class="serif" fill="#172b35" font-size="78" font-weight="700">「今どこで買える？」</text>
+  <text x="80" y="464" class="serif" fill="#172b35" font-size="78" font-weight="700">を、つなぐ<tspan font-size="56" fill="#a63f32">。</tspan></text>
+
+  <!-- sub copy -->
+  <text x="82" y="530" class="serif" fill="#315c68" font-size="34" font-weight="500">常陸太田市「KAJUAL」に見る、地域観光DX</text>
+
+  <!-- footnote -->
+  <text x="1120" y="574" class="sans" fill="#75695a" font-size="19" text-anchor="end">観光果樹園検索アプリ ／ 常陸太田市</text>
+</svg>

@@ -1,8 +1,12 @@
 ---
 import BrandBase from '../layouts/BrandBase.astro'; import { SITE_CONFIG } from '../data/site'; const FORM_ENDPOINT=SITE_CONFIG.formEndpoint;
+import Breadcrumbs, { type Crumb } from '../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../lib/seo';
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'お問い合わせ' }];
 ---
-<BrandBase title="お問い合わせ｜イバトコ" description="取材、情報掲載、訂正、地域事業者向け支援など、イバトコへのお問い合わせ。">
+<BrandBase title="お問い合わせ｜イバトコ" description="取材、情報掲載、訂正、地域事業者向け支援など、イバトコへのお問い合わせ。" jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <section class="contact bp-wrap">
+    <Breadcrumbs items={crumbs} />
     <header><p class="bp-kicker">CONTACT</p><h1><span>話を聞くところから、</span><span>始めます。</span></h1><p>取材、掲載、訂正、発信支援など、ご用件をお知らせください。内容を確認し、必要な担当からご連絡します。</p><a href={`mailto:${SITE_CONFIG.contactEmail}`}>{SITE_CONFIG.contactEmail}</a></header>
     <form class="contact-form" method="POST" action={FORM_ENDPOINT||undefined} data-endpoint={FORM_ENDPOINT}>
       <input type="hidden" name="_subject" value="【イバトコ】お問い合わせ" />

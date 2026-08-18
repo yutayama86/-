@@ -1,8 +1,11 @@
 ---
 import BrandBase from '../layouts/BrandBase.astro'; import EditorialProcess from '../components/EditorialProcess.astro'; import { SITE_CONFIG } from '../data/site';
+import Breadcrumbs, { type Crumb } from '../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../lib/seo';
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'イバトコについて' }];
 ---
-<BrandBase title="イバトコについて｜現地から、信頼を編む。" description="イバトコは、茨城で続く人の仕事と営みを現地で取材し、確かめられる形で記録します。">
-  <header class="about-head bp-wrap"><p class="bp-kicker">ABOUT IBATOCO</p><h1>茨城で続く営みを、<br />きちんと残す。</h1><p>イバトコは、茨城で暮らし、働く人に会い、その言葉と仕事を記録します。店や場所の情報だけでなく、なぜここで続けているのかまで聞き、あとから確かめられる形で届けます。</p></header>
+<BrandBase title="イバトコについて｜現地から、信頼を編む。" description="イバトコは、茨城で続く人の仕事と営みを現地で取材し、確かめられる形で記録します。" jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
+  <header class="about-head bp-wrap"><Breadcrumbs items={crumbs} /><p class="bp-kicker">ABOUT IBATOCO</p><h1>茨城で続く営みを、<br />きちんと残す。</h1><p>イバトコは、茨城で暮らし、働く人に会い、その言葉と仕事を記録します。店や場所の情報だけでなく、なぜここで続けているのかまで聞き、あとから確かめられる形で届けます。</p></header>
   <section class="belief bp-wrap"><p class="bp-kicker">OUR BELIEF</p><div><h2>知らないことは、<br />知らないまま書かない。</h2><p>誰が、いつ、どのように確かめた情報なのかを大切にします。事実と現地での印象を分け、PRは明示し、誤りがあれば直した記録を残します。</p></div></section>
   <section class="bp-wrap bp-section"><EditorialProcess /></section>
   <section class="policies"><div class="bp-wrap"><p class="bp-kicker">POLICIES</p><h2>編集の約束を、公開しています。</h2><nav><a href="/about/editorial-policy/"><span>編集方針</span><small>取材・編集・AI利用</small></a><a href="/about/pr-policy/"><span>PR・広告の方針</span><small>Editorial / Partner / PR</small></a><a href="/about/corrections/"><span>訂正・更新方針</span><small>確認・判断・履歴公開</small></a><a href="/about/team/"><span>運営・チーム</span><small>公開責任と編集体制</small></a></nav></div></section>

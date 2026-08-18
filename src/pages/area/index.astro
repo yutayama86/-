@@ -1,10 +1,14 @@
 ---
 import BrandBase from '../../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
 import HomeAreaExplorer from '../../components/HomeAreaExplorer.astro';
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'エリアから探す' }];
 ---
 
-<BrandBase title="エリアから探す｜44市町村から茨城を読む｜イバトコ" description="茨城県44市町村を地図から選び、取材・確認を経た地域の記事、場所、人を探せます。">
+<BrandBase title="エリアから探す｜44市町村から茨城を読む｜イバトコ" description="茨城県44市町村を地図から選び、取材・確認を経た地域の記事、場所、人を探せます。" jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <main class="area-index-main">
+    <div class="bp-wrap"><Breadcrumbs items={crumbs} /></div>
     <h1 class="sr-only">茨城県44市町村から探す</h1>
     <div class="bp-wrap"><HomeAreaExplorer /></div>
   </main>

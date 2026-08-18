@@ -1,11 +1,15 @@
 ---
 import BrandBase from '../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../lib/seo';
 import { SITE_CONFIG } from '../data/site';
 const updated = '2026年7月';
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'プライバシーポリシー' }];
 ---
 
-<BrandBase title="プライバシーポリシー｜イバトコ" description="イバトコのプライバシーポリシー。" noindex={true}>
+<BrandBase title="プライバシーポリシー｜イバトコ" description="イバトコのプライバシーポリシー。" noindex={true} jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <section class="wrap pv">
+    <Breadcrumbs items={crumbs} />
     <h1 class="display pv-title">プライバシーポリシー</h1>
     <p class="muted">最終更新：{updated}</p>
     <div class="pv-body prose">

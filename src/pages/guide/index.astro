@@ -1,16 +1,20 @@
 ---
 import BrandBase from '../../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
 import { VISIBLE_GUIDES as GUIDES } from '../../data/guides';
 
 const guides = [...GUIDES].sort((a, b) => new Date(b.publishedAt).valueOf() - new Date(a.publishedAt).valueOf());
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ガイド' }];
 ---
 
 <BrandBase
   title="茨城のまとめ・モデルコース｜デート・雨の日・休日プラン"
   description="水戸デート、茨城の雨の日、大洗の休日プランなど。イバトコが目的別に巡り方をまとめた、茨城のモデルコース集です。"
   noindex={guides.length === 0}
->
+ jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <section class="wrap section">
+    <Breadcrumbs items={crumbs} />
     <p class="bp-kicker">Field Guide</p>
     <h1 class="bp-title page-title">現地を歩いた記録から、<br />一日の巡り方を編む。</h1>
     <p class="page-lead">公開情報と現地確認が揃ったものから、テーマ別のガイドとして届けます。まだ確かめられていない場所を、数合わせで載せることはしません。</p>

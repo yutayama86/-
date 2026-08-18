@@ -1,13 +1,16 @@
 ---
 import BrandBase from '../../layouts/BrandBase.astro';
+import type { Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
 import DisclosureBadge from '../../components/DisclosureBadge.astro';
 const updated = '2026年8月';
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'イバトコについて', href: '/about/' }, { name: 'PR・広告の方針' }];
 ---
 
 <BrandBase
   title="PR・広告の方針"
   description="イバトコのPR・広告の方針。Editorial / Partner / PR の区分、費用を伴うコンテンツの明示、契約で編集評価や掲載順位を購入できないことについて。"
->
+ jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <section class="wrap policy">
     <nav class="crumbs" aria-label="パンくず">
       <a href="/">ホーム</a><span aria-hidden="true">/</span>

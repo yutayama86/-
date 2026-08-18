@@ -6,6 +6,8 @@
  *   「例年◯月」表記＋各公式リンクで最新確認を促す常緑設計。
  */
 import BrandBase from '../layouts/BrandBase.astro';
+import type { Crumb } from '../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../lib/seo';
 
 interface Hanabi {
   name: string;
@@ -83,9 +85,10 @@ const events: Hanabi[] = [
 
 const pageTitle = '茨城の花火｜日本三大花火・土浦をはじめとする主な花火大会｜イバトコ';
 const pageDescription = '日本三大花火のひとつ土浦全国花火競技大会をはじめ、大洗の海上花火、常総・古河・水戸偕楽園まで。茨城の主な花火大会を、成り立ちとつくり手（花火師）とともに紹介します。日程は年で変わるため最新は各公式で確認を。';
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '茨城の花火' }];
 ---
 
-<BrandBase title={pageTitle} description={pageDescription}>
+<BrandBase title={pageTitle} description={pageDescription} jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <article class="hanabi">
     <header class="hanabi-head bp-wrap">
       <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><span aria-current="page">茨城の花火</span></nav>

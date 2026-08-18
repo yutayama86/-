@@ -1,15 +1,18 @@
 ---
 import BrandBase from '../../layouts/BrandBase.astro';
+import type { Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
 import NewsCard from '../../components/NewsCard.astro';
 import { getNews } from '../../lib/content';
 
 const news = await getNews();
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '茨城ニュース解説' }];
 ---
 
 <BrandBase
   title="茨城ニュース解説｜イバトコ"
   description="茨城県の自治体、観光、地域経済、交通、スポーツ、DX、スタートアップなどの重要ニュースを、イバトコ編集部が地域への影響とともに解説します。"
->
+ jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <header class="news-index__head bp-wrap">
     <nav aria-label="パンくず"><a href="/">ホーム</a><span>/</span><span aria-current="page">茨城ニュース解説</span></nav>
     <p class="bp-kicker">IBARAKI NEWS EXPLAINED</p>

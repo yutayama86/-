@@ -1,12 +1,15 @@
 ---
 import BrandBase from '../../layouts/BrandBase.astro';
+import type { Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
 const updated = '2026年8月';
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'イバトコについて', href: '/about/' }, { name: '運営・チーム' }];
 ---
 
 <BrandBase
   title="運営・チーム"
   description="イバトコの運営体制とチームの役割。編集部・ローカルエディター・撮影・編集の役割と、利益相反の開示方針について。"
->
+ jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <section class="wrap policy">
     <nav class="crumbs" aria-label="パンくず">
       <a href="/">ホーム</a><span aria-hidden="true">/</span>

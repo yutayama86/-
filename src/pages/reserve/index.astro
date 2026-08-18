@@ -1,9 +1,13 @@
 ---
 import BrandBase from '../../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '予約について' }];
 ---
 
-<BrandBase title="予約について｜イバトコ" description="掲載施設の予約方法についてご案内します。" noindex={true}>
+<BrandBase title="予約について｜イバトコ" description="掲載施設の予約方法についてご案内します。" noindex={true} jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <section class="bp-reading rsv">
+    <Breadcrumbs items={crumbs} />
     <p class="bp-kicker">Reservation</p>
     <h1 class="bp-title rsv-title">予約は、各施設の<br />公式窓口へ。</h1>
     <p class="rsv-lead">イバトコでは現在、予約の受付や仲介を行っていません。掲載ページに公式の予約先が確認できた場合のみ、その窓口をご案内します。</p>

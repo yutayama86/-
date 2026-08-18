@@ -1,6 +1,8 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import BrandBase from '../../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
 import BrandStoryCard from '../../components/BrandStoryCard.astro';
 import { CATEGORY_LIST, CATEGORIES } from '../../data/site';
 import { getArticlesByCategory } from '../../lib/content';
@@ -8,9 +10,10 @@ import type { CategoryKey } from '../../content.config';
 export const getStaticPaths = (() => CATEGORY_LIST.map((item) => ({ params: { category: item.path } }))) satisfies GetStaticPaths;
 const { category } = Astro.params; const cat = CATEGORIES[category as CategoryKey]; if (!cat) return Astro.redirect('/404');
 const articles = await getArticlesByCategory(category!);
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: cat.label }];
 ---
-<BrandBase title={`${cat.label}｜茨城の物語｜イバトコ`} description={`茨城の「${cat.label}」を、現地で確かめた情報から届けます。`} noindex={articles.length === 0}>
-  <header class="category-head bp-wrap"><p class="bp-kicker">THEME / {cat.reading}</p><h1>{cat.label}</h1><p>茨城で見つけた「{cat.label}」を、人と営みの背景から。</p><nav aria-label="テーマ切替">{CATEGORY_LIST.map((item) => <a href={`/${item.path}/`} aria-current={item.path===category?'page':undefined}>{item.label}</a>)}</nav></header>
+<BrandBase title={`${cat.label}｜茨城の物語｜イバトコ`} description={`茨城の「${cat.label}」を、現地で確かめた情報から届けます。`} noindex={articles.length === 0} jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
+  <header class="category-head bp-wrap"><Breadcrumbs items={crumbs} /><p class="bp-kicker">THEME / {cat.reading}</p><h1>{cat.label}</h1><p>茨城で見つけた「{cat.label}」を、人と営みの背景から。</p><nav aria-label="テーマ切替">{CATEGORY_LIST.map((item) => <a href={`/${item.path}/`} aria-current={item.path===category?'page':undefined}>{item.label}</a>)}</nav></header>
   {articles.length > 0 ? <section class="category-grid bp-wrap">{articles.map((article) => <BrandStoryCard article={article} />)}</section> : <section class="category-empty bp-reading"><p class="bp-kicker">FIELD NOTE</p><h2>確かめ終えたものから、公開します。</h2><p>架空の記事や写真で数を埋めず、現地確認と掲載許諾が終わった記事から届けます。</p><a href="/about/editorial-policy/">編集方針を読む →</a></section>}
 </BrandBase>
 <style>

@@ -3,6 +3,8 @@ import type { GetStaticPaths } from 'astro';
 import BrandBase from '../../layouts/BrandBase.astro';
 import BrandStoryCard from '../../components/BrandStoryCard.astro';
 import NewsCard from '../../components/NewsCard.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
 import { getAllTags, getArticlesByTag, getNewsByTag, tagToSlug } from '../../lib/content';
 
 export const getStaticPaths = (async () => {
@@ -13,17 +15,22 @@ export const getStaticPaths = (async () => {
 const { tag } = Astro.props;
 const [articles, news] = await Promise.all([getArticlesByTag(tag), getNewsByTag(tag)]);
 const total = articles.length + news.length;
+// パンくずは現在地としてタグ名まで出す（表示と構造化データで同じ配列を使う）
+const crumbs: Crumb[] = [
+  { name: 'ホーム', href: '/' },
+  { name: 'ニュース解説', href: '/news/' },
+  { name: `#${tag}` },
+];
 ---
 
 <BrandBase
-  title={`#${tag}の記事`}
+  title={`#${tag}の記事｜イバトコ`}
   description={`「${tag}」に関する茨城の記事とニュース解説をイバトコがまとめました。`}
   noindex={true}
+  jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}
 >
   <section class="wrap tag-hero">
-    <nav class="crumbs" aria-label="パンくず" data-reveal>
-      <a href="/">ホーム</a><span aria-hidden="true">/</span><span>タグ</span>
-    </nav>
+    <div data-reveal><Breadcrumbs items={crumbs} /></div>
     <p class="eyebrow" data-reveal>Tag</p>
     <h1 class="display tag-title" data-reveal>#{tag}</h1>
     <p class="tag-lead muted" data-reveal>「{tag}」の記事・ニュース {total}件</p>

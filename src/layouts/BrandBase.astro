@@ -79,6 +79,33 @@ const enableGA = import.meta.env.PROD && !!GA_ID;
     {isIntl ? <IntlHeader locale={locale} translationKey={translationKey} /> : <SiteHeader translationKey={translationKey} />}
     <main id="main-content"><slot /></main>
     {isIntl ? <IntlFooter locale={locale} /> : <SiteFooter />}
+
+    <script>
+      // data-reveal のスクロール表示。global.css で opacity:0 にしているため、
+      // ここで .is-in を付けないと中身が永久に見えないままになる。
+      // 旧 Base.astro にしか無く BrandBase へ移行後に抜け落ちていたので復活させた。
+      const revealTargets = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      if (revealTargets.length) {
+        const showAll = () => revealTargets.forEach((el) => el.classList.add('is-in'));
+        if (!('IntersectionObserver' in window)) {
+          // 非対応環境では隠したままにしない
+          showAll();
+        } else {
+          const io = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);
+              }
+            }
+          }, { rootMargin: '0px 0px -8% 0px', threshold: 0.06 });
+          revealTargets.forEach((el, i) => {
+            el.style.setProperty('--delay', `${(i % 4) * 70}ms`);
+            io.observe(el);
+          });
+        }
+      }
+    </script>
   </body>
 </html>
 

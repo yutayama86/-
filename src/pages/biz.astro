@@ -1,13 +1,16 @@
 ---
 import BrandBase from '../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../lib/seo';
 const services=[
   {n:'01',title:'情報を整える',body:'店舗・企業の基本情報を確認し、読者と検索サービスが理解しやすい形に整備します。'},
   {n:'02',title:'伝わる形をつくる',body:'取材、撮影、文章、Webページ制作を通じて、事業の価値が正確に伝わる状態をつくります。'},
   {n:'03',title:'発信を育てる',body:'Web、SNS、検索、AI検索など、必要な接点の運用と改善を継続的に支援します。'},
 ];
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '地域事業者の方へ' }];
 ---
-<BrandBase title="地域事業者の方へ｜イバトコ" description="店舗・企業の情報整理、取材、Web制作、発信運用を支援します。広告と編集記事の区分も明示します。">
-  <header class="biz-head bp-wrap"><p class="bp-kicker">FOR LOCAL BUSINESSES</p><h1>載せるだけでは、<br />終わらせない。</h1><p>情報を載せただけでは、店や会社の良さは十分に伝わりません。イバトコは、有料支援を編集記事に見せず、情報整理・取材・制作・運用を必要な範囲で支えます。</p><a href="/contact/?subject=地域事業者の相談">相談内容を送る →</a></header>
+<BrandBase title="地域事業者の方へ｜イバトコ" description="店舗・企業の情報整理、取材、Web制作、発信運用を支援します。広告と編集記事の区分も明示します。" jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
+  <header class="biz-head bp-wrap"><Breadcrumbs items={crumbs} /><p class="bp-kicker">FOR LOCAL BUSINESSES</p><h1>載せるだけでは、<br />終わらせない。</h1><p>情報を載せただけでは、店や会社の良さは十分に伝わりません。イバトコは、有料支援を編集記事に見せず、情報整理・取材・制作・運用を必要な範囲で支えます。</p><a href="/contact/?subject=地域事業者の相談">相談内容を送る →</a></header>
   <section class="separation"><div class="bp-wrap"><p class="bp-kicker">TRANSPARENCY</p><h2>Editorial、Partner、PRを混ぜない。</h2><div class="types"><article><span>EDITORIAL</span><h3>編集記事</h3><p>掲載対価を受けず、編集部の判断で企画・取材・編集します。</p></article><article><span>PARTNER</span><h3>発信支援</h3><p>情報整備や制作、運用に対価をいただく支援サービスです。編集評価は販売しません。</p></article><article><span>PR</span><h3>広告・タイアップ</h3><p>広告主の依頼によるコンテンツです。読者が判別できるよう明確に表示します。</p></article></div><a href="/about/pr-policy/">PR・広告の方針を読む →</a></div></section>
   <section class="services bp-wrap bp-section"><p class="bp-kicker">WHAT WE DO</p><h2>今あるものを、伝わる形へ。</h2><ol>{services.map((service)=><li><span>{service.n}</span><div><h3>{service.title}</h3><p>{service.body}</p></div></li>)}</ol></section>
   <section class="scope"><div class="bp-wrap"><p class="bp-kicker">SCOPE</p><ul><li>取材・インタビュー</li><li>写真・文章制作</li><li>店舗・企業情報の整備</li><li>Webサイト制作・改善</li><li>SEO・AI検索への情報設計</li><li>SNS・LINEなどの運用支援</li></ul><p>費用と範囲は、現状と目的を確認したうえで事前に提示します。契約前に成果を保証する表現は行いません。</p></div></section>

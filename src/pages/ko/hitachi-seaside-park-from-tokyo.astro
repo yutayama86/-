@@ -1,10 +1,12 @@
 ---
 import BrandBase from '../../layouts/BrandBase.astro';
 import IntlTravelGuide from '../../components/IntlTravelGuide.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
 import { HITACHI_SEASIDE_PARK, guideJsonLd } from '../../data/intl-guides';
 
 const guide = HITACHI_SEASIDE_PARK.ko;
 const jsonLd = guideJsonLd(guide, 'ko', Astro.site);
+const crumbs: Crumb[] = [{ name: '홈', href: '/ko/' }, { name: guide.h1 }];
 ---
 <BrandBase
   title={`${guide.title} | IBATOCO`}
@@ -14,5 +16,6 @@ const jsonLd = guideJsonLd(guide, 'ko', Astro.site);
   type="article"
   jsonLd={jsonLd}
 >
+  <div class="bp-wrap" style="padding-top:1.5rem"><Breadcrumbs items={crumbs} /></div>
   <IntlTravelGuide guide={guide} />
 </BrandBase>

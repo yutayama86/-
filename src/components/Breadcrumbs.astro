@@ -1,0 +1,29 @@
+---
+/**
+ * 共通パンくず。可視表示のみを担当し、構造化データは lib/seo.ts の
+ * breadcrumbJsonLd() で作って BrandBase の jsonLd に渡す（head に出すため）。
+ * 最後の項目は現在地。リンクにせず aria-current="page" を付ける。
+ */
+export interface Crumb { name: string; href?: string }
+interface Props { items: Crumb[]; }
+const { items } = Astro.props;
+---
+
+<nav class="crumbs" aria-label="パンくず">
+  {items.map((item, i) => (
+    <>
+      {i > 0 && <span aria-hidden="true">/</span>}
+      {item.href && i < items.length - 1
+        ? <a href={item.href}>{item.name}</a>
+        : <span aria-current={i === items.length - 1 ? 'page' : undefined}>{item.name}</span>}
+    </>
+  ))}
+</nav>
+
+<style>
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;color:var(--color-soil);font-size:.78rem;line-height:1.6}
+  .crumbs a{color:inherit;border-bottom:1px solid transparent}
+  .crumbs a:hover{color:var(--color-tide);border-color:var(--color-tide)}
+  .crumbs a:focus-visible{outline:2px solid var(--color-tide);outline-offset:2px}
+  .crumbs span[aria-current='page']{color:var(--color-ink)}
+</style>

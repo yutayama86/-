@@ -7,6 +7,8 @@
  *   公開中のエディターがいれば一覧表示、いなければ募集に集中する。
  */
 import BrandBase from '../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../lib/seo';
 import PersonCard from '../components/PersonCard.astro';
 import { VISIBLE_REPORTERS } from '../data/reporters';
 
@@ -63,6 +65,7 @@ const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({
     '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカルエディター募集' }];
 ---
 
 <BrandBase
@@ -74,6 +77,7 @@ const jsonLd = [
   <!-- HERO -->
   <header class="rp-hero">
     <div class="bp-wrap">
+      <Breadcrumbs items={crumbs} />
       <p class="bp-kicker">JOIN IBATOCO ／ 仲間募集</p>
       <h1>その街のこと、<br />あなたが一番<br />知っている。</h1>
       <div class="rp-hero-lead">

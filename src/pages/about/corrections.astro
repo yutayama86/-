@@ -1,14 +1,17 @@
 ---
 import BrandBase from '../../layouts/BrandBase.astro';
+import type { Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
 import { SITE_CONFIG } from '../../data/site';
 const updated = '2026年8月';
 const reportHref = `mailto:${SITE_CONFIG.contactEmail}?subject=${encodeURIComponent('【訂正のお申し出】')}`;
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'イバトコについて', href: '/about/' }, { name: '訂正・更新方針' }];
 ---
 
 <BrandBase
   title="訂正・更新方針"
   description="イバトコの訂正・更新方針。誤りの訂正、更新履歴の残し方、訂正申請の窓口について。"
->
+ jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <section class="wrap policy">
     <nav class="crumbs" aria-label="パンくず">
       <a href="/">ホーム</a><span aria-hidden="true">/</span>

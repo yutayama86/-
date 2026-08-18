@@ -1,12 +1,15 @@
 ---
 import BrandBase from '../../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
 import ThemeNav from '../../components/ThemeNav.astro';
 import { getPublishedStores } from '../../lib/content';
 const stores = await getPublishedStores();
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '場所を探す' }];
 ---
 
-<BrandBase title="場所を探す｜イバトコ" description="茨城で取材・確認できた店、施設、企業を探せます。公式情報と編集情報を分けて掲載します。" noindex={stores.length === 0}>
-  <header class="places-head bp-wrap"><p class="bp-kicker">PLACES</p><h1>確認できた場所から、<br />探す。</h1><p>住所や営業時間などの公式情報と、取材で受け取った物語を分けて掲載します。</p></header>
+<BrandBase title="場所を探す｜イバトコ" description="茨城で取材・確認できた店、施設、企業を探せます。公式情報と編集情報を分けて掲載します。" noindex={stores.length === 0} jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
+  <header class="places-head bp-wrap"><Breadcrumbs items={crumbs} /><p class="bp-kicker">PLACES</p><h1>確認できた場所から、<br />探す。</h1><p>住所や営業時間などの公式情報と、取材で受け取った物語を分けて掲載します。</p></header>
   <section class="theme-filter"><div class="bp-wrap"><ThemeNav /></div></section>
   {stores.length > 0 ? <section class="place-list bp-wrap">{stores.map((store) => <article><p>{store.data.area}</p><h2><a href={`/place/${store.id}/`}>{store.data.name}</a></h2><p>{store.data.tagline}</p><a href={`/place/${store.id}/`}>基本情報を見る →</a></article>)}</section> : <section class="place-empty bp-reading"><p class="bp-kicker">VERIFIED PLACES</p><h2>場所の情報は、確かめてから。</h2><p>公開確認済みの場所データはまだありません。架空の店名、住所、写真では埋めず、公式情報との照合が完了した場所から掲載します。</p><a href="/about/editorial-policy/">掲載基準を読む →</a></section>}
 </BrandBase>

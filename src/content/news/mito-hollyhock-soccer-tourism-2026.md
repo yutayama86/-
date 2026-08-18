@@ -59,6 +59,8 @@ place:
   name: "水戸信用金庫スタジアム（笠松運動公園陸上競技場）"
   url: "https://www.mito-hollyhock.net/"
 relatedArticleUrls:
+  - "/news/mito-hollyhock-new-stadium-access/"
+  - "/news/mito-hollyhock-home-opening-13226-regional-impact/"
   - "/area/mito/"
   - "/area/hitachinaka/"
   - "/area/oarai/"

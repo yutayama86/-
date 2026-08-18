@@ -42,7 +42,8 @@ const enableGA = import.meta.env.PROD && !!GA_ID;
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f6f2e9" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {/* 検索結果には出さないが、そこから先の記事はたどらせる（タグ・空の一覧などのリンクハブを殺さない） */}
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={absolute(alt.path)} />)}
     {xDefault && <link rel="alternate" hreflang="x-default" href={absolute(xDefault)} />}

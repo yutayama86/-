@@ -225,7 +225,18 @@ const nodes = MUNICIPALITIES.map((m) => ({
             items.length ? `<h4>${label}</h4><ul>${items.map((i) => `<li><a href="${i.href}">${i.title || i.name}</a></li>`).join('')}</ul>` : '';
           c.innerHTML = block('記事', d.stories) + block('お店・場所', d.places) + block('人', d.people);
         } else {
-          c.innerHTML = `<div class="ax-panel-none">この街の情報は準備中です。<br /><a href="/contact/?subject=${encodeURIComponent('この街の情報を教える（' + d.name + '）')}">この街の“いいとこ”を教える →</a></div>`;
+          // URLは組み立てて属性に入れる（HTML文字列に混ぜない）。
+          // インラインJS内に "/contact/?subject=..." の形を残すと、
+          // クローラが未評価のテンプレート文字列をURLとして拾うことがあるため。
+          const params = new URLSearchParams({ subject: `この街の情報を教える（${d.name}）` });
+          const box = document.createElement('div');
+          box.className = 'ax-panel-none';
+          box.append('この街の情報は準備中です。', document.createElement('br'));
+          const cta = document.createElement('a');
+          cta.href = '/contact/' + '?' + params.toString();
+          cta.textContent = 'この街の“いいとこ”を教える →';
+          box.append(cta);
+          c.replaceChildren(box);
         }
       }
     }

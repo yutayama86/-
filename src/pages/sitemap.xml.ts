@@ -43,7 +43,8 @@ export const GET: APIRoute = async () => {
   for (const store of stores) entries.push({ path: `/place/${store.id}/`, lastmod: store.data.verifiedAt ?? store.data.publishedAt });
   for (const slug of areaCounts.keys()) entries.push({ path: `/area/${slug}/` });
 
-  if (VISIBLE_REPORTERS.length > 0) entries.push({ path: '/reporters/' });
+  // /reporters/ はローカルエディター募集ページ。公開中の人物が0人でも内容が成立するため常に掲載する。
+  entries.push({ path: '/reporters/' });
   for (const person of VISIBLE_REPORTERS) entries.push({ path: `/reporter/${person.slug}/` });
 
   if (VISIBLE_GUIDES.length > 0) entries.push({ path: '/guide/' });

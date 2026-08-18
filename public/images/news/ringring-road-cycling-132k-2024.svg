@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="年間13.2万人が走るつくば霞ヶ浦りんりんロード。通過を滞在に変えられるか">
+  <defs>
+    <style>
+      .serif{font-family:'Shippori Mincho','Hiragino Mincho ProN','Yu Mincho',serif;}
+      .sans{font-family:'Source Sans 3','Helvetica Neue',Arial,sans-serif;}
+    </style>
+  </defs>
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="36" y="36" width="1128" height="558" fill="none" stroke="#d9d0c0" stroke-width="1.5"/>
+
+  <!-- kicker -->
+  <text x="80" y="108" class="sans" fill="#315c68" font-size="22" letter-spacing="4" font-weight="600">IBATOCO ・ 茨城ニュース解説</text>
+
+  <!-- a rider on a long route, and the places along it -->
+  <g>
+    <circle cx="152" cy="216" r="21" fill="none" stroke="#172b35" stroke-width="2.5"/>
+    <circle cx="216" cy="216" r="21" fill="none" stroke="#172b35" stroke-width="2.5"/>
+    <path d="M152 216 L182 186 L216 216 M182 186 L196 186" fill="none" stroke="#172b35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M258 210 C 430 178, 560 240, 720 200 T 1040 190" fill="none" stroke="#315c68" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round"/>
+    <circle cx="600" cy="215" r="7" fill="#75695a"/>
+    <circle cx="856" cy="192" r="10" fill="#a63f32"/>
+    <circle cx="1040" cy="190" r="7" fill="#75695a"/>
+    <text x="856" y="238" class="sans" fill="#a63f32" font-size="18" letter-spacing="1" text-anchor="middle">立ち寄る</text>
+    <text x="184" y="262" class="sans" fill="#75695a" font-size="18" letter-spacing="1" text-anchor="middle">走る</text>
+  </g>
+
+  <!-- headline -->
+  <text x="80" y="386" class="serif" fill="#172b35" font-size="104" font-weight="700">13.2万人<tspan font-size="68" fill="#a63f32">。</tspan></text>
+  <text x="80" y="466" class="serif" fill="#172b35" font-size="54" font-weight="700">「通過」を「滞在」に変えられるか</text>
+
+  <!-- sub copy -->
+  <text x="82" y="530" class="serif" fill="#315c68" font-size="33" font-weight="500">つくば霞ヶ浦りんりんロードと、沿線の地域消費</text>
+
+  <!-- footnote -->
+  <text x="1120" y="574" class="sans" fill="#75695a" font-size="19" text-anchor="end">2024年度 推計利用者数 ／ 茨城県</text>
+</svg>

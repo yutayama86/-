@@ -61,6 +61,7 @@ export const GET: APIRoute = async () => {
   // テーマページ（海・川・公園・山・花・祭り・紅葉・花火）。生成器への登録漏れで未収録だった。
   for (const theme of Object.values(THEMES)) entries.push({ path: `/${theme.slug}/` });
   entries.push({ path: '/hanabi/' });
+  entries.push({ path: '/michinoeki/' });
 
   // /reporters/ はローカルエディター募集ページ。公開中の人物が0人でも内容が成立するため常に掲載する。
   entries.push({ path: '/reporters/' });

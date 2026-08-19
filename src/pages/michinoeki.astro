@@ -1,0 +1,156 @@
+---
+/**
+ * /michinoeki/ — 茨城県の道の駅ハブ。
+ * 掲載は「名称・所在市町村・路線」に限定（県公式＋関東道の駅公式の2系統で一致を確認済み）。
+ * 営業時間・施設内容・温泉や車中泊の可否は運用が変わるため書かず、公式で確認する導線に留める。
+ * 根拠のない順位づけ（ランキング／おすすめ順）はしない。
+ */
+import BrandBase from '../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../lib/seo';
+import { MICHINOEKI, michinoekiByRegion, michinoekiAreaSlugs, MICHINOEKI_SOURCES, MICHINOEKI_CHECKED_AT } from '../data/michinoeki';
+import { MUNI_BY_SLUG } from '../data/areas';
+
+const groups = michinoekiByRegion();
+const total = MICHINOEKI.length;
+const areaSlugs = michinoekiAreaSlugs();
+
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '茨城の道の駅' }];
+const pageUrl = new URL('/michinoeki/', Astro.site).href;
+
+const jsonLd = [
+  breadcrumbJsonLd(crumbs, Astro.site),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '茨城県の道の駅',
+    description: `茨城県内の道の駅${total}駅の一覧`,
+    url: pageUrl,
+    numberOfItems: total,
+    itemListElement: MICHINOEKI.map((eki, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: `道の駅 ${eki.name}`,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      { q: '茨城県に道の駅はいくつありますか？', a: `茨城県公式および関東「道の駅」公式の一覧によると、${total}駅です（${MICHINOEKI_CHECKED_AT}時点）。` },
+      { q: '道の駅の営業時間や定休日はどこで確認できますか？', a: '営業時間・定休日・施設内容は駅ごとに異なり、季節や行事でも変わります。各道の駅の公式情報でご確認ください。このページでは掲載していません。' },
+      { q: '道の駅が多いのはどのエリアですか？', a: `${groups.map((g) => `${g.label}が${g.items.length}駅`).join('、')}です。なお、つくば市や土浦市を含む県南には登録された道の駅がありません。` },
+    ].map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+
+<BrandBase
+  title="茨城の道の駅16駅｜エリア・市町村から探す｜イバトコ"
+  description="茨城県内の道の駅16駅を、県北・県央・県南・鹿行・県西のエリア別に一覧で。所在市町村と路線、その街の地域情報へのリンクをまとめました。営業時間などは各駅の公式情報をご確認ください。"
+  jsonLd={jsonLd}
+>
+  <header class="me-head">
+    <div class="bp-wrap">
+      <Breadcrumbs items={crumbs} />
+      <p class="bp-kicker">IBARAKI ROADSIDE STATIONS</p>
+      <h1>茨城の道の駅、<br />{total}駅。</h1>
+      <div class="me-lead">
+        <p>道の駅は、その土地でとれるものと、そこで暮らす人の商いが一か所に集まる場所です。旅の途中に寄る休憩所であり、地域の直売所であり、そこにしかない食べものに出会う入口でもあります。</p>
+        <p>このページでは、茨城県内の{total}駅をエリア別に整理しました。分布には偏りがあり、{groups.map((g) => `${g.label}${g.items.length}駅`).join('、')}です。つくば・土浦を含む県南には、登録された道の駅がありません。掲載しているのは、茨城県と関東「道の駅」公式の一覧で確認できた<strong>名称・所在市町村・路線</strong>です。</p>
+      </div>
+      <dl class="me-facts">
+        <div><dt>駅数</dt><dd>{total}駅</dd></div>
+        <div><dt>ある市町村</dt><dd>{areaSlugs.length}市町村</dd></div>
+        <div><dt>最終確認</dt><dd><time>{MICHINOEKI_CHECKED_AT}</time></dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <nav class="me-jump" aria-label="エリア別の目次">
+    <div class="bp-wrap">
+      <span>エリアから探す</span>
+      {groups.map((g) => <a href={`#${g.region}`}>{g.label}（{g.items.length}）</a>)}
+    </div>
+  </nav>
+
+  <div class="me-body bp-wrap">
+    {groups.map((group) => (
+      <section class="me-region" id={group.region}>
+        <header>
+          <p class="bp-kicker">{group.label}</p>
+          <h2 class="bp-section-title">{group.label}の道の駅</h2>
+          <p>{group.note}</p>
+        </header>
+        <ul class="me-list">{group.items.map((eki) => (
+          <li>
+            <div class="me-name"><strong>道の駅 {eki.name}</strong></div>
+            <dl>
+              <div><dt>所在</dt><dd><a href={`/area/${eki.area}/`}>{eki.areaName}</a></dd></div>
+              <div><dt>路線</dt><dd>{eki.route}</dd></div>
+            </dl>
+          </li>
+        ))}</ul>
+      </section>
+    ))}
+
+    <section class="me-areas">
+      <header><p class="bp-kicker">FROM THE TOWN</p><h2 class="bp-section-title">道の駅がある街を読む。</h2><p>道の駅は、その街の食と産業の入口でもあります。街そのものを知ると、寄り道の意味が変わります。</p></header>
+      <ul class="me-area-links">{areaSlugs.map((slug) => (
+        <li><a href={`/area/${slug}/`}>{MUNI_BY_SLUG.get(slug)?.name}</a></li>
+      ))}</ul>
+    </section>
+
+    <aside class="me-source" aria-labelledby="me-source-title">
+      <div>
+        <p class="bp-kicker">INFORMATION</p>
+        <h2 id="me-source-title">情報の確認について</h2>
+        <p>掲載しているのは、下記の公式一覧で確認できた名称・所在市町村・路線です。営業時間、定休日、施設内容、温泉や車中泊の可否などは駅ごとに運用が異なり、季節や行事でも変わるため、このページには掲載していません。訪問前に各道の駅の公式情報をご確認ください。</p>
+      </div>
+      <div>
+        <p>最終確認：<time>{MICHINOEKI_CHECKED_AT}</time></p>
+        <ul>{MICHINOEKI_SOURCES.map((s) => <li><a href={s.url} target="_blank" rel="noopener">{s.label}<span aria-hidden="true">↗</span></a></li>)}</ul>
+      </div>
+    </aside>
+  </div>
+</BrandBase>
+
+<style>
+  .me-head{padding-block:clamp(2.5rem,6vw,4.5rem) clamp(2.5rem,6vw,4rem)}
+  .me-head .bp-kicker{display:block;margin-top:2rem}
+  .me-head h1{margin-top:1rem;font:600 clamp(2.6rem,7vw,5.4rem)/1.1 var(--font-brand-display);color:var(--color-ink)}
+  .me-lead{display:grid;gap:1rem;max-width:60ch;margin-top:1.6rem;color:var(--color-soil);line-height:1.95}
+  .me-lead strong{color:var(--color-ink)}
+  .me-facts{display:flex;flex-wrap:wrap;gap:2.5rem;margin-top:2.2rem;padding-top:1.4rem;border-top:1px solid var(--color-mist)}
+  .me-facts dt{color:var(--color-tide);font:.68rem var(--font-brand-meta);letter-spacing:.1em}
+  .me-facts dd{margin:.35rem 0 0;font:600 1.3rem var(--font-brand-display);color:var(--color-ink)}
+  .me-jump{position:sticky;top:0;z-index:5;border-block:1px solid var(--color-mist);background:color-mix(in srgb,var(--color-paper) 94%,transparent);backdrop-filter:blur(10px)}
+  .me-jump>div{display:flex;gap:1.4rem;overflow:auto;padding-block:1rem;white-space:nowrap;font-size:.82rem}
+  .me-jump span{color:var(--color-soil)}.me-jump a{color:var(--color-ink)}
+  .me-jump a:hover{color:var(--color-tide)}
+  .me-body{display:grid;gap:clamp(3.5rem,7vw,5.5rem);padding-block:clamp(3rem,7vw,5rem)}
+  .me-region>header{max-width:56ch;margin-bottom:1.8rem}
+  .me-region>header>p:last-child{margin-top:.8rem;color:var(--color-soil);line-height:1.9}
+  .me-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--color-mist);border:1px solid var(--color-mist);list-style:none;padding:0}
+  .me-list li{padding:1.3rem;background:var(--color-white)}
+  .me-name strong{font:600 1.2rem var(--font-brand-display);color:var(--color-ink)}
+  .me-list dl{display:grid;gap:.4rem;margin-top:.9rem}
+  .me-list dl>div{display:flex;gap:.8rem;align-items:baseline}
+  .me-list dt{flex:none;width:3rem;color:var(--color-tide);font:.66rem var(--font-brand-meta);letter-spacing:.08em}
+  .me-list dd{margin:0;color:var(--color-soil);font-size:.88rem}
+  .me-list dd a{color:var(--color-ink);border-bottom:1px solid var(--color-mist)}
+  .me-list dd a:hover{color:var(--color-tide);border-color:var(--color-tide)}
+  .me-areas>header{max-width:56ch;margin-bottom:1.6rem}
+  .me-areas>header>p:last-child{margin-top:.8rem;color:var(--color-soil);line-height:1.9}
+  .me-area-links{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;list-style:none;padding:0}
+  .me-area-links a{color:var(--color-soil);border-bottom:1px solid var(--color-mist);padding-bottom:.2rem}
+  .me-area-links a:hover{color:var(--color-tide);border-color:var(--color-tide)}
+  .me-source{display:grid;grid-template-columns:.7fr 1fr;gap:2.5rem;padding:clamp(2rem,5vw,3.5rem);background:var(--color-ink);color:var(--color-paper)}
+  .me-source h2{margin-top:.8rem;font:600 1.4rem var(--font-brand-display);color:#fff}
+  .me-source p{margin-top:1rem;line-height:1.85;font-size:.92rem}
+  .me-source>div:last-child p{font-size:.85rem}
+  .me-source ul{margin-top:1rem;list-style:none;padding:0;border-top:1px solid rgba(255,255,255,.2)}
+  .me-source li a{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.2);color:var(--color-paper);font-size:.82rem}
+  .me-source li a:hover{color:#fff}
+  @media(max-width:760px){.me-source{grid-template-columns:1fr}.me-facts{gap:1.6rem}}
+</style>

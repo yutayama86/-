@@ -10,6 +10,7 @@ import { MUNICIPALITY_CONTENT } from '../../data/municipality-content';
 import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, municipalitiesByRegion } from '../../data/areas';
 import { getPublishedArticles, getPublishedStores } from '../../lib/content';
 import { themesForArea } from '../../data/themes';
+import { michinoekiForArea } from '../../data/michinoeki';
 import { areaToSlug } from '../../data/areas';
 
 export const getStaticPaths = (() => MUNICIPALITIES.map((municipality) => ({ params: { slug: municipality.slug } }))) satisfies GetStaticPaths;
@@ -30,6 +31,8 @@ const isHitachi = slug === 'hitachi';
 const isDaigo = slug === 'daigo';
 // テーマ軸への戻り導線。テーマ側がこの街を挙げている場合だけ出す（関係は必ず対称）。
 const relatedThemes = themesForArea(slug!);
+// この街にある道の駅（公式一覧で確認済みのものだけ）
+const areaMichinoeki = michinoekiForArea(slug!);
 // 指示書のあるガイド（日立＝別コンポーネント／最終バッチ18）はそれを使用。
 // 残り25市町村は、既存の municipality-content.ts（catch/intro/spots/gourmet/experiences）を
 // そのままガイド形式へ変換して表示（＝架空の加筆はしない。写真・出典・季節等は持たないので出さない）。
@@ -136,12 +139,15 @@ const jsonLd: Record<string, unknown>[] = [
     </section>
   </article>}
 
-  {relatedThemes.length > 0 && (
+  {(relatedThemes.length > 0 || areaMichinoeki.length > 0) && (
     <section class="area-themes">
       <div class="bp-wrap">
         <p class="bp-kicker">THEMES</p>
         <h2>{municipality.name}が出てくるテーマ</h2>
         <p class="area-themes__lead">同じ土地を、別の切り口から読む。</p>
+        {areaMichinoeki.length > 0 && (
+          <p class="area-themes__eki">この街には道の駅が{areaMichinoeki.length}駅あります（{areaMichinoeki.map((e) => `道の駅 ${e.name}`).join('、')}）。<a href="/michinoeki/">茨城の道の駅16駅を見る →</a></p>
+        )}
         <ul>{relatedThemes.map((theme) => (
           <li><a href={`/${theme.slug}/`}><small>{theme.kicker}</small><span>{theme.title}</span><b aria-hidden="true">→</b></a></li>
         ))}</ul>
@@ -159,6 +165,8 @@ const jsonLd: Record<string, unknown>[] = [
   .area-themes{padding-block:clamp(3.5rem,7vw,5.5rem);border-top:1px solid var(--color-mist)}
   .area-themes h2{margin-top:.8rem;font:600 clamp(1.6rem,3.4vw,2.6rem) var(--font-brand-display);color:var(--color-ink)}
   .area-themes__lead{margin-top:.8rem;color:var(--color-soil);font-size:.9rem}
+  .area-themes__eki{margin-top:1rem;padding:1rem 1.2rem;background:var(--color-white);border:1px solid var(--color-mist);color:var(--color-soil);font-size:.88rem;line-height:1.8}
+  .area-themes__eki a{color:var(--color-tide);border-bottom:1px solid;white-space:nowrap}
   .area-themes ul{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1px;margin-top:2rem;background:var(--color-mist);border:1px solid var(--color-mist);list-style:none;padding:0}
   .area-themes a{display:grid;gap:.3rem;padding:1.1rem 1.2rem;background:var(--color-white);color:var(--color-ink);position:relative}
   .area-themes a:hover{background:color-mix(in srgb,var(--color-paper) 70%,var(--color-white))}

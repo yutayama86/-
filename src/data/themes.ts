@@ -325,3 +325,16 @@ export const THEMES: Record<Theme['slug'], Theme> = {
     metaDescription: '日本三名瀑・袋田の滝、日本最大級の竜神大吊橋、紅葉のトンネルの花貫渓谷、「関東の嵐山」御前山、奥久慈から筑波山まで。橋の上から谷を見下ろす茨城の紅葉の名所と、例年11月の見頃・注意点をまとめました。',
   },
 };
+
+/**
+ * ある市町村に関わるテーマを、テーマ側のデータから逆引きする。
+ * テーマページが「この街」を挙げている場合だけ返すので、
+ * テーマ→市町村と市町村→テーマの関係が必ず対称になる（片側だけの嘘が生まれない）。
+ */
+export function themesForArea(areaSlug: string): { slug: string; title: string; kicker: string }[] {
+  return Object.values(THEMES)
+    .filter((theme) =>
+      theme.related.some((r) => r.slug === areaSlug) ||
+      theme.spots.some((s) => s.areaSlug === areaSlug))
+    .map((theme) => ({ slug: theme.slug, title: theme.title, kicker: theme.kicker }));
+}

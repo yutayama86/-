@@ -4,6 +4,9 @@ import { CATEGORIES, SITE_CONFIG } from '../data/site';
 import { VISIBLE_GUIDES } from '../data/guides';
 import { VISIBLE_REPORTERS } from '../data/reporters';
 import { TRANSLATIONS, DEFAULT_LOCALE } from '../data/i18n';
+import { MUNICIPALITIES } from '../data/areas';
+import { AREA_GUIDES } from '../data/area-guides';
+import { THEMES } from '../data/themes';
 
 type SitemapEntry = { path: string; lastmod?: Date };
 
@@ -41,7 +44,23 @@ export const GET: APIRoute = async () => {
 
   if (stores.length > 0) entries.push({ path: '/place/' });
   for (const store of stores) entries.push({ path: `/place/${store.id}/`, lastmod: store.data.verifiedAt ?? store.data.publishedAt });
-  for (const slug of areaCounts.keys()) entries.push({ path: `/area/${slug}/` });
+  // 44市町村ページ。以前は「記事・店舗がある街」だけを載せていたため、
+  // 記事が未公開のあいだ全件が sitemap から漏れていた。
+  // 実際の noindex 判定（area/[slug].astro）と同じ条件で載せる：
+  // 出典付きガイドがある街、日立・大子、または記事/店舗がある街。
+  for (const municipality of MUNICIPALITIES) {
+    const slug = municipality.slug;
+    const indexable =
+      slug === 'hitachi' ||
+      slug === 'daigo' ||
+      !!AREA_GUIDES[slug]?.sources?.length ||
+      (areaCounts.get(slug) ?? 0) > 0;
+    if (indexable) entries.push({ path: `/area/${slug}/` });
+  }
+
+  // テーマページ（海・川・公園・山・花・祭り・紅葉・花火）。生成器への登録漏れで未収録だった。
+  for (const theme of Object.values(THEMES)) entries.push({ path: `/${theme.slug}/` });
+  entries.push({ path: '/hanabi/' });
 
   // /reporters/ はローカルエディター募集ページ。公開中の人物が0人でも内容が成立するため常に掲載する。
   entries.push({ path: '/reporters/' });

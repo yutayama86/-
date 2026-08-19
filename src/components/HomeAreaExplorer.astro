@@ -38,11 +38,16 @@ const panelData = Object.fromEntries(
   })
 );
 
+const LABEL_OVERRIDES: Partial<Record<string, { lx: number; ly: number }>> = {
+  // 東海村は自動算出された中心点が海側へ外れるため、図形の中央へ補正する。
+  tokai: { lx: 392, ly: 268 },
+};
+
 const nodes = MUNICIPALITIES.map((m) => ({
   ...m,
   ...IBARAKI_GEO[m.slug],
-  lx: (IBARAKI_GEO[m.slug] as { lx?: number }).lx,
-  ly: (IBARAKI_GEO[m.slug] as { ly?: number }).ly,
+  lx: LABEL_OVERRIDES[m.slug]?.lx ?? (IBARAKI_GEO[m.slug] as { lx?: number }).lx,
+  ly: LABEL_OVERRIDES[m.slug]?.ly ?? (IBARAKI_GEO[m.slug] as { ly?: number }).ly,
 })).filter((n) => n.d);
 ---
 
@@ -78,7 +83,7 @@ const nodes = MUNICIPALITIES.map((m) => ({
         <p class="ax-intro-copy">
           <span>県北は山と海、県西は一面の畑、鹿行は湖と砂浜。</span>
           <span>同じ県とは思えないほど、街ごとに顔が違います。</span>
-          <span>気になる街を選ぶと、その土地の記事・場所・人が表示されます。</span>
+          <span>気になる街を選ぶと、その街のページへ移動します。</span>
         </p>
       </header>
       <div class="ax-panel-empty" data-panel-empty>
@@ -104,7 +109,7 @@ const nodes = MUNICIPALITIES.map((m) => ({
   </div>
 
   <!-- モバイル：地図の補助となる市町村リンク一覧。必要なときだけ開ける。 -->
-  <details class="ax-list">
+  <details class="ax-list" open>
     <summary class="ax-list-toggle">市町村名から選ぶ <span aria-hidden="true">＋</span></summary>
     <nav aria-label="地域と市町村の一覧">
       {REGION_ORDER.map((k, i) => (
@@ -158,6 +163,7 @@ const nodes = MUNICIPALITIES.map((m) => ({
   .ax-label { font-family: var(--font-brand-body); font-size: 9.4px; font-weight: 700; text-anchor: middle; dominant-baseline: central;
     fill: var(--color-ink); paint-order: stroke; stroke: color-mix(in srgb, var(--color-paper) 82%, transparent); stroke-width: 2px; pointer-events: none; }
   .ax-label[data-label-slug="hitachinaka"], .ax-label[data-label-slug="tsukubamirai"] { font-size: 8.5px; }
+  .ax-label[data-label-slug="tokai"] { font-size: 8.4px; }
   .ax-label[data-label-slug="kasumigaura"] { font-size: 7.7px; }
   .ax-label[data-label-slug="goka"], .ax-label[data-label-slug="sakai"], .ax-label[data-label-slug="bando"], .ax-label[data-label-slug="joso"], .ax-label[data-label-slug="moriya"], .ax-label[data-label-slug="toride"], .ax-label[data-label-slug="ryugasaki"], .ax-label[data-label-slug="kawachi"], .ax-label[data-label-slug="tone"] { font-size: 8.3px; }
   .ax-label[data-label-slug="yachiyo"], .ax-label[data-label-slug="shimotsuma"] { font-size: 7.7px; }
@@ -220,9 +226,11 @@ const nodes = MUNICIPALITIES.map((m) => ({
   /* モバイル：地図は保持しつつ、地域タブ＋リストを併設（ピンチ依存にしない） */
   @media (max-width: 760px) {
     .ax-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "map" "panel"; gap: 1.4rem; }
-    .ax-mapwrap { width: 100%; overflow: hidden; }
+    .ax-mapwrap { width: 100%; overflow: hidden; padding: .4rem .1rem .2rem; }
     .ax-map { width: 100%; max-width: 100%; height:auto; }
-    .ax-label { display: none; }
+    .ax-label { display: block; font-size: 8.8px; stroke-width: 2.25px; }
+    .ax-label[data-label-slug="hitachinaka"], .ax-label[data-label-slug="tsukubamirai"], .ax-label[data-label-slug="tokai"] { font-size: 8px; }
+    .ax-label[data-label-slug="kasumigaura"], .ax-label[data-label-slug="yachiyo"], .ax-label[data-label-slug="shimotsuma"] { font-size: 7.2px; }
     .ax-panel { min-height: 0; }
     .ax-list { display: block; }
   }

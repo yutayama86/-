@@ -33,6 +33,7 @@ const enableGA = import.meta.env.PROD && !!GA_ID;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script is:inline>document.documentElement.classList.add('reveal-ready');</script>
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#f5f1e8" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -80,22 +81,29 @@ const enableGA = import.meta.env.PROD && !!GA_ID;
     }
 
     <script>
-      // Scroll reveal
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) {
-              e.target.classList.add('is-in');
-              io.unobserve(e.target);
+      const revealTargets = [...document.querySelectorAll<HTMLElement>('[data-reveal]')];
+      const showAll = () => revealTargets.forEach((el) => el.classList.add('is-in'));
+      try {
+        if (!revealTargets.length || !('IntersectionObserver' in window)) {
+          showAll();
+        } else {
+          const io = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);
+              }
             }
-          }
-        },
-        { rootMargin: '0px 0px -8% 0px', threshold: 0.06 }
-      );
-      document.querySelectorAll('[data-reveal]').forEach((el, i) => {
-        (el as HTMLElement).style.setProperty('--delay', `${(i % 4) * 70}ms`);
-        io.observe(el);
-      });
+          }, { rootMargin: '0px 0px 6% 0px', threshold: 0.01 });
+          revealTargets.forEach((el) => {
+            el.style.setProperty('--delay', '0ms');
+            io.observe(el);
+          });
+          window.setTimeout(showAll, 1100);
+        }
+      } catch {
+        showAll();
+      }
     </script>
   </body>
 </html>

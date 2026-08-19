@@ -12,6 +12,7 @@ draft: false
 reviewed: true
 sample: false
 noindex: false
+ogImage: "/images/news/ibaraki-food-fairs-tokyo-osaka-2026-20260819.png"
 ogImageAlt: "東京と大阪のホテルで提供される茨城県産食材をテーマにしたイバトコの解説記事"
 conclusion: "2026年9月から、東京のシェラトン都ホテル東京と大阪のホテル日航大阪で、茨城県産食材を使ったフェアが開催される予定です。地域に観光客を呼ぶだけでなく、県産食材を地域外の料理やスイーツへ展開し、県外から売上を得ることも地方創生の重要な方法です。ただし、フェア開催による売上や認知度の向上は現時点では確認できないため、実際の取引継続や産地への波及を見ていく必要があります。"
 keyPoints:

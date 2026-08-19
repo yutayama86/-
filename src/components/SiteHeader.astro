@@ -63,7 +63,7 @@ const aboutLinks = [
 <header class="site-header" data-site-header>
   <div class="site-header__inner">
     <a href="/" class="site-header__logo" aria-label={`${SITE_CONFIG.name} ホーム`}>
-      <BrandLogo size={34} />
+      <BrandLogo size={40} />
     </a>
 
     <nav class="desktop-nav" aria-label="メインナビゲーション">
@@ -221,21 +221,22 @@ const aboutLinks = [
 
 <style>
   :global(html.menu-is-open){overflow:hidden}
-  .site-header{position:sticky;top:0;z-index:50;height:88px;background:color-mix(in srgb,var(--color-paper) 97%,transparent);border-top:2px solid #dce4e3;border-bottom:1px solid color-mix(in srgb,var(--color-ink) 14%,transparent);font-family:var(--font-brand-body);backdrop-filter:blur(12px)}
+  .site-header{position:sticky;top:0;z-index:50;height:88px;background:color-mix(in srgb,var(--color-paper) 94%,transparent);border-bottom:1px solid color-mix(in srgb,var(--color-ink) 14%,transparent);font-family:var(--font-brand-body);backdrop-filter:blur(16px)}
+  .site-header::before{content:'';position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#8fc4f1 0%,var(--color-brand-blue) 48%,#7fa9ce 70%,var(--color-moss) 100%)}
   .site-header__inner{width:100%;height:100%;padding-inline:clamp(1.75rem,5vw,5.75rem);display:grid;grid-template-columns:minmax(150px,1fr) auto minmax(190px,1fr);align-items:center}
   .site-header__logo{display:inline-flex;align-items:center;justify-self:start;color:var(--color-ink);line-height:1.05;text-decoration:none}
   .desktop-nav{height:100%;display:flex;align-items:stretch;gap:clamp(1.5rem,2.7vw,3rem)}
   .desktop-nav>a,.desktop-nav button{position:relative;display:flex;align-items:center;padding:0;border:0;background:none;color:var(--color-ink);font:700 .88rem/1 var(--font-brand-body);letter-spacing:.035em;white-space:nowrap;cursor:pointer}
-  .desktop-nav>a::after,.desktop-nav button::after{content:'';position:absolute;left:0;right:100%;bottom:1.3rem;height:1px;background:var(--color-ink);transition:right .25s ease}
+  .desktop-nav>a::after,.desktop-nav button::after{content:'';position:absolute;left:0;right:100%;bottom:1.3rem;height:2px;background:var(--color-brand-blue);transition:right .25s ease}
   .desktop-nav>a:hover::after,.desktop-nav>a:focus-visible::after,.desktop-nav button:hover::after,.desktop-nav button:focus-visible::after,.desktop-nav button.is-active::after{right:0}
   .desktop-nav button>span{margin-left:.45rem;transition:transform .2s ease}.desktop-nav button.is-active>span{transform:rotate(180deg)}
   .site-header__utility{justify-self:end;display:flex;align-items:center;gap:clamp(.9rem,1.5vw,1.35rem);white-space:nowrap}
   /* 言語選択と「地域事業者の方へ」を細い罫線で分ける */
   .site-header__utility .business-link{position:relative;padding-left:clamp(.9rem,1.5vw,1.35rem)}
   .site-header__utility .business-link::before{content:'';position:absolute;left:0;top:50%;width:1px;height:1.1rem;transform:translateY(-50%);background:var(--color-mist)}
-  .business-link{padding-bottom:.45rem;border-bottom:1px solid var(--color-ink);color:var(--color-ink);font-size:.86rem;font-weight:700;white-space:nowrap}.business-link span{margin-left:.65rem}
+  .business-link{padding-bottom:.45rem;border-bottom:1px solid var(--color-brand-blue);color:var(--color-ink);font-size:.86rem;font-weight:700;white-space:nowrap}.business-link span{margin-left:.65rem;color:var(--color-brand-blue)}
   .mobile-trigger{display:none}
-  .mega-menu{position:absolute;top:87px;left:0;right:0;max-height:calc(100svh - 87px);overflow-y:auto;background:var(--color-paper);border-top:1px solid color-mix(in srgb,var(--color-ink) 16%,transparent);box-shadow:0 1.5rem 3rem rgba(11,30,35,.14);opacity:0;visibility:hidden;transform:translateY(-.5rem);transition:opacity .22s ease,visibility .22s ease,transform .22s ease}
+  .mega-menu{position:absolute;top:87px;left:0;right:0;max-height:calc(100svh - 87px);overflow-y:auto;background:linear-gradient(135deg,color-mix(in srgb,var(--color-sky-soft) 55%,var(--color-paper)) 0%,var(--color-paper) 46%,color-mix(in srgb,var(--color-moss) 12%,var(--color-paper)) 100%);border-top:1px solid color-mix(in srgb,var(--color-ink) 16%,transparent);box-shadow:0 1.5rem 3rem rgba(11,30,35,.14);opacity:0;visibility:hidden;transform:translateY(-.5rem);transition:opacity .22s ease,visibility .22s ease,transform .22s ease}
   .mega-menu.is-open,.about-menu.is-open{opacity:1;visibility:visible;transform:translateY(0)}
   .mega-menu__inner{display:grid;grid-template-columns:minmax(250px,.72fr) minmax(660px,2.3fr);gap:clamp(2.6rem,6vw,6.25rem);padding:2.6rem clamp(2.1rem,6vw,6.9rem) 3rem}
   .menu-number{font:600 .72rem/1 var(--font-brand-meta);color:#789095}.en-label{font:800 .62rem/1 var(--font-brand-meta);letter-spacing:.2em;color:#668087}.mega-intro>.en-label{margin-top:.7rem}

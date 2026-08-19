@@ -61,9 +61,11 @@ const officialSocials = [
 </footer>
 
 <style>
-  .site-footer2 { background: var(--color-ink); color: var(--color-white); font-family: var(--font-brand-body); }
+  .site-footer2 { position:relative;overflow:hidden;background:linear-gradient(145deg,var(--color-ink) 0%,#102c3c 60%,#0a2140 100%); color: var(--color-white); font-family: var(--font-brand-body); }
+  .site-footer2::before{content:'';position:absolute;right:-6rem;top:-7rem;width:36rem;height:20rem;background:url('/brand/terrain-contours.svg') center/contain no-repeat;color:#95c8ef;opacity:.09;transform:rotate(8deg);pointer-events:none}
+  .site-footer2::after{content:'';position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#82bce8,var(--color-brand-blue) 50%,var(--color-moss))}
   .site-footer2__inner {
-    max-width: var(--content-wide); margin-inline: auto;
+    position:relative;z-index:1;max-width: var(--content-wide); margin-inline: auto;
     padding: clamp(2.5rem, 6vw, 4rem) clamp(1rem, 4vw, 2rem);
     display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2rem;
   }
@@ -78,7 +80,7 @@ const officialSocials = [
   .site-footer2__col a:hover, .site-footer2__col a:focus-visible { color: var(--color-white); border-color: var(--color-mist); }
 
   .site-footer2__base {
-    max-width: var(--content-wide); margin-inline: auto;
+    position:relative;z-index:1;max-width: var(--content-wide); margin-inline: auto;
     padding: 1.2rem clamp(1rem, 4vw, 2rem); border-top: 1px solid rgba(255,253,248,0.14);
     color: var(--color-mist); font-family: var(--font-brand-meta); font-size: 0.75rem;
   }

@@ -1,11 +1,11 @@
 ---
 const themes = [
-  { label: '食べる', path: 'eat', desc: '干し芋、あんこう、常陸秋そば。海の町の朝と、畑の町の昼。', cta: '食の物語へ', bg: '#D7B783', icon: 'eat' },
-  { label: '出かける', path: 'sauna-play', desc: '袋田の滝、筑波山、ネモフィラの丘、五浦の海。休日の行き先を見つける。', cta: '休日の行き先へ', bg: '#9DBDC3', icon: 'go' },
-  { label: '泊まる', path: 'stay', desc: '海沿いの宿、山あいの一軒宿。朝の光ごと、茨城に身を置く。', cta: '宿を探す', bg: '#A8AEC0', icon: 'stay' },
-  { label: '暮らす', path: 'life', desc: '直売所、朝市、季節の手仕事。この土地の普通の一日を訪ねる。', cta: '日常を訪ねる', bg: '#B7C4A5', icon: 'life' },
-  { label: '整える', path: 'beauty', desc: '温泉、サウナ、湖のほとり。身体をゆるめる場所を知る。', cta: '整う場所へ', bg: '#D6B4A7', icon: 'wellbeing' },
-  { label: '働く・つくる', path: 'company', desc: '笠間焼、結城紬、醸造、農場。受け継がれてきた技と、それを継ぐ人。', cta: '仕事と人へ', bg: '#8FA39D', icon: 'work' },
+  { label: '食べる', path: 'eat', desc: '干し芋、あんこう、常陸秋そば。海の町の朝と、畑の町の昼。', cta: '食の物語へ', bg: '#E5C792', icon: 'eat' },
+  { label: '出かける', path: 'sauna-play', desc: '袋田の滝、筑波山、ネモフィラの丘、五浦の海。休日の行き先を見つける。', cta: '休日の行き先へ', bg: '#A7D2EE', icon: 'go' },
+  { label: '泊まる', path: 'stay', desc: '海沿いの宿、山あいの一軒宿。朝の光ごと、茨城に身を置く。', cta: '宿を探す', bg: '#B8C6DF', icon: 'stay' },
+  { label: '暮らす', path: 'life', desc: '直売所、朝市、季節の手仕事。この土地の普通の一日を訪ねる。', cta: '日常を訪ねる', bg: '#C2D2A2', icon: 'life' },
+  { label: '整える', path: 'beauty', desc: '温泉、サウナ、湖のほとり。身体をゆるめる場所を知る。', cta: '整う場所へ', bg: '#E3BDB5', icon: 'wellbeing' },
+  { label: '働く・つくる', path: 'company', desc: '笠間焼、結城紬、醸造、農場。受け継がれてきた技と、それを継ぐ人。', cta: '仕事と人へ', bg: '#A7C1BA', icon: 'work' },
 ];
 ---
 <nav class="theme-nav" aria-label="テーマから探す">
@@ -38,7 +38,7 @@ const themes = [
   .theme-nav li:last-child{border-right:0}
   .theme-nav a{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 3.7rem auto 1fr auto;column-gap:.5rem;height:100%;min-height:17.5rem;padding:1rem clamp(.75rem,1.15vw,1.15rem) .9rem;color:var(--color-ink);transition:background-color .25s ease,box-shadow .25s ease}
   .tn-num{font:600 .62rem/1 var(--font-brand-meta);letter-spacing:.1em;color:var(--color-soil)}
-  .tn-icon{grid-column:2;grid-row:1/3;display:grid;place-items:center;width:3.35rem;height:3.35rem;background:color-mix(in srgb,var(--theme-color) 78%,#fff);border-radius:50%;transition:transform .35s cubic-bezier(.2,.7,.2,1),background-color .25s ease}
+  .tn-icon{grid-column:2;grid-row:1/3;display:grid;place-items:center;width:3.35rem;height:3.35rem;background:color-mix(in srgb,var(--theme-color) 78%,#fff);border-radius:54% 46% 61% 39% / 43% 58% 42% 57%;transform:rotate(2deg);transition:transform .35s cubic-bezier(.2,.7,.2,1),background-color .25s ease,border-radius .35s ease}
   .tn-icon svg{width:2rem;height:2rem;fill:none;stroke:var(--color-ink);stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
   .tn-title{grid-column:1/-1;grid-row:3;font:600 clamp(1.25rem,1.55vw,1.65rem)/1.25 var(--font-brand-display);letter-spacing:.015em;text-wrap:balance}
   .tn-desc{grid-column:1/-1;grid-row:4;margin-top:.55rem;font-size:.72rem;line-height:1.7;color:var(--color-soil)}
@@ -46,7 +46,7 @@ const themes = [
   .theme-nav a::before{content:'';position:absolute;inset:0;background:color-mix(in srgb,var(--theme-color) 18%,transparent);opacity:0;transition:opacity .25s ease;pointer-events:none}
   .theme-nav a:hover,.theme-nav a:focus-visible{outline:none;box-shadow:inset 0 0 0 1px var(--color-ink)}
   .theme-nav a:hover::before,.theme-nav a:focus-visible::before{opacity:1}
-  .theme-nav a:hover .tn-icon,.theme-nav a:focus-visible .tn-icon{transform:rotate(-3deg) scale(1.04);background:var(--theme-color)}
+  .theme-nav a:hover .tn-icon,.theme-nav a:focus-visible .tn-icon{transform:rotate(-4deg) scale(1.05);border-radius:43% 57% 44% 56% / 58% 39% 61% 42%;background:var(--theme-color)}
   .theme-nav a:hover .tn-cta span,.theme-nav a:focus-visible .tn-cta span{transform:translateX(4px)}
   @media(max-width:900px){.theme-nav{margin-inline:calc(var(--page-gutter,1.25rem) * -1);overflow-x:auto;scrollbar-width:none;overscroll-behavior-inline:contain;scroll-snap-type:x proximity}.theme-nav::-webkit-scrollbar{display:none}.theme-nav ol{grid-template-columns:repeat(6,10.5rem);width:max-content;padding-inline:var(--page-gutter,1.25rem);border-block:0}.theme-nav li{scroll-snap-align:start;border-block:1px solid color-mix(in srgb,var(--color-ink) 28%,transparent)}.theme-nav li:last-child{border-right:1px solid color-mix(in srgb,var(--color-ink) 20%,transparent)}.theme-nav a{min-height:14.5rem}.tn-title{font-size:1.35rem}.tn-desc{font-size:.7rem}}
 </style>

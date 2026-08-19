@@ -37,6 +37,11 @@
   --color-soil: #75695a;      /* 補助文字・自然系図版 */
   --color-brass: #9a7a45;     /* ごく限定した編集注記 */
   --color-signal: #a63f32;    /* エラー・重要警告のみ（CTA色にしない） */
+  --color-brand-blue: #1f63bf; /* ブランドの発見性を担うコバルト */
+  --color-sky: #dcecff;        /* 空・水・ネモフィラの淡色面 */
+  --color-sky-soft: #edf6ff;   /* 大面積に使う淡い空色 */
+  --color-moss: #b9c786;       /* 山・畑の若草 */
+  --color-deep-blue: #071744;  /* OGPと共通する深い藍 */
 
   --radius-xs: 4px;
   --radius-sm: 8px;

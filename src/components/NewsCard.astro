@@ -12,14 +12,16 @@ interface Props {
 const { item, compact = false } = Astro.props;
 const slug = item.id.split('/').pop();
 const municipalities = item.data.municipalities.map((value) => MUNI_BY_SLUG.get(value)?.name).filter(Boolean);
-const image = item.data.ogImage ?? '/images/news/news-placeholder-20260819.png';
-const imageAlt = item.data.ogImageAlt || '茨城ニュース解説のイメージ';
+const image = item.data.ogImage;
+const imageAlt = item.data.ogImageAlt || '';
 ---
 
-<article class:list={['news-card', { compact }]}>
-  <a class="news-card__image" href={`/news/${slug}/`} tabindex="-1" aria-hidden="true">
-    <img src={image} alt={imageAlt} loading="lazy" width="1200" height="630" />
-  </a>
+<article class:list={['news-card', { compact, 'has-image': Boolean(image) }]}>
+  {image && (
+    <a class="news-card__image" href={`/news/${slug}/`} tabindex="-1" aria-hidden="true">
+      <img src={image} alt={imageAlt} loading="lazy" width="1200" height="630" />
+    </a>
+  )}
   <div class="news-card__body">
     <div class="news-card__meta">
       <span>{NEWS_CATEGORIES[item.data.category].label}</span>
@@ -37,10 +39,12 @@ const imageAlt = item.data.ogImageAlt || '茨城ニュース解説のイメー�
 
 <style>
   .news-card{display:grid;grid-template-rows:auto 1fr;height:100%;background:var(--color-white);border:1px solid color-mix(in srgb,var(--color-tide) 18%,transparent)}
+  .news-card:not(.has-image){grid-template-rows:1fr}
   .news-card__image{display:block;overflow:hidden;aspect-ratio:16/9;background:var(--color-mist)}.news-card__image img{width:100%;height:100%;object-fit:cover;transition:transform .45s ease}.news-card:hover .news-card__image img{transform:scale(1.025)}
   .news-card__body{display:flex;flex-direction:column;padding:1.25rem}.news-card__meta{display:flex;flex-wrap:wrap;gap:.45rem .8rem;color:var(--color-tide);font:.68rem/1.5 var(--font-brand-meta);letter-spacing:.08em}.news-card__sample{color:var(--color-signal)}
   h3{margin-top:.75rem;font:600 clamp(1.15rem,2vw,1.45rem)/1.55 var(--font-brand-display);color:var(--color-ink)}h3 a{text-decoration:none}h3 a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
   p{margin-top:.75rem;color:var(--color-soil);font-size:.84rem;line-height:1.8}.news-card__dates{display:flex;flex-wrap:wrap;gap:.35rem 1rem;margin-top:auto;padding-top:1.2rem;color:var(--color-soil);font-size:.68rem}
   .compact{grid-template-columns:1fr;grid-template-rows:auto 1fr}.compact .news-card__image{aspect-ratio:16/9}.compact .news-card__body{padding:1rem}.compact h3{font-size:1rem}
+  .compact:not(.has-image){grid-template-rows:1fr}
   @media(prefers-reduced-motion:reduce){.news-card__image img{transition:none}}
 </style>

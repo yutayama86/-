@@ -20,7 +20,7 @@ municipalities:
 featured: true
 draft: false
 reviewed: true
-ogImage: "/images/news/mito-hollyhock-home-opening-13226.svg"
+ogImage: "/images/news/mito-hollyhock-home-opening-13226-20260819.png"
 ogImageAlt: "水戸ホーリーホックJ1ホーム開幕戦の来場者と地域への波及をテーマにしたイバトコ特集"
 conclusion: "2026年8月15日、水戸信用金庫スタジアムで行われた水戸ホーリーホックのJ1ホーム開幕戦（2026/27明治安田J1リーグ第2節・ガンバ大阪戦）に、13,226人が来場しました。クラブはこれを、クラブ史上のホーム最多入場者数と発表しています。この記事では、試合の勝敗や戦術ではなく、13,226人という人の流れが「スタジアムの外」にどんな可能性を生むのかを、地域メディアの視点からイバトコ編集部が考えます。"
 keyPoints:

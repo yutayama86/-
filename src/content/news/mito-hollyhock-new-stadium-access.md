@@ -13,7 +13,7 @@ draft: false
 reviewed: true
 sample: false
 noindex: false
-ogImage: "/images/news/mito-hollyhock-stadium-access.jpg"
+ogImage: "/images/news/mito-hollyhock-stadium-access-og-20260819.jpg"
 ogImageAlt: "水戸信用金庫スタジアム（笠松運動公園陸上競技場）のフィールドと観客席"
 imageCredit: "Miyuki Meinaka"
 imageCreditUrl: "https://commons.wikimedia.org/wiki/File:Ikiiki_Ibaraki_Yume_Kokutai,_Main_Stadium_Inside.jpg"

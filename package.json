@@ -12,7 +12,9 @@
     "deploy": "npm run audit:site && npx wrangler deploy",
     "preview": "astro preview",
     "astro": "astro",
-    "db:seed": "node scripts/csv-to-d1-seed.mjs"
+    "db:seed": "node scripts/csv-to-d1-seed.mjs",
+    "og:build": "node scripts/build-og-images.mjs",
+    "og:check": "node scripts/check-ogp.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

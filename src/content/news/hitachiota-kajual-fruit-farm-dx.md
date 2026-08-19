@@ -19,7 +19,7 @@ municipalities:
 featured: true
 draft: false
 reviewed: true
-ogImage: "/images/news/hitachiota-kajual-fruit-farm-dx.svg"
+ogImage: "/images/news/hitachiota-kajual-fruit-farm-dx-20260819.png"
 ogImageAlt: "常陸太田市の観光果樹園検索アプリKAJUALと地域観光DXをテーマにしたイバトコの記事画像"
 conclusion: "常陸太田市は、市内の観光果樹園の営業状況を調べられる検索アプリ「KAJUAL」を提供しています。対象はぶどう園・梨園・いちご園で、一覧から現在営業中の果樹園を探せる仕組みです。あわせて利用促進キャンペーンを実施しており、第1弾の「梨」（令和8年7月20日〜8月9日）は終了、現在は第2弾の「ぶどう」（令和8年8月10日〜8月31日）が実施中です。この記事ではキャンペーンの紹介ではなく、「地域の魅力は、発信するだけでなく“今どこへ行ける・買える”までつないで初めて地域の消費になる」という観点から、その意味をイバトコ編集部が考えます。"
 keyPoints:

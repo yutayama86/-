@@ -19,7 +19,7 @@ municipalities:
 featured: true
 draft: false
 reviewed: true
-ogImage: "/images/news/mito-hollyhock-soccer-tourism-2026.svg"
+ogImage: "/images/news/mito-hollyhock-soccer-tourism-2026-20260819.png"
 ogImageAlt: "水戸ホーリーホックのホームゲームと茨城観光をテーマにしたサッカーツーリズム特集"
 conclusion: "水戸ホーリーホックは、2025年シーズンにJ2で初優勝し、クラブ史上初のJ1昇格を果たしました。2026年シーズンからはJ1で戦い、8月15日には県央エリアの水戸信用金庫スタジアムでガンバ大阪と対戦します。J1には全国的に大きなサポーター基盤を持つクラブが揃い、その人たちが茨城を訪れる機会が増えます。クラブや県は、アウェイサポーターへの観光案内や県産品のPRをすでに始めています。この記事では、公開されている取り組みを整理したうえで、「試合のあと」の滞在・消費という視点から、サッカーツーリズムの可能性をイバトコ編集部が考えます。"
 keyPoints:

@@ -29,7 +29,22 @@ const xDefault = xDefaultFor(translationKey);
 const isIntl = locale !== DEFAULT_LOCALE;
 const absolute = (path: string) => new URL(path, Astro.site).href;
 const SKIP_LABEL: Record<Locale, string> = { ja: '本文へスキップ', en: 'Skip to content', 'zh-tw': '跳至主要內容', ko: '본문으로 건너뛰기' };
-const absoluteImage = new URL(image ?? '/og-default.svg', Astro.site).href;
+// OGP画像：SVGはX等の多くのSNSで表示できないため、必ずラスタライズ済み(PNG/JPEG)を使う。
+// 画像は scripts/build-og-images.mjs で 1200x630 に固定生成している。
+// 言語ごとに既定のOGP画像を分ける（日本語テキストの画像を海外ページに出さない）。
+// 文言はサイト内で使っている正式表現をそのまま画像化している。
+const OG_DEFAULT_BY_LOCALE: Record<Locale, string> = {
+  ja: '/og-default-20260819.png',
+  en: '/og-en-20260819.png',
+  'zh-tw': '/og-zh-tw-20260819.png',
+  ko: '/og-ko-20260819.png',
+};
+const ogImagePath = image ?? OG_DEFAULT_BY_LOCALE[locale];
+const absoluteImage = new URL(ogImagePath, Astro.site).href;
+const OG_MIME: Record<string, string> = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', gif: 'image/gif' };
+const ogImageType = OG_MIME[ogImagePath.split('.').pop()?.toLowerCase() ?? ''] ?? 'image/png';
+// alt は必ず出す（未指定ならページ名で代替）
+const ogImageAlt = imageAlt || title;
 const GA_ID = (import.meta.env.PUBLIC_GA_ID as string | undefined) || SITE_CONFIG.gaMeasurementId;
 const enableGA = import.meta.env.PROD && !!GA_ID;
 ---
@@ -54,15 +69,16 @@ const enableGA = import.meta.env.PROD && !!GA_ID;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={absoluteImage} />
-    {imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+    <meta property="og:image:type" content={ogImageType} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:site_name" content="イバトコ" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={ogTitle ?? title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteImage} />
-    {imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
+    <meta name="twitter:image:alt" content={ogImageAlt} />
     {publishedAt && <meta property="article:published_time" content={publishedAt.toISOString()} />}
     {updatedAt && <meta property="article:modified_time" content={updatedAt.toISOString()} />}
     {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}

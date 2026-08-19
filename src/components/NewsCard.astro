@@ -12,7 +12,7 @@ interface Props {
 const { item, compact = false } = Astro.props;
 const slug = item.id.split('/').pop();
 const municipalities = item.data.municipalities.map((value) => MUNI_BY_SLUG.get(value)?.name).filter(Boolean);
-const image = item.data.ogImage ?? '/images/news/news-placeholder.svg';
+const image = item.data.ogImage ?? '/images/news/news-placeholder-20260819.png';
 const imageAlt = item.data.ogImageAlt || '茨城ニュース解説のイメージ';
 ---
 

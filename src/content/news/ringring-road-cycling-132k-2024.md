@@ -20,7 +20,7 @@ municipalities:
 featured: true
 draft: false
 reviewed: true
-ogImage: "/images/news/ringring-road-cycling-132k-2024.svg"
+ogImage: "/images/news/ringring-road-cycling-132k-2024-20260819.png"
 ogImageAlt: "つくば霞ヶ浦りんりんロードの利用者数と沿線の地域消費をテーマにしたイバトコの記事画像"
 conclusion: "茨城県が公表している推計によると、つくば霞ヶ浦りんりんロードの2024年度の利用者数は13万2千人でした。2016年度の4万8千人から、8年で2.7倍以上に増えています。県内のほかのルートでは、奥久慈里山ヒルクライムルートが1万5千人、大洗・ひたち海浜シーサイドルートが2万3千人（いずれも2024年度推計）です。この記事では利用者数の増加そのものではなく、「走りに来た人が、沿線で食べ・休み・泊まり・買うところまでどうつなげるか」を、地域メディアの視点からイバトコ編集部が考えます。"
 keyPoints:

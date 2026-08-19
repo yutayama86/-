@@ -22,7 +22,7 @@ draft: false
 reviewed: true
 sample: false
 noindex: false
-ogImage: "/images/news/ibaraki-airport-busan-charter-2026.svg"
+ogImage: "/images/news/ibaraki-airport-busan-charter-2026-20260819.png"
 ogImageAlt: "茨城空港と韓国・釜山を結ぶチャーター便の運航を伝えるイバトコのニュース画像"
 conclusion: "茨城県は2026年8月12日、韓国の航空会社「エアプサン」による、茨城空港と釜山・金海国際空港を結ぶ連続チャーター便を発表しました。運航予定は10月3日・6日・9日・12日の計4往復で、機材は220席のエアバスA321型機です。茨城―釜山路線もエアプサンの茨城空港乗り入れも、いずれも初めて。定期便ではなくチャーター便で、運航には関係国政府の許可取得が条件です。この記事では、発表された運航概要を整理したうえで、「到着後」の滞在・消費という地域経済の視点から、その可能性をイバトコ編集部が解説します。"
 keyPoints:

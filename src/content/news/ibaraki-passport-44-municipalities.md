@@ -16,7 +16,7 @@ municipalities: []
 featured: true
 draft: false
 reviewed: true
-ogImage: "/images/news/ibaraki-passport-44-municipalities.svg"
+ogImage: "/images/news/ibaraki-passport-44-municipalities-20260819.png"
 ogImageAlt: "茨城県44市町村を巡るIBARAKI PASSPORTと周遊観光を紹介するイバトコ特集"
 conclusion: "茨城県には44の市町村があります。県は2026年10月上旬から、県内44市町村を対象にしたスタンプラリーなどを行う「IBARAKI PASSPORT」を交付する予定です。県民の茨城への愛着を高めつつ、県内周遊や近隣都県からの誘客につなげる狙いです。この記事では、発表されている制度の概要を整理したうえで、観光地を「点」ではなく「線」でつなぎ、地域での滞在と消費を増やす可能性を、イバトコ編集部が考えます。"
 keyPoints:

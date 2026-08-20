@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="常陸太田市で特定外来生物を初確認。地域の魅力は守って初めて資産になる">
+  <defs>
+    <style>
+      .serif{font-family:'Shippori Mincho','Hiragino Mincho ProN','Yu Mincho',serif;}
+      .sans{font-family:'Source Sans 3','Helvetica Neue',Arial,sans-serif;}
+    </style>
+  </defs>
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="36" y="36" width="1128" height="558" fill="none" stroke="#d9d0c0" stroke-width="1.5"/>
+
+  <!-- kicker -->
+  <text x="80" y="108" class="sans" fill="#315c68" font-size="22" letter-spacing="4" font-weight="600">IBATOCO ・ 茨城ニュース解説</text>
+
+  <!-- a branch, and the act of looking closely at it -->
+  <g fill="none" stroke="#172b35" stroke-width="2.5" stroke-linecap="round">
+    <path d="M150 250 C 250 236, 330 214, 430 196"/>
+    <path d="M246 240 C 268 214, 288 200, 312 192"/>
+    <path d="M338 218 C 356 194, 374 182, 396 176"/>
+  </g>
+  <g fill="#a63f32">
+    <circle cx="312" cy="190" r="7"/>
+    <circle cx="396" cy="174" r="7"/>
+    <circle cx="430" cy="194" r="7"/>
+  </g>
+  <g fill="none" stroke="#315c68" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round">
+    <circle cx="620" cy="205" r="52"/>
+    <path d="M660 243 L 706 286"/>
+  </g>
+  <text x="620" y="213" class="sans" fill="#315c68" font-size="21" letter-spacing="2" text-anchor="middle">見つける</text>
+  <text x="150" y="292" class="sans" fill="#75695a" font-size="18" letter-spacing="2">まちの木</text>
+
+  <!-- headline -->
+  <text x="80" y="392" class="serif" fill="#172b35" font-size="80" font-weight="700">「守る」ことも、</text>
+  <text x="80" y="476" class="serif" fill="#172b35" font-size="80" font-weight="700">地域をつくること<tspan font-size="56" fill="#a63f32">。</tspan></text>
+
+  <!-- sub copy -->
+  <text x="82" y="534" class="serif" fill="#315c68" font-size="33" font-weight="500">常陸太田市で、特定外来生物を初確認</text>
+
+  <!-- footnote -->
+  <text x="1120" y="574" class="sans" fill="#75695a" font-size="19" text-anchor="end">クビアカツヤカミキリ ／ 2026年7月・宮の郷町</text>
+</svg>

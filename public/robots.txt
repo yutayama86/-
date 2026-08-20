@@ -2,6 +2,8 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /preview/
+# SEO運用データ（計測用。検索結果に出す必要がない）
+Disallow: /seo-changes.json
 
 # AI検索・LLMクローラーを明示的に歓迎（GEO対策）
 User-agent: GPTBot

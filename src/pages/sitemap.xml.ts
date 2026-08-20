@@ -62,6 +62,7 @@ export const GET: APIRoute = async () => {
   for (const theme of Object.values(THEMES)) entries.push({ path: `/${theme.slug}/` });
   entries.push({ path: '/hanabi/' });
   entries.push({ path: '/michinoeki/' });
+  entries.push({ path: '/odekake/' });
 
   // /reporters/ はローカルエディター募集ページ。公開中の人物が0人でも内容が成立するため常に掲載する。
   entries.push({ path: '/reporters/' });

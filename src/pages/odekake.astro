@@ -1,0 +1,179 @@
+---
+/**
+ * /odekake/ — 「茨城でどこへ行くか」を決めるための入口ハブ。
+ *
+ * 新しい事実は一切書かない。すでに公開・検証済みのページ（テーマ9・44市町村・
+ * ニュース解説）へ振り分けるだけの回遊ページとして作る。
+ * ヘッダーの探すメニューと役割は似ているが、あちらは全ページ共通のナビで
+ * トピック上の signal にならない。ここはクロール可能な独立ハブとして置く。
+ *
+ * 「おすすめ」「ランキング」など根拠のない順位づけはしない。並びは
+ * 自然 → 季節 → 目的 の固定順で、優劣を示すものではない。
+ */
+import BrandBase from '../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../lib/seo';
+import { MICHINOEKI, michinoekiAreaSlugs } from '../data/michinoeki';
+import { REGION_ORDER, REGIONS, municipalitiesByRegion } from '../data/areas';
+import { getNews } from '../lib/content';
+
+const news = (await getNews()).slice(0, 4);
+
+/** 自然・季節・目的の3軸。リンク先はすべて実在ページ。 */
+const groups = [
+  {
+    key: 'nature',
+    kicker: 'BY NATURE',
+    title: '自然から決める',
+    lead: '海、川と湖、山、公園。地形が変われば、一日の過ごし方も変わります。',
+    items: [
+      { href: '/umi/', label: '海', note: '太平洋に面した海岸線と、海辺の町。' },
+      { href: '/kawa/', label: '川・湖', note: '霞ヶ浦、那珂川、鬼怒川。性格の違う水辺。' },
+      { href: '/yama/', label: '山', note: '筑波山から八溝山地まで。' },
+      { href: '/koen/', label: '公園', note: '季節の花と、大きな空。' },
+    ],
+  },
+  {
+    key: 'season',
+    kicker: 'BY SEASON',
+    title: '季節から決める',
+    lead: '見頃と開催日がある行き先です。時期を外すと会えないものが多くあります。',
+    items: [
+      { href: '/hana/', label: '花', note: '梅から桜、ネモフィラへ。見頃が続く。' },
+      { href: '/hanabi/', label: '花火', note: '県内の花火大会と、つくり手のこと。' },
+      { href: '/matsuri/', label: '祭り', note: '担い手が受け継いできた、土地の行事。' },
+      { href: '/kouyou/', label: '紅葉', note: '渓谷と山あいが色づく秋。' },
+    ],
+  },
+  {
+    key: 'purpose',
+    kicker: 'BY PURPOSE',
+    title: '目的から決める',
+    lead: '立ち寄り先や、街そのものを目的にする日もあります。',
+    items: [
+      { href: '/michinoeki/', label: '道の駅', note: `県内${MICHINOEKI.length}駅を、エリア別に一覧で。` },
+      { href: '/area/', label: '44市町村', note: '街を選んで、そこにある場所と食べものを読む。' },
+      { href: '/news/', label: 'ニュース解説', note: 'いま茨城で起きていることを、地域の視点で。' },
+    ],
+  },
+];
+
+/** 地域から入る導線（5地域） */
+const regions = REGION_ORDER.map((key) => ({
+  key,
+  label: REGIONS[key].label,
+  note: REGIONS[key].note,
+  count: municipalitiesByRegion(key).length,
+}));
+
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '茨城のおでかけ' }];
+const pageUrl = new URL('/odekake/', Astro.site).href;
+const allItems = groups.flatMap((g) => g.items);
+
+const jsonLd = [
+  breadcrumbJsonLd(crumbs, Astro.site),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: '茨城のおでかけ・観光の入口',
+    url: pageUrl,
+    numberOfItems: allItems.length,
+    itemListElement: allItems.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.label,
+      url: new URL(item.href, Astro.site).href,
+    })),
+  },
+];
+---
+
+<BrandBase
+  title="茨城のおでかけ・観光｜自然・季節・目的から行き先を決める｜イバトコ"
+  description="茨城のおでかけ先を、海・川・山・公園の自然、花や花火・祭り・紅葉の季節、道の駅や44市町村といった目的から選べるようにまとめました。現地で確かめた情報をもとに、イバトコが編集しています。"
+  jsonLd={jsonLd}
+>
+  <header class="ok-head">
+    <div class="bp-wrap">
+      <Breadcrumbs items={crumbs} />
+      <p class="bp-kicker">IBARAKI ／ WHERE TO GO</p>
+      <h1>今日は、<br />どこへ行こう。</h1>
+      <div class="ok-lead">
+        <p>茨城は広く、海も山も湖も、車で二時間の中にあります。だからこそ「どこへ行くか」より先に、<strong>何を基準に決めるか</strong>で迷いがちです。</p>
+        <p>このページは、自然・季節・目的の3つの入口から行き先を絞るための地図です。並び順に優劣はありません。気分に近いところから開いてください。</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="ok-body bp-wrap">
+    {groups.map((group) => (
+      <section class="ok-group" id={group.key}>
+        <header>
+          <p class="bp-kicker">{group.kicker}</p>
+          <h2 class="bp-section-title">{group.title}</h2>
+          <p>{group.lead}</p>
+        </header>
+        <ul>{group.items.map((item) => (
+          <li>
+            <a href={item.href}>
+              <strong>{item.label}</strong>
+              <span>{item.note}</span>
+              <b aria-hidden="true">→</b>
+            </a>
+          </li>
+        ))}</ul>
+      </section>
+    ))}
+
+    <section class="ok-region">
+      <header>
+        <p class="bp-kicker">BY AREA</p>
+        <h2 class="bp-section-title">地域から決める</h2>
+        <p>県北から県西まで、同じ茨城でも土地の成り立ちが違います。道の駅は{michinoekiAreaSlugs().length}市町村にあります。</p>
+      </header>
+      <ul>{regions.map((r) => (
+        <li><a href="/area/"><strong>{r.label}</strong><span>{r.note}</span><small>{r.count}市町村</small></a></li>
+      ))}</ul>
+    </section>
+
+    {news.length > 0 && (
+      <section class="ok-news">
+        <header><p class="bp-kicker">LATEST</p><h2 class="bp-section-title">いま起きていること</h2><p>おでかけの前に、地域の動きも。</p></header>
+        <ul>{news.map((item) => (
+          <li><a href={`/news/${item.id.split('/').pop()}/`}>{item.data.title}</a></li>
+        ))}</ul>
+      </section>
+    )}
+
+    <aside class="ok-note">
+      <p class="bp-kicker">INFORMATION</p>
+      <h2>掲載について</h2>
+      <p>各ページの内容は、自治体・施設・交通事業者などの公開情報をもとに編集し、出典と最終確認日を記載しています。営業時間・料金・開催日・見頃は変わるため、訪問前に各公式情報をご確認ください。順位づけやおすすめの序列はつけていません。</p>
+    </aside>
+  </div>
+</BrandBase>
+
+<style>
+  .ok-head{padding-block:clamp(2.5rem,6vw,4.5rem) clamp(2.5rem,6vw,4rem)}
+  .ok-head .bp-kicker{display:block;margin-top:2rem}
+  .ok-head h1{margin-top:1rem;font:600 clamp(2.8rem,8vw,6rem)/1.1 var(--font-brand-display);color:var(--color-ink)}
+  .ok-lead{display:grid;gap:1rem;max-width:58ch;margin-top:1.7rem;color:var(--color-soil);line-height:1.95}
+  .ok-lead strong{color:var(--color-ink)}
+  .ok-body{display:grid;gap:clamp(3.5rem,7vw,5.5rem);padding-block:clamp(3rem,7vw,5rem)}
+  .ok-group>header,.ok-region>header,.ok-news>header{max-width:56ch;margin-bottom:1.8rem}
+  .ok-group>header>p:last-child,.ok-region>header>p:last-child,.ok-news>header>p:last-child{margin-top:.8rem;color:var(--color-soil);line-height:1.9}
+  .ok-group ul,.ok-region ul{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1px;background:var(--color-mist);border:1px solid var(--color-mist);list-style:none;padding:0}
+  .ok-group a,.ok-region a{display:grid;gap:.4rem;padding:1.4rem 1.3rem;background:var(--color-white);color:var(--color-ink);position:relative;min-height:100%}
+  .ok-group a:hover,.ok-region a:hover{background:color-mix(in srgb,var(--color-paper) 70%,var(--color-white))}
+  .ok-group a:focus-visible,.ok-region a:focus-visible{outline:2px solid var(--color-tide);outline-offset:-2px}
+  .ok-group strong,.ok-region strong{font:600 1.35rem var(--font-brand-display)}
+  .ok-group span,.ok-region span{color:var(--color-soil);font-size:.84rem;line-height:1.75;padding-right:1.4rem}
+  .ok-region small{color:var(--color-tide);font:.68rem var(--font-brand-meta);letter-spacing:.08em}
+  .ok-group b{position:absolute;right:1.2rem;bottom:1.2rem;color:var(--color-tide);font-weight:400}
+  .ok-news ul{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
+  .ok-news li a{display:block;padding:1.1rem 0;border-bottom:1px solid var(--color-mist);color:var(--color-ink);line-height:1.7}
+  .ok-news li a:hover{color:var(--color-tide)}
+  .ok-note{padding:clamp(1.6rem,4vw,2.4rem);background:var(--color-white);border:1px solid var(--color-mist)}
+  .ok-note h2{margin-top:.7rem;font:600 1.25rem var(--font-brand-display);color:var(--color-ink)}
+  .ok-note p{margin-top:.9rem;color:var(--color-soil);font-size:.88rem;line-height:1.9}
+</style>

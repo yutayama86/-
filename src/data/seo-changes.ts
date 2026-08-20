@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260820-odekake',
+    date: '2026-08-20',
+    url: '/odekake/',
+    kind: 'new-article',
+    change: 'おでかけハブを新設。自然・季節・目的・地域の4軸から既存の検証済みページへ振り分ける',
+    queries: ['茨城 おでかけ', '茨城 観光', '茨城 日帰り', '茨城 穴場'],
+    commit: 'd56c6ed',
+    note: '狙いクエリは仮説。GSCの実クエリで置き換える。新規事実は書かず既存ページを束ねただけ。',
+  },
+  {
     id: '20260820-kubiaka-new',
     date: '2026-08-20',
     url: '/news/hitachiota-kubiaka-first-detection-2026/',

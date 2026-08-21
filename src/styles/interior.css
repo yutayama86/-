@@ -397,15 +397,22 @@ body.interior-site :is(.news-detail__deck, .story-deck) {
 }
 
 body.interior-site :is(.news-detail__hero, .story-hero, .place-image) {
-  /* 冒頭画像が本文より大きく主張していたため、表示幅を約半分に絞る。
-     OG画像は文字入りの図版なので、切り抜かず幅で縮める（構図と文字を保つ）。
-     本文ブロックと同じく中央寄せ。 */
+  /* 冒頭画像が本文より大きく主張していたため、表示幅を絞る。
+     OG画像は文字入りの図版なので、切り抜かず幅で縮める（構図と文字を保つ）。 */
   width: min(calc(100% - 2rem), 640px);
   margin-top: clamp(1.25rem, 2.5vw, 2rem);
   overflow: hidden;
   border-radius: clamp(.8rem, 2vw, 1.35rem);
   background: linear-gradient(145deg, var(--interior-sky-soft), #eef1e2);
   box-shadow: var(--interior-shadow);
+}
+
+/* ニュース記事の冒頭画像は本文カラムの先頭に置く。
+   見出しと本文のあいだで1枚だけ浮かないよう、目次の横・本文と同じ幅に揃える。 */
+body.interior-site .news-detail__body .news-detail__hero {
+  width: 100%;
+  margin: 0 0 clamp(1.75rem, 3vw, 2.75rem);
+  box-shadow: none;
 }
 
 body.interior-site :is(.news-detail__hero, .story-hero, .place-image) img {

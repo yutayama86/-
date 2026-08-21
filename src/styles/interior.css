@@ -396,30 +396,11 @@ body.interior-site :is(.news-detail__deck, .story-deck) {
   color: #607078;
 }
 
-/* ニュース記事の冒頭は、見出しと画像を1枚のカードに収めて横並びにする
-   （一覧のカードと同じ見え方に揃える）。画像は文字入りの図版なので
-   切り抜かず、幅に合わせて縮める。 */
-body.interior-site .news-detail__head {
-  width: min(calc(100% - 2rem), 1200px);
-  display: grid;
-  /* 見出しが折り返しすぎないよう、テキスト側を広めに取る */
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, .85fr);
-  gap: clamp(1.5rem, 3vw, 2.75rem);
-  align-items: center;
-}
-
-body.interior-site .news-detail__head .news-detail__hero {
-  width: 100%;
-  margin: 0;
-}
-
-@media (max-width: 900px) {
-  body.interior-site .news-detail__head {
-    grid-template-columns: 1fr;
-  }
-}
-
 body.interior-site :is(.news-detail__hero, .story-hero, .place-image) {
+  /* 冒頭画像が本文より大きく主張していたため、表示幅を約半分に絞る。
+     OG画像は文字入りの図版なので、切り抜かず幅で縮める（構図と文字を保つ）。
+     本文ブロックと同じく中央寄せ。 */
+  width: min(calc(100% - 2rem), 640px);
   margin-top: clamp(1.25rem, 2.5vw, 2rem);
   overflow: hidden;
   border-radius: clamp(.8rem, 2vw, 1.35rem);

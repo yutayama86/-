@@ -47,7 +47,14 @@ const internalLinkLabels: Record<string, string> = {
   '/ko/': '한국어：茨城の旅行ガイド（韓国語版）',
   '/area/daigo/': '大子町の地域情報',
   '/news/ibaraki-passport-44-municipalities/': 'IBARAKI PASSPORTから考える茨城観光（解説）',
+  '/news/ibaraki-food-fairs-tokyo-osaka-2026/': '東京・大阪の茨城フェアに見る「地域外から売上をつくる」（解説）',
+  '/news/ibaraki-kaiyo-high-school-collab-menu-2026/': '海洋高校の実習魚が「地域の食」になる（解説）',
+  '/umi/': '茨城の海（海岸線190キロと海の幸）',
 };
+
+// 04セクションの見出し。accessGuide を持つ記事だけアクセス案内として見せ、
+// それ以外は本来の「具体的に何が変わる？」に戻す（目次の表記とも揃える）。
+const changesHeading = data.accessGuide ? 'アクセス・駐車場・公共交通' : '具体的に何が変わる？';
 
 const organizationId = `${SITE_CONFIG.domain}/#organization`;
 const jsonLd: Record<string, unknown>[] = [
@@ -110,7 +117,7 @@ if (data.faq.length > 0) jsonLd.push({
     </header>
 
     <div class="news-detail__layout bp-wrap">
-      <aside class="news-detail__toc" aria-label="この記事の目次"><p>この記事の構成</p><ol><li><a href="#conclusion">結論</a></li><li><a href="#points">この記事でわかること</a></li><li><a href="#what-happened">何が起きた？</a></li><li><a href="#changes">具体的に何が変わる？</a></li><li><a href="#analysis">編集部の解説</a></li><li><a href="#impact">地域への影響</a></li><li><a href="#business">地域事業者への示唆</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">情報源</a></li></ol></aside>
+      <aside class="news-detail__toc" aria-label="この記事の目次"><p>この記事の構成</p><ol><li><a href="#conclusion">結論</a></li><li><a href="#points">この記事でわかること</a></li><li><a href="#what-happened">何が起きた？</a></li><li><a href="#changes">{changesHeading}</a></li><li><a href="#analysis">編集部の解説</a></li><li><a href="#impact">地域への影響</a></li><li><a href="#business">地域事業者への示唆</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">情報源</a></li></ol></aside>
       <div class="news-detail__body">
         {/* 冒頭画像は本文カラムの先頭に置く（見出しと本文のあいだで浮かせない） */}
         <figure class="news-detail__hero"><img src={visualImagePath} alt={data.ogImageAlt || '茨城ニュース解説のイメージ'} loading="eager" width="1200" height="630" />{data.imageCredit && <figcaption>写真：<a href={data.imageCreditUrl} target="_blank" rel="noopener noreferrer">{data.imageCredit}</a>{data.imageLicense && <> / <a href={data.imageLicenseUrl} target="_blank" rel="noopener noreferrer">{data.imageLicense}</a></>}</figcaption>}</figure>
@@ -118,7 +125,7 @@ if (data.faq.length > 0) jsonLd.push({
         <section id="conclusion" class="news-conclusion"><p class="section-number">01 / CONCLUSION</p><h2>結論</h2><p>{data.conclusion}</p></section>
         <section id="points"><p class="section-number">02 / KEY POINTS</p><h2>この記事でわかること</h2><ul>{data.keyPoints.map((point) => <li>{point}</li>)}</ul></section>
         <section id="what-happened"><p class="section-number">03 / WHAT HAPPENED</p><h2>何が起きた？</h2><p>{data.whatHappened}</p></section>
-        <section id="changes"><p class="section-number">04 / CHANGES</p><h2>アクセス・駐車場・公共交通</h2><p>{data.whatChanges}</p>
+        <section id="changes"><p class="section-number">04 / CHANGES</p><h2>{changesHeading}</h2><p>{data.whatChanges}</p>
           {data.accessGuide && <div class="access-guide">
             <div><h3>場所とホーム利用開始時期</h3><dl><dt>場所</dt><dd>{data.accessGuide.location}</dd><dt>いつから</dt><dd>{data.accessGuide.homeUseStarts}</dd></dl></div>
             <div><h3>車・駐車場</h3><dl>{data.accessGuide.parking.map((item) => <><dt>{item.heading}</dt><dd>{item.detail}</dd></>)}</dl></div>

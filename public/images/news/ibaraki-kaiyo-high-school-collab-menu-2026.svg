@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="実習で獲った魚が、地域の食になる。茨城県立海洋高校と県庁食堂とカジキ釣り国際大会のコラボメニュー">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g fill="none" stroke="#315c68" stroke-width="2">
+    <path d="M100 232 H640"/>
+  </g>
+  <g fill="none" stroke="#75695a" stroke-width="1.5" opacity="0.55">
+    <path d="M100 262 q22 -12 44 0 t44 0 t44 0 t44 0 t44 0 t44 0"/>
+  </g>
+
+  <g fill="#a63f32">
+    <circle cx="130" cy="232" r="7"/>
+    <circle cx="370" cy="232" r="7"/>
+    <circle cx="610" cy="232" r="7"/>
+  </g>
+
+  <g font-family="'Source Sans 3', sans-serif" font-size="19" fill="#75695a" text-anchor="middle">
+    <text x="130" y="205">実習で獲る</text>
+    <text x="370" y="205">メニューにする</text>
+    <text x="610" y="205">食堂で出す</text>
+  </g>
+
+  <g fill="none" stroke="#315c68" stroke-width="1.6" stroke-dasharray="4 5" opacity="0.75">
+    <path d="M700 232 h150"/>
+  </g>
+  <circle cx="905" cy="232" r="52" fill="none" stroke="#315c68" stroke-width="1.6" stroke-dasharray="4 5" opacity="0.75"/>
+  <text x="905" y="240" font-family="'Source Sans 3', sans-serif" font-size="20" fill="#315c68" text-anchor="middle">地域へ</text>
+
+  <text x="100" y="368" font-family="'Shippori Mincho', serif" font-size="66" font-weight="600" fill="#172b35">実習で獲った魚が、</text>
+  <text x="100" y="452" font-family="'Shippori Mincho', serif" font-size="66" font-weight="600" fill="#172b35">「地域の食」になる。</text>
+
+  <text x="100" y="512" font-family="'Shippori Mincho', serif" font-size="27" fill="#315c68">茨城県立海洋高校 × 県庁食堂 × カジキ釣り国際大会</text>
+
+  <text x="1100" y="556" font-family="'Source Sans 3', sans-serif" font-size="19" fill="#75695a" text-anchor="end">マグロ・カジキのコラボメニュー ／ 2026年8月26日・27日 ／ 水戸市</text>
+</svg>

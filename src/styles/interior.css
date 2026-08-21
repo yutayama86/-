@@ -1456,17 +1456,9 @@ body.interior-site .rp-final {
     grid-template-columns: 1fr;
   }
 
-  body.interior-site.route-news .news-index__list .news-grid > .news-card:first-child {
-    grid-column: auto;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    min-height: 0;
-  }
-
-  body.interior-site.route-news .news-index__list .news-grid > .news-card:first-child .news-card__image {
-    height: auto;
-    aspect-ratio: 16 / 9;
-  }
+  /* 「新着」の大きな1枚を廃止し全件を等しいカードにしたため、
+     先頭カードだけを打ち消していた指定は不要になった（画像なしカードで
+     余分な行が生まれるため残さない） */
 
   body.interior-site .category-grid > .bsc:first-child {
     grid-column: auto;

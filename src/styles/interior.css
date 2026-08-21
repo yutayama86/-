@@ -397,6 +397,10 @@ body.interior-site :is(.news-detail__deck, .story-deck) {
 }
 
 body.interior-site :is(.news-detail__hero, .story-hero, .place-image) {
+  /* 冒頭画像が本文より大きく主張していたため、表示幅を約半分に絞る。
+     OG画像は文字入りの図版なので、切り抜かず幅で縮める（構図と文字を保つ）。
+     本文ブロックと同じく中央寄せ。 */
+  width: min(calc(100% - 2rem), 640px);
   margin-top: clamp(1.25rem, 2.5vw, 2rem);
   overflow: hidden;
   border-radius: clamp(.8rem, 2vw, 1.35rem);

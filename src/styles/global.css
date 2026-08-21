@@ -42,6 +42,9 @@
   --color-sky-soft: #edf6ff;   /* 大面積に使う淡い空色 */
   --color-moss: #b9c786;       /* 山・畑の若草 */
   --color-deep-blue: #071744;  /* OGPと共通する深い藍 */
+  --color-slate: #5f6f76;      /* 内ページの補助本文（旧参照との互換） */
+  --color-line: #d5e0df;       /* 内ページの罫線（旧参照との互換） */
+  --color-sand: #e9dfc8;       /* 土・和紙の淡色面（旧参照との互換） */
 
   --radius-xs: 4px;
   --radius-sm: 8px;
@@ -65,6 +68,7 @@
      公開前調整（2026-07）：全体が大きく感じる／見出しが不自然に改行する問題に対応し、
      スケール上限を圧縮。階層比は維持したまま可読性を優先。 */
   --step--1: clamp(0.76rem, 0.73rem + 0.13vw, 0.83rem);
+  --step--2: clamp(0.67rem, 0.64rem + 0.12vw, 0.74rem);
   --step-0: clamp(0.92rem, 0.88rem + 0.2vw, 1rem);
   --step-1: clamp(1.05rem, 0.98rem + 0.35vw, 1.25rem);
   --step-2: clamp(1.3rem, 1.15rem + 0.75vw, 1.7rem);

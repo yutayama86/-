@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import '../styles/interior.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import IntlHeader from '../components/IntlHeader.astro';
@@ -47,6 +48,10 @@ const ogImageType = OG_MIME[ogImagePath.split('.').pop()?.toLowerCase() ?? ''] ?
 const ogImageAlt = imageAlt || title;
 const GA_ID = (import.meta.env.PUBLIC_GA_ID as string | undefined) || SITE_CONFIG.gaMeasurementId;
 const enableGA = import.meta.env.PROD && !!GA_ID;
+const pathname = Astro.url.pathname;
+const localeHomes = new Set(['/', '/en/', '/ko/', '/zh-tw/']);
+const isInterior = !localeHomes.has(pathname);
+const routeSegment = pathname.split('/').filter(Boolean)[0]?.replace(/[^a-z0-9-]/gi, '-') || 'home';
 ---
 <!doctype html>
 <html lang={localeMeta.htmlLang}>
@@ -91,7 +96,7 @@ const enableGA = import.meta.env.PROD && !!GA_ID;
       </>
     )}
   </head>
-  <body class="brand-site">
+  <body class:list={['brand-site', isInterior ? 'interior-site' : 'home-site', `route-${routeSegment}`]}>
     <a href="#main-content" class="sr-only">{SKIP_LABEL[locale]}</a>
     {isIntl ? <IntlHeader locale={locale} translationKey={translationKey} /> : <SiteHeader translationKey={translationKey} />}
     <main id="main-content"><slot /></main>

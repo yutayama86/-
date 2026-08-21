@@ -39,11 +39,11 @@ const jsonLd = {
     {data.cover && <figure class="place-image bp-wrap"><img src={data.cover} alt={data.name} loading="eager" /></figure>}
 
     <div class="place-grid bp-wrap">
-      <main>
+      <div class="place-main">
         <section><p class="bp-kicker">ABOUT</p><h2>この場所について</h2><div class="place-description">{Content ? <Content /> : <p>{data.description}</p>}</div></section>
         {data.features.length > 0 && <section><p class="bp-kicker">FEATURES</p><ul class="features">{data.features.map((feature) => <li>{feature}</li>)}</ul></section>}
         {data.faq.length > 0 && <section><p class="bp-kicker">QUESTIONS</p><h2>訪れる前に</h2><dl class="faq">{data.faq.map((item) => <div><dt>{item.q}</dt><dd>{item.a}</dd></div>)}</dl></section>}
-      </main>
+      </div>
       <aside><p class="facts-label">基本情報</p><PlaceFacts store={store} />{data.website && <a class="official" href={data.website} target="_blank" rel="noopener noreferrer">公式サイトを確認する ↗</a>}<p class="fact-note">営業日時などは変更される場合があります。訪問前に公式情報をご確認ください。</p></aside>
     </div>
   </article>
@@ -55,7 +55,7 @@ const jsonLd = {
   .place{padding-block:clamp(4rem,9vw,7rem)}.crumbs{display:flex;gap:.55rem;margin-bottom:1.5rem;color:var(--color-soil);font-size:.78rem}.crumbs a{border-bottom:1px solid transparent}.crumbs a:hover{border-color:var(--color-tide)}
   .place-head{display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:end}.place-kicker{margin-top:1.2rem}.place-head h1{margin-top:.8rem;font:600 clamp(2.3rem,6vw,5rem)/1.15 var(--font-brand-display);color:var(--color-ink)}.place-head>div>p:last-child{margin-top:1rem;font:500 1.15rem var(--font-brand-display);color:var(--color-soil)}
   .place-note{padding-left:1rem;border-left:1px solid var(--color-tide);font-size:.75rem;color:var(--color-soil)}.place-note strong{color:var(--color-ink)}.place-image{margin-top:3rem}.place-image img{width:100%;max-height:70vh;object-fit:cover}
-  .place-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:clamp(3rem,8vw,7rem);padding-top:4rem}.place-grid main section+section{margin-top:3.5rem}.place-grid h2{margin-top:.6rem;font:600 clamp(1.6rem,3vw,2.5rem) var(--font-brand-display);color:var(--color-ink)}
+  .place-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:clamp(3rem,8vw,7rem);padding-top:4rem}.place-main section+section{margin-top:3.5rem}.place-grid h2{margin-top:.6rem;font:600 clamp(1.6rem,3vw,2.5rem) var(--font-brand-display);color:var(--color-ink)}
   .place-description{margin-top:1.2rem;max-width:58ch;line-height:2;color:var(--color-soil)}.features{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}.features li{padding:.4rem .7rem;border:1px solid var(--color-mist);font-size:.78rem}
   .facts-label{margin-bottom:.7rem;color:var(--color-tide);font-size:.75rem;font-weight:600}.official{display:inline-block;margin-top:1.5rem;border-bottom:1px solid var(--color-tide);font-size:.85rem}.fact-note{margin-top:1.2rem;color:var(--color-soil);font-size:.72rem;line-height:1.8}
   .faq{margin-top:1.5rem;border-top:1px solid var(--color-mist)}.faq div{padding-block:1rem;border-bottom:1px solid var(--color-mist)}.faq dt{font-weight:600;color:var(--color-ink)}.faq dd{margin-top:.5rem;color:var(--color-soil);line-height:1.8}

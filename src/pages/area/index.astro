@@ -7,11 +7,11 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'エリアか
 ---
 
 <BrandBase title="エリアから探す｜44市町村から茨城を読む｜イバトコ" description="茨城県44市町村を地図から選び、取材・確認を経た地域の記事、場所、人を探せます。" jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
-  <main class="area-index-main">
+  <section class="area-index-main" aria-labelledby="area-index-title">
     <div class="bp-wrap"><Breadcrumbs items={crumbs} /></div>
-    <h1 class="sr-only">茨城県44市町村から探す</h1>
+    <h1 id="area-index-title" class="sr-only">茨城県44市町村から探す</h1>
     <div class="bp-wrap"><HomeAreaExplorer /></div>
-  </main>
+  </section>
 </BrandBase>
 
 <style>

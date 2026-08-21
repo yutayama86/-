@@ -14,10 +14,12 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ガイド' }
   noindex={guides.length === 0}
  jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <section class="wrap section">
-    <Breadcrumbs items={crumbs} />
-    <p class="bp-kicker">Field Guide</p>
-    <h1 class="bp-title page-title">現地を歩いた記録から、<br />一日の巡り方を編む。</h1>
-    <p class="page-lead">公開情報と現地確認が揃ったものから、テーマ別のガイドとして届けます。まだ確かめられていない場所を、数合わせで載せることはしません。</p>
+    <header class="guide-index-head">
+      <Breadcrumbs items={crumbs} />
+      <p class="bp-kicker">Field Guide</p>
+      <h1 class="bp-title page-title">現地を歩いた記録から、<br />一日の巡り方を編む。</h1>
+      <p class="page-lead">公開情報と現地確認が揃ったものから、テーマ別のガイドとして届けます。まだ確かめられていない場所を、数合わせで載せることはしません。</p>
+    </header>
 
     {guides.length > 0 ? (
       <ul class="gl-grid">

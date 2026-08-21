@@ -11,7 +11,7 @@ const { theme } = Astro.props;
 ---
 
 <article class="tg">
-  <header class="tg-head">
+  <header class:list={['tg-head', theme.hero && 'tg-head--with-hero']}>
     <div class="tg-head__copy bp-wrap">
       <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><span aria-current="page">{theme.title}</span></nav>
       <p class="bp-kicker">{theme.kicker}</p>

@@ -76,15 +76,15 @@ const CURRENT_NOTE: Record<Locale, string> = {
 
 <style>
   .lang-menu{position:relative}
-  .lang-menu__button{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem .65rem;border:1px solid var(--color-mist);border-radius:1px;background:color-mix(in srgb,var(--color-paper) 60%,var(--color-white));color:var(--color-ink);font:500 .78rem/1.4 var(--font-brand-body);white-space:nowrap;cursor:pointer;transition:background-color .2s ease,border-color .2s ease}
+  .lang-menu__button{display:inline-flex;min-height:42px;align-items:center;gap:.55rem;padding:.55rem .9rem;border:1px solid rgba(31,99,191,.17);border-radius:999px;background:rgba(255,255,255,.58);color:var(--color-ink);font:600 .75rem/1.4 var(--font-brand-body);white-space:nowrap;cursor:pointer;transition:background-color .2s ease,border-color .2s ease,box-shadow .2s ease}
   .lang-menu__button:hover{background:color-mix(in srgb,var(--color-ink) 5%,var(--color-white));border-color:color-mix(in srgb,var(--color-ink) 22%,transparent)}
   .lang-menu__button:focus-visible{outline:2px solid var(--color-tide);outline-offset:2px}
   .lang-menu__caret{flex:none;color:var(--color-soil);transition:transform .2s ease}
   .lang-menu__button[aria-expanded='true'] .lang-menu__caret{transform:rotate(180deg)}
 
-  .lang-menu__list{position:absolute;top:calc(100% + .5rem);right:0;z-index:40;width:190px;margin:0;padding:.25rem 0;list-style:none;border:1px solid var(--color-mist);background:var(--color-white);box-shadow:0 2px 10px rgba(23,43,53,.06)}
+  .lang-menu__list{position:absolute;top:calc(100% + .6rem);right:0;z-index:40;width:190px;margin:0;padding:.35rem;list-style:none;border:1px solid var(--color-mist);border-radius:.7rem;background:rgba(255,253,248,.98);box-shadow:0 18px 40px rgba(23,43,53,.11)}
   .lang-menu__list[hidden]{display:none}
-  .lang-menu__item{display:flex;align-items:center;gap:.5rem;min-height:44px;padding:.5rem .9rem;color:var(--color-ink);font:500 .85rem/1.5 var(--font-brand-body);transition:background-color .18s ease}
+  .lang-menu__item{display:flex;align-items:center;gap:.5rem;min-height:42px;padding:.5rem .75rem;border-radius:.45rem;color:var(--color-ink);font:500 .82rem/1.5 var(--font-brand-body);transition:background-color .18s ease}
   .lang-menu__item:hover{background:color-mix(in srgb,var(--color-paper) 70%,var(--color-white))}
   .lang-menu__item:focus-visible{outline:2px solid var(--color-tide);outline-offset:-2px}
   .lang-menu__item.is-current{background:color-mix(in srgb,var(--color-paper) 92%,var(--color-white));font-weight:700}

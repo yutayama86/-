@@ -4,6 +4,8 @@
    ============================================================= */
 
 :root {
+  /* 共通ヘッダーと、追従ナビ／アンカーの位置をひとつの値で管理する。 */
+  --site-header-height: 80px;
   /* --- Palette ------------------------------------------------ */
   --paper: #f5f1e8;        /* 和紙のような温かい地色 */
   --paper-2: #efe9db;      /* 一段沈めた面 */
@@ -86,6 +88,14 @@
   --shadow-sm: 0 1px 2px rgba(28, 26, 20, 0.06);
   --shadow: 0 10px 30px -12px rgba(28, 26, 20, 0.22);
   --shadow-lg: 0 30px 70px -30px rgba(15, 35, 52, 0.4);
+}
+
+@media (max-width: 1180px) {
+  :root { --site-header-height: 76px; }
+}
+
+@media (max-width: 560px) {
+  :root { --site-header-height: 68px; }
 }
 
 @font-face {

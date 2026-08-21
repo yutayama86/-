@@ -13,6 +13,10 @@ body.interior-site {
   --interior-line: rgba(23, 43, 53, .13);
   --interior-shadow: 0 20px 56px rgba(25, 55, 88, .085);
   --interior-shadow-hover: 0 24px 58px rgba(25, 55, 88, .125);
+  --interior-title-xl: clamp(2.2rem, 3.45vw, 3.6rem);
+  --interior-title-lg: clamp(1.95rem, 2.8vw, 2.85rem);
+  --interior-hero-y: clamp(1.9rem, 3.1vw, 3rem);
+  --interior-section-y: clamp(2.75rem, 5vw, 5rem);
   background: var(--color-paper);
 }
 
@@ -54,8 +58,19 @@ body.interior-site .eyebrow {
 }
 
 body.interior-site .bp-section-title {
+  font-size: clamp(1.55rem, 2.5vw, 2.45rem);
   letter-spacing: .015em;
   text-wrap: balance;
+}
+
+body.interior-site .bp-title {
+  font-size: var(--interior-title-xl);
+  line-height: 1.24;
+  text-wrap: balance;
+}
+
+body.interior-site .bp-section {
+  padding-block: var(--interior-section-y);
 }
 
 body.interior-site .bp-link,
@@ -102,7 +117,8 @@ body.interior-site :is(
 ) {
   position: relative;
   margin-top: clamp(1rem, 2vw, 1.75rem);
-  padding: clamp(2.25rem, 4vw, 3.75rem) clamp(1.4rem, 4.5vw, 4.5rem);
+  /* 下層ごとに残っている旧来の大きな余白を、共通スケールへ確実に揃える。 */
+  padding: var(--interior-hero-y) clamp(1.4rem, 4.2vw, 4rem) !important;
   overflow: hidden;
   border: 1px solid rgba(31, 99, 191, .13);
   border-radius: clamp(.9rem, 1.6vw, 1.25rem);
@@ -149,7 +165,7 @@ body.interior-site :is(
   max-width: 12em;
   margin-top: .9rem;
   color: var(--color-deep-blue);
-  font: 600 clamp(2.45rem, 4.5vw, 4.4rem)/1.18 var(--font-brand-display);
+  font: 600 var(--interior-title-xl)/1.22 var(--font-brand-display) !important;
   letter-spacing: .015em;
   text-wrap: balance;
 }
@@ -212,7 +228,7 @@ body.interior-site .category-head nav a:hover {
 
   body.interior-site.route-news .news-index__head h1 {
     margin-top: .2rem;
-    font-size: clamp(2.8rem, 4.5vw, 4.25rem);
+    font-size: var(--interior-title-xl);
   }
 
   body.interior-site.route-news .news-index__head > p:last-of-type {
@@ -233,7 +249,7 @@ body.interior-site :is(
   .tag-hero + .section,
   .ok-body
 ) {
-  padding-block: clamp(2.75rem, 5.5vw, 5rem);
+  padding-block: clamp(2.5rem, 4.8vw, 4.5rem);
 }
 
 body.interior-site :is(.news-grid, .category-grid, .tag-grid) {
@@ -361,8 +377,8 @@ body.interior-site :is(.news-detail__head, .story-head) {
 body.interior-site :is(.news-detail__head, .story-head) h1 {
   max-width: 18em;
   color: var(--color-deep-blue);
-  font-size: clamp(2.05rem, 3.45vw, 3.15rem);
-  line-height: 1.35;
+  font-size: var(--interior-title-lg) !important;
+  line-height: 1.35 !important;
   letter-spacing: .012em;
   text-wrap: balance;
 }
@@ -388,7 +404,7 @@ body.interior-site :is(.news-detail__hero, .story-hero, .place-image) img {
 body.interior-site .news-detail__layout,
 body.interior-site .story-grid {
   align-items: start;
-  padding-block: clamp(3rem, 6vw, 5.5rem);
+  padding-block: clamp(2.75rem, 5vw, 4.75rem);
 }
 
 body.interior-site .news-detail__toc,
@@ -514,6 +530,23 @@ body.interior-site .place-head {
   align-items: center;
 }
 
+body.interior-site :is(.place-head h1, .ag-head h1, .ig-head h1) {
+  max-width: 15em;
+  color: var(--color-deep-blue);
+  font-size: var(--interior-title-xl) !important;
+  line-height: 1.24 !important;
+  letter-spacing: .012em;
+  text-wrap: balance;
+}
+
+body.interior-site :is(.area-guide, .daigo-guide, .hitachi-guide, .ig) {
+  padding-top: clamp(1.5rem, 3vw, 2.75rem);
+}
+
+body.interior-site :is(.ag-head, .area-head) {
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
 body.interior-site .place-head > div:first-child {
   padding: clamp(2rem, 4.5vw, 3.7rem);
   border: 1px solid rgba(31, 99, 191, .12);
@@ -632,8 +665,8 @@ body.interior-site .tg-head__copy::after {
 }
 
 body.interior-site .tg-head__copy h1 {
-  font-size: clamp(2.55rem, 4.4vw, 4.2rem);
-  line-height: 1.12;
+  font-size: var(--interior-title-xl);
+  line-height: 1.2;
 }
 
 body.interior-site .tg-hero {
@@ -654,7 +687,7 @@ body.interior-site .tg-hero img {
   body.interior-site .tg-head--with-hero {
     display: grid;
     grid-template-columns: minmax(26rem, .82fr) minmax(0, 1.18fr);
-    min-height: 31rem;
+    min-height: clamp(24rem, 35vw, 27rem);
   }
 
   body.interior-site .tg-head__copy {
@@ -676,7 +709,7 @@ body.interior-site .tg-hero img {
   body.interior-site .tg-hero,
   body.interior-site .tg-hero img {
     height: 100%;
-    min-height: 31rem;
+    min-height: clamp(24rem, 35vw, 27rem);
     aspect-ratio: auto;
   }
 }
@@ -759,8 +792,8 @@ body.interior-site :is(.policy, .pv, .rsv, .nf) {
 body.interior-site :is(.policy-title, .pv-title, .rsv-title, .nf-title, .tag-title) {
   margin-top: .7rem;
   color: var(--color-deep-blue);
-  font-size: clamp(2.3rem, 5.4vw, 4.7rem);
-  line-height: 1.2;
+  font-size: var(--interior-title-xl) !important;
+  line-height: 1.24 !important;
   text-wrap: balance;
 }
 
@@ -787,13 +820,11 @@ body.interior-site .prose a {
 }
 
 body.interior-site .contact {
-  margin-block: clamp(2rem, 5vw, 4rem);
-  padding: clamp(2rem, 5vw, 4.5rem);
+  margin-block: clamp(1.2rem, 2.5vw, 2.25rem);
+  padding: clamp(2rem, 3.5vw, 3.25rem);
   border: 1px solid rgba(31, 99, 191, .12);
   border-radius: 1.35rem;
-  background:
-    radial-gradient(circle at 8% 96%, rgba(190,203,139,.20), transparent 32%),
-    linear-gradient(135deg, rgba(255,255,255,.98), rgba(238,246,255,.9));
+  background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(241,247,253,.92));
   box-shadow: var(--interior-shadow);
 }
 
@@ -803,7 +834,7 @@ body.interior-site .contact h1 {
 }
 
 body.interior-site .contact-form {
-  padding: clamp(1.4rem, 3vw, 2.2rem);
+  padding: clamp(1.3rem, 2.2vw, 1.85rem);
   border: 1px solid var(--interior-line);
   border-radius: 1rem;
   background: rgba(255,255,255,.78);
@@ -855,8 +886,8 @@ body.interior-site :is(.belief, .policies, .separation, .scope, .biz-cta, .about
 }
 
 body.interior-site .belief {
-  margin-block: clamp(3.5rem, 8vw, 7rem);
-  padding: clamp(2rem, 5vw, 4.5rem);
+  margin-block: clamp(2.75rem, 5.5vw, 5.5rem);
+  padding: clamp(2rem, 4vw, 3.75rem);
   border: 1px solid rgba(31,99,191,.12);
   border-radius: 1.25rem;
   background:
@@ -950,8 +981,8 @@ body.interior-site .scope li::before {
 }
 
 body.interior-site .biz-cta {
-  margin-block: clamp(4rem, 9vw, 8rem);
-  padding: clamp(2rem, 5vw, 4rem);
+  margin-block: clamp(3rem, 6vw, 6rem);
+  padding: clamp(2rem, 4vw, 3.5rem);
   border: 1px solid rgba(31,99,191,.13);
   border-radius: 1.2rem;
   background:
@@ -1003,8 +1034,8 @@ body.interior-site .place-list article > a {
 }
 
 body.interior-site .tag-group + .tag-group {
-  margin-top: clamp(4rem, 8vw, 7rem);
-  padding-top: clamp(3rem, 6vw, 5rem);
+  margin-top: clamp(3rem, 5.5vw, 5rem);
+  padding-top: clamp(2.5rem, 4.5vw, 4rem);
   border-top: 1px solid var(--interior-line);
 }
 
@@ -1026,7 +1057,7 @@ body.interior-site .tag-hero {
 body.interior-site .guide-index-head {
   position: relative;
   margin-bottom: clamp(2.5rem, 5vw, 4rem);
-  padding: clamp(2.4rem, 5vw, 4.5rem);
+  padding: clamp(2rem, 3.6vw, 3.4rem);
   overflow: hidden;
   border: 1px solid rgba(31,99,191,.12);
   border-radius: 1.3rem;
@@ -1079,7 +1110,7 @@ body.interior-site .ig-sources {
 }
 
 body.interior-site :is(.ag-section, .guide-section, .taste-section, .experience-section, .route-section, .season-section, .basics-section, .practical-section, .faq-section, .tg-spots, .tg-practical) {
-  scroll-margin-top: 150px;
+  scroll-margin-top: calc(var(--site-header-height) + 2rem);
 }
 
 body.interior-site.route-reporters :is(.rp-way, .rp-people-empty) {
@@ -1101,8 +1132,8 @@ body.interior-site.route-reporters .rp-standard-grid article {
 body.interior-site .guide-index-head .page-title {
   max-width: 13em;
   color: var(--color-deep-blue);
-  font-size: clamp(2.35rem, 5.4vw, 4.8rem);
-  line-height: 1.2;
+  font-size: var(--interior-title-xl) !important;
+  line-height: 1.24 !important;
   text-wrap: balance;
 }
 
@@ -1147,7 +1178,7 @@ body.interior-site .xc-hero {
 }
 
 body.interior-site :is(.gd-hero, .xc-hero) > .wrap {
-  padding: clamp(2.4rem, 5vw, 4.6rem);
+  padding: clamp(2rem, 3.7vw, 3.5rem);
   overflow: hidden;
   border: 1px solid rgba(31,99,191,.12);
   border-radius: 1.3rem;
@@ -1164,8 +1195,8 @@ body.interior-site :is(.gd-hero, .xc-hero) .crumbs {
 body.interior-site :is(.gd-title, .xc-title) {
   max-width: 15em;
   color: var(--color-deep-blue);
-  font-size: clamp(2.2rem, 5.2vw, 4.65rem);
-  line-height: 1.25;
+  font-size: var(--interior-title-xl) !important;
+  line-height: 1.25 !important;
   text-wrap: balance;
 }
 
@@ -1277,7 +1308,7 @@ body.interior-site .ok-note {
 body.interior-site .me-head > .bp-wrap,
 body.interior-site .rp-hero > .bp-wrap {
   margin-top: clamp(1.25rem, 3vw, 2.5rem);
-  padding: clamp(2.5rem, 5.5vw, 5rem);
+  padding: clamp(2.1rem, 3.8vw, 3.6rem);
   overflow: hidden;
   border: 1px solid rgba(31,99,191,.12);
   border-radius: 1.35rem;
@@ -1291,8 +1322,8 @@ body.interior-site .rp-hero > .bp-wrap {
 body.interior-site :is(.me-head h1, .rp-hero h1) {
   max-width: 12em;
   color: var(--color-deep-blue);
-  font-size: clamp(2.55rem, 6vw, 5.5rem);
-  line-height: 1.16;
+  font-size: var(--interior-title-xl) !important;
+  line-height: 1.22 !important;
   text-wrap: balance;
 }
 
@@ -1343,6 +1374,13 @@ body.interior-site .rp-final {
 }
 
 @media (max-width: 720px) {
+  body.interior-site {
+    --interior-title-xl: clamp(1.95rem, 8.2vw, 2.65rem);
+    --interior-title-lg: clamp(1.75rem, 7.4vw, 2.3rem);
+    --interior-hero-y: 1.65rem;
+    --interior-section-y: clamp(2.75rem, 10vw, 4rem);
+  }
+
   body.interior-site #main-content::before {
     height: 27rem;
   }
@@ -1360,7 +1398,7 @@ body.interior-site .rp-final {
     .person-head
   ) {
     margin-top: 1rem;
-    padding: 2rem 1.25rem 2.4rem;
+    padding: 1.65rem 1.1rem 1.9rem;
     border-radius: .95rem;
   }
 
@@ -1376,8 +1414,8 @@ body.interior-site .rp-final {
     .ok-head,
     .person-head
   ) h1 {
-    font-size: clamp(2.15rem, 12vw, 3.35rem);
-    line-height: 1.2;
+    font-size: var(--interior-title-xl);
+    line-height: 1.27;
   }
 
   body.interior-site :is(.news-detail__head, .story-head) {
@@ -1387,8 +1425,8 @@ body.interior-site .rp-final {
   }
 
   body.interior-site :is(.news-detail__head, .story-head) h1 {
-    font-size: clamp(1.8rem, 8.5vw, 2.55rem);
-    line-height: 1.42;
+    font-size: var(--interior-title-lg);
+    line-height: 1.4;
   }
 
   body.interior-site :is(.news-detail__hero, .story-hero, .place-image, .tg-hero) {
@@ -1398,7 +1436,7 @@ body.interior-site .rp-final {
 
   body.interior-site :is(.news-detail__layout, .story-grid, .place-grid) {
     width: min(calc(100% - 2rem), 1280px);
-    padding-block: 3rem 4.5rem;
+    padding-block: 2.5rem 3.75rem;
   }
 
   body.interior-site .bsc-body {
@@ -1434,8 +1472,8 @@ body.interior-site .rp-final {
 
   body.interior-site :is(.policy, .pv, .rsv, .nf, .contact) {
     width: calc(100% - 1.5rem);
-    margin-block: 1rem 2.5rem;
-    padding: 1.5rem 1.2rem 2rem;
+    margin-block: .8rem 2rem;
+    padding: 1.35rem 1.1rem 1.75rem;
     border-radius: .95rem;
   }
 

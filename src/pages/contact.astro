@@ -7,24 +7,40 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'お問い合
 <BrandBase title="お問い合わせ｜イバトコ" description="取材、情報掲載、訂正、地域事業者向け支援など、イバトコへのお問い合わせ。" jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <section class="contact bp-wrap">
     <Breadcrumbs items={crumbs} />
-    <header><p class="bp-kicker">CONTACT</p><h1><span>話を聞くところから、</span><span>始めます。</span></h1><p>取材、掲載、訂正、発信支援など、ご用件をお知らせください。内容を確認し、必要な担当からご連絡します。</p><a href={`mailto:${SITE_CONFIG.contactEmail}`}>{SITE_CONFIG.contactEmail}</a></header>
+    <header class="contact-intro">
+      <p class="bp-kicker">CONTACT</p>
+      <h1>話を聞くところから、<br />始めます。</h1>
+      <p>取材、掲載、訂正、発信支援など、ご用件をお知らせください。内容を確認し、必要な担当からご連絡します。</p>
+      <div class="contact-mail">
+        <span>MAIL</span>
+        <a href={`mailto:${SITE_CONFIG.contactEmail}`}>{SITE_CONFIG.contactEmail}</a>
+      </div>
+    </header>
     <form class="contact-form" method="POST" action={FORM_ENDPOINT||undefined} data-endpoint={FORM_ENDPOINT}>
+      <header class="contact-form__head">
+        <p class="bp-kicker">MESSAGE</p>
+        <h2>ご相談内容をお聞かせください。</h2>
+        <p>必須項目をご入力のうえ、送信してください。</p>
+      </header>
       <input type="hidden" name="_subject" value="【イバトコ】お問い合わせ" />
       <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="honeypot" />
-      <div class="field"><label for="subject">ご用件</label><select id="subject" name="subject" required><option value="">選択してください</option><option value="取材・掲載相談">取材・情報掲載について</option><option value="地域事業者の相談">Web・発信支援について</option><option value="訂正・更新">掲載内容の訂正・更新</option><option value="ローカルエディター">ローカルエディターについて</option><option value="協業希望">協業・提携</option><option value="その他">その他</option></select></div>
-      <div class="field"><label for="name">お名前 / 店舗・企業名</label><input id="name" name="name" type="text" required autocomplete="organization" /></div>
-      <div class="field"><label for="email">メールアドレス</label><input id="email" name="email" type="email" required autocomplete="email" /></div>
-      <div class="field"><label for="tel">電話番号（任意）</label><input id="tel" name="tel" type="tel" autocomplete="tel" /></div>
-      <div class="field"><label for="message">お問い合わせ内容</label><textarea id="message" name="message" rows="7" required></textarea></div>
-      <button type="submit">内容を送信する →</button><p class="privacy">送信前に<a href="/privacy/">プライバシーポリシー</a>をご確認ください。</p><p class="form-status" data-status role="status" aria-live="polite" hidden></p>
+      <div class="field"><label for="subject">ご用件 <small>必須</small></label><select id="subject" name="subject" required><option value="">選択してください</option><option value="取材・掲載相談">取材・情報掲載について</option><option value="地域事業者の相談">Web・発信支援について</option><option value="訂正・更新">掲載内容の訂正・更新</option><option value="ローカルエディター">ローカルエディターについて</option><option value="協業希望">協業・提携</option><option value="その他">その他</option></select></div>
+      <div class="field"><label for="name">お名前 / 店舗・企業名 <small>必須</small></label><input id="name" name="name" type="text" required autocomplete="organization" /></div>
+      <div class="field"><label for="email">メールアドレス <small>必須</small></label><input id="email" name="email" type="email" required autocomplete="email" /></div>
+      <div class="field"><label for="tel">電話番号 <small class="is-optional">任意</small></label><input id="tel" name="tel" type="tel" autocomplete="tel" /></div>
+      <div class="field"><label for="message">お問い合わせ内容 <small>必須</small></label><textarea id="message" name="message" rows="7" required></textarea></div>
+      <div class="contact-form__actions"><button type="submit"><span>内容を送信する</span><span aria-hidden="true">→</span></button><p class="privacy">送信前に<a href="/privacy/">プライバシーポリシー</a>をご確認ください。</p></div><p class="form-status" data-status role="status" aria-live="polite" hidden></p>
     </form>
   </section>
 </BrandBase>
 <style>
-  .contact{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(3rem,8vw,8rem);padding-block:clamp(5rem,11vw,9rem)}.contact h1{margin-top:1rem;font:600 clamp(2rem,6vw,5rem)/1.3 var(--font-brand-display);color:var(--color-ink)}.contact h1 span{display:block}.contact header>p:not(.bp-kicker){margin-top:1.5rem;line-height:2;color:var(--color-soil)}.contact header>a{display:inline-block;margin-top:2rem;color:var(--color-tide);border-bottom:1px solid}
-  .contact-form{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}.field{display:grid;gap:.5rem}.field:first-of-type,.field:nth-of-type(2),.field:last-of-type{grid-column:1/-1}label{font-size:.78rem;font-weight:600;color:var(--color-soil)}input,select,textarea{width:100%;padding:.9rem 0;border:0;border-bottom:1px solid var(--color-mist);border-radius:0;background:transparent;color:var(--color-ink);font:inherit}input:focus,select:focus,textarea:focus{outline:0;border-color:var(--color-tide);box-shadow:0 2px 0 var(--color-tide)}textarea{resize:vertical}.contact-form button{justify-self:start;margin-top:.8rem;padding:.7rem 0;border:0;border-bottom:1px solid var(--color-tide);background:transparent;color:var(--color-ink);font:600 1rem var(--font-brand-body);cursor:pointer}.privacy{align-self:center;color:var(--color-soil);font-size:.72rem}.privacy a{border-bottom:1px solid}.form-status{grid-column:1/-1}.honeypot{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-  @media(max-width:760px){.contact,.contact-form{grid-template-columns:1fr}.field{grid-column:1!important}}
-  @media(max-width:360px){.contact h1{font-size:1.8rem;line-height:1.4}}
+  .contact{display:grid;grid-template-columns:minmax(18rem,.72fr) minmax(30rem,1.28fr);grid-template-areas:"crumbs crumbs" "intro form";align-items:start;column-gap:clamp(3rem,6vw,6rem);row-gap:clamp(1.75rem,3vw,2.5rem)}
+  .contact>:global(.crumbs){grid-area:crumbs;margin:0}.contact-intro{grid-area:intro;padding-top:.35rem}.contact-intro h1{max-width:10em;margin-top:1rem;font:600 clamp(2.2rem,3.3vw,3.45rem)/1.3 var(--font-brand-display);letter-spacing:.01em;color:var(--color-ink)}.contact-intro>p:not(.bp-kicker){max-width:34ch;margin-top:1.35rem;line-height:1.95;color:var(--color-soil)}
+  .contact-mail{display:grid;gap:.35rem;margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--color-mist)}.contact-mail span{font:700 .62rem var(--font-brand-meta);letter-spacing:.16em;color:var(--color-tide)}.contact-mail a{width:max-content;max-width:100%;padding-bottom:.12rem;border-bottom:1px solid var(--color-tide);color:var(--color-ink);font-weight:600}
+  .contact-form{grid-area:form;display:grid;grid-template-columns:1fr 1fr;gap:1.25rem 1.15rem}.contact-form__head{grid-column:1/-1;padding-bottom:.4rem}.contact-form__head h2{max-width:16em;margin-top:.65rem;font:600 clamp(1.55rem,2.2vw,2rem)/1.45 var(--font-brand-display);color:var(--color-ink)}.contact-form__head>p:last-child{margin-top:.55rem;color:var(--color-soil);font-size:.8rem}.field{display:grid;gap:.5rem}.field:first-of-type,.field:nth-of-type(2),.field:last-of-type{grid-column:1/-1}label{display:flex;align-items:center;gap:.55rem;font-size:.78rem;font-weight:700;color:var(--color-ink)}label small{padding:.12rem .42rem;border-radius:999px;background:color-mix(in srgb,var(--color-tide) 10%,var(--color-white));color:var(--color-tide);font-size:.6rem;letter-spacing:.05em}label small.is-optional{background:var(--color-paper);color:var(--color-soil)}input,select,textarea{width:100%;padding:.9rem 0;border:0;border-bottom:1px solid var(--color-mist);border-radius:0;background:transparent;color:var(--color-ink);font:inherit}input:focus,select:focus,textarea:focus{outline:0;border-color:var(--color-tide);box-shadow:0 2px 0 var(--color-tide)}textarea{resize:vertical}.contact-form__actions{grid-column:1/-1;display:flex;align-items:center;gap:1.25rem;margin-top:.25rem}.contact-form button{display:inline-flex;align-items:center;justify-content:space-between;gap:2rem;min-width:13.5rem;min-height:3.25rem;padding:.72rem 1.25rem;border:1px solid var(--color-tide);border-radius:999px;background:var(--color-tide);color:#fff;font:700 .9rem var(--font-brand-body);cursor:pointer}.privacy{color:var(--color-soil);font-size:.7rem;line-height:1.7}.privacy a{border-bottom:1px solid}.form-status{grid-column:1/-1}.honeypot{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  @media(max-width:900px){.contact{grid-template-columns:1fr;grid-template-areas:"crumbs" "intro" "form";gap:2rem}.contact-intro>p:not(.bp-kicker){max-width:50ch}}
+  @media(max-width:640px){.contact-form{grid-template-columns:1fr}.field{grid-column:1!important}.contact-form__actions{align-items:stretch;flex-direction:column}.contact-form button{width:100%}}
+  @media(max-width:360px){.contact-intro h1{font-size:1.9rem;line-height:1.4}}
 </style>
 <script>
   import { submitForm } from '../lib/forms'; const form=document.querySelector<HTMLFormElement>('.contact-form'); const params=new URLSearchParams(location.search); const subject=params.get('subject'); const select=document.getElementById('subject') as HTMLSelectElement|null;

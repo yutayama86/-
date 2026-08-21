@@ -257,7 +257,15 @@ body.interior-site :is(.news-grid, .category-grid, .tag-grid) {
 }
 
 body.interior-site.route-news .news-index__list .news-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* TOPの新着ニュースと同じく、PCではカード3枚横並び */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* 3枚だと窮屈になる幅で2枚へ。720px以下は下のブロックで1枚になる */
+@media (max-width: 1100px) {
+  body.interior-site.route-news .news-index__list .news-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 body.interior-site .news-card {

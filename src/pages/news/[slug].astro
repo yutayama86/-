@@ -99,17 +99,20 @@ if (data.faq.length > 0) jsonLd.push({
 
 <BrandBase title={`${data.title}｜イバトコ`} description={data.description} image={imagePath} imageAlt={data.ogImageAlt} type="article" publishedAt={data.pubDate} updatedAt={data.updatedDate ?? data.pubDate} jsonLd={jsonLd} noindex={data.noindex}>
   <article class="news-detail">
+    {/* 見出しと冒頭画像を1枚のカードにまとめる（一覧のカードと同じ見え方に揃える） */}
     <header class="news-detail__head bp-reading">
-      <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><a href="/news/">茨城ニュース解説</a></nav>
-      {data.sample && <p class="sample-note"><strong>実装確認用サンプル</strong>　この記事はニュース機能の表示確認用です。実際の施策発表を報じる記事ではありません。</p>}
-      <div class="news-detail__meta"><span>{NEWS_CATEGORIES[data.category].label}</span>{municipalities.length > 0 && <span>{municipalities.map((value) => value!.name).join('・')}</span>}</div>
-      <h1>{data.title}</h1>
-      <p class="news-detail__deck">{data.description}</p>
-      {data.tags.length > 0 && <ul class="news-detail__tags" aria-label="記事のタグ">{data.tags.map((tag) => <li><a href={`/tag/${tagToSlug(tag)}/`}>#{tag}</a></li>)}</ul>}
-      <div class="news-detail__dates"><time datetime={data.pubDate.toISOString()}>公開 {formatDate(data.pubDate)}</time>{data.updatedDate && <time datetime={data.updatedDate.toISOString()}>更新 {formatDate(data.updatedDate)}</time>}<span>{data.author}</span></div>
-    </header>
+      <div class="news-detail__head-copy">
+        <nav class="crumbs" aria-label="パンくず"><a href="/">ホーム</a><span>/</span><a href="/news/">茨城ニュース解説</a></nav>
+        {data.sample && <p class="sample-note"><strong>実装確認用サンプル</strong>　この記事はニュース機能の表示確認用です。実際の施策発表を報じる記事ではありません。</p>}
+        <div class="news-detail__meta"><span>{NEWS_CATEGORIES[data.category].label}</span>{municipalities.length > 0 && <span>{municipalities.map((value) => value!.name).join('・')}</span>}</div>
+        <h1>{data.title}</h1>
+        <p class="news-detail__deck">{data.description}</p>
+        {data.tags.length > 0 && <ul class="news-detail__tags" aria-label="記事のタグ">{data.tags.map((tag) => <li><a href={`/tag/${tagToSlug(tag)}/`}>#{tag}</a></li>)}</ul>}
+        <div class="news-detail__dates"><time datetime={data.pubDate.toISOString()}>公開 {formatDate(data.pubDate)}</time>{data.updatedDate && <time datetime={data.updatedDate.toISOString()}>更新 {formatDate(data.updatedDate)}</time>}<span>{data.author}</span></div>
+      </div>
 
-    <figure class="news-detail__hero bp-wrap"><img src={visualImagePath} alt={data.ogImageAlt || '茨城ニュース解説のイメージ'} loading="eager" width="1200" height="630" />{data.imageCredit && <figcaption>写真：<a href={data.imageCreditUrl} target="_blank" rel="noopener noreferrer">{data.imageCredit}</a>{data.imageLicense && <> / <a href={data.imageLicenseUrl} target="_blank" rel="noopener noreferrer">{data.imageLicense}</a></>}</figcaption>}</figure>
+      <figure class="news-detail__hero"><img src={visualImagePath} alt={data.ogImageAlt || '茨城ニュース解説のイメージ'} loading="eager" width="1200" height="630" />{data.imageCredit && <figcaption>写真：<a href={data.imageCreditUrl} target="_blank" rel="noopener noreferrer">{data.imageCredit}</a>{data.imageLicense && <> / <a href={data.imageLicenseUrl} target="_blank" rel="noopener noreferrer">{data.imageLicense}</a></>}</figcaption>}</figure>
+    </header>
 
     <div class="news-detail__layout bp-wrap">
       <aside class="news-detail__toc" aria-label="この記事の目次"><p>この記事の構成</p><ol><li><a href="#conclusion">結論</a></li><li><a href="#points">この記事でわかること</a></li><li><a href="#what-happened">何が起きた？</a></li><li><a href="#changes">具体的に何が変わる？</a></li><li><a href="#analysis">編集部の解説</a></li><li><a href="#impact">地域への影響</a></li><li><a href="#business">地域事業者への示唆</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">情報源</a></li></ol></aside>

@@ -57,7 +57,13 @@ function todayYmd_() {
 function fetchGsc_(url, startDate, endDate, queries) {
   const filters = [];
   if (url && url !== '*') {
-    filters.push({ dimension: 'page', operator: 'equals', expression: 'https://ibatoco.jp' + url });
+    if (url.slice(-1) === '*') {
+      // 前方一致（例：'/news/*' → /news/ 配下すべて）。
+      // ニュース記事全体のレイアウト変更など、複数ページに同時に効く変更で使う。
+      filters.push({ dimension: 'page', operator: 'contains', expression: 'https://ibatoco.jp' + url.slice(0, -1) });
+    } else {
+      filters.push({ dimension: 'page', operator: 'equals', expression: 'https://ibatoco.jp' + url });
+    }
   }
   const request = {
     startDate: startDate,

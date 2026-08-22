@@ -7,6 +7,23 @@ interface Options {
   successText: string;
   mailto?: string;
   mailSubject?: string;
+  /** GA4へ送るCV名。未指定なら form の id、それも無ければ 'contact' */
+  conversionId?: string;
+}
+
+/**
+ * CVイベント。**エンドポイントが 2xx を返した送信だけ**送る。
+ * ボタンのクリックや、失敗した送信では送らない（実際に届いた件数と一致させるため）。
+ * gtag が読み込まれていない環境（開発・運営者除外）では何もしない。
+ */
+function trackConversion(id: string, subject: string): void {
+  const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+  if (typeof gtag !== 'function') return;
+  gtag('event', 'generate_lead', {
+    form_id: id,
+    form_subject: subject || '(未選択)',
+    page_path: window.location.pathname,
+  });
 }
 
 export function submitForm(form: HTMLFormElement, opts: Options): void {
@@ -45,6 +62,10 @@ export function submitForm(form: HTMLFormElement, opts: Options): void {
         headers: { Accept: 'application/json' },
       });
       if (res.ok) {
+        trackConversion(
+          opts.conversionId || form.id || 'contact',
+          String(data.get('subject') ?? ''),
+        );
         form.reset();
         show(opts.successText, 'ok');
         form.querySelectorAll('input, select, textarea').forEach((el) => {

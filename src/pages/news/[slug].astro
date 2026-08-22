@@ -50,6 +50,8 @@ const internalLinkLabels: Record<string, string> = {
   '/news/ibaraki-food-fairs-tokyo-osaka-2026/': '東京・大阪の茨城フェアに見る「地域外から売上をつくる」（解説）',
   '/news/ibaraki-kaiyo-high-school-collab-menu-2026/': '海洋高校の実習魚が「地域の食」になる（解説）',
   '/umi/': '茨城の海（海岸線190キロと海の幸）',
+  '/news/ibaraki-native-communication-supporter-801-2026/': '母語支援801件から考える「暮らせる茨城」（解説）',
+  '/area/joso/': '常総市の地域情報',
 };
 
 // 04セクションの見出し。accessGuide を持つ記事だけアクセス案内として見せ、
@@ -142,7 +144,9 @@ if (data.faq.length > 0) jsonLd.push({
     </div>
   </article>
 
-  {(relatedNews.length > 0 || relatedArticles.length > 0 || relatedPlaces.length > 0 || municipalities.length > 0) && <section class="news-related bp-wrap bp-section"><p class="bp-kicker">10 / RELATED</p><h2 class="bp-section-title">関連情報</h2>
+  {/* relatedArticleUrls も条件に含める。県全体の話題（municipalities が空）でも
+      編集部が選んだ関連リンクが消えないようにする。 */}
+  {(relatedNews.length > 0 || relatedArticles.length > 0 || relatedPlaces.length > 0 || municipalities.length > 0 || data.relatedArticleUrls.length > 0) && <section class="news-related bp-wrap bp-section"><p class="bp-kicker">10 / RELATED</p><h2 class="bp-section-title">関連情報</h2>
     {municipalities.length > 0 && <div class="municipality-links">{municipalities.map((value) => <a href={`/area/${value!.slug}/`}>{value!.name}を知る →</a>)}</div>}
     {relatedNews.length > 0 && <div class="news-related__grid">{relatedNews.map((related) => <NewsCard item={related} compact />)}</div>}
     {(relatedArticles.length > 0 || relatedPlaces.length > 0) && <div class="local-links">{relatedArticles.map((article) => <a href={`/${CATEGORIES[article.data.category].path}/${article.id.split('/').pop()}/`}><span>記事</span>{article.data.title}</a>)}{relatedPlaces.map((place) => <a href={`/place/${place.id}/`}><span>場所</span>{place.data.name}</a>)}</div>}

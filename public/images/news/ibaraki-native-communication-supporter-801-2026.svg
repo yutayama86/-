@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="4か月で801件の生活支援。役所・免許の手続き同行352件、情報周知229件、病院への同行123件という内訳を示したイメージ図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g font-family="'Source Sans 3', sans-serif" font-size="19" fill="#75695a">
+    <text x="100" y="196">役所・免許の手続き同行</text>
+    <text x="100" y="240">情報周知</text>
+    <text x="100" y="284">病院への同行</text>
+  </g>
+
+  <g stroke-width="9" stroke-linecap="butt">
+    <path d="M330 190 H682" stroke="#315c68"/>
+    <path d="M330 234 H559" stroke="#315c68" opacity="0.62"/>
+    <path d="M330 278 H453" stroke="#315c68" opacity="0.38"/>
+  </g>
+
+  <g font-family="'Source Sans 3', sans-serif" font-size="19" fill="#172b35">
+    <text x="700" y="196">352件</text>
+    <text x="577" y="240">229件</text>
+    <text x="471" y="284">123件</text>
+  </g>
+
+  <g fill="none" stroke="#a63f32" stroke-width="1.6">
+    <path d="M860 168 V300"/>
+  </g>
+  <text x="890" y="222" font-family="'Shippori Mincho', serif" font-size="46" font-weight="600" fill="#a63f32">801件</text>
+  <text x="890" y="256" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a">2026年4月〜7月末</text>
+
+  <text x="100" y="392" font-family="'Shippori Mincho', serif" font-size="60" font-weight="600" fill="#172b35">呼ぶことと、</text>
+  <text x="100" y="470" font-family="'Shippori Mincho', serif" font-size="60" font-weight="600" fill="#172b35">暮らせることは、別。</text>
+
+  <text x="100" y="526" font-family="'Shippori Mincho', serif" font-size="26" fill="#315c68">IBARAKIネイティブコミュニケーションサポーターの4か月</text>
+
+  <text x="1100" y="562" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a" text-anchor="end">茨城県公表 ／ 内訳は一部 ／ 件数であり人数ではない</text>
+</svg>

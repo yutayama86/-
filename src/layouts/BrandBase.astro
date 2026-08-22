@@ -7,6 +7,7 @@ import IntlHeader from '../components/IntlHeader.astro';
 import IntlFooter from '../components/IntlFooter.astro';
 import { SITE_CONFIG } from '../data/site';
 import { DEFAULT_LOCALE, LOCALE_META, alternatesFor, xDefaultFor, type Locale } from '../data/i18n';
+import { AI_REFERRAL_HOSTS, GA_OPTOUT_KEY, GA_OPTOUT_PARAM } from '../data/analytics';
 interface Props { title?: string; ogTitle?: string; description?: string; image?: string; imageAlt?: string; type?: 'website'|'article'; publishedAt?: Date; updatedAt?: Date; jsonLd?: Record<string, unknown>|Record<string, unknown>[]; noindex?: boolean; locale?: Locale; translationKey?: string; }
 const {
   title = 'イバトコ｜現地から、信頼を編む。',
@@ -48,6 +49,16 @@ const ogImageType = OG_MIME[ogImagePath.split('.').pop()?.toLowerCase() ?? ''] ?
 const ogImageAlt = imageAlt || title;
 const GA_ID = (import.meta.env.PUBLIC_GA_ID as string | undefined) || SITE_CONFIG.gaMeasurementId;
 const enableGA = import.meta.env.PROD && !!GA_ID;
+// 計測して良い本番ホスト。ここ以外（localhost・プレビュー・ステージング）では
+// gtag自体を読み込まない。ビルド時の site 設定から取るので取りこぼさない。
+const GA_ALLOWED_HOSTS = [new URL(SITE_CONFIG.domain).hostname, `www.${new URL(SITE_CONFIG.domain).hostname}`];
+const gaBootConfig = JSON.stringify({
+  id: GA_ID,
+  hosts: GA_ALLOWED_HOSTS,
+  optOutKey: GA_OPTOUT_KEY,
+  optOutParam: GA_OPTOUT_PARAM,
+  aiHosts: AI_REFERRAL_HOSTS,
+});
 const pathname = Astro.url.pathname;
 const localeHomes = new Set(['/', '/en/', '/ko/', '/zh-tw/']);
 const isInterior = !localeHomes.has(pathname);
@@ -91,8 +102,65 @@ const routeSegment = pathname.split('/').filter(Boolean)[0]?.replace(/[^a-z0-9-]
     {enableGA && (
       <>
         <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
-        <script is:inline set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}></script>
+        {/*
+          gtagは「本番ホスト」かつ「運営者の除外フラグが立っていない」ときだけ読み込む。
+          除外条件に当たった場合はタグ自体を挿入しないので、GA4へは1リクエストも飛ばない。
+          流入区分（AI / 検索 / その他参照 / Direct）はここで判定して config に載せる。
+        */}
+        <script is:inline set:html={`(function(){
+  var C = ${gaBootConfig};
+  var w = window, d = document, loc = w.location;
+
+  // 1) 除外フラグの切り替え（?ga-optout=1 で除外、=0 で解除）
+  try {
+    var q = new URLSearchParams(loc.search).get(C.optOutParam);
+    if (q === '1') { localStorage.setItem(C.optOutKey, '1'); }
+    else if (q === '0') { localStorage.removeItem(C.optOutKey); }
+  } catch (e) {}
+
+  // 2) 計測対象かどうか。開発・プレビュー・運営者自身は読み込まない
+  var host = loc.hostname.toLowerCase();
+  if (C.hosts.indexOf(host) === -1) return;
+  try { if (localStorage.getItem(C.optOutKey) === '1') return; } catch (e) {}
+
+  // 3) 流入元の分類。特定できたものだけAI扱いし、Directは寄せない
+  function hostOf(v) {
+    if (!v) return '';
+    try { return new URL(v.indexOf('://') > -1 ? v : 'https://' + v).hostname.toLowerCase().replace(/^www\\./, ''); }
+    catch (e) { return ''; }
+  }
+  function aiOf(h) {
+    if (!h) return '';
+    if (C.aiHosts[h]) return C.aiHosts[h];
+    for (var k in C.aiHosts) { if (h.length > k.length && h.slice(-(k.length + 1)) === '.' + k) return C.aiHosts[k]; }
+    return '';
+  }
+  var utm = '';
+  try { utm = new URLSearchParams(loc.search).get('utm_source') || ''; } catch (e) {}
+  var refHost = hostOf(d.referrer);
+  var ai = aiOf(hostOf(utm)) || aiOf(refHost);
+  var SEARCH = ['google.com','google.co.jp','bing.com','yahoo.co.jp','duckduckgo.com','ecosia.org','brave.com'];
+  function isSearch(h) {
+    for (var i = 0; i < SEARCH.length; i++) {
+      if (h === SEARCH[i] || (h.length > SEARCH[i].length && h.slice(-(SEARCH[i].length + 1)) === '.' + SEARCH[i])) return true;
+    }
+    return false;
+  }
+  var kind = ai ? 'ai_referral' : (!refHost ? 'direct' : (isSearch(refHost) ? 'search' : 'other_referral'));
+
+  // 4) gtag読み込み
+  var s = d.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + C.id;
+  d.head.appendChild(s);
+  w.dataLayer = w.dataLayer || [];
+  w.gtag = function(){ w.dataLayer.push(arguments); };
+  w.gtag('js', new Date());
+  var params = { traffic_kind: kind };
+  if (ai) params.ai_source = ai;
+  w.gtag('config', C.id, params);
+  w.__ibatocoTraffic = { kind: kind, aiSource: ai || null, referrerHost: refHost || null };
+})();`} />
       </>
     )}
   </head>

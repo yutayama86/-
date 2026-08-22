@@ -56,20 +56,47 @@ if (!KINDS.includes(kind)) {
   process.exit(1);
 }
 if (!url.startsWith('/') && url !== '*') {
-  console.error("--url は '/' 始まりのパスか、サイト全体を表す '*' で指定してください");
+  console.error("--url は '/' 始まりのパスか、サイト全体を表す '*' か、前方一致の '/news/*' で指定してください");
   process.exit(1);
 }
 
-const date = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Tokyo' }); // YYYY-MM-DD
-const slug = (url === '*' ? 'site' : url.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')).slice(0, 40);
+const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Tokyo' }); // YYYY-MM-DD
+
+// --date は「後から過去の変更を記録する」ためだけに使う。
+// 変更日がずれると GSC の比較期間（変更前7日／変更後7日・28日）ごとずれるので、
+// 実際の本番反映日を入れること。未来日は受け付けない。
+const date = arg('date') ?? today;
+if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+  console.error(`--date は YYYY-MM-DD で指定してください: ${date}`);
+  process.exit(1);
+}
+if (date > today) {
+  console.error(`--date に未来の日付は指定できません: ${date}（今日は ${today}）`);
+  process.exit(1);
+}
+// '/news/' と '/news/*' は別物なので、前方一致には -all を付けてidが衝突しないようにする
+const slugBase = url === '*' ? 'site' : url.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '');
+const slug = (url !== '*' && url.endsWith('*') ? `${slugBase}-all` : slugBase).slice(0, 40);
 const id = `${date.replaceAll('-', '')}-${slug}`;
 if (src.includes(`id: '${id}'`)) {
   console.error(`同じidが既にあります: ${id}\n同日・同URLの変更は1件にまとめるか、手でidを調整してください。`);
   process.exit(1);
 }
 
+// 根拠コミット。--commit を渡した場合は実在するか確認してから記録する
+// （存在しないハッシュを残すと、後から変更内容を確かめられなくなるため）。
 let commit = 'uncommitted';
-try { commit = execSync('git rev-parse --short HEAD', { cwd: root }).toString().trim(); } catch {}
+const wantCommit = arg('commit');
+if (wantCommit) {
+  try {
+    commit = execSync(`git rev-parse --short ${wantCommit}^{commit}`, { cwd: root, stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+  } catch {
+    console.error(`--commit がリポジトリに見つかりません: ${wantCommit}`);
+    process.exit(1);
+  }
+} else {
+  try { commit = execSync('git rev-parse --short HEAD', { cwd: root }).toString().trim(); } catch {}
+}
 
 const esc = (s) => s.replaceAll('\\', '\\\\').replaceAll("'", "\\'");
 const entry = [

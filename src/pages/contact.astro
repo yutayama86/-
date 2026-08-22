@@ -24,7 +24,9 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'お問い合
       </header>
       <input type="hidden" name="_subject" value="【イバトコ】お問い合わせ" />
       <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="honeypot" />
-      <div class="field"><label for="subject">ご用件 <small>必須</small></label><select id="subject" name="subject" required><option value="">選択してください</option><option value="取材・掲載相談">取材・情報掲載について</option><option value="地域事業者の相談">Web・発信支援について</option><option value="訂正・更新">掲載内容の訂正・更新</option><option value="ローカルエディター">ローカルエディターについて</option><option value="協業希望">協業・提携</option><option value="その他">その他</option></select></div>
+      {/* name="subject" は Formspree にメール件名として解釈され、本文に出ない。
+          用件が本文で読めるよう inquiry_type にしている（元に戻さないこと）。 */}
+      <div class="field"><label for="subject">ご用件 <small>必須</small></label><select id="subject" name="inquiry_type" required><option value="">選択してください</option><option value="取材・掲載相談">取材・情報掲載について</option><option value="地域事業者の相談">Web・発信支援について</option><option value="訂正・更新">掲載内容の訂正・更新</option><option value="ローカルエディター">ローカルエディターについて</option><option value="協業希望">協業・提携</option><option value="その他">その他</option></select></div>
       <div class="field"><label for="name">お名前 / 店舗・企業名 <small>必須</small></label><input id="name" name="name" type="text" required autocomplete="organization" /></div>
       <div class="field"><label for="email">メールアドレス <small>必須</small></label><input id="email" name="email" type="email" required autocomplete="email" /></div>
       <div class="field"><label for="tel">電話番号 <small class="is-optional">任意</small></label><input id="tel" name="tel" type="tel" autocomplete="tel" /></div>
@@ -45,5 +47,5 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'お問い合
 <script>
   import { submitForm } from '../lib/forms'; const form=document.querySelector<HTMLFormElement>('.contact-form'); const params=new URLSearchParams(location.search); const subject=params.get('subject'); const select=document.getElementById('subject') as HTMLSelectElement|null;
   if(subject&&select){let option=Array.from(select.options).find((item)=>item.value===subject||item.textContent?.trim()===subject);if(!option){option=new Option(subject,subject);select.add(option,1)}select.value=option.value;const detail=params.get('detail');const message=document.getElementById('message') as HTMLTextAreaElement|null;if(detail&&message&&!message.value)message.value=detail}
-  if(form){form.addEventListener('submit',()=>{const type=(form.elements.namedItem('subject') as HTMLSelectElement|null)?.value||'お問い合わせ';const name=((form.elements.namedItem('name') as HTMLInputElement|null)?.value||'').trim();const field=form.querySelector<HTMLInputElement>('input[name="_subject"]');if(field)field.value=name?`【${type}】${name}`:`【${type}】お問い合わせ`});submitForm(form,{successText:'お問い合わせを受け付けました。内容を確認してご連絡します。',conversionId:'contact'})}
+  if(form){form.addEventListener('submit',()=>{const type=(form.elements.namedItem('inquiry_type') as HTMLSelectElement|null)?.value||'お問い合わせ';const name=((form.elements.namedItem('name') as HTMLInputElement|null)?.value||'').trim();const field=form.querySelector<HTMLInputElement>('input[name="_subject"]');if(field)field.value=name?`【${type}】${name}`:`【${type}】お問い合わせ`});submitForm(form,{successText:'お問い合わせを受け付けました。内容を確認してご連絡します。',conversionId:'contact'})}
 </script>

@@ -64,7 +64,7 @@ export function submitForm(form: HTMLFormElement, opts: Options): void {
       if (res.ok) {
         trackConversion(
           opts.conversionId || form.id || 'contact',
-          String(data.get('subject') ?? ''),
+          String(data.get('inquiry_type') ?? ''),
         );
         form.reset();
         show(opts.successText, 'ok');

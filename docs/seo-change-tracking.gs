@@ -216,10 +216,16 @@ function updateSeoChangeLog() {
   });
 
   sheet.autoResizeColumns(1, header.length);
-  SpreadsheetApp.getUi().alert(
-    '更新しました：' + changes.length + '件\n\n' +
-    'GSCの確定には2〜3日かかります。「計測中」の行は期間の満了後に自動で埋まります。'
-  );
+
+  // 完了通知。メニューから実行したときだけダイアログを出す。
+  // エディタの「実行」ボタンからは getUi() が使えないので、ログに落として続行する。
+  const done = '更新しました：' + changes.length + '件\n\n'
+    + 'GSCの確定には2〜3日かかります。「計測中」の行は期間の満了後に自動で埋まります。';
+  try {
+    SpreadsheetApp.getUi().alert(done);
+  } catch (e) {
+    Logger.log(done);
+  }
 }
 
 /** 週次で自動更新したい場合はこれを一度だけ実行してトリガーを作る */

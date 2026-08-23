@@ -181,8 +181,18 @@ AI Referral に振り分けること。実態と乖離し、施策判断を誤�
 
 - 履歴データ：`src/data/seo-changes.ts`（変更日 / URL / 狙いクエリ / 変更内容 / commit）
 - 配信：`https://ibatoco.jp/seo-changes.json`（robots非許可・sitemap未収録）
-- 集計：`docs/seo-change-tracking.gs` を Apps Script に貼り、
-  「サービス」から **Search Console API** を追加してから `updateSeoChangeLog` を実行
+- 集計：`docs/seo-change-tracking.gs` を既存プロジェクト
+  「イバトコ SEO自動集計」へ**新規ファイルとして追加**し、`updateSeoChangeLog` を実行
+
+**拡張サービスの追加は不要です。** Apps Script のサービス一覧から
+「Search Console API」は提供されなくなっており、`Webmasters.*` は使えません
+（2026-08-23 に一覧を確認：Groups Settings → Merchant → Peopleapi → Tag Manager と続き、
+S で始まる項目がない）。代わりに `UrlFetchApp` で Search Console の REST を直接叩きます。
+必要なスコープ `webmasters.readonly` と `script.external_request` は、既存プロジェクトの
+`appsscript.json` にすでに入っているため、設定変更なしで動きます。
+
+既存の `コード.gs`（GA4/GSCの日次取得）には触れません。関数名の重複がないことと、
+`createWeeklyTrigger` が `updateSeoChangeLog` のトリガーだけを削除することを確認済みです。
 
 シートに書き出される列：
 

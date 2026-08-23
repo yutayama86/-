@@ -16,11 +16,18 @@
  * 過去の変更でも「変更前」を後から正しく取得できます。推測で埋める必要はありません。
  *
  * ── 準備 ───────────────────────────────
- * 1. Apps Script エディタ → サービス → 「Search Console API」を追加（識別子: Webmasters）
+ * 1. 既存プロジェクト「イバトコ SEO自動集計」に、このファイルを新規 .gs として追加する
+ *      既存の コード.gs には手を触れない。関数名は重複しないことを確認済み。
  * 2. 下の SITE_URL が Search Console のプロパティ表記と一致しているか確認
  *      ドメインプロパティなら 'sc-domain:ibatoco.jp'
  *      URLプレフィックスなら 'https://ibatoco.jp/'
  * 3. 保存してリロード → メニュー「SEO」→「改善履歴を更新」
+ *
+ * 拡張サービスの追加は不要。Apps Script のサービス一覧から
+ * 「Search Console API」は提供されなくなっており、Webmasters.* は使えない。
+ * 代わりに UrlFetchApp で REST を叩く（gscQuery_ 参照）。必要なスコープ
+ * webmasters.readonly / script.external_request は既存の appsscript.json に
+ * すでに含まれているため、設定変更なしで動く。
  *
  * ── 注意 ───────────────────────────────
  * GSCのデータ確定には2〜3日かかります。変更直後の実行では7日後の値が埋まりません。
@@ -54,6 +61,33 @@ function todayYmd_() {
  * url が '*' のときはサイト全体、それ以外は該当ページに絞る。
  * queries が指定されていれば、そのクエリだけに絞った値も返す。
  */
+/**
+ * Search Console の searchAnalytics.query を REST で叩き、先頭行だけ返す。
+ *
+ * 拡張サービス「Search Console API」は Apps Script のサービス一覧から
+ * 提供されなくなったため、Webmasters.* は使えない。既存の日次処理と同じく
+ * UrlFetchApp と OAuth トークンで直接呼ぶ。
+ * appsscript.json 側に webmasters.readonly と script.external_request が
+ * 必要だが、既存プロジェクトには両方とも入っている。
+ */
+function gscQuery_(request) {
+  const endpoint = 'https://searchconsole.googleapis.com/webmasters/v3/sites/'
+    + encodeURIComponent(SITE_URL) + '/searchAnalytics/query';
+  const res = UrlFetchApp.fetch(endpoint, {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    payload: JSON.stringify(request),
+    muteHttpExceptions: true,
+  });
+  const code = res.getResponseCode();
+  if (code !== 200) {
+    throw new Error('GSC API ' + code + ': ' + res.getContentText().slice(0, 300));
+  }
+  const body = JSON.parse(res.getContentText());
+  return (body.rows && body.rows[0]) || null;
+}
+
 function fetchGsc_(url, startDate, endDate, queries) {
   const filters = [];
   if (url && url !== '*') {
@@ -75,8 +109,7 @@ function fetchGsc_(url, startDate, endDate, queries) {
 
   let overall = null;
   try {
-    const res = Webmasters.Searchanalytics.query(request, SITE_URL);
-    const row = res.rows && res.rows[0];
+    const row = gscQuery_(request);
     if (row) {
       overall = {
         clicks: row.clicks,
@@ -98,14 +131,13 @@ function fetchGsc_(url, startDate, endDate, queries) {
       expression: queries.map(function (q) { return q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'),
     }]);
     try {
-      const res2 = Webmasters.Searchanalytics.query({
+      const r2 = gscQuery_({
         startDate: startDate,
         endDate: endDate,
         dimensions: [],
         rowLimit: 1,
         dimensionFilterGroups: [{ filters: qFilters }],
-      }, SITE_URL);
-      const r2 = res2.rows && res2.rows[0];
+      });
       if (r2) {
         byQuery = { clicks: r2.clicks, impressions: r2.impressions, ctr: r2.ctr, position: r2.position };
       }

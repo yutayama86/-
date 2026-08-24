@@ -44,6 +44,24 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260824-news-tsukuba-personal-food-recommend-202',
+    date: '2026-08-24',
+    url: '/news/tsukuba-personal-food-recommend-2026/',
+    kind: 'new-article',
+    change: 'つくば市のパーソナルフードレコメンド実証を起点に、地域DXを行動変容まで設計する構造を解説',
+    queries: ['つくば市 実証実験', 'カロミル つくば', 'パーソナルフードレコメンド'],
+    commit: 'b7a6000',
+  },
+  {
+    id: '20260823-news-ishioka-iju-fair-tokyo-2026',
+    date: '2026-08-23',
+    url: '/news/ishioka-iju-fair-tokyo-2026/',
+    kind: 'new-article',
+    change: '石岡市の3か月連続移住フェア出展を起点に、仕事を変えない移住が制度上成立するかを解説',
+    queries: ['石岡市 移住', '茨城 移住 支援金', '石岡 上野 特急'],
+    commit: 'ffd309c',
+  },
+  {
     id: '20260822-news-all',
     date: '2026-08-22',
     url: '/news/*',

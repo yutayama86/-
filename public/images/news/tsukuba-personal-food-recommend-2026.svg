@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="記録・解析・提案・来店という4段階を線でつなぎ、データが実店舗での行動まで届く流れを示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g fill="none" stroke="#315c68" stroke-width="2">
+    <path d="M130 240 H820"/>
+  </g>
+
+  <g fill="#315c68">
+    <circle cx="130" cy="240" r="8"/>
+    <circle cx="360" cy="240" r="8"/>
+    <circle cx="590" cy="240" r="8"/>
+  </g>
+  <circle cx="820" cy="240" r="12" fill="#a63f32"/>
+
+  <g font-family="'Source Sans 3', sans-serif" font-size="20" fill="#75695a" text-anchor="middle">
+    <text x="130" y="212">記録する</text>
+    <text x="360" y="212">解析する</text>
+    <text x="590" y="212">提案する</text>
+  </g>
+  <text x="820" y="212" font-family="'Source Sans 3', sans-serif" font-size="20" font-weight="600" fill="#a63f32" text-anchor="middle">店で買える</text>
+
+  <g font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="middle">
+    <text x="130" y="278">食事アプリ</text>
+    <text x="360" y="278">栄養の傾向</text>
+    <text x="590" y="278">商品とクーポン</text>
+    <text x="820" y="278">市内20店舗</text>
+  </g>
+
+  <g fill="none" stroke="#75695a" stroke-width="1.4" stroke-dasharray="4 5" opacity="0.6">
+    <path d="M880 240 H1060"/>
+  </g>
+  <text x="1070" y="246" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">3店舗に管理栄養士</text>
+
+  <text x="100" y="380" font-family="'Shippori Mincho', serif" font-size="60" font-weight="600" fill="#172b35">データを集めて、</text>
+  <text x="100" y="458" font-family="'Shippori Mincho', serif" font-size="60" font-weight="600" fill="#172b35">終わりにしない。</text>
+
+  <text x="100" y="514" font-family="'Shippori Mincho', serif" font-size="26" fill="#315c68">つくば市が9月から食事データの実証実験</text>
+
+  <text x="1100" y="556" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a" text-anchor="end">2026年9月1日〜2027年1月31日 ／ 募集は10月31日まで</text>
+</svg>

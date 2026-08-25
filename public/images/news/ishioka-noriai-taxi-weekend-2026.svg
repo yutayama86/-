@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="平日だけ引かれていた移動の線が、土日にも延びることを示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g font-family="'Source Sans 3', sans-serif" font-size="19" fill="#75695a">
+    <text x="100" y="196">平日</text>
+    <text x="100" y="266">土日</text>
+  </g>
+
+  <g font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="middle">
+    <text x="230" y="163">月</text>
+    <text x="330" y="163">火</text>
+    <text x="430" y="163">水</text>
+    <text x="530" y="163">木</text>
+    <text x="630" y="163">金</text>
+    <text x="750" y="163">土</text>
+    <text x="850" y="163">日</text>
+  </g>
+
+  <g fill="#315c68">
+    <circle cx="230" cy="190" r="8"/>
+    <circle cx="330" cy="190" r="8"/>
+    <circle cx="430" cy="190" r="8"/>
+    <circle cx="530" cy="190" r="8"/>
+    <circle cx="630" cy="190" r="8"/>
+  </g>
+  <path d="M230 190 H630" fill="none" stroke="#315c68" stroke-width="2.4"/>
+  <text x="660" y="196" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">7台</text>
+
+  <g fill="none" stroke="#a63f32" stroke-width="2.4">
+    <path d="M750 260 H850"/>
+  </g>
+  <circle cx="750" cy="260" r="10" fill="#a63f32"/>
+  <circle cx="850" cy="260" r="10" fill="#a63f32"/>
+  <text x="880" y="266" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#a63f32">2台・実証運行</text>
+
+  <text x="1100" y="196" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">いまの運行</text>
+  <text x="1100" y="298" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a" text-anchor="end">祝日・年末年始は運休</text>
+
+  <text x="100" y="392" font-family="'Shippori Mincho', serif" font-size="60" font-weight="600" fill="#172b35">行けなければ、</text>
+  <text x="100" y="468" font-family="'Shippori Mincho', serif" font-size="60" font-weight="600" fill="#172b35">ないのと同じ。</text>
+
+  <text x="100" y="522" font-family="'Shippori Mincho', serif" font-size="26" fill="#315c68">石岡市が乗合いタクシーを土日も走らせる実証へ</text>
+
+  <text x="1100" y="560" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a" text-anchor="end">2026年11月1日〜2027年3月28日 ／ 運賃は意見募集中の案</text>
+</svg>

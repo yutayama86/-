@@ -44,6 +44,15 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260825-news-ishioka-noriai-taxi-weekend-2026',
+    date: '2026-08-25',
+    url: '/news/ishioka-noriai-taxi-weekend-2026/',
+    kind: 'new-article',
+    change: '石岡市の乗合いタクシー土日実証運行を起点に、週末の移動手段が暮らしと観光の前提になるという視点で解説',
+    queries: ['石岡市 乗合いタクシー', '石岡 デマンドタクシー', '茨城 乗合タクシー 土日'],
+    commit: '2b989f0',
+  },
+  {
     id: '20260824-news-tsukuba-personal-food-recommend-202',
     date: '2026-08-24',
     url: '/news/tsukuba-personal-food-recommend-2026/',

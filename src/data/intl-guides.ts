@@ -28,6 +28,12 @@ export interface IntlGuide {
   lead: string[];
   quickAnswerLabel: string;
   quickAnswer: { q: string; a: string }[];
+  /**
+   * 東京からの経路を一目で示す連鎖（例：Tokyo → Katsuta → Bus → Park）。
+   * 本文の表と同じ事実だけを短く並べる。新しい情報は足さない。
+   * 旅行者の斜め読みと、AI検索の抜き出しの両方に効かせる目的。
+   */
+  routeChain?: { label: string; steps: { place: string; note?: string }[] };
   sections: GuideSection[];
   faqLabel: string;
   faq: { q: string; a: string }[];
@@ -51,13 +57,24 @@ export const HITACHI_SEASIDE_PARK: Record<Exclude<Locale, 'ja'>, IntlGuide> = {
   en: {
     slug: 'hitachi-seaside-park-from-tokyo',
     translationKey: 'hitachi-seaside-park-from-tokyo',
-    title: 'How to Get to Hitachi Seaside Park from Tokyo (2026 Guide)',
+    // 「(2026 Guide)」は年が古びるうえ、狙うクエリ（train / bus）と一致する語がない。
+    // 主要クエリ "how to get to ... from Tokyo" を保ったまま、交通手段を明示する。
+    title: 'How to Get to Hitachi Seaside Park from Tokyo: Train & Bus Guide',
     description: 'Hitachi Seaside Park is about 2 hours from Tokyo by train and bus — no car needed. Routes, travel time, admission fees, and the best season for the blue nemophila hills, from a local media team in Ibaraki.',
     h1: 'How to Get to Hitachi Seaside Park from Tokyo',
     lead: [
       'The hill covered in millions of sky-blue nemophila flowers is one of the most photographed places in Japan — and it sits in Ibaraki, roughly two hours from central Tokyo.',
       'This guide covers how to actually get there without a car, what it costs, and when to go. We are a local media team based in Ibaraki, and we only publish what we can confirm with official sources.',
     ],
+    routeChain: {
+      label: 'The route at a glance',
+      steps: [
+        { place: 'Tokyo Station', note: 'JR Joban Line limited express' },
+        { place: 'Katsuta Station', note: 'about 85 minutes' },
+        { place: 'Bus from East Exit, stop No. 2', note: 'about 15 minutes' },
+        { place: 'Hitachi Seaside Park, West Gate' },
+      ],
+    },
     quickAnswerLabel: 'Quick answers',
     quickAnswer: [
       { q: 'What is it?', a: 'A large national seaside park in Hitachinaka, Ibaraki, known for its seasonal flower hill — blue nemophila in spring and red kochia in autumn.' },
@@ -157,6 +174,15 @@ export const HITACHI_SEASIDE_PARK: Record<Exclude<Locale, 'ja'>, IntlGuide> = {
       '一整片天空藍的粉蝶花山丘，是日本最常被拍到的風景之一。它就在茨城縣，距離東京市中心大約兩小時。',
       '這篇整理「實際上要怎麼去」：不自駕的路線、需要多少時間、門票多少錢、什麼季節去最好。我們是位於茨城的在地媒體，只刊登能在官方資料查證的內容。',
     ],
+    routeChain: {
+      label: '路線一次看懂',
+      steps: [
+        { place: '東京車站', note: 'JR常磐線特急' },
+        { place: '勝田站', note: '約85分鐘' },
+        { place: '東口2號乘車處搭巴士', note: '約15分鐘' },
+        { place: '海濱公園西口' },
+      ],
+    },
     quickAnswerLabel: '快速重點',
     quickAnswer: [
       { q: '這是什麼地方？', a: '位於茨城縣常陸那珂市的國營海濱公園，以季節花海聞名——春天的藍色粉蝶花與秋天的紅色掃帚草。' },
@@ -253,6 +279,15 @@ export const HITACHI_SEASIDE_PARK: Record<Exclude<Locale, 'ja'>, IntlGuide> = {
       '하늘색 네모필라가 언덕 전체를 덮는 풍경은 일본에서 가장 많이 사진에 담기는 장소 중 하나입니다. 그곳이 바로 이바라키, 도쿄 도심에서 약 2시간 거리에 있습니다.',
       '이 글에서는 렌터카 없이 실제로 가는 방법, 비용, 그리고 언제 가면 좋은지를 정리했습니다. 저희는 이바라키에 기반을 둔 로컬 미디어로, 공식 자료로 확인된 내용만 싣습니다.',
     ],
+    routeChain: {
+      label: '경로 한눈에 보기',
+      steps: [
+        { place: '도쿄역', note: 'JR 조반선 특급' },
+        { place: '가쓰타역', note: '약 85분' },
+        { place: '동쪽 출구 2번 승강장에서 버스', note: '약 15분' },
+        { place: '히타치 해변공원 서문' },
+      ],
+    },
     quickAnswerLabel: '한눈에 보기',
     quickAnswer: [
       { q: '어떤 곳인가요?', a: '이바라키현 히타치나카시에 있는 국영 해변공원으로, 봄의 파란 네모필라와 가을의 붉은 코키아로 유명합니다.' },

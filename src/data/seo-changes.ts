@@ -44,6 +44,36 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260826-zh-tw-hitachi-seaside-park-from-tokyo',
+    date: '2026-08-26',
+    url: '/zh-tw/hitachi-seaside-park-from-tokyo/',
+    kind: 'on-page',
+    change: '冒頭に東京からの経路連鎖（路線一次看懂）を追加。titleとdescriptionは変更なし',
+    queries: [],
+    commit: '450bcb6',
+    note: '平均14位前後で露出中のため、既存の評価に触れない範囲の追加のみ。',
+  },
+  {
+    id: '20260826-en-hitachi-seaside-park-from-tokyo',
+    date: '2026-08-26',
+    url: '/en/hitachi-seaside-park-from-tokyo/',
+    kind: 'on-page',
+    change: 'titleの「(2026 Guide)」を「Train & Bus Guide」へ変更し、冒頭に東京からの経路連鎖を追加',
+    queries: ['hitachi seaside park from tokyo', 'how to get to hitachi seaside park', 'hitachi seaside park train', 'hitachi seaside park bus'],
+    commit: '450bcb6',
+    note: '年表記の陳腐化回避と、train/busクエリとの一致。zh-tw/koのtitleは自然な表現のため変更せず。',
+  },
+  {
+    id: '20260826-area-ushiku',
+    date: '2026-08-26',
+    url: '/area/ushiku/',
+    kind: 'on-page',
+    change: 'titleを「見どころ・食・半日コース」から「牛久大仏と牛久シャトー・半日コース」へ変更。descriptionと本文は据え置き',
+    queries: ['牛久大仏', '牛久シャトー', '日本初のワイン醸造所', '高さ120mの大仏', '牛久 観光'],
+    commit: '450bcb6',
+    note: 'TOP10前後で表示されるのにCTR0%だったため。titleに名所名が1語も無かったのが原因の仮説。本文・URL・descriptionは無変更。',
+  },
+  {
     id: '20260825-news-ishioka-noriai-taxi-weekend-2026',
     date: '2026-08-25',
     url: '/news/ishioka-noriai-taxi-weekend-2026/',

@@ -21,6 +21,20 @@ const { guide } = Astro.props;
   </header>
 
   <div class="ig-body bp-wrap">
+    {guide.routeChain && (
+      <section class="ig-route" aria-labelledby="ig-route-title">
+        <h2 id="ig-route-title">{guide.routeChain.label}</h2>
+        <ol>
+          {guide.routeChain.steps.map((step) => (
+            <li>
+              <strong>{step.place}</strong>
+              {step.note && <small>{step.note}</small>}
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
     <section class="ig-quick" aria-labelledby="ig-quick-title">
       <h2 id="ig-quick-title">{guide.quickAnswerLabel}</h2>
       <dl>{guide.quickAnswer.map((item) => <div><dt>{item.q}</dt><dd>{item.a}</dd></div>)}</dl>
@@ -55,6 +69,14 @@ const { guide } = Astro.props;
   .ig-lead{display:grid;gap:1rem;max-width:62ch;margin-top:1.4rem;color:var(--color-soil);line-height:1.95}
   .ig-meta{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:1.5rem;color:var(--color-soil);font-size:.76rem}
   .ig-body{display:grid;gap:clamp(2.5rem,6vw,4rem);padding-block:clamp(2.5rem,6vw,4rem);max-width:var(--content-reading)}
+  /* 東京からの経路を一目で追えるようにする連鎖表示。横スクロールで折り返さない。 */
+  .ig-route h2{font:600 1.15rem var(--font-brand-display);color:var(--color-ink)}
+  .ig-route ol{display:flex;flex-wrap:wrap;align-items:stretch;gap:.55rem;margin-top:1rem;padding:0;list-style:none}
+  .ig-route li{display:grid;gap:.15rem;flex:0 1 auto;padding:.7rem .9rem;background:var(--color-white);border:1px solid var(--color-mist);border-radius:.5rem}
+  .ig-route li+li{position:relative;margin-left:1.1rem}
+  .ig-route li+li::before{content:'→';position:absolute;left:-1.05rem;top:50%;transform:translateY(-50%);color:var(--color-tide);font-size:.85rem}
+  .ig-route strong{color:var(--color-ink);font-size:.88rem;font-weight:700;line-height:1.5}
+  .ig-route small{color:var(--color-soil);font-size:.72rem;line-height:1.5}
   .ig-quick{padding:1.6rem;background:var(--color-white);border:1px solid var(--color-mist)}
   .ig-quick h2{font:600 1.15rem var(--font-brand-display);color:var(--color-ink)}
   .ig-quick dl{display:grid;gap:.9rem;margin-top:1.1rem}

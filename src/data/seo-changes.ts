@@ -44,6 +44,15 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260827-news-hitachinaka-machizemi-2026',
+    date: '2026-08-27',
+    url: '/news/hitachinaka-machizemi-2026/',
+    kind: 'new-article',
+    change: 'ひたちなかDEまちゼミを起点に、店主の知識・専門性が地域の資産になるという視点で解説',
+    queries: ['ひたちなか まちゼミ', 'まちゼミ 茨城', 'ひたちなかDEまちゼミ', '得する街のゼミナール'],
+    commit: '6077118',
+  },
+  {
     id: '20260827-news-shin-ibaraki-meshi-2026',
     date: '2026-08-27',
     url: '/news/shin-ibaraki-meshi-2026/',

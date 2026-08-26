@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="値引きではなく、学ぶ・店を知る・信頼が生まれるという順で客と店がつながることを示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <text x="100" y="188" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a">これまで</text>
+  <g fill="none" stroke="#75695a" stroke-width="1.6" opacity="0.5">
+    <path d="M240 182 H700"/>
+  </g>
+  <g fill="#75695a" opacity="0.5">
+    <circle cx="240" cy="182" r="6"/><circle cx="470" cy="182" r="6"/><circle cx="700" cy="182" r="6"/>
+  </g>
+  <g font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" opacity="0.75" text-anchor="middle">
+    <text x="240" y="164">値引き</text>
+    <text x="470" y="164">来店</text>
+    <text x="700" y="164">価格で比べられる</text>
+  </g>
+
+  <text x="100" y="290" font-family="'Source Sans 3', sans-serif" font-size="18" font-weight="600" fill="#a63f32">まちゼミ</text>
+  <g fill="none" stroke="#a63f32" stroke-width="2.4">
+    <path d="M240 284 H700"/>
+    <path d="M676 273 L700 284 L676 295"/>
+  </g>
+  <g fill="#a63f32">
+    <circle cx="240" cy="284" r="8"/><circle cx="470" cy="284" r="8"/><circle cx="700" cy="284" r="8"/>
+  </g>
+  <g font-family="'Source Sans 3', sans-serif" font-size="18" font-weight="600" fill="#a63f32" text-anchor="middle">
+    <text x="240" y="264">学ぶ</text>
+    <text x="470" y="264">店主を知る</text>
+    <text x="700" y="264">選ぶ理由になる</text>
+  </g>
+  <text x="470" y="316" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a" text-anchor="middle">講座の場では売らない</text>
+
+  <text x="1100" y="188" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">安い店ができれば移る</text>
+  <text x="1100" y="290" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#a63f32" text-anchor="end">その人にしか出せない</text>
+
+  <text x="100" y="410" font-family="'Shippori Mincho', serif" font-size="56" font-weight="600" fill="#172b35">値札のつかないものが、</text>
+  <text x="100" y="478" font-family="'Shippori Mincho', serif" font-size="56" font-weight="600" fill="#172b35">店の価値になる。</text>
+
+  <text x="100" y="528" font-family="'Shippori Mincho', serif" font-size="25" fill="#315c68">ひたちなかDEまちゼミ／10月1日〜31日</text>
+
+  <text x="1100" y="562" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a" text-anchor="end">申込は9月14日から各店舗へ直接 ／ 受講料は不要（一部材料費）</text>
+</svg>

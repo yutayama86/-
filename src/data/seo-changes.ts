@@ -44,6 +44,15 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260826-news-ibaraki-natto-nihonichi-project-202',
+    date: '2026-08-26',
+    url: '/news/ibaraki-natto-nihonichi-project-2026/',
+    kind: 'new-article',
+    change: '茨城県の納豆日本一奪還プロジェクトを起点に、知名度を地域産業の競争力へ変える条件を解説。納豆関連の取材展開のハブ記事',
+    queries: ['納豆 日本一', '水戸 納豆', '茨城 納豆', '納豆日本一奪還プロジェクト', '全国納豆鑑評会'],
+    commit: '0efe465',
+  },
+  {
     id: '20260826-zh-tw-hitachi-seaside-park-from-tokyo',
     date: '2026-08-26',
     url: '/zh-tw/hitachi-seaside-park-from-tokyo/',

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="大豆から製造、店頭、食卓へとつながる流れと、品質・消費量・健康長寿という3本柱を示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g fill="none" stroke="#315c68" stroke-width="2">
+    <path d="M130 232 H760"/>
+  </g>
+  <g fill="#315c68">
+    <circle cx="130" cy="232" r="8"/>
+    <circle cx="340" cy="232" r="8"/>
+    <circle cx="550" cy="232" r="8"/>
+  </g>
+  <circle cx="760" cy="232" r="12" fill="#a63f32"/>
+
+  <g font-family="'Source Sans 3', sans-serif" font-size="20" fill="#75695a" text-anchor="middle">
+    <text x="130" y="204">大豆をつくる</text>
+    <text x="340" y="204">納豆にする</text>
+    <text x="550" y="204">店に並ぶ</text>
+  </g>
+  <text x="760" y="204" font-family="'Source Sans 3', sans-serif" font-size="20" font-weight="600" fill="#a63f32" text-anchor="middle">食卓へ</text>
+
+  <g font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="middle">
+    <text x="130" y="270">県産大豆の品質向上</text>
+    <text x="340" y="270">11社の研究会</text>
+    <text x="550" y="270">消費拡大の宣言</text>
+    <text x="760" y="270">レシピコンテスト</text>
+  </g>
+
+  <g fill="none" stroke="#75695a" stroke-width="1.4" stroke-dasharray="4 5" opacity="0.55">
+    <path d="M880 232 H1060"/>
+  </g>
+  <text x="1100" y="238" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">品質・消費量・健康長寿</text>
+
+  <text x="100" y="384" font-family="'Shippori Mincho', serif" font-size="58" font-weight="600" fill="#172b35">有名なだけでは、</text>
+  <text x="100" y="458" font-family="'Shippori Mincho', serif" font-size="58" font-weight="600" fill="#172b35">産業にならない。</text>
+
+  <text x="100" y="514" font-family="'Shippori Mincho', serif" font-size="26" fill="#315c68">茨城県が「納豆日本一奪還プロジェクト」を発表</text>
+
+  <text x="1100" y="556" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a" text-anchor="end">水戸市は家計調査で2位 ／ 鑑評会の最優秀賞は2008年が最後</text>
+</svg>

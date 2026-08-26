@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="44市町村の味が3日間だけ水戸の1か所に集まり、会期後に各地へ戻っていくことを示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g fill="#75695a" opacity="0.55">
+    <circle cx="112" cy="196" r="5"/><circle cx="140" cy="224" r="5"/><circle cx="106" cy="252" r="5"/>
+    <circle cx="152" cy="180" r="5"/><circle cx="126" cy="278" r="5"/><circle cx="164" cy="256" r="5"/>
+    <circle cx="182" cy="208" r="5"/><circle cx="96" cy="224" r="5"/>
+  </g>
+  <text x="140" y="316" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a" text-anchor="middle">44市町村</text>
+
+  <g fill="none" stroke="#315c68" stroke-width="1.8">
+    <path d="M215 228 H495"/>
+    <path d="M471 217 L495 228 L471 239"/>
+  </g>
+  <text x="355" y="212" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#315c68" text-anchor="middle">10月10日〜12日</text>
+
+  <circle cx="580" cy="228" r="58" fill="none" stroke="#a63f32" stroke-width="2.4"/>
+  <text x="580" y="222" font-family="'Source Sans 3', sans-serif" font-size="20" font-weight="600" fill="#a63f32" text-anchor="middle">82品</text>
+  <text x="580" y="248" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#a63f32" text-anchor="middle">水戸に集結</text>
+
+  <g fill="none" stroke="#75695a" stroke-width="1.6" stroke-dasharray="5 5" opacity="0.7">
+    <path d="M665 228 H960"/>
+    <path d="M936 217 L960 228 L936 239"/>
+  </g>
+  <text x="812" y="212" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="middle">3日間で終わる</text>
+  <text x="812" y="252" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a" text-anchor="middle">そのあとは？</text>
+
+  <text x="1055" y="234" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a" text-anchor="middle">各地へ</text>
+
+  <text x="100" y="392" font-family="'Shippori Mincho', serif" font-size="58" font-weight="600" fill="#172b35">3日で終わらせない</text>
+  <text x="100" y="464" font-family="'Shippori Mincho', serif" font-size="58" font-weight="600" fill="#172b35">ために、記録する。</text>
+
+  <text x="100" y="518" font-family="'Shippori Mincho', serif" font-size="25" fill="#315c68">シン・いばらきメシ総選挙2026／事前投票は10月5日正午まで</text>
+
+  <text x="1100" y="558" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a" text-anchor="end">茨城県三の丸庁舎（水戸市） ／ 本選は各部門10市町村</text>
+</svg>

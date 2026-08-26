@@ -44,6 +44,15 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260827-news-shin-ibaraki-meshi-2026',
+    date: '2026-08-27',
+    url: '/news/shin-ibaraki-meshi-2026/',
+    kind: 'new-article',
+    change: 'シン・いばらきメシ総選挙2026を起点に、3日間のイベントを地域の味へつなげる視点で解説',
+    queries: ['シン・いばらきメシ総選挙', 'いばらきメシ総選挙 2026', '茨城 ご当地グルメ', '三の丸庁舎 イベント'],
+    commit: '1b2194f',
+  },
+  {
     id: '20260826-news-ibaraki-natto-nihonichi-project-202',
     date: '2026-08-26',
     url: '/news/ibaraki-natto-nihonichi-project-2026/',

@@ -95,7 +95,16 @@ if (wantCommit) {
     process.exit(1);
   }
 } else {
-  try { commit = execSync('git rev-parse --short HEAD', { cwd: root }).toString().trim(); } catch {}
+  // 記録する変更はまだコミットされていないのが普通なので、ここでHEADを入れると
+  // 常に「ひとつ前のコミット」を指してしまう（実際に5件それで誤っていた）。
+  // 作業ツリーが汚れているあいだは PENDING とし、コミット後に npm run seo:seal で確定させる。
+  let dirty = true;
+  try { dirty = execSync('git status --porcelain', { cwd: root }).toString().trim().length > 0; } catch {}
+  if (dirty) {
+    commit = 'PENDING';
+  } else {
+    try { commit = execSync('git rev-parse --short HEAD', { cwd: root }).toString().trim(); } catch {}
+  }
 }
 
 const esc = (s) => s.replaceAll('\\', '\\\\').replaceAll("'", "\\'");

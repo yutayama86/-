@@ -15,7 +15,8 @@
     "db:seed": "node scripts/csv-to-d1-seed.mjs",
     "og:build": "node scripts/build-og-images.mjs",
     "og:check": "node scripts/check-ogp.mjs",
-    "seo:log": "node scripts/seo-change.mjs"
+    "seo:log": "node scripts/seo-change.mjs",
+    "seo:seal": "node scripts/seo-seal.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

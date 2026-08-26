@@ -44,13 +44,23 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260827-area-ushiku',
+    date: '2026-08-27',
+    url: '/area/ushiku/',
+    kind: 'on-page',
+    change: 'titleを「牛久市の歩き方｜牛久大仏と牛久シャトー・半日コース」から「牛久市観光｜牛久大仏・牛久シャトー・半日モデルコース」へ変更。descriptionも「歩き方」から「観光ガイド」起点に書き換え、地上85mの胎内展望台と季節の見どころを追記。あわせて /odekake/ の地域カードに代表2市町村へのリンクを追加し、牛久へテーマ側からの導線を新設',
+    queries: ['牛久 観光', '牛久大仏', '牛久シャトー', '牛久 モデルコース', '牛久 半日'],
+    commit: 'PENDING',
+    note: '8/22〜24は123表示・0クリック・平均約10位。共通形式の「◯◯の歩き方」では主要クエリ語が1つも一致しないため、この街だけtitleを丸ごと差し替えた（pageTitle項目を新設。他43市町村は無変更）。本文・URLは無変更。8/26の前回変更は計測前だったため、計測基準日は本日とする。牛久の被リンクは16→17件。',
+  },
+  {
     id: '20260827-news-hitachinaka-machizemi-2026',
     date: '2026-08-27',
     url: '/news/hitachinaka-machizemi-2026/',
     kind: 'new-article',
     change: 'ひたちなかDEまちゼミを起点に、店主の知識・専門性が地域の資産になるという視点で解説',
     queries: ['ひたちなか まちゼミ', 'まちゼミ 茨城', 'ひたちなかDEまちゼミ', '得する街のゼミナール'],
-    commit: '6077118',
+    commit: '10f894d',
   },
   {
     id: '20260827-news-shin-ibaraki-meshi-2026',
@@ -59,7 +69,7 @@ export const SEO_CHANGES: SeoChange[] = [
     kind: 'new-article',
     change: 'シン・いばらきメシ総選挙2026を起点に、3日間のイベントを地域の味へつなげる視点で解説',
     queries: ['シン・いばらきメシ総選挙', 'いばらきメシ総選挙 2026', '茨城 ご当地グルメ', '三の丸庁舎 イベント'],
-    commit: '1b2194f',
+    commit: '6077118',
   },
   {
     id: '20260826-news-ibaraki-natto-nihonichi-project-202',
@@ -68,7 +78,7 @@ export const SEO_CHANGES: SeoChange[] = [
     kind: 'new-article',
     change: '茨城県の納豆日本一奪還プロジェクトを起点に、知名度を地域産業の競争力へ変える条件を解説。納豆関連の取材展開のハブ記事',
     queries: ['納豆 日本一', '水戸 納豆', '茨城 納豆', '納豆日本一奪還プロジェクト', '全国納豆鑑評会'],
-    commit: '0efe465',
+    commit: '1b2194f',
   },
   {
     id: '20260826-zh-tw-hitachi-seaside-park-from-tokyo',
@@ -77,7 +87,7 @@ export const SEO_CHANGES: SeoChange[] = [
     kind: 'on-page',
     change: '冒頭に東京からの経路連鎖（路線一次看懂）を追加。titleとdescriptionは変更なし',
     queries: [],
-    commit: '450bcb6',
+    commit: 'c08f003',
     note: '平均14位前後で露出中のため、既存の評価に触れない範囲の追加のみ。',
   },
   {
@@ -87,7 +97,7 @@ export const SEO_CHANGES: SeoChange[] = [
     kind: 'on-page',
     change: 'titleの「(2026 Guide)」を「Train & Bus Guide」へ変更し、冒頭に東京からの経路連鎖を追加',
     queries: ['hitachi seaside park from tokyo', 'how to get to hitachi seaside park', 'hitachi seaside park train', 'hitachi seaside park bus'],
-    commit: '450bcb6',
+    commit: 'c08f003',
     note: '年表記の陳腐化回避と、train/busクエリとの一致。zh-tw/koのtitleは自然な表現のため変更せず。',
   },
   {
@@ -97,8 +107,8 @@ export const SEO_CHANGES: SeoChange[] = [
     kind: 'on-page',
     change: 'titleを「見どころ・食・半日コース」から「牛久大仏と牛久シャトー・半日コース」へ変更。descriptionと本文は据え置き',
     queries: ['牛久大仏', '牛久シャトー', '日本初のワイン醸造所', '高さ120mの大仏', '牛久 観光'],
-    commit: '450bcb6',
-    note: 'TOP10前後で表示されるのにCTR0%だったため。titleに名所名が1語も無かったのが原因の仮説。本文・URL・descriptionは無変更。',
+    commit: 'c08f003',
+    note: 'TOP10前後で表示されるのにCTR0%だったため。titleに名所名が1語も無かったのが原因の仮説。本文・URL・descriptionは無変更。計測データが出る前に翌8/27の再改善へ引き継いだため、この版単独の効果は測っていない。',
   },
   {
     id: '20260825-news-ishioka-noriai-taxi-weekend-2026',

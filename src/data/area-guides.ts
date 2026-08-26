@@ -34,6 +34,8 @@ export interface AreaGuide {
   seasons?: GuideSeason[];
   beforeYouGo?: GuideNote[]; // 追加分（その街固有の注意）
   titleSuffix?: string;     // 既定「見どころ・食・半日コース」／八千代のみ変更
+  /** titleを丸ごと差し替える。共通形式では主要クエリに当たらない街だけに使う（牛久） */
+  pageTitle?: string;
   metaDescription: string;
   checkedAt: string;
   sources?: { label: string; url: string }[]; // 公式・一次情報の確認先（検証済みURLのみ）
@@ -581,11 +583,13 @@ export const AREA_GUIDES: Record<string, AreaGuide> = {
     beforeYouGo: [
       { label: 'その街固有の注意', text: '牛久大仏の胎内拝観や庭園は、入場に料金がかかります。牛久シャトーの施設は、営業内容や見学範囲が変わることがあります。事前に公式情報で確認してください。' },
     ],
-    // titleは「見どころ・食・半日コース」だと、実際に露出しているクエリ
-    //（高さ120mの大仏／日本初のワイン醸造所 等）と一致する語がひとつも入らない。
-    // TOP10前後で表示されているのにCTRが0%だったため、名所名を明示する。
+    // 露出しているクエリ（牛久 観光／牛久大仏／牛久シャトー）に対し、
+    // 「◯◯の歩き方」という共通形式ではひとつも語が一致しない。
+    // 平均10位前後で表示されながらCTRが0%だったため、この街だけ
+    // titleを丸ごと差し替え、主要クエリ語をそのまま前方に置く。
+    pageTitle: '牛久市観光｜牛久大仏・牛久シャトー・半日モデルコース｜イバトコ',
     titleSuffix: '牛久大仏と牛久シャトー・半日コース',
-    metaDescription: '茨城県牛久市の歩き方。世界一高いブロンズ立像・牛久大仏（全高120m、ギネス世界記録）と胎内の展望台、日本初の本格ワイナリー・牛久シャトー、牛久沼のうなぎ。半日モデルコースまで。',
+    metaDescription: '茨城県牛久市の観光ガイド。世界一高いブロンズ立像・牛久大仏（全高120m・ギネス世界記録）と地上85mの胎内展望台、日本初の本格ワイナリー・牛久シャトー、牛久沼のうなぎ。半日モデルコースと季節の見どころまで。',
     checkedAt: CHECKED,
     sources: [
       { label: '牛久大仏（公式）', url: 'https://daibutu.net/' },

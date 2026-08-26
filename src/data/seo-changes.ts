@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260827-odekake',
+    date: '2026-08-27',
+    url: '/odekake/',
+    kind: 'internal-link',
+    change: '地域カードの街リンクを各2件から3件へ増やし、県北・県央・鹿行・県西の選定を見直し。あわせてTOPと/area/のモバイル「市町村名から選ぶ」で県北だけ開いていた既定を、5地域とも閉じた状態に変更',
+    queries: [],
+    commit: 'PENDING',
+    note: '2件では県西（半日コース整備済みが8市町）の選び方が恣意的だったため。選定基準は「半日コースまで整備済みのページ」から地域の性格が伝わる3件で、件数は地域間で揃える。牛久は県南に継続。',
+  },
+  {
     id: '20260827-area-ushiku',
     date: '2026-08-27',
     url: '/area/ushiku/',

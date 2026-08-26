@@ -90,8 +90,9 @@ const nodes = MUNICIPALITIES.map((m) => ({
   <details class="ax-list">
     <summary class="ax-list-toggle">市町村名から選ぶ <span aria-hidden="true">＋</span></summary>
     <nav aria-label="地域と市町村の一覧">
-      {REGION_ORDER.map((k, i) => (
-        <details class="ax-region" open={i === 0}>
+      {/* 5地域はすべて閉じた状態で始める。県北だけ開いていると、その地域を勧めているように見えるため */}
+      {REGION_ORDER.map((k) => (
+        <details class="ax-region">
           <summary><span class="ax-region-dot" data-region={k}></span>{REGIONS[k].label}</summary>
           <ul>
             {MUNICIPALITIES.filter((m) => m.region === k).map((m) => (

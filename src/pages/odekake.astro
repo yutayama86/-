@@ -59,17 +59,19 @@ const groups = [
 ];
 
 /**
- * 地域カードから直接入れる街（各2件）。
+ * 地域カードから直接入れる街（各3件）。
  * 5枚のカードがすべて /area/ に飛ぶだけだと、地域名からは何があるか分からず、
  * 街ページへはエリア同士の相互リンクしか経路がなかった。
- * 代表的な行き先を出して、テーマ側から街へ降りられるようにする。
+ *
+ * 選定は「半日コースまで整備済みのページ」から、その地域の性格が伝わる3件。
+ * 序列ではないので、地域ごとに件数は揃える。
  */
 const REGION_PICKS: Record<RegionKey, string[]> = {
-  kenpoku: ['hitachi', 'daigo'],
-  keno: ['mito', 'oarai'],
-  kennan: ['tsukuba', 'ushiku'],
-  rokko: ['kashima', 'itako'],
-  kensei: ['koga', 'chikusei'],
+  kenpoku: ['daigo', 'kitaibaraki', 'hitachiota'],
+  keno: ['mito', 'hitachinaka', 'kasama'],
+  kennan: ['tsukuba', 'tsuchiura', 'ushiku'],
+  rokko: ['kashima', 'itako', 'hokota'],
+  kensei: ['koga', 'yuki', 'sakai'],
 };
 
 /** 地域から入る導線（5地域） */

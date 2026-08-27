@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="県内第1位という結果を、品質管理と新規生産者の確保という二つの仕組みが下から支えている構造を示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <text x="100" y="180" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">評価された3点</text>
+
+  <rect x="100" y="196" width="330" height="52" fill="none" stroke="#a63f32" stroke-width="2"/>
+  <text x="265" y="228" font-family="'Source Sans 3', sans-serif" font-size="19" font-weight="600" fill="#a63f32" text-anchor="middle">系統出荷で県内第1位</text>
+  <text x="265" y="272" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a" text-anchor="middle">＝ 結果</text>
+
+  <g fill="none" stroke="#315c68" stroke-width="1.8">
+    <path d="M265 322 V294"/>
+    <path d="M255 312 L265 292 L275 312"/>
+    <path d="M170 348 V322 H360 V348"/>
+  </g>
+
+  <rect x="100" y="348" width="140" height="46" fill="none" stroke="#315c68" stroke-width="1.6"/>
+  <text x="170" y="377" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#315c68" text-anchor="middle">予冷・全箱検査</text>
+
+  <rect x="290" y="348" width="140" height="46" fill="none" stroke="#315c68" stroke-width="1.6"/>
+  <text x="360" y="377" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#315c68" text-anchor="middle">新規生産者の確保</text>
+
+  <text x="265" y="420" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a" text-anchor="middle">＝ 続けるための仕組み</text>
+
+  <g font-family="'Source Sans 3', sans-serif" text-anchor="end">
+    <text x="1100" y="196" font-size="17" fill="#75695a">令和7年度の実績</text>
+    <text x="1100" y="248" font-size="40" font-weight="600" fill="#172b35">33戸</text>
+    <text x="1100" y="292" font-size="26" fill="#172b35">10.7ha ／ 販売額 97百万円</text>
+    <text x="1100" y="336" font-size="17" fill="#315c68">花き銘柄産地は県全体で6産地</text>
+  </g>
+
+  <text x="530" y="472" font-family="'Shippori Mincho', serif" font-size="50" font-weight="600" fill="#172b35">有名になるだけでは、</text>
+  <text x="530" y="530" font-family="'Shippori Mincho', serif" font-size="50" font-weight="600" fill="#172b35">産地は続かない。</text>
+
+  <text x="100" y="530" font-family="'Shippori Mincho', serif" font-size="23" fill="#315c68">笠間市の小菊</text>
+  <text x="100" y="562" font-family="'Shippori Mincho', serif" font-size="23" fill="#315c68">10回目の銘柄産地指定</text>
+
+  <text x="1100" y="562" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">交付式は2026年8月24日 ／ 有効期間3年</text>
+</svg>

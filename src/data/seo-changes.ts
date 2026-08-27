@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260828-news-kasama-kogiku-meigara-sanchi-2026',
+    date: '2026-08-28',
+    url: '/news/kasama-kogiku-meigara-sanchi-2026/',
+    kind: 'new-article',
+    change: '笠間市の小菊が10回目の銘柄産地に指定されたことを起点に、産地は有名になるだけでなく「作り続けられる」状態をつくって初めて地域資産になるという視点で解説',
+    queries: ['笠間 小菊', '茨城 銘柄産地', '笠間市 花き', '小菊 産地', '銘柄産地 指定'],
+    commit: 'PENDING',
+    note: '「県内第1位」は系統出荷の数量・販売金額に限定される旨を本文とFAQで明示。産地の縮小については県・部会長・市で述べていることが異なるため、断定せず出典を分けて併記した。',
+  },
+  {
     id: '20260827-site',
     date: '2026-08-27',
     url: '*',

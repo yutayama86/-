@@ -143,12 +143,45 @@ body.interior-site :is(
   padding: var(--interior-hero-y) var(--interior-gutter) !important;
   overflow: hidden;
   border: 0;
-  border-bottom: 1px solid rgba(31, 99, 191, .13);
   border-radius: 0;
+  /* 背景は ::before が持つ。下端を溶かすため（下のコメント参照） */
+  background: transparent;
+  box-shadow: none;
+}
+
+/*
+ * バンドの下端を紙色へ溶かす。以前は 1px の枠線で切っていたが、
+ * 淡い青と紙色がそのままぶつかって境目が目立っていた。
+ *
+ * 紙色を上から塗り重ねる方法は取らない。バンドの高さはページごとに違い、
+ * 背後の #main-content::before（上部の淡い青）はまだ残っているので、
+ * 塗ると今度は逆向きの段差ができる。
+ * そこで背景を疑似要素へ移し、下端でマスクして透過させる。背後が
+ * そのまま出るため、どの高さでも継ぎ目にならない。
+ */
+body.interior-site :is(
+  .news-index__head,
+  .category-head,
+  .about-head,
+  .biz-head,
+  .places-head,
+  .area-head,
+  .hanabi-head,
+  .ok-head,
+  .person-head
+)::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
   background:
     radial-gradient(circle at 90% 14%, rgba(121, 183, 239, .23), transparent 29%),
     linear-gradient(132deg, rgba(255, 255, 255, .98), rgba(239, 247, 255, .94));
-  box-shadow: 0 14px 42px rgba(36, 77, 110, .06);
+  /* 標準プロパティを後に置く。逆にすると minifier が -webkit- だけを残し、
+     Chrome では効かなくなる（ヘッダーで実際に起きた） */
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 5rem), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 5rem), transparent 100%);
 }
 
 /*
@@ -193,11 +226,13 @@ body.interior-site :is(main, article, section, header, div):has(> :is(
  * 写真と横並びになる浮いたカードで、全幅バンドとは別の設計なので、
  * 上の一括指定を打ち消して従来のカード表現に戻す。
  */
+/*
+ * テーマガイド（/yama/ /umi/ 等）の見出しは、写真と横並びのカードの中身。
+ * カードの枠・背景は親の .tg-head が持ち、この要素自体は後段（「テーマガイド」節）で
+ * 透明にされる。ここで必要なのは、全幅バンド用の左右paddingを打ち消すことだけ。
+ */
 body.interior-site .tg-head__copy {
-  margin-top: clamp(1rem, 2vw, 1.75rem);
   padding: var(--interior-hero-y) clamp(1.4rem, 4.2vw, 4rem) !important;
-  border: 1px solid rgba(31, 99, 191, .13);
-  border-radius: clamp(.9rem, 1.6vw, 1.25rem);
 }
 
 body.interior-site .tg-head__copy::after {
@@ -921,15 +956,28 @@ body.interior-site .prose a {
  * 幅は全面に広げ、中身だけ --interior-gutter で本文カラムに揃える。
  */
 body.interior-site .contact {
+  /* ::before を自分に重ねるための基準 */
+  position: relative;
   width: auto !important;
   max-width: none !important;
   margin: 0 0 clamp(1.2rem, 2.5vw, 2.25rem);
   padding: clamp(2rem, 3.5vw, 3.25rem) var(--interior-gutter);
   border: 0;
-  border-bottom: 1px solid rgba(31, 99, 191, .12);
   border-radius: 0;
+  /* 見出しバンドと同じく、背景は ::before に持たせて下端を溶かす */
+  background: transparent;
+  box-shadow: none;
+}
+
+body.interior-site .contact::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
   background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(241,247,253,.92));
-  box-shadow: var(--interior-shadow);
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 5rem), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 5rem), transparent 100%);
 }
 
 body.interior-site .contact h1 {

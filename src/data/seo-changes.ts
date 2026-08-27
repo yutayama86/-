@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260827-site',
+    date: '2026-08-27',
+    url: '*',
+    kind: 'on-page',
+    change: '下層ページ共通の見出しをヘッダー直下の全幅バンドに変更（紙色の隙間16pxを解消）。テーマ切替の選択中チップが濃紺地に濃い文字で読めなかったのを白文字へ修正。パンくずがチップ化されていたのを平文へ戻す',
+    queries: [],
+    commit: 'PENDING',
+    note: 'コントラスト比1.5→8.03でAA達成。テーマガイド（/yama/等）の見出しは写真と横並びのカードのため対象外。',
+  },
+  {
     id: '20260827-odekake',
     date: '2026-08-27',
     url: '/odekake/',

@@ -17,6 +17,13 @@ body.interior-site {
   --interior-title-lg: clamp(1.95rem, 2.8vw, 2.85rem);
   --interior-hero-y: clamp(1.9rem, 3.1vw, 3rem);
   --interior-section-y: clamp(2.75rem, 5vw, 5rem);
+  /*
+   * 本文カラムの左端までの距離。下層の .bp-wrap は
+   *   width: min(100% - clamp(2rem, 7vw, 7.5rem), 1280px)
+   * を中央寄せしているので、その左余白と同じ値になるよう分解したもの。
+   * 全幅の背景を敷きつつ文字だけカラムに揃えたいときに padding として使う。
+   */
+  --interior-gutter: max(clamp(1rem, 3.5vw, 3.75rem), calc((100% - 1280px) / 2));
   background: var(--color-paper);
 }
 
@@ -116,16 +123,85 @@ body.interior-site :is(
   .person-head
 ) {
   position: relative;
-  margin-top: clamp(1rem, 2vw, 1.75rem);
+  /*
+   * ヘッダーに接する全幅バンド。以前は紙色の上に浮いた角丸カードで、
+   * ヘッダーとのあいだに16pxの紙色が挟まって帯が二重に見えていた。
+   *
+   * 幅は 100vw ではなく親（main）基準の auto/% で取る。vw はスクロールバーを
+   * 含むため、その分だけ横にはみ出して横スクロールが出てしまう。
+   * 左右paddingを --interior-gutter（＝下層 .bp-wrap の左余白と同値）にすることで、
+   * 全幅の背景のまま、文字は本文カラムと同じ位置から始まる。
+   *
+   * !important が要るのは、これらの見出しが .bp-wrap も併せ持つため。
+   * 狭い画面用の `body.interior-site .bp-wrap { width: ... }` が同じ特異度で
+   * 後ろに定義されており、これがないと900px以下で幅が戻ってしまう。
+   */
+  width: auto !important;
+  max-width: none !important;
+  margin: 0;
   /* 下層ごとに残っている旧来の大きな余白を、共通スケールへ確実に揃える。 */
-  padding: var(--interior-hero-y) clamp(1.4rem, 4.2vw, 4rem) !important;
+  padding: var(--interior-hero-y) var(--interior-gutter) !important;
   overflow: hidden;
-  border: 1px solid rgba(31, 99, 191, .13);
-  border-radius: clamp(.9rem, 1.6vw, 1.25rem);
+  border: 0;
+  border-bottom: 1px solid rgba(31, 99, 191, .13);
+  border-radius: 0;
   background:
     radial-gradient(circle at 90% 14%, rgba(121, 183, 239, .23), transparent 29%),
     linear-gradient(132deg, rgba(255, 255, 255, .98), rgba(239, 247, 255, .94));
   box-shadow: 0 14px 42px rgba(36, 77, 110, .06);
+}
+
+/*
+ * .area-head と .ok-head は内側に自前の .bp-wrap を持つ。
+ * バンド側でも左右paddingを入れると二重にインデントされるので、内側に任せる。
+ */
+body.interior-site :is(
+  .news-index__head,
+  .category-head,
+  .about-head,
+  .biz-head,
+  .places-head,
+  .area-head,
+  .tg-head__copy,
+  .hanabi-head,
+  .ok-head,
+  .person-head
+):has(> .bp-wrap) {
+  padding-inline: 0 !important;
+}
+
+/*
+ * バンドをヘッダーに接触させる。見出しは常に親の最初の子なので、
+ * 親に残っている上余白（例：article.daigo-guide の padding-top）を取り除く。
+ */
+body.interior-site :is(main, article, section, header, div):has(> :is(
+  .news-index__head,
+  .category-head,
+  .about-head,
+  .biz-head,
+  .places-head,
+  .area-head,
+  .hanabi-head,
+  .ok-head,
+  .person-head
+):first-child) {
+  padding-top: 0;
+}
+
+/*
+ * テーマガイド（/yama/ /umi/ 等）の見出しだけは例外。
+ * 写真と横並びになる浮いたカードで、全幅バンドとは別の設計なので、
+ * 上の一括指定を打ち消して従来のカード表現に戻す。
+ */
+body.interior-site .tg-head__copy {
+  margin-top: clamp(1rem, 2vw, 1.75rem);
+  padding: var(--interior-hero-y) clamp(1.4rem, 4.2vw, 4rem) !important;
+  border: 1px solid rgba(31, 99, 191, .13);
+  border-radius: clamp(.9rem, 1.6vw, 1.25rem);
+}
+
+body.interior-site .tg-head__copy::after {
+  right: clamp(1rem, 5vw, 4rem);
 }
 
 body.interior-site :is(
@@ -142,7 +218,8 @@ body.interior-site :is(
 )::after {
   content: '';
   position: absolute;
-  right: clamp(1rem, 5vw, 4rem);
+  /* 全幅バンド化したので、装飾線も画面端ではなく本文カラムの右端に合わせる */
+  right: var(--interior-gutter);
   bottom: clamp(1rem, 3vw, 2.2rem);
   width: clamp(2.6rem, 6vw, 4rem);
   height: 2px;
@@ -189,13 +266,13 @@ body.interior-site :is(
   line-height: 2;
 }
 
-body.interior-site .category-head nav {
+body.interior-site .category-head nav:not(.crumbs) {
   margin-top: 2.25rem;
   padding-top: 1.1rem;
   border-top: 1px solid rgba(23, 43, 53, .11);
 }
 
-body.interior-site .category-head nav a {
+body.interior-site .category-head nav:not(.crumbs) a {
   padding: .5rem .85rem;
   border: 1px solid rgba(23, 43, 53, .12);
   border-radius: 999px;
@@ -203,8 +280,8 @@ body.interior-site .category-head nav a {
   transition: background-color .2s ease, color .2s ease, border-color .2s ease;
 }
 
-body.interior-site .category-head nav a[aria-current='page'],
-body.interior-site .category-head nav a:hover {
+body.interior-site .category-head nav:not(.crumbs) a[aria-current='page'],
+body.interior-site .category-head nav:not(.crumbs) a:hover {
   border-color: var(--interior-blue);
   background: var(--interior-blue);
   color: #fff;
@@ -1364,6 +1441,11 @@ body.interior-site .rp-final {
 
 /* --- Tablet / mobile --------------------------------------------------- */
 @media (max-width: 900px) {
+  body.interior-site {
+    /* この幅では .bp-wrap の余白が 2rem になるので、見出しバンドの左右も揃える */
+    --interior-gutter: max(1rem, calc((100% - 1280px) / 2));
+  }
+
   body.interior-site .bp-wrap,
   body.interior-site .wrap {
     width: min(calc(100% - 2rem), 1280px);
@@ -1417,9 +1499,10 @@ body.interior-site .rp-final {
     .ok-head,
     .person-head
   ) {
-    margin-top: 1rem;
-    padding: 1.65rem 1.1rem 1.9rem;
-    border-radius: .95rem;
+    /* 全幅バンドはモバイルでも維持する。左右は bp-wrap の余白（1rem）に揃える */
+    margin: 0;
+    padding: 1.65rem var(--interior-gutter) 1.9rem !important;
+    border-radius: 0;
   }
 
   body.interior-site :is(
@@ -1494,11 +1577,11 @@ body.interior-site .rp-final {
     line-height: 2;
   }
 
-  body.interior-site .category-head nav {
+  body.interior-site .category-head nav:not(.crumbs) {
     gap: .5rem;
   }
 
-  body.interior-site .category-head nav a {
+  body.interior-site .category-head nav:not(.crumbs) a {
     font-size: .75rem;
   }
 
@@ -1520,6 +1603,11 @@ body.interior-site .rp-final {
 }
 
 @media (max-width: 420px) {
+  body.interior-site {
+    /* この幅では .bp-wrap の余白が 1.5rem になるので、見出しバンドの左右も揃える */
+    --interior-gutter: .75rem;
+  }
+
   body.interior-site .bp-wrap,
   body.interior-site .wrap {
     width: calc(100% - 1.5rem);

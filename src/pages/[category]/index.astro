@@ -22,6 +22,9 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: cat.label }];
    文字が上に寄る・下辺だけ色が違う、という崩れを起こしていたので外した。 */
 .category-head nav a{color:var(--color-soil);font-size:.85rem}
 .category-head nav a[aria-current="page"]{color:#fff;background:var(--interior-blue,#174f99);border-color:var(--interior-blue,#174f99)}
-  .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;padding-block:clamp(4rem,9vw,7rem)}.category-empty{padding-block:clamp(5rem,11vw,9rem)}.category-empty h2{margin-top:1rem;font:600 clamp(2rem,5vw,4rem)/1.3 var(--font-brand-display);color:var(--color-ink)}.category-empty>p:not(.bp-kicker){margin-top:1.5rem;color:var(--color-soil)}.category-empty a{display:inline-block;margin-top:2rem;color:var(--color-tide);border-bottom:1px solid}
+  .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;padding-block:clamp(4rem,9vw,7rem)}.category-empty{padding-block:clamp(5rem,11vw,9rem)}.category-empty h2{margin-top:1rem;font:600 clamp(2rem,5vw,4rem)/1.3 var(--font-brand-display);color:var(--color-ink)}.category-empty>p:not(.bp-kicker){margin-top:1.5rem;color:var(--color-soil)}/* ボタンの形は interior.css がピル型（inline-flex・中央寄せ・4辺の枠）で描く。
+     下線リンクだった頃の display / color / border-bottom は特異度でそれに勝ち、
+     文字が上端に張り付く・下辺だけ色が違う、という崩れを起こしていたので外した。 */
+  .category-empty a{margin-top:2rem}
   @media(max-width:850px){.category-grid{grid-template-columns:1fr}}
 </style>

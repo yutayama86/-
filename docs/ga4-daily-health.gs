@@ -9,23 +9,73 @@
  * この1ファイルを別スクリプトとして追加するだけで動く。
  *
  * ─────────────────────────────────────────────
- * 準備
- * 1. 下の PROPERTY_ID に GA4の「プロパティID（数字）」を入れる。
- *    測定ID（G-2DNYX7CSK6）ではない。GA4管理画面 > プロパティ設定 の先頭にある数字。
- * 2. appsscript.json に読み取りスコープを足す：
+ * 準備は2つだけ
+ *
+ * 1. appsscript.json に読み取りスコープを足す：
  *      "oauthScopes": [
  *        "https://www.googleapis.com/auth/script.external_request",
  *        "https://www.googleapis.com/auth/spreadsheets",
  *        "https://www.googleapis.com/auth/analytics.readonly"
  *      ]
- *    （GA4 Data API は Apps Script の「サービス」に無いため REST で叩く。
+ *    （GA4のAPIは Apps Script の「サービス」一覧に無いため REST で叩く。
  *      Search Console API が一覧から消えたのと同じ事情。）
- * 3. メニュー「イバトコ計測」から「日次トリガーを作成」を一度実行する。
+ *
+ * 2. メニュー「イバトコ計測 > セットアップ」を1回実行する。
+ *    プロパティIDの調査・保存、日次トリガーの作成、直近14日の取り込みまで
+ *    まとめてやる。数字を手で調べて貼る必要はない。
  * ─────────────────────────────────────────────
  */
 
-const PROPERTY_ID = '';           // ← 数字のプロパティIDを入れる（例: '123456789'）
 const SHEET_NAME = 'GA4日次';
+
+/**
+ * プロパティIDは手で書かず、Admin APIで引いて保存する。
+ * 測定ID（G-…）とプロパティID（数字）は別物で、取り違えが起きやすいため。
+ */
+function propertyId_() {
+  const props = PropertiesService.getScriptProperties();
+  const saved = props.getProperty('GA4_PROPERTY_ID');
+  if (saved) return saved;
+
+  const found = listProperties_();
+  if (found.length === 0) {
+    throw new Error('このアカウントで読めるGA4プロパティが見つかりませんでした。ログイン中のGoogleアカウントを確認してください。');
+  }
+  if (found.length > 1) {
+    throw new Error(
+      '複数のGA4プロパティが見つかりました。使うものの数字を控えて、\n' +
+      'setPropertyId("数字") を一度実行してください。\n\n' +
+      found.map(function (p) { return '  ' + p.id + '  ' + p.name; }).join('\n')
+    );
+  }
+  props.setProperty('GA4_PROPERTY_ID', found[0].id);
+  Logger.log('プロパティを自動設定しました: ' + found[0].id + ' ' + found[0].name);
+  return found[0].id;
+}
+
+/** 読めるGA4プロパティを一覧する。 */
+function listProperties_() {
+  const res = UrlFetchApp.fetch('https://analyticsadmin.googleapis.com/v1beta/accountSummaries?pageSize=200', {
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    muteHttpExceptions: true,
+  });
+  if (res.getResponseCode() !== 200) {
+    throw new Error('GA4 Admin API ' + res.getResponseCode() + ': ' + res.getContentText());
+  }
+  const out = [];
+  (JSON.parse(res.getContentText()).accountSummaries || []).forEach(function (a) {
+    (a.propertySummaries || []).forEach(function (p) {
+      out.push({ id: String(p.property).replace('properties/', ''), name: p.displayName });
+    });
+  });
+  return out;
+}
+
+/** プロパティが複数あるときに、使うものを指定する。 */
+function setPropertyId(id) {
+  PropertiesService.getScriptProperties().setProperty('GA4_PROPERTY_ID', String(id));
+  Logger.log('プロパティIDを ' + id + ' に設定しました。');
+}
 
 /**
  * 何日前を取りに行くか。
@@ -37,7 +87,9 @@ const LAG_DAYS = 2;
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('イバトコ計測')
-    .addItem('昨日までを取り込む', 'backfillRecentDays')
+    .addItem('セットアップ（初回はこれ1つ）', 'setup')
+    .addSeparator()
+    .addItem('直近14日を取り込む', 'backfillRecentDays')
     .addItem('日次トリガーを作成', 'createDailyTrigger')
     .addToUi();
 }
@@ -54,9 +106,8 @@ function daysAgo_(n) {
 
 /** GA4 Data API を REST で叩く。失敗時は本文ごと投げて原因を追えるようにする。 */
 function runReport_(body) {
-  if (!PROPERTY_ID) throw new Error('PROPERTY_ID が未設定です。GA4のプロパティID（数字）を入れてください。');
   const res = UrlFetchApp.fetch(
-    'https://analyticsdata.googleapis.com/v1beta/properties/' + PROPERTY_ID + ':runReport',
+    'https://analyticsdata.googleapis.com/v1beta/properties/' + propertyId_() + ':runReport',
     {
       method: 'post',
       contentType: 'application/json',
@@ -210,7 +261,9 @@ function collectGa4Daily() {
 }
 
 /** 直近14日ぶんを取り直す（初回や、取りこぼしの復旧用）。 */
-function backfillRecentDays() {
+function backfillRecentDays() { backfillRecentDays_(); }
+
+function backfillRecentDays_() {
   const sh = sheet_();
   for (let i = LAG_DAYS; i <= LAG_DAYS + 13; i++) {
     try { upsert_(sh, collectDay_(daysAgo_(i))); } catch (e) { Logger.log(daysAgo_(i) + ': ' + e); }
@@ -218,10 +271,28 @@ function backfillRecentDays() {
   try { SpreadsheetApp.getUi().alert('取り込みが終わりました。'); } catch (e) { Logger.log('取り込み完了'); }
 }
 
-function createDailyTrigger() {
+function createDailyTrigger() { createDailyTrigger_(); }
+
+function createDailyTrigger_() {
   ScriptApp.getProjectTriggers().forEach(function (t) {
     if (t.getHandlerFunction() === 'collectGa4Daily') ScriptApp.deleteTrigger(t);
   });
   ScriptApp.newTrigger('collectGa4Daily').timeBased().everyDays(1).atHour(9).create();
   try { SpreadsheetApp.getUi().alert('毎日9時台に集計する日次トリガーを作成しました。'); } catch (e) { Logger.log('日次トリガー作成'); }
+}
+
+/**
+ * 初回セットアップ。これ1つで済むようにしてある。
+ *   プロパティIDの解決と保存 → 日次トリガー作成 → 直近14日の取り込み
+ */
+function setup() {
+  const id = propertyId_();
+  createDailyTrigger_();
+  backfillRecentDays_();
+  const msg = 'セットアップが終わりました。\n\n'
+    + 'GA4プロパティ: ' + id + '\n'
+    + 'シート「' + SHEET_NAME + '」に直近14日を取り込み、毎日9時台の自動集計を設定しました。\n'
+    + '「所見」列に気になる点が出ていないか見てください。';
+  Logger.log(msg);
+  try { SpreadsheetApp.getUi().alert(msg); } catch (e) {}
 }

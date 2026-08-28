@@ -107,7 +107,9 @@ export const HITACHI_SEASIDE_PARK: Record<Exclude<Locale, 'ja'>, IntlGuide> = {
       {
         id: 'cost',
         heading: 'Admission fees',
-        body: ['Fees below are the park’s published admission prices. Train and bus fares are separate and are not listed here because they change; check the operator before you travel.'],
+        // 運賃は書かない。公園公式にも茨城交通の「のりば案内」にも金額の掲載がなく、
+        // 一次情報で確認できていないため。代わりに事業者の運賃検索へ誘導する。
+        body: ['Fees below are the park’s published admission prices. Train and bus fares are separate, and we do not print amounts here because we could not confirm current fares from an official source. Look them up directly: Ibaraki Kotsu publishes a route and fare search for the bus, and JR East for the train — both are linked under Sources below.'],
         table: [
           ['Adults (high school age and above)', '¥450'],
           ['Seniors (65 and over)', '¥210'],
@@ -155,6 +157,8 @@ export const HITACHI_SEASIDE_PARK: Record<Exclude<Locale, 'ja'>, IntlGuide> = {
       { label: 'Hitachi Seaside Park — Official site', url: PARK_URL },
       { label: 'Hitachi Seaside Park — Admission fees (official)', url: PARK_TICKET_URL },
       { label: 'Hitachi Seaside Park — Access by train and bus (official)', url: PARK_ACCESS_URL },
+      { label: 'Ibaraki Kotsu — Bus route and fare search (official)', url: 'https://bus.ibako.co.jp/route/' },
+      { label: 'JR East — English site (train routes and fares)', url: 'https://www.jreast.co.jp/multi/en/' },
     ],
     updatedLabel: 'Last updated',
     updatedDate: UPDATED,

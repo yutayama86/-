@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260829-news-hitachi-jidounten-bus-ai-tsushin-20',
+    date: '2026-08-29',
+    url: '/news/hitachi-jidounten-bus-ai-tsushin-2026/',
+    kind: 'new-article',
+    change: '日立市の自動運転バス通信実証を起点に、自動運転は走れるだけでは完成せず通信・遠隔監視・運営工数まで含めて持続可能にできるかが問われる段階だという視点で解説',
+    queries: ['日立市 自動運転バス', 'ひたちBRT 自動運転', 'レベル4 自動運転 バス', '自動運転 遠隔監視', 'KDDI 自動運転 実証'],
+    commit: 'PENDING',
+    note: '一次情報の確認で、日立市のレベル4営業運行が2026年4月1日から休止していることが判明（開始は2025年2月3日）。休止理由は非公表のため推測せず記載。今回の実証はレベル2であり、レベル4再開の発表ではない点も明示。「国内初」「国内最長」はKDDIと日立市で文言と限定条件が異なるため出典ごとに帰属させ、6.1kmはKDDIのみの記載である旨も注記。日経の関連報道は有料記事で本文未読のため不使用。',
+  },
+  {
     id: '20260828-en-hitachi-seaside-park-from-tokyo',
     date: '2026-08-28',
     url: '/en/hitachi-seaside-park-from-tokyo/',

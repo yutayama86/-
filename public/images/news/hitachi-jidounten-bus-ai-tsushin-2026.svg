@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="自動で走れることの下に、通信・遠隔監視・運営体制という支えが必要であることを示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <text x="100" y="182" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">2025年2月に証明されたこと</text>
+  <rect x="100" y="198" width="300" height="50" fill="none" stroke="#75695a" stroke-width="1.6" opacity="0.75"/>
+  <text x="250" y="229" font-family="'Source Sans 3', sans-serif" font-size="19" font-weight="600" fill="#75695a" text-anchor="middle">自動で走れる</text>
+
+  <g fill="none" stroke="#a63f32" stroke-width="2">
+    <path d="M250 248 V282"/>
+    <path d="M239 272 L250 292 L261 272"/>
+  </g>
+  <text x="286" y="278" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#a63f32">2026年4月 営業運行を休止</text>
+
+  <text x="100" y="330" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#315c68">続けるために要るもの</text>
+  <rect x="100" y="346" width="150" height="46" fill="none" stroke="#315c68" stroke-width="1.6"/>
+  <text x="175" y="375" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#315c68" text-anchor="middle">通信品質</text>
+  <rect x="266" y="346" width="150" height="46" fill="none" stroke="#315c68" stroke-width="1.6"/>
+  <text x="341" y="375" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#315c68" text-anchor="middle">遠隔監視</text>
+  <rect x="432" y="346" width="150" height="46" fill="none" stroke="#315c68" stroke-width="1.6"/>
+  <text x="507" y="375" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#315c68" text-anchor="middle">運営の工数</text>
+
+  <g font-family="'Source Sans 3', sans-serif" text-anchor="end">
+    <text x="1100" y="182" font-size="17" fill="#75695a">9月からの実証</text>
+    <text x="1100" y="232" font-size="38" font-weight="600" fill="#172b35">7日間程度</text>
+    <text x="1100" y="274" font-size="22" fill="#172b35">レベル2／通信を測る</text>
+    <text x="1100" y="330" font-size="17" fill="#315c68">ひたちBRT・大甕駅周回ルート</text>
+    <text x="1100" y="372" font-size="17" fill="#315c68">KDDI ／ みちのりホールディングス</text>
+  </g>
+
+  <text x="100" y="470" font-family="'Shippori Mincho', serif" font-size="52" font-weight="600" fill="#172b35">走れれば完成、</text>
+  <text x="100" y="530" font-family="'Shippori Mincho', serif" font-size="52" font-weight="600" fill="#172b35">ではなかった。</text>
+
+  <text x="1100" y="562" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">日立市／2026年9月1日から10月末までのうち7日間程度</text>
+</svg>

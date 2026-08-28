@@ -237,6 +237,11 @@ body.interior-site .tg-head__copy::after {
   display: none;
 }
 
+/*
+ * 見出しバンド右下にあった青い装飾線は出さない。
+ * 何も示していない線で、全幅バンドにしたあとは端に浮いて見えるだけだった。
+ * 1ページだけ消すと不揃いになるので、全ページで止める。
+ */
 body.interior-site :is(
   .news-index__head,
   .category-head,
@@ -249,15 +254,7 @@ body.interior-site :is(
   .ok-head,
   .person-head
 )::after {
-  content: '';
-  position: absolute;
-  /* 全幅バンド化したので、装飾線も画面端ではなく本文カラムの右端に合わせる */
-  right: var(--interior-gutter);
-  bottom: clamp(1rem, 3vw, 2.2rem);
-  width: clamp(2.6rem, 6vw, 4rem);
-  height: 2px;
-  background: var(--interior-blue);
-  opacity: .64;
+  content: none;
 }
 
 body.interior-site :is(
@@ -1114,15 +1111,18 @@ body.interior-site :is(.belief, .policies, .separation, .scope, .biz-cta, .about
   border-top-color: var(--interior-line);
 }
 
+/*
+ * 「知らないことは、知らないまま書かない。」の一文は、
+ * 囲うほど強くならない。枠・角丸・影・地色をやめて文字だけで置く。
+ * 上下の余白は残し、前後の節と混ざらないようにする。
+ */
 body.interior-site .belief {
   margin-block: clamp(2.75rem, 5.5vw, 5.5rem);
-  padding: clamp(2rem, 4vw, 3.75rem);
-  border: 1px solid rgba(31,99,191,.12);
-  border-radius: 1.25rem;
-  background:
-    radial-gradient(circle at 100% 0%, rgba(185,199,134,.20), transparent 30%),
-    rgba(255,255,255,.72);
-  box-shadow: 0 18px 55px rgba(36,77,110,.06);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
 }
 
 body.interior-site .belief h2 {

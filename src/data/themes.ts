@@ -5,7 +5,11 @@
  * 見頃・日程・遊泳可否などは年・天候で変わるため、常緑表現＋公式確認導線とする。
  */
 
-export interface ThemeImage { src: string; alt: string; credit: string; creditUrl: string; }
+/**
+ * 写真。creditUrl は借り物のときだけ入れる（ライセンス表示先）。
+ * 自前で撮ったものは表示先が無いので省略し、文字だけ出す。
+ */
+export interface ThemeImage { src: string; alt: string; credit: string; creditUrl?: string; }
 export interface ThemeSpot { name: string; area: string; areaSlug?: string; desc: string; image?: ThemeImage; mapQuery?: string; }
 export interface ThemeSection { kicker: string; title: string; body: string; }
 export interface Theme {
@@ -30,7 +34,7 @@ const CHECKED = '2026年8月13日';
 // ---- 帰属確認済みの画像 ----
 const IMG_OARAI: ThemeImage = { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg/1280px-Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg', alt: '大洗海岸から望む太平洋の日の出', credit: '写真：t.kunikuni / CC BY-SA 2.0', creditUrl: 'https://commons.wikimedia.org/wiki/File:Sunrise_of_the_Pacific_Ocean_-_Oarai_coast.jpg' };
 const IMG_FUKURODA: ThemeImage = { src: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Fukuroda%20Falls%2042.jpg?width=1280', alt: '大子町の袋田の滝', credit: '写真：Σ64 / CC BY 3.0', creditUrl: 'https://commons.wikimedia.org/wiki/File:Fukuroda_Falls_42.jpg' };
-const IMG_NEMOPHILA: ThemeImage = { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/2025_Hitachi_Seaside_Park.jpg/1280px-2025_Hitachi_Seaside_Park.jpg', alt: '国営ひたち海浜公園に咲くネモフィラ', credit: '写真：Kakidai / CC BY-SA 4.0', creditUrl: 'https://commons.wikimedia.org/wiki/File:2025_Hitachi_Seaside_Park.jpg' };
+const IMG_NEMOPHILA: ThemeImage = { src: '/images/theme/nemophila-hitachi-seaside-park.jpg', alt: '国営ひたち海浜公園のみはらしの丘に咲くネモフィラ', credit: '写真：イバトコ編集部' };
 const IMG_TSUKUBA: ThemeImage = { src: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Mt.Tsukuba.jpg', alt: '筑波山', credit: '写真：RESPITE / パブリックドメイン', creditUrl: 'https://commons.wikimedia.org/wiki/File:Mt.Tsukuba.jpg' };
 const IMG_HITACHI_STATION: ThemeImage = { src: '/images/area/hitachi/station.jpg', alt: '海に張り出した日立駅', credit: '写真：Σ64 / CC BY 4.0', creditUrl: 'https://commons.wikimedia.org/wiki/File:Hitachi_Station,_Ibaraki_01.jpg' };
 const IMG_KAMINE: ThemeImage = { src: '/images/area/hitachi/kamine-park.jpg', alt: '日立市かみね公園', credit: '写真：Σ64 / CC BY 4.0', creditUrl: 'https://commons.wikimedia.org/wiki/File:Kamine_Park,_Ibaraki_07.jpg' };

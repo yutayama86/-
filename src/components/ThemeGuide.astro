@@ -21,7 +21,9 @@ const { theme } = Astro.props;
     {theme.hero && (
       <figure class="tg-hero">
         <img src={theme.hero.src} alt={theme.hero.alt} loading="eager" fetchpriority="high" width="1280" height="854" />
-        <figcaption><a href={theme.hero.creditUrl} target="_blank" rel="license noopener">{theme.hero.credit}</a></figcaption>
+        <figcaption>{theme.hero.creditUrl
+          ? <a href={theme.hero.creditUrl} target="_blank" rel="license noopener">{theme.hero.credit}</a>
+          : theme.hero.credit}</figcaption>
       </figure>
     )}
   </header>
@@ -44,7 +46,9 @@ const { theme } = Astro.props;
           {sp.image && (
             <figure class="tg-card__fig">
               <img src={sp.image.src} alt={sp.image.alt} loading="lazy" decoding="async" width="1280" height="854" />
-              <figcaption><a href={sp.image.creditUrl} target="_blank" rel="license noopener">{sp.image.credit}</a></figcaption>
+              <figcaption>{sp.image.creditUrl
+                ? <a href={sp.image.creditUrl} target="_blank" rel="license noopener">{sp.image.credit}</a>
+                : sp.image.credit}</figcaption>
             </figure>
           )}
           <div class="tg-card__body">

@@ -20,6 +20,20 @@ const { guide } = Astro.props;
     </p>
   </header>
 
+  {guide.heroImage && (
+    <figure class="ig-hero bp-wrap">
+      <img
+        src={guide.heroImage.src}
+        alt={guide.heroImage.alt}
+        width={guide.heroImage.width}
+        height={guide.heroImage.height}
+        loading="eager"
+        fetchpriority="high"
+      />
+      <figcaption>{guide.heroImage.credit}</figcaption>
+    </figure>
+  )}
+
   <div class="ig-body bp-wrap">
     {guide.routeChain && (
       <section class="ig-route" aria-labelledby="ig-route-title">
@@ -70,6 +84,10 @@ const { guide } = Astro.props;
   .ig-meta{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:1.5rem;color:var(--color-soil);font-size:.76rem}
   .ig-body{display:grid;gap:clamp(2.5rem,6vw,4rem);padding-block:clamp(2.5rem,6vw,4rem);max-width:var(--content-reading)}
   /* 東京からの経路を一目で追えるようにする連鎖表示。横スクロールで折り返さない。 */
+  /* 冒頭写真。自前で撮ったものだけを置く。撮影者表記は写真の直下に小さく。 */
+  .ig-hero{margin:0 auto clamp(2rem,4vw,3rem)}
+  .ig-hero img{display:block;width:100%;height:auto;border-radius:.75rem}
+  .ig-hero figcaption{margin-top:.6rem;color:var(--color-soil);font-size:.72rem;letter-spacing:.02em}
   .ig-route h2{font:600 1.15rem var(--font-brand-display);color:var(--color-ink)}
   .ig-route ol{display:flex;flex-wrap:wrap;align-items:stretch;gap:.55rem;margin-top:1rem;padding:0;list-style:none}
   .ig-route li{display:grid;gap:.15rem;flex:0 1 auto;padding:.7rem .9rem;background:var(--color-white);border:1px solid var(--color-mist);border-radius:.5rem}

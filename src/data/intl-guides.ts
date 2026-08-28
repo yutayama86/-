@@ -29,6 +29,11 @@ export interface IntlGuide {
   quickAnswerLabel: string;
   quickAnswer: { q: string; a: string }[];
   /**
+   * 記事冒頭の写真。イバトコが自分で撮ったものだけを置く。
+   * 借り物の写真や、行っていない場所の写真は載せない（編集方針）。
+   */
+  heroImage?: { src: string; alt: string; credit: string; width: number; height: number };
+  /**
    * 東京からの経路を一目で示す連鎖（例：Tokyo → Katsuta → Bus → Park）。
    * 本文の表と同じ事実だけを短く並べる。新しい情報は足さない。
    * 旅行者の斜め読みと、AI検索の抜き出しの両方に効かせる目的。
@@ -66,6 +71,13 @@ export const HITACHI_SEASIDE_PARK: Record<Exclude<Locale, 'ja'>, IntlGuide> = {
       'The hill covered in millions of sky-blue nemophila flowers is one of the most photographed places in Japan — and it sits in Ibaraki, roughly two hours from central Tokyo.',
       'This guide covers how to actually get there without a car, what it costs, and when to go. We are a local media team based in Ibaraki, and we only publish what we can confirm with official sources.',
     ],
+    heroImage: {
+      src: '/images/intl/hitachi-seaside-park-nemophila.jpg',
+      alt: 'Visitors walking the ridge of Miharashi Hill at Hitachi Seaside Park, covered in blue nemophila flowers',
+      credit: 'Photo: IBATOCO Editorial Team',
+      width: 1108,
+      height: 831,
+    },
     routeChain: {
       label: 'The route at a glance',
       steps: [
@@ -178,6 +190,13 @@ export const HITACHI_SEASIDE_PARK: Record<Exclude<Locale, 'ja'>, IntlGuide> = {
       '一整片天空藍的粉蝶花山丘，是日本最常被拍到的風景之一。它就在茨城縣，距離東京市中心大約兩小時。',
       '這篇整理「實際上要怎麼去」：不自駕的路線、需要多少時間、門票多少錢、什麼季節去最好。我們是位於茨城的在地媒體，只刊登能在官方資料查證的內容。',
     ],
+    heroImage: {
+      src: '/images/intl/hitachi-seaside-park-nemophila.jpg',
+      alt: '國營常陸海濱公園「觀海之丘」上開滿藍色粉蝶花，遊客沿著山脊步道行走',
+      credit: '照片：IBATOCO 編輯部',
+      width: 1108,
+      height: 831,
+    },
     routeChain: {
       label: '路線一次看懂',
       steps: [
@@ -283,6 +302,13 @@ export const HITACHI_SEASIDE_PARK: Record<Exclude<Locale, 'ja'>, IntlGuide> = {
       '하늘색 네모필라가 언덕 전체를 덮는 풍경은 일본에서 가장 많이 사진에 담기는 장소 중 하나입니다. 그곳이 바로 이바라키, 도쿄 도심에서 약 2시간 거리에 있습니다.',
       '이 글에서는 렌터카 없이 실제로 가는 방법, 비용, 그리고 언제 가면 좋은지를 정리했습니다. 저희는 이바라키에 기반을 둔 로컬 미디어로, 공식 자료로 확인된 내용만 싣습니다.',
     ],
+    heroImage: {
+      src: '/images/intl/hitachi-seaside-park-nemophila.jpg',
+      alt: '국영 히타치 해변공원 미하라시 언덕을 뒤덮은 푸른 네모필라와 능선을 걷는 방문객',
+      credit: '사진: IBATOCO 편집부',
+      width: 1108,
+      height: 831,
+    },
     routeChain: {
       label: '경로 한눈에 보기',
       steps: [

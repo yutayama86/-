@@ -216,27 +216,25 @@ body.interior-site :is(main, article, section, header, div):has(> :is(
   .area-head,
   .hanabi-head,
   .ok-head,
-  .person-head
+  .person-head,
+  .tg-head
 ):first-child) {
   padding-top: 0;
 }
 
 /*
- * テーマガイド（/yama/ /umi/ 等）の見出しだけは例外。
- * 写真と横並びになる浮いたカードで、全幅バンドとは別の設計なので、
- * 上の一括指定を打ち消して従来のカード表現に戻す。
- */
-/*
- * テーマガイド（/yama/ /umi/ 等）の見出しは、写真と横並びのカードの中身。
- * カードの枠・背景は親の .tg-head が持ち、この要素自体は後段（「テーマガイド」節）で
- * 透明にされる。ここで必要なのは、全幅バンド用の左右paddingを打ち消すことだけ。
+ * テーマガイド（/umi/ /yama/ 等）の見出しは、右半分が写真の2カラム。
+ * 背景と枠は親の .tg-head が持ち、この要素は器にすぎない。
+ * 左は本文カラムの位置（--interior-gutter）に揃え、右は写真との間隔を取る。
+ * 共有の全幅バンド指定が !important なので、こちらも !important で上書きする。
  */
 body.interior-site .tg-head__copy {
   padding: var(--interior-hero-y) clamp(1.4rem, 4.2vw, 4rem) !important;
 }
 
+/* 装飾線は2カラムの左側に入ると写真と競合するので出さない */
 body.interior-site .tg-head__copy::after {
-  right: clamp(1rem, 5vw, 4rem);
+  display: none;
 }
 
 body.interior-site :is(
@@ -810,20 +808,26 @@ body.interior-site .tg {
   padding-top: clamp(1rem, 2.2vw, 1.8rem);
 }
 
+/*
+ * テーマガイドの見出しも、ほかの下層と同じくヘッダーに接する全幅にする。
+ * 紙色の上に浮いた角丸カードのままだと、ここだけ旧デザインが残って見える。
+ * 写真が下端まで来るので、下は溶かさずそのまま切る（写真の終わりが境界になる）。
+ */
 body.interior-site .tg-head {
-  width: min(calc(100% - clamp(2rem, 7vw, 7.5rem)), 1280px);
-  margin-inline: auto;
+  width: auto;
+  max-width: none;
+  margin: 0;
   overflow: hidden;
-  border: 1px solid rgba(31, 99, 191, .13);
-  border-radius: 1.25rem;
+  border: 0;
+  border-radius: 0;
   background: linear-gradient(132deg, rgba(255,255,255,.98), rgba(239,247,255,.94));
-  box-shadow: 0 16px 46px rgba(36, 77, 110, .075);
+  box-shadow: none;
 }
 
 body.interior-site .tg-head__copy {
   width: auto;
   margin: 0;
-  padding: clamp(2rem, 4vw, 3.5rem);
+  /* padding は上の「Editorial hero」節で !important 指定済み。ここでは触らない */
   overflow: visible;
   border: 0;
   border-radius: 0;
@@ -859,6 +863,17 @@ body.interior-site .tg-hero img {
     display: grid;
     grid-template-columns: minmax(26rem, .82fr) minmax(0, 1.18fr);
     min-height: clamp(24rem, 35vw, 27rem);
+    /*
+     * 本文カラムに合わせる左余白は、コピー側ではなくここで取る。
+     * .tg-head__copy はグリッド項目なので、padding の % が
+     * 「グリッド領域の幅」基準になり、--interior-gutter が正しく解決しない。
+     * 親（通常フローのブロック）で取れば画面幅基準になる。
+     */
+    padding-left: var(--interior-gutter);
+  }
+
+  body.interior-site .tg-head--with-hero .tg-head__copy {
+    padding-left: 0 !important;
   }
 
   body.interior-site .tg-head__copy {
@@ -1724,13 +1739,15 @@ body.interior-site .rp-final {
 /* テーマページはスマホでも文章と写真を一続きの表紙として見せる。 */
 @media (max-width: 960px) {
   body.interior-site .tg-head {
-    width: min(calc(100% - 2rem), 1280px);
+    /* 狭い画面でも全幅バンドのまま。角丸と左右余白は付け直さない */
+    width: auto;
+    margin: 0;
   }
 
   body.interior-site .tg-head__copy {
     width: auto;
     margin: 0;
-    padding: clamp(1.8rem, 6vw, 2.6rem);
+    padding: clamp(1.8rem, 6vw, 2.6rem) var(--interior-gutter);
     border: 0;
     border-radius: 0;
     background: transparent;
@@ -1754,7 +1771,8 @@ body.interior-site .rp-final {
 
 @media (max-width: 420px) {
   body.interior-site .tg-head {
-    width: calc(100% - 1.5rem);
-    border-radius: .9rem;
+    /* 全幅バンドを維持（以前はここで角丸カードに戻していた） */
+    width: auto;
+    border-radius: 0;
   }
 }

@@ -1117,7 +1117,8 @@ body.interior-site :is(.belief, .policies, .separation, .scope, .biz-cta, .about
  * 上下の余白は残し、前後の節と混ざらないようにする。
  */
 body.interior-site .belief {
-  margin-block: clamp(2.75rem, 5.5vw, 5.5rem);
+  /* 節の上下余白は共通スケールに揃える（他の節と同じ値にする） */
+  margin-block: var(--interior-section-y);
   padding: 0;
   border: 0;
   border-radius: 0;

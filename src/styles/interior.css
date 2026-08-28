@@ -964,15 +964,36 @@ body.interior-site .ok-region a:hover {
 }
 
 /* --- Fixed/editorial pages -------------------------------------------- */
+/*
+ * 方針・規約などの文章ページ。ほかの下層と同じくヘッダーに接する全幅にする。
+ * 紙色の上に浮いた角丸カードのままだと、ここだけ旧デザインとして残る。
+ *
+ * ただし読み幅は変えない。背景だけ全幅に広げ、本文は 716px の段のまま
+ * 中央に置く（カード時代の 860px から左右padding 72px を引いた実測値）。
+ * width の !important は、狭い画面用の .wrap 指定が後ろで勝つため。
+ */
 body.interior-site :is(.policy, .pv, .rsv, .nf) {
-  width: min(calc(100% - 2rem), 860px);
-  max-width: 860px;
-  margin-block: clamp(2rem, 5vw, 4rem);
-  padding: clamp(2rem, 5vw, 4.5rem);
-  border: 1px solid rgba(31, 99, 191, .12);
-  border-radius: 1.25rem;
+  position: relative;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 0 clamp(2rem, 5vw, 4rem);
+  padding: clamp(2rem, 5vw, 4.5rem) max(1.25rem, calc((100% - 716px) / 2));
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* 背景は疑似要素に持たせ、下端を紙色へ溶かす（見出しバンドと同じ手当て） */
+body.interior-site :is(.policy, .pv, .rsv, .nf)::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
   background: rgba(255,255,255,.9);
-  box-shadow: var(--interior-shadow);
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 5rem), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 5rem), transparent 100%);
 }
 
 body.interior-site :is(.policy-title, .pv-title, .rsv-title, .nf-title, .tag-title) {
@@ -1676,11 +1697,11 @@ body.interior-site .rp-final {
     aspect-ratio: 4 / 3;
   }
 
+  /* 狭い画面でも全幅のまま。上の余白と角丸は付け直さない */
   body.interior-site :is(.policy, .pv, .rsv, .nf) {
-    width: calc(100% - 1.5rem);
-    margin-block: .8rem 2rem;
-    padding: 1.35rem 1.1rem 1.75rem;
-    border-radius: .95rem;
+    margin: 0 0 2rem;
+    padding: 1.35rem max(1rem, calc((100% - 716px) / 2)) 1.75rem;
+    border-radius: 0;
   }
 
   /* 問い合わせは狭い画面でも全幅パネルのまま。上の余白と角丸は付け直さない */

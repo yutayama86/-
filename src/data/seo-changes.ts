@@ -50,7 +50,7 @@ export const SEO_CHANGES: SeoChange[] = [
     kind: 'on-page',
     change: '運賃セクションを改善。金額は一次情報で確認できなかったため書かず、茨城交通の経路・運賃検索とJR東日本英語サイトへの導線を追加。title/description/H1・hreflang・canonicalは監査の結果いずれも適正で無変更',
     queries: ['Tokyo to Hitachi Seaside Park', 'Hitachi Seaside Park from Tokyo', 'how to get to Hitachi Seaside Park from Tokyo'],
-    commit: 'PENDING',
+    commit: 'f2511e3',
     note: '公園公式・茨城交通のりば案内とも運賃の掲載なし、茨城交通のリリースは403で読めず。検索結果には450円とあるが未確認のため不採用。経路と所要時間（東京→勝田 特急約85分／勝田駅東口2番のりば→西口 約15分／みと号 約2時間）は公園公式で再確認し、既存記載と一致。/en/配下は本ページ1本のみで、同言語の内部リンク先が存在しない。',
   },
   {

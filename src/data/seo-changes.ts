@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260830-news-chikusei-shinycolors-collab-2026',
+    date: '2026-08-30',
+    url: '/news/chikusei-shinycolors-collab-2026/',
+    kind: 'new-article',
+    change: '筑西市×シャイニーカラーズのコラボを起点に、IPコラボの価値は話題化ではなくファンが街を歩き消費する理由を設計できるかだという視点で解説',
+    queries: ['筑西市 シャニマス', 'シャイニーカラーズ 筑西市', 'ちくせい花火大会 2026', '筑西市 コラボ', 'シャニマス 応援席'],
+    commit: 'PENDING',
+    note: '出典URLは依頼になかったため特定。市の公式2本（コラボ8/29更新・花火5/13更新）で全数値を再確認した。スタンプラリー5か所の名称とグッズの販売場所・価格は市のページに記載がなく、記事とFAQで「記載なし」と明示。デジタル観光コンテンツのプロポーザル資料は404で引用せず。権利物は不使用でOG画像は自前SVGのみ。',
+  },
+  {
     id: '20260829-news-hitachi-jidounten-bus-ai-tsushin-20',
     date: '2026-08-29',
     url: '/news/hitachi-jidounten-bus-ai-tsushin-2026/',

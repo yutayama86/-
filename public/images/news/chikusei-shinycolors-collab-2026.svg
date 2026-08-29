@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="1日の花火を16日間の期間へ広げ、5か所中3か所の回遊を経て道の駅とカフェの消費接点へつなぐ流れを示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <text x="100" y="180" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">集める</text>
+  <rect x="100" y="196" width="180" height="52" fill="none" stroke="#a63f32" stroke-width="2"/>
+  <text x="190" y="221" font-family="'Source Sans 3', sans-serif" font-size="18" font-weight="600" fill="#a63f32" text-anchor="middle">花火</text>
+  <text x="190" y="240" font-family="'Source Sans 3', sans-serif" font-size="14" fill="#a63f32" text-anchor="middle">10月17日の1日</text>
+
+  <g fill="none" stroke="#315c68" stroke-width="1.8">
+    <path d="M286 222 H352"/>
+    <path d="M340 212 L358 222 L340 232"/>
+  </g>
+
+  <text x="368" y="180" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">歩かせる</text>
+  <rect x="368" y="196" width="200" height="52" fill="none" stroke="#315c68" stroke-width="1.8"/>
+  <text x="468" y="221" font-family="'Source Sans 3', sans-serif" font-size="18" font-weight="600" fill="#315c68" text-anchor="middle">5か所中3か所</text>
+  <text x="468" y="240" font-family="'Source Sans 3', sans-serif" font-size="14" fill="#315c68" text-anchor="middle">スタンプラリー</text>
+
+  <g fill="none" stroke="#315c68" stroke-width="1.8">
+    <path d="M574 222 H640"/>
+    <path d="M628 212 L646 222 L628 232"/>
+  </g>
+
+  <text x="656" y="180" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">足を止める</text>
+  <rect x="656" y="196" width="230" height="52" fill="none" stroke="#172b35" stroke-width="2"/>
+  <text x="771" y="221" font-family="'Source Sans 3', sans-serif" font-size="17" font-weight="600" fill="#172b35" text-anchor="middle">道の駅・カフェ</text>
+  <text x="771" y="240" font-family="'Source Sans 3', sans-serif" font-size="14" fill="#172b35" text-anchor="middle">ポストカード引き換え</text>
+
+  <text x="100" y="300" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a">コラボ期間は10月10日から25日までの16日間。花火の前後にも幅がある</text>
+
+  <text x="100" y="392" font-family="'Shippori Mincho', serif" font-size="52" font-weight="600" fill="#172b35">話題になるだけでは、</text>
+  <text x="100" y="452" font-family="'Shippori Mincho', serif" font-size="52" font-weight="600" fill="#172b35">街に何も残らない。</text>
+
+  <text x="100" y="512" font-family="'Shippori Mincho', serif" font-size="24" fill="#315c68">筑西市×アイドルマスター シャイニーカラーズ</text>
+
+  <text x="1100" y="512" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">応援席 12,000円（税込）／イス席・定員1名</text>
+  <text x="1100" y="546" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">花火は約20,000発規模／道の駅グランテラス筑西周辺</text>
+</svg>

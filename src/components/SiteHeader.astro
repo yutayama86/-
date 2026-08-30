@@ -73,11 +73,13 @@ const aboutLinks = [
     </a>
 
     <nav class="desktop-nav" aria-label="メインナビゲーション">
-      <a href="/news/" class:list={{ 'is-current': currentPath.startsWith('/news/') }} aria-current={currentPath.startsWith('/news/') ? 'page' : undefined}>ニュース</a>
-      <a href="/sports/" class:list={{ 'is-current': currentPath.startsWith('/sports/') }} aria-current={currentPath.startsWith('/sports/') ? 'page' : undefined}>スポーツ</a>
+      {/* 並びはサイトの実態に合わせる。44市町村＋テーマ（60ページ）が中核資産なので先頭。
+          次に更新の軸のニュース、そのあとに育成中のスポーツ。 */}
       <button type="button" class:list={{ 'is-current': isDiscoverCurrent }} data-menu-trigger="discover" aria-expanded="false" aria-controls="discover-menu">
         茨城を探す <NavCaret />
       </button>
+      <a href="/news/" class:list={{ 'is-current': currentPath.startsWith('/news/') }} aria-current={currentPath.startsWith('/news/') ? 'page' : undefined}>ニュース</a>
+      <a href="/sports/" class:list={{ 'is-current': currentPath.startsWith('/sports/') }} aria-current={currentPath.startsWith('/sports/') ? 'page' : undefined}>スポーツ</a>
       {/* 「イバトコについて」はトリガーと面を同じ入れ物に入れ、真下に出す。
           以前は面をヘッダー直下に置いて left:50% で寄せていたため、
           画面幅によってボタンから最大70pxほど横へずれていた。 */}
@@ -113,7 +115,9 @@ const aboutLinks = [
       <div class="mega-intro">
         <span class="menu-number">01</span>
         <p class="en-label">DISCOVER IBARAKI</p>
-        <h2>知らなかった茨城へ。</h2>
+        {/* 改行位置は指定する。自動折返しだと「知らなかった茨城／へ。」と
+            2文字だけの行ができる（1440pxでも起きる） */}
+        <h2>知らなかった<br />茨城へ。</h2>
         <p>自然、季節、目的。いまの気分に近い入口から、土地の話をたどれます。</p>
         <a class="area-gateway" href="/area/">
           <span><small>IBARAKI 44 CITIES</small>44市町村から探す</span>
@@ -138,8 +142,7 @@ const aboutLinks = [
   <div class="mobile-panel" id="mobile-menu" data-mobile-panel aria-hidden="true">
     <div class="mobile-panel__inner">
       <p class="en-label">MENU</p>
-      <a class="mobile-main-link" href="/news/">ニュース <span aria-hidden="true">→</span></a>
-      <a class="mobile-main-link" href="/sports/">スポーツ <span aria-hidden="true">→</span></a>
+      {/* PCナビと同じ並び。順番が2つで食い違うと、どちらが正か分からなくなる */}
       <details open>
         <summary>茨城を探す <span aria-hidden="true">＋</span></summary>
         <div class="mobile-discovery">
@@ -152,6 +155,8 @@ const aboutLinks = [
           ))}
         </div>
       </details>
+      <a class="mobile-main-link" href="/news/">ニュース <span aria-hidden="true">→</span></a>
+      <a class="mobile-main-link" href="/sports/">スポーツ <span aria-hidden="true">→</span></a>
       <details>
         <summary>イバトコについて <span aria-hidden="true">＋</span></summary>
         <div class="mobile-sub-links">{aboutLinks.map((item) => <a href={item.href}>{item.label}</a>)}</div>

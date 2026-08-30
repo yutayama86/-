@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="年間のうち試合日はごく一部で、残る非試合日をどう使うかが問われていること、そして会場から鹿行地域へ人の流れが広がる構造を示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <text x="100" y="178" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">1年のうち、スタジアムに人が集まる日</text>
+
+  <g transform="translate(100,196)">
+    <rect x="0" y="0" width="132" height="46" fill="none" stroke="#a63f32" stroke-width="2"/>
+    <text x="66" y="29" font-family="'Source Sans 3', sans-serif" font-size="16" font-weight="600" fill="#a63f32" text-anchor="middle">試合日</text>
+    <rect x="140" y="0" width="746" height="46" fill="none" stroke="#315c68" stroke-width="1.6" stroke-dasharray="5 5"/>
+    <text x="513" y="29" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#315c68" text-anchor="middle">非試合日 ── ここをどう使うかが、今回のアンケートで聞かれている</text>
+  </g>
+
+  <text x="100" y="298" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">会場の中だけで完結させない</text>
+  <g fill="none" stroke="#315c68" stroke-width="1.8">
+    <path d="M104 322 H196"/><path d="M184 312 L202 322 L184 332"/>
+  </g>
+  <text x="216" y="328" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#172b35">飲食・イベント・健康・観光・地域産品・宿泊</text>
+  <g fill="none" stroke="#315c68" stroke-width="1.8">
+    <path d="M104 356 H196"/><path d="M184 346 L202 356 L184 366"/>
+  </g>
+  <text x="216" y="362" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#172b35">鹿嶋市・潮来市・神栖市・行方市・鉾田市への回遊</text>
+
+  <text x="100" y="452" font-family="'Shippori Mincho', serif" font-size="48" font-weight="600" fill="#172b35">試合の日だけの施設に、</text>
+  <text x="100" y="508" font-family="'Shippori Mincho', serif" font-size="48" font-weight="600" fill="#172b35">しないために。</text>
+
+  <text x="1100" y="500" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">茨城県のアンケートは2026年9月15日まで</text>
+  <text x="1100" y="534" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">整備の賛否を問う調査ではない</text>
+</svg>

@@ -16,6 +16,8 @@ tags:
 prefecture: "茨城県"
 municipalities:
   - "mito"
+sportsTeam: "mito-hollyhock"
+sportsContentType: "column"
 featured: true
 draft: false
 reviewed: true

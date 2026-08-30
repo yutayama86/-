@@ -10,8 +10,10 @@
  *    「関連市町村」などにまとめて平らにしない。まとめた瞬間に事実が変わる。
  *    例：ロボッツのホームタウンは水戸市の1市だけで、つくば市はマザータウン。
  *    検索結果には両者を混ぜた記述があるが、公式の区分に従う。
- *  - 試合日程・結果・順位は SPORTS_MATCHES に入れるが、**現時点では空**。
- *    未確認のまま入れない。外部APIの自動取得は今回実装していない。
+ *  - 試合日程・結果・順位は、確認できたものだけを入れる。外部APIの自動取得はしない。
+ *    出どころは2つ：記事frontmatterの sportsMatch と、下の SPORTS_MATCHES。
+ *    記事のある試合は記事側が持ち、記事の無い試合だけ SPORTS_MATCHES に手で入れる。
+ *    読み出しは lib/sports.ts の getTeamMatches() に一本化する。
  *  - 公式ロゴ・選手写真など権利の確認できない素材は使わない。テキストだけで構成する。
  */
 
@@ -195,6 +197,11 @@ export const SPORTS_TEAM_BY_SLUG: Record<SportsTeamSlug, SportsTeam> = Object.fr
   SPORTS_TEAMS.map((team) => [team.slug, team])
 ) as Record<SportsTeamSlug, SportsTeam>;
 
+/** 区分をまたいだ市町村slugの重複なし一覧。関係する街の記事を引くのに使う */
+export function townSlugsOf(team: SportsTeam): string[] {
+  return [...new Set(team.towns.flatMap((group) => group.slugs))];
+}
+
 /**
  * 一覧カード用に、最初の区分（各チームとも最上位の関係＝ホームタウン等）だけを返す。
  * 下位の区分まで並べるとカードが埋まるうえ、区分の違いが読めなくなる。
@@ -227,24 +234,11 @@ export interface SportsMatch {
 }
 
 /**
- * 試合データ。**意図的に空**にしてある。
+ * 記事を書いていない試合を手で入れる場所。**現時点では空**。
+ * 記事のある試合は記事frontmatterの sportsMatch が持つので、ここには重複させない。
  * 日程・結果・順位は一次情報で確認できたものだけを入れる。
- * 空のあいだ、画面には「準備中」と出す。
+ *
+ * 画面へ出すときは lib/sports.ts の getTeamMatches() を使う。
+ * ここと記事の両方をまとめて重複を除くので、読み出し口はそちらに一本化する。
  */
 export const SPORTS_MATCHES: SportsMatch[] = [];
-
-export function matchesOf(team: SportsTeamSlug): SportsMatch[] {
-  return SPORTS_MATCHES.filter((m) => m.team === team);
-}
-
-export function upcomingMatches(team: SportsTeamSlug): SportsMatch[] {
-  return matchesOf(team)
-    .filter((m) => m.status === 'scheduled')
-    .sort((a, b) => a.date.localeCompare(b.date));
-}
-
-export function finishedMatches(team: SportsTeamSlug): SportsMatch[] {
-  return matchesOf(team)
-    .filter((m) => m.status === 'finished')
-    .sort((a, b) => b.date.localeCompare(a.date));
-}

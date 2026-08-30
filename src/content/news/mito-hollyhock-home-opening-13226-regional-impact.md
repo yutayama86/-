@@ -17,6 +17,8 @@ prefecture: "茨城県"
 municipalities:
   - "mito"
   - "naka"
+sportsTeam: "mito-hollyhock"
+sportsContentType: "news"
 featured: true
 draft: false
 reviewed: true

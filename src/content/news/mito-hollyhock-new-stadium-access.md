@@ -8,6 +8,8 @@ category: "transport"
 tags: ["水戸ホーリーホック", "水戸信用金庫スタジアム", "予約制駐車場", "無料シャトル", "東海駅", "水戸駅"]
 prefecture: "茨城県"
 municipalities: ["naka", "tokai"]
+sportsTeam: "mito-hollyhock"
+sportsContentType: "home-guide"
 featured: true
 draft: false
 reviewed: true

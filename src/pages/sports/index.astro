@@ -9,8 +9,10 @@
 import BrandBase from '../../layouts/BrandBase.astro';
 import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
 import { breadcrumbJsonLd } from '../../lib/seo';
-import { SPORTS_TEAMS, SPORTS_CONTENT_TYPES, SPORTS_MATCHES, primaryTowns } from '../../data/sports';
+import { SPORTS_TEAMS, SPORTS_CONTENT_TYPES, primaryTowns } from '../../data/sports';
 import { MUNICIPALITIES } from '../../data/areas';
+import { getSportsNews, getSportsNewsByKeyword } from '../../lib/content';
+import { getTeamMatches } from '../../lib/sports';
 
 /** カードの1行。1市町村なら数ではなく市町村名を出す（「1市町村」は読みにくい） */
 const townLabel = (group: { label: string; slugs: string[] }) => {
@@ -20,7 +22,10 @@ const townLabel = (group: { label: string; slugs: string[] }) => {
   }
   return `${group.label}：${group.slugs.length}市町村`;
 };
-import { getSportsNews, getSportsNewsByKeyword } from '../../lib/content';
+
+// 試合が1件でも入っていれば、下の「準備中」の注記は出さない。
+// 記事側の sportsMatch も数えるので、記事を1本足せば自動で消える。
+const matchCount = (await Promise.all(SPORTS_TEAMS.map((t) => getTeamMatches(t.slug)))).flat().length;
 
 const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '茨城のスポーツ' }];
 const pageUrl = new URL('/sports/', Astro.site).href;
@@ -122,7 +127,7 @@ const jsonLd = [
     <p class="sp-more"><a href="/news/">茨城ニュース解説をすべて見る →</a></p>
   </section>
 
-  {SPORTS_MATCHES.length === 0 && (
+  {matchCount === 0 && (
     <section class="sp-note bp-wrap bp-section">
       <p><strong>試合の日程と結果について。</strong>公式で確認できた情報だけを載せる方針のため、日程・結果・順位の掲載はまだ準備中です。確認が取れ次第、各チームのページへ追加します。</p>
     </section>

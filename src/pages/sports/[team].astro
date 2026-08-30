@@ -2,21 +2,23 @@
 /**
  * /sports/<team>/ — チームページ。5チームすべて同じ部品・同じデータ構造で作る。
  *
- * 構成：チーム紹介 / 次の試合 / 最近の試合 / 記事（種類ごと）/ 地域への導線。
- * 試合データ（SPORTS_MATCHES）は現時点で空なので、該当セクションは
- * 「準備中」と明示する。未確認の日程・結果・順位は出さない。
+ * 構成：チーム紹介 / 次の試合・直近の結果・最新記事 / 記事（種類ごと）/ 地域への導線。
+ * 記事は sportsTeam で自動的に集まる。記事URLの一覧は持たない。
+ * 未確認の日程・結果・順位は出さない。データが無い枠は黙って出さない。
  * 公式ロゴ・選手写真は権利が確認できないため使わない。
  */
 import type { GetStaticPaths } from 'astro';
 import BrandBase from '../../layouts/BrandBase.astro';
 import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import SportsMatchBoard from '../../components/SportsMatchBoard.astro';
 import { breadcrumbJsonLd } from '../../lib/seo';
 import {
   SPORTS_TEAMS, SPORTS_TEAM_BY_SLUG, SPORTS_CONTENT_TYPES,
-  upcomingMatches, finishedMatches, type SportsContentType,
+  townSlugsOf, type SportsContentType,
 } from '../../data/sports';
 import { MUNICIPALITIES } from '../../data/areas';
-import { getSportsNews, getSportsNewsByKeyword } from '../../lib/content';
+import { getSportsNews, getSportsNewsByKeyword, getIndexableNews } from '../../lib/content';
+import { getTeamMatches, pickNextMatch, pickLatestResult } from '../../lib/sports';
 
 export const getStaticPaths = (() => SPORTS_TEAMS.map((team) => ({ params: { team: team.slug } }))) satisfies GetStaticPaths;
 
@@ -24,19 +26,24 @@ const { team: slug } = Astro.params;
 const team = SPORTS_TEAM_BY_SLUG[slug as keyof typeof SPORTS_TEAM_BY_SLUG];
 if (!team) return Astro.redirect('/404');
 
-const upcoming = upcomingMatches(team.slug);
-const finished = finishedMatches(team.slug);
+// 試合は記事frontmatterと手入力の両方から集める（lib/sports.ts）
+const matches = await getTeamMatches(team.slug);
+const nextMatch = pickNextMatch(matches);
+const latestResult = pickLatestResult(matches);
 
-// sportsTeam で分類された記事。将来CMSから追加されるぶんはここに入る。
+// sportsTeam で分類された記事。ChatGPTから追加されるぶんはここに入る。
 const tagged = await getSportsNews(team.slug);
-// 既存記事は分類を持たないため、チーム名で拾って橋渡しする（推測はしない）。
+// sportsTeam が未設定の既存記事は、チーム名の一致だけで拾う（推測はしない）。
 const legacy = await getSportsNewsByKeyword([team.name]);
 const seen = new Set<string>();
 const articles = [...tagged, ...legacy].filter((item) => {
   if (seen.has(item.id)) return false;
   seen.add(item.id);
   return true;
-});
+}).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const newsPath = (id: string) => `/news/${id.split('/').pop()}/`;
+const fmt = (d: Date) => new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
 
 /** 種類ごとに束ねる。分類が未設定の既存記事は「関連記事」へ寄せる。 */
 const byType = new Map<SportsContentType, typeof articles>();
@@ -46,6 +53,40 @@ for (const item of articles) {
   if (t) byType.set(t, [...(byType.get(t) ?? []), item]);
   else untyped.push(item);
 }
+
+/**
+ * 一覧の見出し。0件の束は作らないので、記事が増えるまで自然に出てこない。
+ * ニュースとコラムは1つにまとめる（分けるほど本数が無い段階で細かく割らない）。
+ */
+const SECTIONS: { title: string; types: SportsContentType[] }[] = [
+  { title: '試合結果', types: ['match-result'] },
+  { title: 'プレビュー', types: ['preview'] },
+  { title: '観戦・ホームガイド', types: ['home-guide'] },
+  { title: 'アウェイ遠征', types: ['away-guide'] },
+  { title: 'ニュース・コラム', types: ['news', 'column'] },
+];
+const sections = SECTIONS
+  .map((s) => ({ title: s.title, items: s.types.flatMap((t) => byType.get(t) ?? []) }))
+  .filter((s) => s.items.length > 0);
+
+/** 上部の LATEST STORIES。種類の札を添えて3件まで */
+const stories = articles.slice(0, 3).map((item) => {
+  const t = item.data.sportsContentType as SportsContentType | undefined;
+  return {
+    href: newsPath(item.id),
+    title: item.data.title,
+    date: item.data.pubDate,
+    typeLabel: t ? SPORTS_CONTENT_TYPES[t].label : undefined,
+  };
+});
+
+// ホームタウンの市町村に関わるニュース（このチームの記事は除く）。
+// 手で選ばず、既存の municipalities から自動で拾うので、リンク切れが起きない。
+const townSlugs = new Set(townSlugsOf(team));
+const teamArticleIds = new Set(articles.map((a) => a.id));
+const townNews = (await getIndexableNews())
+  .filter((item) => !teamArticleIds.has(item.id) && item.data.municipalities.some((m) => townSlugs.has(m)))
+  .slice(0, 4);
 
 // 区分（ホームタウン／マザータウン等）を保ったまま市町村を引く。
 // 区分をまたいで平らにすると事実が変わるため、まとめない。
@@ -64,8 +105,6 @@ const crumbs: Crumb[] = [
   { name: team.name },
 ];
 const pageUrl = new URL(`/sports/${team.slug}/`, Astro.site).href;
-const newsPath = (id: string) => `/news/${id.split('/').pop()}/`;
-const fmt = (d: Date) => new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
 
 const jsonLd = [
   breadcrumbJsonLd(crumbs, Astro.site),
@@ -100,53 +139,19 @@ const jsonLd = [
     )}
   </header>
 
-  <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-next">
-    <h2 id="tm-next" class="bp-section-title">次の試合</h2>
-    {upcoming.length > 0 ? (
-      <ul class="tm-matches">{upcoming.map((m) => (
-        <li>
-          <span class="tm-date">{m.date}{m.startTime ? ` ${m.startTime}` : ''}</span>
-          <strong>{m.homeAway === 'home' ? 'ホーム' : m.homeAway === 'away' ? 'アウェイ' : '中立'}　vs {m.opponent}</strong>
-          <span class="tm-meta">{m.competition}／{m.venue}</span>
-          {m.articleUrl && <a href={m.articleUrl}>この試合の記事 →</a>}
-        </li>
-      ))}</ul>
-    ) : (
-      <p class="tm-empty">日程はまだ掲載していません。公式で確認できたものから順に載せます。</p>
-    )}
-  </section>
+  <SportsMatchBoard next={nextMatch} latest={latestResult} stories={stories} />
 
-  <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-recent">
-    <h2 id="tm-recent" class="bp-section-title">最近の試合</h2>
-    {finished.length > 0 ? (
-      <ul class="tm-matches">{finished.map((m) => (
-        <li>
-          <span class="tm-date">{m.date}</span>
-          <strong>vs {m.opponent}{m.score ? `　${m.score.own} - ${m.score.opponent}` : ''}</strong>
-          <span class="tm-meta">{m.competition}／{m.venue}</span>
-          {m.articleUrl && <a href={m.articleUrl}>試合結果を読む →</a>}
-        </li>
+  {sections.map((section) => (
+    <section class="tm-block bp-wrap bp-section">
+      <h2 class="bp-section-title">{section.title}</h2>
+      <ul class="tm-articles">{section.items.map((item) => (
+        <li><a href={newsPath(item.id)}>
+          <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
+          <strong>{item.data.title}</strong>
+        </a></li>
       ))}</ul>
-    ) : (
-      <p class="tm-empty">試合結果はまだ掲載していません。順位や成績も、確認できるまで書きません。</p>
-    )}
-  </section>
-
-  {[...Object.keys(SPORTS_CONTENT_TYPES)].map((key) => {
-    const type = key as SportsContentType;
-    const list = byType.get(type) ?? [];
-    return list.length > 0 ? (
-      <section class="tm-block bp-wrap bp-section">
-        <h2 class="bp-section-title">{SPORTS_CONTENT_TYPES[type].label}</h2>
-        <ul class="tm-articles">{list.map((item) => (
-          <li><a href={newsPath(item.id)}>
-            <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
-            <strong>{item.data.title}</strong>
-          </a></li>
-        ))}</ul>
-      </section>
-    ) : null;
-  })}
+    </section>
+  ))}
 
   {untyped.length > 0 && (
     <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-related">
@@ -164,6 +169,19 @@ const jsonLd = [
     <section class="tm-block bp-wrap bp-section">
       <h2 class="bp-section-title">記事</h2>
       <p class="tm-empty">このチームの記事はこれから公開します。</p>
+    </section>
+  )}
+
+  {townNews.length > 0 && (
+    <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-townnews">
+      <h2 id="tm-townnews" class="bp-section-title">この街のニュース</h2>
+      <p class="tm-lead">ホームタウンの市町村を扱った記事です。試合とは別の切り口で、同じ街を追っています。</p>
+      <ul class="tm-articles">{townNews.map((item) => (
+        <li><a href={newsPath(item.id)}>
+          <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
+          <strong>{item.data.title}</strong>
+        </a></li>
+      ))}</ul>
     </section>
   )}
 

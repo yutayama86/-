@@ -192,6 +192,23 @@ const news = defineCollection({
     /** スポーツ記事のときだけ指定する。/sports/ 配下の絞り込みに使う */
     sportsTeam: z.enum(sportsTeamSlugs).optional(),
     sportsContentType: z.enum(sportsContentTypes).optional(),
+    /**
+     * 試合そのものを扱う記事だけに付ける。チームページの
+     * NEXT MATCH / LATEST RESULT はここから組み立てる。
+     * 記事URLの一覧を手で持たないための土台なので、
+     * 試合を書いたら必ずここにも入れる。
+     * score は終了した試合だけ。未確定の結果・順位は書かない。
+     */
+    sportsMatch: z.object({
+      date: z.coerce.date(),
+      opponent: z.string().min(1),
+      homeAway: z.enum(['home', 'away', 'neutral']),
+      /** 開始時刻 HH:mm。未定なら省く（「未定」と書かない） */
+      kickoff: z.string().regex(/^\d{2}:\d{2}$/).optional(),
+      competition: z.string().min(1).optional(),
+      venue: z.string().min(1).optional(),
+      score: z.object({ own: z.number().int().min(0), opponent: z.number().int().min(0) }).optional(),
+    }).optional(),
     featured: z.boolean().default(false),
     draft: z.boolean().default(true),
     reviewed: z.boolean().default(false),
@@ -240,6 +257,14 @@ const news = defineCollection({
   }).superRefine((data, ctx) => {
     if (!data.draft && !data.reviewed) {
       ctx.addIssue({ code: 'custom', path: ['reviewed'], message: 'ニュース公開には編集部の事実確認（reviewed: true）が必要です。' });
+    }
+    // スポーツ用のフィールドは、どのチームの記事か決まっていないと置き場所が無い。
+    // 付け忘れるとチームページに出ないまま気づけないので、ビルドで止める。
+    if (data.sportsContentType && !data.sportsTeam) {
+      ctx.addIssue({ code: 'custom', path: ['sportsTeam'], message: 'sportsContentType を指定した記事には sportsTeam が必要です。' });
+    }
+    if (data.sportsMatch && !data.sportsTeam) {
+      ctx.addIssue({ code: 'custom', path: ['sportsTeam'], message: 'sportsMatch を指定した記事には sportsTeam が必要です。' });
     }
     if (!data.draft && data.sourceUrls.length === 0) {
       ctx.addIssue({ code: 'custom', path: ['sourceUrls'], message: '公開ニュースには一次情報または信頼できる情報源URLが必要です。' });

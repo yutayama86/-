@@ -4,10 +4,12 @@
  * 事実の扱い（重要）:
  *  - チームの所属リーグ・本拠地・ホームタウンは、**公式で確認できたものだけ**を書く。
  *    確認できていない項目は undefined のままにし、画面側で「準備中」または非表示にする。
- *    2026年8月30日に各チームの公式サイトで確認した。確認できなかったものは書いていない。
- *    ホームタウンを公式に明記しているのはアストロプラネッツのみで、
- *    鹿島・ロボッツは本拠地スタジアム名までしか確認できていない。
- *    クーガーズは公式サイトにリーグ・本拠地の記載がなかった。
+ *    2026年8月30日に各チームの公式サイト（クーガーズのみひたちなか市公式）で確認した。
+ *  - 関係市町村の区分名は**クラブが使っている表記をそのまま使う**。
+ *    ホームタウン／マザータウン／フレンドリータウン／フランチャイズは意味が違うため、
+ *    「関連市町村」などにまとめて平らにしない。まとめた瞬間に事実が変わる。
+ *    例：ロボッツのホームタウンは水戸市の1市だけで、つくば市はマザータウン。
+ *    検索結果には両者を混ぜた記述があるが、公式の区分に従う。
  *  - 試合日程・結果・順位は SPORTS_MATCHES に入れるが、**現時点では空**。
  *    未確認のまま入れない。外部APIの自動取得は今回実装していない。
  *  - 公式ロゴ・選手写真など権利の確認できない素材は使わない。テキストだけで構成する。
@@ -39,6 +41,17 @@ export const SPORTS_CONTENT_TYPES: Record<SportsContentType, { label: string; no
   column: { label: 'コラム', note: '編集部の視点' },
 };
 
+/**
+ * クラブと市町村の関係。区分ごとに分けて持つ。
+ * label にはクラブの公式表記をそのまま入れる（言い換えない）。
+ */
+export interface SportsTownGroup {
+  /** 例：ホームタウン、マザータウン、フレンドリータウン、フランチャイズ */
+  label: string;
+  /** 市町村slug。src/data/areas.ts の44件に一致させる */
+  slugs: string[];
+}
+
 export interface SportsTeam {
   slug: SportsTeamSlug;
   /** 公式表記のチーム名 */
@@ -51,8 +64,8 @@ export interface SportsTeam {
   league?: string;
   /** 本拠地。未確認なら undefined（画面に出さない） */
   venue?: string;
-  /** 関連する市町村slug。確認できたものだけ。/area/ への導線に使う */
-  municipalitySlugs: string[];
+  /** 関係する市町村を公式の区分ごとに。確認できたものだけ。/area/ への導線に使う */
+  towns: SportsTownGroup[];
   /**
    * リーグ・本拠地などの基本情報が未確認であることを画面に明示するか。
    * 空欄を黙って隠すと「調べていない」ことが読者に伝わらないため。
@@ -65,45 +78,81 @@ export const SPORTS_TEAMS: SportsTeam[] = [
     slug: 'mito-hollyhock',
     name: '水戸ホーリーホック',
     sport: 'サッカー',
-    summary: '水戸を本拠地とするサッカークラブ。当サイトではスタジアムへの行き方や、試合の外へ広がる地域の動きを記録しています。',
-    // 当サイトの既存記事（水戸信用金庫スタジアムのアクセス・駐車場）で確認済み
+    summary: '県北を中心に18市町村をホームタウンとするサッカークラブ。当サイトではスタジアムへの行き方や、試合の外へ広がる地域の動きを記録しています。',
+    // 公式サイト（クラブトップ）で確認（2026年8月30日）
+    league: 'Ｊ１リーグ',
+    // 当サイトの既存記事（アクセス・駐車場）でも確認済み
     venue: '水戸信用金庫スタジアム',
-    municipalitySlugs: ['mito'],
+    towns: [
+      {
+        // 公式が列挙している順序のまま。検索結果には9市町村とする記述もあったが、
+        // 公式のクラブ情報ページは18市町村を挙げている
+        label: 'ホームタウン',
+        slugs: [
+          'mito', 'hitachinaka', 'kasama', 'naka', 'omitama', 'ibaraki-machi',
+          'oarai', 'shirosato', 'tokai', 'hitachi', 'hitachiota', 'kitaibaraki',
+          'hitachiomiya', 'takahagi', 'daigo', 'ishioka', 'chikusei', 'sakuragawa',
+        ],
+      },
+    ],
     basicsPending: false,
   },
   {
     slug: 'kashima-antlers',
     name: '鹿島アントラーズ',
     sport: 'サッカー',
-    summary: '茨城県を拠点とするサッカークラブ。',
+    summary: '鹿行（ろっこう）5市をホームタウンとするサッカークラブ。',
     // 公式サイトで確認（2026年8月30日）
     league: '明治安田Ｊ１リーグ',
     venue: 'メルカリスタジアム',
-    // ホームタウンの市町村名は公式サイトに記載がなかったため空のまま
-    municipalitySlugs: [],
+    towns: [
+      {
+        // 公式「クラブ ホームタウン」ページで確認。公式はこの5市を「鹿行5市」と総称している
+        label: 'ホームタウン',
+        slugs: ['kashima', 'itako', 'kamisu', 'namegata', 'hokota'],
+      },
+    ],
     basicsPending: false,
   },
   {
     slug: 'ibaraki-robots',
     name: '茨城ロボッツ',
     sport: 'バスケットボール',
-    summary: '茨城県を拠点とするバスケットボールクラブ。',
-    // 公式サイトで確認（2026年8月30日）。ディビジョンは「B.LEAGUE」表記に従う
-    league: 'B.LEAGUE',
+    summary: '水戸市をホームタウンとするバスケットボールクラブ。県内の多くの市町村と、区分を分けて関係を結んでいます。',
+    // 公式サイトで確認（2026年8月30日）。ディビジョンまで公式表記に従う
+    league: 'B.LEAGUE（B1）',
     venue: 'アダストリアみとアリーナ',
-    municipalitySlugs: [],
+    // 公式「クラブ概要」の3区分をそのまま保持する。
+    // ホームタウンは水戸市のみ。つくば市はマザータウンであってホームタウンではない
+    towns: [
+      { label: 'ホームタウン', slugs: ['mito'] },
+      { label: 'マザータウン', slugs: ['naka', 'kamisu', 'tsukuba', 'hitachi'] },
+      {
+        label: 'フレンドリータウン',
+        slugs: [
+          'ushiku', 'hitachinaka', 'oarai', 'hitachiota', 'tsukubamirai', 'shirosato',
+          'omitama', 'kasama', 'tokai', 'tsuchiura', 'hitachiomiya', 'ishioka',
+          'daigo', 'namegata', 'ryugasaki', 'goka', 'koga', 'kitaibaraki', 'takahagi',
+        ],
+      },
+    ],
     basicsPending: false,
   },
   {
     slug: 'ibaraki-astroplanets',
     name: '茨城アストロプラネッツ',
     sport: '野球',
-    summary: '茨城県を拠点とする野球チーム。公式サイトは県内14市町村をフランチャイズとして挙げています。',
+    summary: '県内14市町村をフランチャイズとする野球チーム。',
     // 公式サイトで確認（2026年8月30日）。本拠地球場の記載はなかった
     league: 'ルートインBCリーグ',
-    municipalitySlugs: [
-      'mito', 'hitachi', 'tsuchiura', 'koga', 'ryugasaki', 'takahagi', 'kasama',
-      'ushiku', 'hitachiomiya', 'tsukubamirai', 'omitama', 'oarai', 'miho', 'kamisu',
+    towns: [
+      {
+        label: 'フランチャイズ',
+        slugs: [
+          'mito', 'hitachi', 'tsuchiura', 'koga', 'ryugasaki', 'takahagi', 'kasama',
+          'ushiku', 'hitachiomiya', 'tsukubamirai', 'omitama', 'oarai', 'miho', 'kamisu',
+        ],
+      },
     ],
     basicsPending: false,
   },
@@ -111,8 +160,18 @@ export const SPORTS_TEAMS: SportsTeam[] = [
     slug: 'hitachi-hightech-cougars',
     name: '日立ハイテク クーガーズ',
     sport: 'バスケットボール',
-    summary: '茨城県を拠点とするバスケットボールチーム。',
-    municipalitySlugs: [],
+    summary: 'ひたちなか市をホームタウンとする女子バスケットボールチーム。',
+    // WJBL公式のチーム紹介に掲載されている（2026年8月30日確認）
+    league: 'WJBL（バスケットボール女子日本リーグ）',
+    // チーム公式サイトには本拠地体育館の記載がなかったため venue は入れない
+    towns: [
+      {
+        // ひたちなか市公式が「ひたちなか市のホームタウンスポーツチーム」と記載し、
+        // 市とホームタウンパートナー協定を結んでいる（2026年8月30日確認）
+        label: 'ホームタウン',
+        slugs: ['hitachinaka'],
+      },
+    ],
     basicsPending: true,
   },
 ];
@@ -120,6 +179,14 @@ export const SPORTS_TEAMS: SportsTeam[] = [
 export const SPORTS_TEAM_BY_SLUG: Record<SportsTeamSlug, SportsTeam> = Object.fromEntries(
   SPORTS_TEAMS.map((team) => [team.slug, team])
 ) as Record<SportsTeamSlug, SportsTeam>;
+
+/**
+ * 一覧カード用に、最初の区分（各チームとも最上位の関係＝ホームタウン等）だけを返す。
+ * 下位の区分まで並べるとカードが埋まるうえ、区分の違いが読めなくなる。
+ */
+export function primaryTowns(team: SportsTeam): SportsTownGroup | undefined {
+  return team.towns[0];
+}
 
 /**
  * 試合の1件。将来ここへ日程・結果を入れる。

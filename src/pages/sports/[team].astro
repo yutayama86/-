@@ -47,9 +47,16 @@ for (const item of articles) {
   else untyped.push(item);
 }
 
-const towns = team.municipalitySlugs
-  .map((s) => MUNICIPALITIES.find((m) => m.slug === s))
-  .filter((m): m is NonNullable<typeof m> => Boolean(m));
+// 区分（ホームタウン／マザータウン等）を保ったまま市町村を引く。
+// 区分をまたいで平らにすると事実が変わるため、まとめない。
+const townGroups = team.towns
+  .map((group) => ({
+    label: group.label,
+    towns: group.slugs
+      .map((s) => MUNICIPALITIES.find((m) => m.slug === s))
+      .filter((m): m is NonNullable<typeof m> => Boolean(m)),
+  }))
+  .filter((group) => group.towns.length > 0);
 
 const crumbs: Crumb[] = [
   { name: 'ホーム', href: '/' },
@@ -89,7 +96,7 @@ const jsonLd = [
       </dl>
     )}
     {team.basicsPending && (
-      <p class="tm-pending">所属リーグや本拠地などの基本情報は、公式で確認できしだい追記します。確認できていないことは書きません。</p>
+      <p class="tm-pending">本拠地の会場など、公式で確認できていない基本情報があります。確認できしだい追記します。確認できていないことは書きません。</p>
     )}
   </header>
 
@@ -162,14 +169,26 @@ const jsonLd = [
 
   <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-area">
     <h2 id="tm-area" class="bp-section-title">この街のこと</h2>
+    {townGroups.length > 0 ? (
+      <>
+        <p class="tm-lead">クラブが公式に挙げている市町村です。区分はクラブの表記に合わせています。</p>
+        {townGroups.map((group) => (
+          <div class="tm-towns">
+            {/* 1件のときに「1市町村」と書くと数を強調して読みにくいので出さない */}
+            <h3>{group.label}{group.towns.length > 1 && <span>{group.towns.length}市町村</span>}</h3>
+            <ul>{group.towns.map((m) => (
+              <li><a href={`/area/${m.slug}/`}>{m.name}</a></li>
+            ))}</ul>
+          </div>
+        ))}
+      </>
+    ) : (
+      <p class="tm-empty">ホームタウンとして確認できた市町村がまだありません。確認できしだい、街のページへつなぎます。</p>
+    )}
     <ul class="tm-links">
-      {towns.map((m) => <li><a href={`/area/${m.slug}/`}>{m.name}の地域情報 →</a></li>)}
       <li><a href="/sports/">茨城のスポーツ 一覧へ戻る →</a></li>
       <li><a href="/news/">茨城ニュース解説 →</a></li>
     </ul>
-    {towns.length === 0 && (
-      <p class="tm-empty">ホームタウンとして確認できた市町村がまだありません。確認できしだい、街のページへつなぎます。</p>
-    )}
   </section>
 </BrandBase>
 
@@ -200,6 +219,15 @@ const jsonLd = [
   .tm-articles time{font:.72rem var(--font-brand-meta);color:var(--color-soil)}
   .tm-articles strong{font:600 1rem/1.65 var(--font-brand-display)}
 
-  .tm-links{list-style:none;padding:0;display:grid;gap:.7rem}
+  .tm-lead{max-width:52ch;margin-bottom:1.6rem;color:var(--color-soil);font-size:.86rem;line-height:1.9}
+  .tm-towns{margin-bottom:1.8rem}
+  .tm-towns h3{display:flex;align-items:baseline;gap:.7rem;margin:0 0 .8rem;padding-bottom:.5rem;border-bottom:1px solid var(--color-mist);font:600 .95rem var(--font-brand-display);color:var(--color-ink)}
+  .tm-towns h3 span{font:.72rem var(--font-brand-meta);color:var(--color-soil)}
+  .tm-towns ul{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0}
+  /* 指で押せる高さを確保する（44px） */
+  .tm-towns a{display:flex;align-items:center;min-height:44px;padding:.4rem .9rem;border:1px solid var(--color-mist);font-size:.82rem;line-height:1.4;color:var(--color-ink)}
+  .tm-towns a:hover{border-color:var(--interior-blue,#174f99);color:var(--interior-blue,#174f99)}
+
+  .tm-links{list-style:none;padding:0;display:grid;gap:.7rem;margin-top:2rem}
   .tm-links a{color:var(--interior-blue,#174f99);font-size:.9rem;font-weight:700}
 </style>

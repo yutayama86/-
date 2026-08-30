@@ -9,7 +9,17 @@
 import BrandBase from '../../layouts/BrandBase.astro';
 import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
 import { breadcrumbJsonLd } from '../../lib/seo';
-import { SPORTS_TEAMS, SPORTS_CONTENT_TYPES, SPORTS_MATCHES } from '../../data/sports';
+import { SPORTS_TEAMS, SPORTS_CONTENT_TYPES, SPORTS_MATCHES, primaryTowns } from '../../data/sports';
+import { MUNICIPALITIES } from '../../data/areas';
+
+/** カードの1行。1市町村なら数ではなく市町村名を出す（「1市町村」は読みにくい） */
+const townLabel = (group: { label: string; slugs: string[] }) => {
+  if (group.slugs.length === 1) {
+    const name = MUNICIPALITIES.find((m) => m.slug === group.slugs[0])?.name;
+    if (name) return `${group.label}：${name}`;
+  }
+  return `${group.label}：${group.slugs.length}市町村`;
+};
 import { getSportsNews, getSportsNewsByKeyword } from '../../lib/content';
 
 const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '茨城のスポーツ' }];
@@ -59,16 +69,26 @@ const jsonLd = [
       <h2 id="sp-teams-title" class="bp-section-title">チームから読む</h2>
       <p>県内を拠点に活動する5チーム。各ページに、記事・試合・観戦の情報をためていきます。</p>
     </header>
-    <ul>{SPORTS_TEAMS.map((team) => (
-      <li>
-        <a href={`/sports/${team.slug}/`}>
-          <span class="sp-sport">{team.sport}</span>
-          <strong>{team.name}</strong>
-          <span class="sp-summary">{team.summary}</span>
-          {team.venue && <small>本拠地：{team.venue}</small>}
-        </a>
-      </li>
-    ))}</ul>
+    <ul>{SPORTS_TEAMS.map((team) => {
+      // 最上位の区分だけ出す。下位の区分まで並べると区分の違いが読めなくなる
+      const towns = primaryTowns(team);
+      return (
+        <li>
+          <a href={`/sports/${team.slug}/`}>
+            <span class="sp-sport">{team.sport}</span>
+            <strong>{team.name}</strong>
+            <span class="sp-summary">{team.summary}</span>
+            {(team.venue || towns) && (
+              <small>
+                {towns && townLabel(towns)}
+                {towns && team.venue && <br />}
+                {team.venue && `本拠地：${team.venue}`}
+              </small>
+            )}
+          </a>
+        </li>
+      );
+    })}</ul>
   </section>
 
   <section class="sp-types bp-wrap bp-section" aria-labelledby="sp-types-title">
@@ -77,7 +97,7 @@ const jsonLd = [
       <h2 id="sp-types-title" class="bp-section-title">扱うもの</h2>
       <p>試合の記録だけでなく、行く前と帰ったあとまでを書きます。</p>
     </header>
-    <dl>{Object.entries(SPORTS_CONTENT_TYPES).map(([key, meta]) => (
+    <dl>{Object.values(SPORTS_CONTENT_TYPES).map((meta) => (
       <div><dt>{meta.label}</dt><dd>{meta.note}</dd></div>
     ))}</dl>
   </section>

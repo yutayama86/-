@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="2026年9月2日19時キックオフ、水戸信用金庫スタジアムで行われる水戸ホーリーホック対鹿島アントラーズの対戦を、両チームの勝点と順位とともに示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城のスポーツ</text>
+
+  <text x="100" y="186" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">2026年9月2日（水）19:00 ／ 2026/27 明治安田J1リーグ 第5節</text>
+
+  <rect x="100" y="212" width="410" height="96" fill="none" stroke="#a63f32" stroke-width="2"/>
+  <text x="305" y="248" font-family="'Shippori Mincho', serif" font-size="27" font-weight="600" fill="#a63f32" text-anchor="middle">水戸ホーリーホック</text>
+  <text x="305" y="280" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#a63f32" text-anchor="middle">HOME ／ 勝点5 ・ 11位</text>
+
+  <text x="558" y="270" font-family="'Source Sans 3', sans-serif" font-size="26" font-weight="600" fill="#75695a" text-anchor="middle">vs</text>
+
+  <rect x="606" y="212" width="410" height="96" fill="none" stroke="#315c68" stroke-width="2"/>
+  <text x="811" y="248" font-family="'Shippori Mincho', serif" font-size="27" font-weight="600" fill="#315c68" text-anchor="middle">鹿島アントラーズ</text>
+  <text x="811" y="280" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#315c68" text-anchor="middle">AWAY ／ 勝点12 ・ 2位</text>
+
+  <text x="100" y="352" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a">会場：水戸信用金庫スタジアム　／　4試合を終えた時点の順位と勝点</text>
+
+  <text x="100" y="436" font-family="'Shippori Mincho', serif" font-size="52" font-weight="600" fill="#172b35">同じ県の2クラブが、</text>
+  <text x="100" y="496" font-family="'Shippori Mincho', serif" font-size="52" font-weight="600" fill="#172b35">J1で向き合う夜。</text>
+
+  <text x="1100" y="512" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">水戸はJ1初勝利から2試合負けなし</text>
+  <text x="1100" y="546" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">鹿島は開幕4連勝・4試合11得点</text>
+</svg>

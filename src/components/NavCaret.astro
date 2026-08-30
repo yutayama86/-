@@ -1,0 +1,16 @@
+---
+/**
+ * ヘッダーのドロップダウンを開くボタンに付ける caret（∨）。
+ *
+ * 以前は「⌄」の文字を使っていたが、この字形は em ボックスの下寄りに描かれる。
+ * 開いたときに180度回すと字形が上端へ移動し、位置が跳ねて見えていた。
+ * viewBox の中央に描いたSVGなら、回しても中心が動かない。
+ *
+ * 見た目（色・回転・余白）は global.css の .nav-caret が持つ。
+ * 開閉の判定は親ボタンの aria-expanded を使うので、JS側の状態と必ず一致する。
+ */
+---
+
+<svg class="nav-caret" width="9" height="6" viewBox="0 0 9 6" aria-hidden="true" focusable="false">
+  <path d="M1 1L4.5 4.5L8 1" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+</svg>

@@ -310,3 +310,78 @@ ul, ol { list-style: none; padding: 0; }
 .form-status[data-tone="ok"] { background: color-mix(in srgb, var(--matcha) 14%, var(--paper-2)); color: var(--matcha); border: 1px solid color-mix(in srgb, var(--matcha) 40%, transparent); }
 .form-status[data-tone="err"] { background: color-mix(in srgb, var(--shu) 12%, var(--paper-2)); color: var(--shu-deep); border: 1px solid color-mix(in srgb, var(--shu) 40%, transparent); }
 .is-sending { opacity: 0.6; pointer-events: none; }
+
+/* --- ヘッダーのドロップダウン（共通） ------------------------------
+   基準は「茨城を探す」のメガメニュー。面・罫線・影・動き・項目・caret を
+   ここへ集約し、SiteHeader と LanguageMenu が同じものを使う。
+
+   コンポーネント側のスコープCSSで上書きしないこと。
+   Astroのスコープ付きCSSは [data-astro-cid-…] が付いて詳細度が上がるため、
+   一度上書きするとここを直しても効かなくなり、また三者三様に戻る。 */
+:root{
+  --nav-drop-surface:#fbfdff;
+  --nav-drop-border:rgba(7,23,68,.1);
+  --nav-drop-shadow:0 1.5rem 3rem rgba(7,23,68,.11);
+  --nav-drop-line:color-mix(in srgb,var(--color-ink) 14%,transparent);
+  --nav-drop-hover:color-mix(in srgb,var(--color-tide) 7%,transparent);
+  --nav-drop-meta:#789095;
+  --nav-drop-row:3.65rem;
+}
+
+/* 開閉する面 */
+.nav-drop{
+  position:absolute;
+  top:calc(100% + var(--nav-drop-gap,0px));
+  z-index:40;
+  padding:0;
+  background:var(--nav-drop-surface);
+  border:1px solid var(--nav-drop-border);
+  box-shadow:var(--nav-drop-shadow);
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(-.5rem);
+  transition:opacity .22s ease,visibility .22s ease,transform .22s ease;
+}
+.nav-drop.is-open{opacity:1;visibility:visible;transform:translateY(0)}
+
+/* 面ごとの位置と幅。トリガーの真下に出す（以前の left:50% の決め打ちは廃止） */
+.nav-drop--about{left:0;width:19.5rem}
+.nav-drop--lang{right:0;width:12.5rem;--nav-drop-gap:.55rem}
+
+/* 項目。メガメニューの列と同じ見た目・同じ動きにそろえる */
+.nav-drop__list{margin:0;padding:0;list-style:none}
+.nav-drop__item{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  min-height:var(--nav-drop-row);
+  padding:.6rem 2.35rem .6rem 1.15rem;
+  border-bottom:1px solid var(--nav-drop-line);
+  color:var(--color-ink);
+  font:700 1.02rem/1.3 var(--font-brand-display);
+  transition:background-color .22s ease,padding-left .22s ease;
+}
+.nav-drop>.nav-drop__item:last-child,
+.nav-drop__list>li:last-child>.nav-drop__item{border-bottom:0}
+.nav-drop__item:hover,.nav-drop__item:focus-visible{padding-left:1.5rem;background:var(--nav-drop-hover)}
+.nav-drop__item:focus-visible{outline:2px solid var(--color-tide);outline-offset:-2px}
+/* 現在地（言語メニューは aria-current="true"、about は "page"）。色だけに頼らず
+   スクリーンリーダー向けの補足テキストも各コンポーネントで出している */
+.nav-drop__item.is-current,.nav-drop__item[aria-current]{background:var(--nav-drop-hover)}
+/* 言語メニューには末尾の矢印が無いので、右の余白を空けない */
+.nav-drop--lang .nav-drop__item{padding-right:1.15rem}
+/* 番号（01…）とチェックは同じ位置に置く。幅を固定して文字の頭をそろえる */
+.nav-drop__mark{flex:none;width:1.1rem;color:var(--nav-drop-meta);font:.62rem/1 var(--font-brand-meta)}
+.nav-drop__item.is-current .nav-drop__mark{color:var(--color-tide);font-size:.75rem}
+.nav-drop__arrow{position:absolute;right:1rem;font-weight:400;transition:transform .2s ease}
+.nav-drop__item:hover .nav-drop__arrow,.nav-drop__item:focus-visible .nav-drop__arrow{transform:translate(.25rem,-.25rem)}
+
+/* トリガーの caret。⌄ の文字は字形が下寄りで、回転すると位置が跳ねる。
+   縦中央にそろえたSVGへ統一する。 */
+.nav-caret{flex:none;color:var(--color-soil);transition:transform .2s ease}
+[aria-expanded='true']>.nav-caret{transform:rotate(180deg)}
+
+@media(prefers-reduced-motion:reduce){
+  .nav-drop,.nav-drop__item,.nav-drop__arrow,.nav-caret{transition:none}
+}

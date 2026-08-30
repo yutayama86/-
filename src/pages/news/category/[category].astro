@@ -1,0 +1,100 @@
+---
+/**
+ * /news/category/<key>/ — ニュースのカテゴリ別一覧。
+ *
+ * 記事が1本以上あるカテゴリだけ生成する。中身の無い一覧ページは作らない。
+ * 記事が増減すればページも自動で増減するので、手で足す必要はない。
+ */
+import type { GetStaticPaths } from 'astro';
+import BrandBase from '../../../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../../lib/seo';
+import NewsCard from '../../../components/NewsCard.astro';
+import { NEWS_CATEGORIES, type NewsCategoryKey } from '../../../data/news';
+import { getNewsByCategory, getNewsCategoryCounts } from '../../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const counts = await getNewsCategoryCounts();
+  return [...counts.entries()]
+    .filter(([, count]) => count > 0)
+    .map(([category]) => ({ params: { category } }));
+}) satisfies GetStaticPaths;
+
+const { category } = Astro.params;
+const key = category as NewsCategoryKey;
+const meta = NEWS_CATEGORIES[key];
+if (!meta) return Astro.redirect('/404');
+
+const news = await getNewsByCategory(key);
+const counts = await getNewsCategoryCounts();
+// 兄弟カテゴリへの導線。記事があるものだけ、多い順に並べる
+const siblings = [...counts.entries()]
+  .filter(([slug, count]) => count > 0 && slug !== key)
+  .sort((a, b) => b[1] - a[1])
+  .map(([slug, count]) => ({ slug, count, label: NEWS_CATEGORIES[slug as NewsCategoryKey]?.label ?? slug }));
+
+const crumbs: Crumb[] = [
+  { name: 'ホーム', href: '/' },
+  { name: '茨城ニュース解説', href: '/news/' },
+  { name: meta.label },
+];
+const pageUrl = new URL(`/news/category/${key}/`, Astro.site).href;
+
+const jsonLd = [
+  breadcrumbJsonLd(crumbs, Astro.site),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${meta.label}のニュース解説｜イバトコ`,
+    url: pageUrl,
+    description: meta.summary,
+  },
+];
+---
+
+<BrandBase
+  title={`${meta.label}｜茨城ニュース解説｜イバトコ`}
+  description={meta.summary}
+  jsonLd={jsonLd}
+>
+  <header class="news-index__head bp-wrap">
+    <Breadcrumbs items={crumbs} />
+    <p class="bp-kicker">IBARAKI NEWS EXPLAINED</p>
+    <h1>{meta.label}</h1>
+    <p>{meta.summary}</p>
+  </header>
+
+  <section class="news-index__list bp-wrap" aria-labelledby="news-list">
+    <div class="news-index__section-head">
+      <p class="bp-kicker">{news.length}件の解説</p>
+      <h2 id="news-list">新着順</h2>
+    </div>
+    <div class="news-grid">{news.map((item) => <NewsCard item={item} />)}</div>
+  </section>
+
+  <nav class="news-cats bp-wrap bp-section" aria-labelledby="news-cats-title">
+    <h2 id="news-cats-title" class="bp-section-title">ほかのカテゴリ</h2>
+    <ul>
+      {siblings.map((s) => (
+        <li><a href={`/news/category/${s.slug}/`}>{s.label}<span>{s.count}</span></a></li>
+      ))}
+      <li><a href="/news/">すべての解説<span>{news.length + siblings.reduce((n, s) => n + s.count, 0)}</span></a></li>
+    </ul>
+  </nav>
+</BrandBase>
+
+<style>
+  /* 見出しの帯と余白は interior.css の .news-index__head が持つ */
+  .news-index__head h1{font-family:var(--font-brand-display);color:var(--color-ink)}
+  .news-index__head>p:last-child{max-width:56ch;color:var(--color-soil);line-height:2}
+  .news-index__section-head{display:flex;align-items:end;justify-content:space-between;gap:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(23,43,53,.15)}
+  .news-index__section-head h2{margin-top:.6rem;font:600 clamp(1.6rem,3vw,2.4rem) var(--font-brand-display);color:var(--color-ink)}
+  .news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem;margin-top:1.8rem}
+
+  .news-cats ul{display:flex;flex-wrap:wrap;gap:.6rem;list-style:none;padding:0}
+  .news-cats a{display:flex;align-items:center;gap:.6rem;min-height:44px;padding:.4rem 1rem;border:1px solid var(--color-mist);color:var(--color-ink);font-size:.86rem;font-weight:700}
+  .news-cats a:hover{border-color:var(--interior-blue,#174f99);color:var(--interior-blue,#174f99)}
+  .news-cats span{color:var(--color-soil);font:.72rem var(--font-brand-meta)}
+
+  @media(max-width:900px){.news-grid{grid-template-columns:1fr}}
+</style>

@@ -165,6 +165,23 @@ export async function getNewsByTag(tag: string) {
   return (await getIndexableNews()).filter((item) => item.data.tags.includes(tag));
 }
 
+/** カテゴリ別のニュース。/news/category/<key>/ とヘッダーのプルダウンで使う。 */
+export async function getNewsByCategory(category: string) {
+  return (await getIndexableNews()).filter((item) => item.data.category === category);
+}
+
+/**
+ * カテゴリごとの記事数。0件のカテゴリは返さない。
+ * 中身の無いカテゴリページやプルダウン項目を作らないための土台。
+ */
+export async function getNewsCategoryCounts(): Promise<Map<string, number>> {
+  const counts = new Map<string, number>();
+  for (const item of await getIndexableNews()) {
+    counts.set(item.data.category, (counts.get(item.data.category) ?? 0) + 1);
+  }
+  return counts;
+}
+
 /** Cloudflare静的配信でも安定するASCIIタグslug。表示名は元の日本語を使う。 */
 export function tagToSlug(tag: string): string {
   const bytes = new TextEncoder().encode(tag.normalize('NFC'));

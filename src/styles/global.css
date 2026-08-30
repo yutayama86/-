@@ -328,6 +328,16 @@ ul, ol { list-style: none; padding: 0; }
   --nav-drop-row:3.65rem;
 }
 
+/* ヘッダーの項目そのもの（リンクでもプルダウンのボタンでも同じ見た目）。
+   子コンポーネント（NavDropdown）が出すボタンにも効かせる必要があるため、
+   スコープCSSではなくここに置く。SiteHeader側に書くと、Astroのスコープが
+   自分のテンプレート内の要素にしか当たらず、子が出したボタンだけ素の
+   display:block に落ちる（caretが2行目に落ちる崩れになる）。 */
+.nav-link{position:relative;display:flex;align-items:center;padding:0;border:0;background:none;color:var(--color-ink);font:700 .82rem/1 var(--font-brand-body);letter-spacing:.04em;white-space:nowrap;cursor:pointer}
+.nav-link::after{content:'';position:absolute;left:0;right:100%;bottom:1.05rem;height:1px;background:var(--color-brand-blue);transition:right .25s ease}
+.nav-link:hover::after,.nav-link:focus-visible::after,.nav-link.is-active::after,.nav-link.is-current::after{right:0}
+.nav-link .nav-caret{margin-left:.45rem}
+
 /* 開閉する面 */
 .nav-drop{
   position:absolute;
@@ -346,6 +356,8 @@ ul, ol { list-style: none; padding: 0; }
 
 /* 面ごとの位置と幅。トリガーの真下に出す（以前の left:50% の決め打ちは廃止） */
 .nav-drop--about{left:0;width:19.5rem}
+/* 補足(note)が入るぶん広くする。右端がはみ出す位置のものは right 起点にする */
+.nav-drop--wide{left:0;width:23rem}
 .nav-drop--lang{right:0;width:12.5rem;--nav-drop-gap:.55rem}
 
 /* 項目。メガメニューの列と同じ見た目・同じ動きにそろえる */
@@ -372,6 +384,9 @@ ul, ol { list-style: none; padding: 0; }
 /* 言語メニューには末尾の矢印が無いので、右の余白を空けない */
 .nav-drop--lang .nav-drop__item{padding-right:1.15rem}
 /* 番号（01…）とチェックは同じ位置に置く。幅を固定して文字の頭をそろえる */
+/* ラベルと補足。メガメニューの列（.mega-columns a）と同じ組み方にそろえる */
+.nav-drop__text{flex:1 1 auto;display:grid;gap:.25rem;min-width:0}
+.nav-drop__note{color:var(--color-soil);font:400 .62rem/1.5 var(--font-brand-body)}
 .nav-drop__mark{flex:none;width:1.1rem;color:var(--nav-drop-meta);font:.62rem/1 var(--font-brand-meta)}
 .nav-drop__item.is-current .nav-drop__mark{color:var(--color-tide);font-size:.75rem}
 .nav-drop__arrow{position:absolute;right:1rem;font-weight:400;transition:transform .2s ease}
@@ -383,5 +398,5 @@ ul, ol { list-style: none; padding: 0; }
 [aria-expanded='true']>.nav-caret{transform:rotate(180deg)}
 
 @media(prefers-reduced-motion:reduce){
-  .nav-drop,.nav-drop__item,.nav-drop__arrow,.nav-caret{transition:none}
+  .nav-drop,.nav-drop__item,.nav-drop__arrow,.nav-caret,.nav-link::after{transition:none}
 }

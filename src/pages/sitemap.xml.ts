@@ -43,6 +43,16 @@ export const GET: APIRoute = async () => {
 
   for (const item of news) entries.push({ path: `/news/${item.id.split('/').pop()}/`, lastmod: item.data.updatedDate ?? item.data.pubDate });
 
+  // ニュースのカテゴリ別一覧。記事が1本以上あるものだけ（ページ側の生成条件と同じ）。
+  // 最終更新はそのカテゴリで一番新しい記事に合わせる。
+  const newsCategoryLastmod = new Map<string, Date>();
+  for (const item of news) {
+    const date = item.data.updatedDate ?? item.data.pubDate;
+    const known = newsCategoryLastmod.get(item.data.category);
+    if (!known || date > known) newsCategoryLastmod.set(item.data.category, date);
+  }
+  for (const [category, lastmod] of newsCategoryLastmod) entries.push({ path: `/news/category/${category}/`, lastmod });
+
   for (const category of Object.values(CATEGORIES)) {
     if (articles.some((article) => CATEGORIES[article.data.category].path === category.path)) entries.push({ path: `/${category.path}/` });
   }

@@ -1,0 +1,72 @@
+---
+/**
+ * ヘッダーの小さいプルダウン（イバトコについて / ニュース / スポーツ）。
+ *
+ * 「茨城を探す」は3列のメガメニューなので別実装のまま。
+ * それ以外はここに集約して、項目の作りが三者三様に戻らないようにする。
+ * 見た目は global.css の .nav-drop / .nav-drop__* が持つ。
+ *
+ * トリガーのボタンは呼び出し側に置く（data-menu-trigger と id を合わせること）。
+ */
+import NavCaret from './NavCaret.astro';
+
+export interface NavDropdownItem {
+  label: string;
+  href: string;
+  /** 1行の補足。何が入っているかを具体的に書く */
+  note?: string;
+  /** 行頭の小さな印（01, 02… など）。省略すると印の列は出ない */
+  mark?: string;
+}
+
+interface Props {
+  /** パネルのid。トリガー側の aria-controls と一致させる */
+  id: string;
+  /** JSの開閉が拾う名前。トリガー側の data-menu-trigger と一致させる */
+  name: string;
+  /** ナビに出す見出し（ボタンの文言） */
+  label: string;
+  items: NavDropdownItem[];
+  /** 現在地の判定に使う。前方一致ではなく完全一致で見る */
+  currentPath?: string;
+  /** 幅を広めにする（noteが入るとき） */
+  wide?: boolean;
+  isCurrent?: boolean;
+}
+
+const { id, name, label, items, currentPath, wide = false, isCurrent = false } = Astro.props;
+---
+
+<div class="nav-dropdown">
+  <button
+    type="button"
+    class:list={['nav-link', { 'is-current': isCurrent }]}
+    data-menu-trigger={name}
+    aria-expanded="false"
+    aria-controls={id}
+  >
+    {label} <NavCaret />
+  </button>
+
+  <div class:list={['nav-drop', wide ? 'nav-drop--wide' : 'nav-drop--about']} id={id} data-menu-panel={name} aria-hidden="true">
+    {items.map((item) => (
+      <a
+        class="nav-drop__item"
+        href={item.href}
+        aria-current={currentPath === item.href ? 'page' : undefined}
+      >
+        {item.mark && <span class="nav-drop__mark" aria-hidden="true">{item.mark}</span>}
+        <span class="nav-drop__text">
+          <span class="nav-drop__label">{item.label}</span>
+          {item.note && <small class="nav-drop__note">{item.note}</small>}
+        </span>
+        <b class="nav-drop__arrow" aria-hidden="true">↗</b>
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  /* 面と項目の見た目は global.css。ここは入れ物の位置だけ持つ */
+  .nav-dropdown{position:relative;display:flex;align-items:stretch}
+</style>

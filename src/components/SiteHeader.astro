@@ -7,7 +7,11 @@ import { SITE_CONFIG } from '../data/site';
 import BrandLogo from './BrandLogo.astro';
 import LanguageMenu from './LanguageMenu.astro';
 import NavCaret from './NavCaret.astro';
+import NavDropdown, { type NavDropdownItem } from './NavDropdown.astro';
 import { LOCALES, LOCALE_META, TRANSLATIONS, localeHome } from '../data/i18n';
+import { NEWS_CATEGORIES, type NewsCategoryKey } from '../data/news';
+import { getNewsCategoryCounts } from '../lib/content';
+import { SPORTS_TEAMS } from '../data/sports';
 
 interface Props { translationKey?: string; }
 const { translationKey } = Astro.props;
@@ -59,10 +63,39 @@ const discoveryGroups = [
   },
 ];
 
-const aboutLinks = [
-  { label: '私たちについて', href: '/about/' },
-  { label: '編集方針', href: '/about/editorial-policy/' },
-  { label: '運営・チーム', href: '/about/team/' },
+const aboutLinks: NavDropdownItem[] = [
+  { label: '私たちについて', href: '/about/', mark: '01' },
+  { label: '編集方針', href: '/about/editorial-policy/', mark: '02' },
+  { label: '運営・チーム', href: '/about/team/', mark: '03' },
+];
+
+// ニュースのカテゴリ。記事が1本以上あるものだけ、多い順に出す。
+// 空のカテゴリを並べると、押した先に何も無い項目ができるため。
+const categoryCounts = await getNewsCategoryCounts();
+const newsLinks: NavDropdownItem[] = [
+  { label: 'すべての解説', href: '/news/', note: '新着順にすべて表示' },
+  ...[...categoryCounts.entries()]
+    .filter(([, count]) => count > 0)
+    .sort((a, b) => b[1] - a[1])
+    .map(([key]) => ({
+      label: NEWS_CATEGORIES[key as NewsCategoryKey].label,
+      href: `/news/category/${key}/`,
+      note: NEWS_CATEGORIES[key as NewsCategoryKey].note,
+    })),
+];
+
+// スポーツは5チーム。競技とリーグは data/sports.ts の確認済みの値だけを使う。
+// リーグ名の丸括弧の中は略す。ナビでは
+// 「バスケットボール・WJBL（バスケットボール女子日本リーグ）」のように
+// 競技名が二重になって読みにくいため。正式名称はチームページに出す。
+const shortLeague = (league: string) => league.replace(/（[^）]*）$/, '');
+const sportsLinks: NavDropdownItem[] = [
+  { label: '茨城のスポーツ', href: '/sports/', note: '観戦・遠征・地域から読む' },
+  ...SPORTS_TEAMS.map((team) => ({
+    label: team.name,
+    href: `/sports/${team.slug}/`,
+    note: team.league ? `${team.sport}・${shortLeague(team.league)}` : team.sport,
+  })),
 ];
 ---
 
@@ -75,29 +108,24 @@ const aboutLinks = [
     <nav class="desktop-nav" aria-label="メインナビゲーション">
       {/* 並びはサイトの実態に合わせる。44市町村＋テーマ（60ページ）が中核資産なので先頭。
           次に更新の軸のニュース、そのあとに育成中のスポーツ。 */}
-      <button type="button" class:list={{ 'is-current': isDiscoverCurrent }} data-menu-trigger="discover" aria-expanded="false" aria-controls="discover-menu">
+      <button type="button" class:list={['nav-link', { 'is-current': isDiscoverCurrent }]} data-menu-trigger="discover" aria-expanded="false" aria-controls="discover-menu">
         茨城を探す <NavCaret />
       </button>
-      <a href="/news/" class:list={{ 'is-current': currentPath.startsWith('/news/') }} aria-current={currentPath.startsWith('/news/') ? 'page' : undefined}>ニュース</a>
-      <a href="/sports/" class:list={{ 'is-current': currentPath.startsWith('/sports/') }} aria-current={currentPath.startsWith('/sports/') ? 'page' : undefined}>スポーツ</a>
-      {/* 「イバトコについて」はトリガーと面を同じ入れ物に入れ、真下に出す。
-          以前は面をヘッダー直下に置いて left:50% で寄せていたため、
-          画面幅によってボタンから最大70pxほど横へずれていた。 */}
-      <div class="nav-dropdown">
-        <button type="button" class:list={{ 'is-current': isAboutCurrent }} data-menu-trigger="about" aria-expanded="false" aria-controls="about-menu">
-          イバトコについて <NavCaret />
-        </button>
-        <div class="nav-drop nav-drop--about" id="about-menu" data-menu-panel="about" aria-hidden="true">
-          {aboutLinks.map((item, index) => (
-            <a class="nav-drop__item" href={item.href} aria-current={currentPath === item.href ? 'page' : undefined}>
-              <span class="nav-drop__mark" aria-hidden="true">0{index + 1}</span>
-              <span class="nav-drop__label">{item.label}</span>
-              <b class="nav-drop__arrow" aria-hidden="true">↗</b>
-            </a>
-          ))}
-        </div>
-      </div>
-      <a href="/contact/" class:list={{ 'is-current': currentPath.startsWith('/contact/') }} aria-current={currentPath.startsWith('/contact/') ? 'page' : undefined}>お問い合わせ</a>
+      {/* 子を持つ項目はすべてプルダウン。トリガーと面を同じ入れ物に入れて真下に出す。
+          ハブページ（/news/ /sports/）へは各プルダウンの先頭項目から行ける。 */}
+      <NavDropdown
+        id="news-menu" name="news" label="ニュース" items={newsLinks} wide
+        currentPath={currentPath} isCurrent={currentPath.startsWith('/news/')}
+      />
+      <NavDropdown
+        id="sports-menu" name="sports" label="スポーツ" items={sportsLinks} wide
+        currentPath={currentPath} isCurrent={currentPath.startsWith('/sports/')}
+      />
+      <NavDropdown
+        id="about-menu" name="about" label="イバトコについて" items={aboutLinks}
+        currentPath={currentPath} isCurrent={isAboutCurrent}
+      />
+      <a href="/contact/" class:list={['nav-link', { 'is-current': currentPath.startsWith('/contact/') }]} aria-current={currentPath.startsWith('/contact/') ? 'page' : undefined}>お問い合わせ</a>
     </nav>
 
     <div class="site-header__utility">
@@ -155,8 +183,14 @@ const aboutLinks = [
           ))}
         </div>
       </details>
-      <a class="mobile-main-link" href="/news/">ニュース <span aria-hidden="true">→</span></a>
-      <a class="mobile-main-link" href="/sports/">スポーツ <span aria-hidden="true">→</span></a>
+      <details>
+        <summary>ニュース <span aria-hidden="true">＋</span></summary>
+        <div class="mobile-sub-links">{newsLinks.map((item) => <a href={item.href}>{item.label}</a>)}</div>
+      </details>
+      <details>
+        <summary>スポーツ <span aria-hidden="true">＋</span></summary>
+        <div class="mobile-sub-links">{sportsLinks.map((item) => <a href={item.href}>{item.label}</a>)}</div>
+      </details>
       <details>
         <summary>イバトコについて <span aria-hidden="true">＋</span></summary>
         <div class="mobile-sub-links">{aboutLinks.map((item) => <a href={item.href}>{item.label}</a>)}</div>
@@ -249,13 +283,8 @@ const aboutLinks = [
   .site-header__inner{width:min(calc(100% - 3rem),1440px);height:100%;margin-inline:auto;display:grid;grid-template-columns:minmax(145px,.72fr) auto minmax(205px,.72fr);align-items:center}
   .site-header__logo{display:inline-flex;align-items:center;justify-self:start;color:var(--color-ink);line-height:1.05;text-decoration:none}
   .desktop-nav{height:100%;display:flex;align-items:stretch;gap:clamp(1.35rem,2.1vw,2.35rem)}
-  .desktop-nav>a,.desktop-nav button{position:relative;display:flex;align-items:center;padding:0;border:0;background:none;color:var(--color-ink);font:700 .82rem/1 var(--font-brand-body);letter-spacing:.04em;white-space:nowrap;cursor:pointer}
-  .desktop-nav>a::after,.desktop-nav button::after{content:'';position:absolute;left:0;right:100%;bottom:1.05rem;height:1px;background:var(--color-brand-blue);transition:right .25s ease}
-  .desktop-nav>a:hover::after,.desktop-nav>a:focus-visible::after,.desktop-nav button:hover::after,.desktop-nav button:focus-visible::after,.desktop-nav .is-active::after,.desktop-nav .is-current::after{right:0}
-  /* caretの色・回転は global.css の .nav-caret が持つ。ここは余白だけ */
-  .desktop-nav button :global(.nav-caret){margin-left:.45rem}
-  /* トリガーと面の入れ物。ヘッダーの高さいっぱいに伸ばし、面を top:100% で真下へ出す */
-  .nav-dropdown{position:relative;display:flex;align-items:stretch}
+  /* 項目の見た目（.nav-link）と面（.nav-drop）は global.css。
+     子コンポーネントが出す要素にも効かせる必要があるため、ここには書かない。 */
   .site-header__utility{justify-self:end;display:flex;align-items:center;gap:clamp(.9rem,1.5vw,1.35rem);white-space:nowrap}
   /* 言語選択と「地域事業者の方へ」を細い罫線で分ける */
   .site-header__utility .business-link{position:relative}
@@ -272,5 +301,6 @@ const aboutLinks = [
   .mobile-panel{display:none}
   @media(max-width:1180px){.site-header__inner{width:100%;grid-template-columns:1fr auto;padding-inline:1.5rem}.desktop-nav,.business-link,.site-header__utility{display:none}.mobile-trigger{z-index:2;display:flex;width:2.75rem;height:2.75rem;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;padding:0;border:0;background:transparent;cursor:pointer}.mobile-trigger span{display:block;width:1.7rem;height:1px;background:var(--color-ink);transition:transform .25s ease}.mobile-trigger.is-active span:first-child{transform:translateY(.28rem) rotate(45deg)}.mobile-trigger.is-active span:last-child{transform:translateY(-.28rem) rotate(-45deg)}.mega-menu{display:none}.mobile-panel{position:fixed;top:var(--site-header-height);inset-inline:0;display:block;height:calc(100svh - var(--site-header-height));overflow-y:auto;background:var(--color-paper);opacity:0;visibility:hidden;transform:translateY(-.5rem);transition:opacity .23s ease,visibility .23s ease,transform .23s ease}.mobile-panel.is-open{opacity:1;visibility:visible;transform:none}.mobile-panel__inner{padding:2rem 1.6rem 3.75rem}.mobile-main-link,.mobile-panel summary{display:flex;min-height:4rem;align-items:center;justify-content:space-between;border-bottom:1px solid var(--color-ink);font:600 1.2rem var(--font-brand-display);cursor:pointer;list-style:none}.mobile-panel summary::-webkit-details-marker{display:none}.mobile-panel details[open] summary span{transform:rotate(45deg)}.mobile-discovery{padding:1.2rem 0 1.6rem}.mobile-area{display:grid;grid-template-columns:1fr auto;gap:.35rem 1rem;align-items:center;margin-bottom:1.4rem;padding:1rem 1.1rem;background:var(--color-ink);color:#fff}.mobile-area small{font:.55rem var(--font-brand-meta);letter-spacing:.14em;color:#9db4b7}.mobile-area strong{grid-column:1;font:700 1rem var(--font-brand-display)}.mobile-area span{grid-column:2;grid-row:1/3}.mobile-discovery section{margin-bottom:1.15rem}.mobile-discovery h3{margin:0 0 .55rem;color:#668087;font-size:.62rem;letter-spacing:.12em}.mobile-discovery section div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;border:1px solid color-mix(in srgb,var(--color-ink) 14%,transparent);background:color-mix(in srgb,var(--color-ink) 14%,transparent)}.mobile-discovery section a{padding:.85rem;background:var(--color-paper);font:600 .9rem var(--font-brand-display)}.mobile-sub-links{display:grid;padding:.5rem 0 1.1rem 1rem}.mobile-sub-links a{padding:.75rem 0;color:var(--color-soil);font-size:.85rem}.mobile-business{display:flex;justify-content:space-between;margin-top:1.75rem;padding:1.2rem;background:var(--color-ink);color:#fff;font-size:.86rem;font-weight:700}.mobile-lang summary{margin-top:0}.mobile-lang .mobile-sub-links a[aria-current="true"]{color:var(--color-ink);font-weight:700}}
   @media(max-width:560px){.site-header__inner{padding-inline:1.1rem}.site-header__logo :global(svg){max-width:8.5rem}.mobile-panel__inner{padding-inline:1.2rem}}
-  @media(prefers-reduced-motion:reduce){.desktop-nav>a::after,.desktop-nav button::after,.mega-menu,.area-gateway,.mega-columns a,.mega-columns a b,.mobile-trigger span,.mobile-panel{transition:none}}
+  /* .nav-link / .nav-drop / .nav-caret の reduced-motion は global.css 側 */
+  @media(prefers-reduced-motion:reduce){.mega-menu,.area-gateway,.mega-columns a,.mega-columns a b,.mobile-trigger span,.mobile-panel{transition:none}}
 </style>

@@ -120,7 +120,9 @@ body.interior-site :is(
   .tg-head__copy,
   .hanabi-head,
   .ok-head,
-  .person-head
+  .person-head,
+  .sp-head,
+  .tm-head
 ) {
   position: relative;
   /*
@@ -168,7 +170,9 @@ body.interior-site :is(
   .area-head,
   .hanabi-head,
   .ok-head,
-  .person-head
+  .person-head,
+  .sp-head,
+  .tm-head
 )::before {
   content: '';
   position: absolute;
@@ -198,7 +202,9 @@ body.interior-site :is(
   .tg-head__copy,
   .hanabi-head,
   .ok-head,
-  .person-head
+  .person-head,
+  .sp-head,
+  .tm-head
 ):has(> .bp-wrap) {
   padding-inline: 0 !important;
 }
@@ -217,6 +223,8 @@ body.interior-site :is(main, article, section, header, div):has(> :is(
   .hanabi-head,
   .ok-head,
   .person-head,
+  .sp-head,
+  .tm-head,
   .tg-head
 ):first-child) {
   padding-top: 0;
@@ -252,7 +260,9 @@ body.interior-site :is(
   .tg-head__copy,
   .hanabi-head,
   .ok-head,
-  .person-head
+  .person-head,
+  .sp-head,
+  .tm-head
 )::after {
   content: none;
 }
@@ -267,7 +277,9 @@ body.interior-site :is(
   .tg-head__copy,
   .hanabi-head,
   .ok-head,
-  .person-head
+  .person-head,
+  .sp-head,
+  .tm-head
 ) h1 {
   max-width: 12em;
   margin-top: .9rem;
@@ -287,7 +299,9 @@ body.interior-site :is(
   .tg-head__copy,
   .hanabi-head,
   .ok-head,
-  .person-head
+  .person-head,
+  .sp-head,
+  .tm-head
 ) > p:last-of-type {
   max-width: 55ch;
   margin-top: clamp(1.2rem, 2.4vw, 1.8rem);
@@ -1630,7 +1644,9 @@ body.interior-site .rp-final {
     .tg-head__copy,
     .hanabi-head,
     .ok-head,
-    .person-head
+    .person-head,
+  .sp-head,
+  .tm-head
   ) {
     /* 全幅バンドはモバイルでも維持する。左右は bp-wrap の余白（1rem）に揃える */
     margin: 0;
@@ -1648,7 +1664,9 @@ body.interior-site .rp-final {
     .tg-head__copy,
     .hanabi-head,
     .ok-head,
-    .person-head
+    .person-head,
+  .sp-head,
+  .tm-head
   ) h1 {
     font-size: var(--interior-title-xl);
     line-height: 1.27;

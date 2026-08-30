@@ -235,3 +235,29 @@ export function formatDate(d: Date): string {
     day: 'numeric',
   }).format(d);
 }
+
+/**
+ * スポーツ記事。sportsTeam が指定された公開記事だけを新しい順で返す。
+ * team を渡すとそのチームに絞る。まだ0件でも落ちない。
+ */
+export async function getSportsNews(team?: string): Promise<CollectionEntry<'news'>[]> {
+  const all = await getIndexableNews();
+  return all.filter((item) => {
+    if (!item.data.sportsTeam) return false;
+    return team ? item.data.sportsTeam === team : true;
+  });
+}
+
+/**
+ * チームに関係する記事を、sportsTeam が未設定の既存記事も含めて拾う。
+ * 既存記事を書き換えずに /sports/ から参照するための、当面の橋渡し。
+ * 判定はタグとタイトルの一致だけで、推測はしない。
+ */
+export async function getSportsNewsByKeyword(keywords: string[]): Promise<CollectionEntry<'news'>[]> {
+  if (keywords.length === 0) return [];
+  const all = await getIndexableNews();
+  return all.filter((item) => {
+    const haystack = [item.data.title, ...(item.data.tags ?? [])].join(' ');
+    return keywords.some((k) => haystack.includes(k));
+  });
+}

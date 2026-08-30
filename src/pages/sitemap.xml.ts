@@ -7,6 +7,7 @@ import { TRANSLATIONS, DEFAULT_LOCALE } from '../data/i18n';
 import { MUNICIPALITIES } from '../data/areas';
 import { AREA_GUIDES } from '../data/area-guides';
 import { THEMES } from '../data/themes';
+import { SPORTS_TEAMS } from '../data/sports';
 
 type SitemapEntry = { path: string; lastmod?: Date };
 
@@ -26,7 +27,11 @@ export const GET: APIRoute = async () => {
     { path: '/biz/' },
     { path: '/contact/' },
     { path: '/news/' },
+    { path: '/sports/' },
   ];
+
+  // スポーツのチームページ。チームが増えたら data/sports.ts に足すだけで反映される。
+  for (const team of SPORTS_TEAMS) entries.push({ path: `/sports/${team.slug}/` });
 
   for (const article of articles) {
     const slug = article.id.split('/').pop();

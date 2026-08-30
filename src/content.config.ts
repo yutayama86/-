@@ -1,4 +1,5 @@
 import { defineCollection, reference } from 'astro:content';
+import { SPORTS_TEAMS, SPORTS_CONTENT_TYPES } from './data/sports';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 import { csvStoresLoader } from './loaders/csv-stores';
@@ -21,6 +22,9 @@ export const CATEGORIES = {
 export type CategoryKey = keyof typeof CATEGORIES;
 const categoryKeys = Object.keys(CATEGORIES) as [CategoryKey, ...CategoryKey[]];
 const municipalitySlugs = MUNICIPALITIES.map((municipality) => municipality.slug) as [string, ...string[]];
+// スポーツ記事の分類。CMSから追加・絞り込みできるよう、値は data/sports.ts に一本化する。
+const sportsTeamSlugs = SPORTS_TEAMS.map((team) => team.slug) as [string, ...string[]];
+const sportsContentTypes = Object.keys(SPORTS_CONTENT_TYPES) as [string, ...string[]];
 
 /**
  * 体験レポート記事（/eat /life /sauna-play /beauty /company）
@@ -185,6 +189,9 @@ const news = defineCollection({
     tags: z.array(z.string().min(1)).default([]),
     prefecture: z.literal('茨城県').default('茨城県'),
     municipalities: z.array(z.enum(municipalitySlugs)).default([]),
+    /** スポーツ記事のときだけ指定する。/sports/ 配下の絞り込みに使う */
+    sportsTeam: z.enum(sportsTeamSlugs).optional(),
+    sportsContentType: z.enum(sportsContentTypes).optional(),
     featured: z.boolean().default(false),
     draft: z.boolean().default(true),
     reviewed: z.boolean().default(false),

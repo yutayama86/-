@@ -1,0 +1,147 @@
+---
+/**
+ * /sports/ — 茨城のスポーツの入口ハブ。
+ *
+ * 「試合を見る」だけで終わらせず、行き方・過ごし方・地域まで含めて扱う領域として置く。
+ * 未確認の日程・結果・順位は出さない。データが無いところは「準備中」と正直に書く。
+ * 公式ロゴや選手写真は権利が確認できないため使わず、テキストで構成する。
+ */
+import BrandBase from '../../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
+import { SPORTS_TEAMS, SPORTS_CONTENT_TYPES, SPORTS_MATCHES } from '../../data/sports';
+import { getSportsNews, getSportsNewsByKeyword } from '../../lib/content';
+
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '茨城のスポーツ' }];
+const pageUrl = new URL('/sports/', Astro.site).href;
+
+// sportsTeam で分類された記事。まだ0件でも動く。
+const tagged = await getSportsNews();
+// 既存記事は sportsTeam を持たないため、当面はチーム名で拾って橋渡しする。
+const legacy = await getSportsNewsByKeyword(SPORTS_TEAMS.map((t) => t.name));
+const seen = new Set<string>();
+const articles = [...tagged, ...legacy].filter((item) => {
+  if (seen.has(item.id)) return false;
+  seen.add(item.id);
+  return true;
+}).slice(0, 6);
+
+const newsPath = (id: string) => `/news/${id.split('/').pop()}/`;
+const fmt = (d: Date) => new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
+
+const jsonLd = [
+  breadcrumbJsonLd(crumbs, Astro.site),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: '茨城のスポーツ',
+    url: pageUrl,
+    description: '茨城のスポーツを、試合だけでなく観戦・遠征・地域まで含めて読むための入口。',
+  },
+];
+---
+
+<BrandBase
+  title="茨城のスポーツ｜観戦・遠征・地域から読む｜イバトコ"
+  description="水戸ホーリーホック、鹿島アントラーズ、茨城ロボッツ、茨城アストロプラネッツ、日立ハイテク クーガーズ。試合の結果だけでなく、行き方や街での過ごし方まで含めて記録します。"
+  jsonLd={jsonLd}
+>
+  <header class="sp-head bp-wrap">
+    <Breadcrumbs items={crumbs} />
+    <p class="bp-kicker">IBARAKI SPORTS</p>
+    <h1>試合の外にも、<br />茨城がある。</h1>
+    <p>勝ち負けは翌日には流れていきます。けれど、スタジアムへの行き方、待ち時間に寄った店、帰りに見た景色は残ります。イバトコは茨城のスポーツを、観戦と遠征と地域までひとつづきのものとして記録します。</p>
+  </header>
+
+  <section class="sp-teams bp-wrap bp-section" aria-labelledby="sp-teams-title">
+    <header>
+      <p class="bp-kicker">TEAMS</p>
+      <h2 id="sp-teams-title" class="bp-section-title">チームから読む</h2>
+      <p>県内を拠点に活動する5チーム。各ページに、記事・試合・観戦の情報をためていきます。</p>
+    </header>
+    <ul>{SPORTS_TEAMS.map((team) => (
+      <li>
+        <a href={`/sports/${team.slug}/`}>
+          <span class="sp-sport">{team.sport}</span>
+          <strong>{team.name}</strong>
+          <span class="sp-summary">{team.summary}</span>
+          {team.venue && <small>本拠地：{team.venue}</small>}
+        </a>
+      </li>
+    ))}</ul>
+  </section>
+
+  <section class="sp-types bp-wrap bp-section" aria-labelledby="sp-types-title">
+    <header>
+      <p class="bp-kicker">WHAT WE WRITE</p>
+      <h2 id="sp-types-title" class="bp-section-title">扱うもの</h2>
+      <p>試合の記録だけでなく、行く前と帰ったあとまでを書きます。</p>
+    </header>
+    <dl>{Object.entries(SPORTS_CONTENT_TYPES).map(([key, meta]) => (
+      <div><dt>{meta.label}</dt><dd>{meta.note}</dd></div>
+    ))}</dl>
+  </section>
+
+  <section class="sp-latest bp-wrap bp-section" aria-labelledby="sp-latest-title">
+    <header>
+      <p class="bp-kicker">LATEST</p>
+      <h2 id="sp-latest-title" class="bp-section-title">最新の記事</h2>
+    </header>
+    {articles.length > 0 ? (
+      <ul class="sp-articles">{articles.map((item) => (
+        <li>
+          <a href={newsPath(item.id)}>
+            <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
+            <strong>{item.data.title}</strong>
+          </a>
+        </li>
+      ))}</ul>
+    ) : (
+      <p class="sp-empty">スポーツの記事はこれから公開します。確かめられたことから順に出します。</p>
+    )}
+    <p class="sp-more"><a href="/news/">茨城ニュース解説をすべて見る →</a></p>
+  </section>
+
+  {SPORTS_MATCHES.length === 0 && (
+    <section class="sp-note bp-wrap bp-section">
+      <p><strong>試合の日程と結果について。</strong>公式で確認できた情報だけを載せる方針のため、日程・結果・順位の掲載はまだ準備中です。確認が取れ次第、各チームのページへ追加します。</p>
+    </section>
+  )}
+</BrandBase>
+
+<style>
+  /* 上下の余白と全幅の背景は interior.css の見出しバンドが持つ */
+  .sp-head h1{margin-top:1rem;font:600 clamp(2.4rem,6vw,4.4rem)/1.25 var(--font-brand-display);color:var(--color-ink)}
+  .sp-head>p:last-child{max-width:52ch;margin-top:1.6rem;line-height:2;color:var(--color-soil)}
+
+  .sp-teams>header,.sp-types>header,.sp-latest>header{max-width:56ch;margin-bottom:1.8rem}
+  .sp-teams>header>p:last-child,.sp-types>header>p:last-child{margin-top:.8rem;color:var(--color-soil);line-height:1.9}
+
+  .sp-teams ul{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--color-mist);border:1px solid var(--color-mist);list-style:none;padding:0}
+  .sp-teams a{display:grid;gap:.45rem;align-content:start;padding:1.5rem 1.35rem;background:var(--color-white);color:var(--color-ink);min-height:100%}
+  .sp-teams a:hover{background:color-mix(in srgb,var(--color-paper) 70%,var(--color-white))}
+  .sp-teams a:focus-visible{outline:2px solid var(--color-tide);outline-offset:-2px}
+  .sp-sport{font:700 .66rem var(--font-brand-meta);letter-spacing:.12em;color:var(--color-tide)}
+  .sp-teams strong{font:600 1.3rem var(--font-brand-display)}
+  .sp-summary{color:var(--color-soil);font-size:.82rem;line-height:1.8}
+  .sp-teams small{margin-top:.3rem;color:var(--color-soil);font-size:.72rem}
+
+  .sp-types dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.1rem;margin:0}
+  .sp-types dt{font:600 1rem var(--font-brand-display);color:var(--color-ink)}
+  .sp-types dd{margin:.35rem 0 0;color:var(--color-soil);font-size:.82rem;line-height:1.8}
+
+  .sp-articles{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
+  .sp-articles li{border-bottom:1px solid var(--color-mist)}
+  .sp-articles a{display:grid;gap:.35rem;padding:1.05rem 0;color:var(--color-ink)}
+  .sp-articles a:hover{color:var(--interior-blue,#174f99)}
+  .sp-articles time{font:.72rem var(--font-brand-meta);color:var(--color-soil)}
+  .sp-articles strong{font:600 1.02rem/1.65 var(--font-brand-display)}
+  .sp-empty{color:var(--color-soil);line-height:1.9}
+  .sp-more{margin-top:1.2rem;font-size:.82rem;font-weight:700}
+
+  .sp-note p{max-width:60ch;padding:1.2rem 1.35rem;border-left:2px solid var(--color-mist);color:var(--color-soil);font-size:.86rem;line-height:1.9}
+
+  @media(max-width:640px){
+    .sp-types dl{grid-template-columns:1fr}
+  }
+</style>

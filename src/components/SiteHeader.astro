@@ -73,6 +73,7 @@ const aboutLinks = [
 
     <nav class="desktop-nav" aria-label="メインナビゲーション">
       <a href="/news/" class:list={{ 'is-current': currentPath.startsWith('/news/') }} aria-current={currentPath.startsWith('/news/') ? 'page' : undefined}>ニュース</a>
+      <a href="/sports/" class:list={{ 'is-current': currentPath.startsWith('/sports/') }} aria-current={currentPath.startsWith('/sports/') ? 'page' : undefined}>スポーツ</a>
       <button type="button" class:list={{ 'is-current': isDiscoverCurrent }} data-menu-trigger="discover" aria-expanded="false" aria-controls="discover-menu">
         茨城を探す <span aria-hidden="true">⌄</span>
       </button>
@@ -127,6 +128,7 @@ const aboutLinks = [
     <div class="mobile-panel__inner">
       <p class="en-label">MENU</p>
       <a class="mobile-main-link" href="/news/">ニュース <span aria-hidden="true">→</span></a>
+      <a class="mobile-main-link" href="/sports/">スポーツ <span aria-hidden="true">→</span></a>
       <details open>
         <summary>茨城を探す <span aria-hidden="true">＋</span></summary>
         <div class="mobile-discovery">

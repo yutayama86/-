@@ -1,0 +1,205 @@
+---
+/**
+ * /sports/<team>/ — チームページ。5チームすべて同じ部品・同じデータ構造で作る。
+ *
+ * 構成：チーム紹介 / 次の試合 / 最近の試合 / 記事（種類ごと）/ 地域への導線。
+ * 試合データ（SPORTS_MATCHES）は現時点で空なので、該当セクションは
+ * 「準備中」と明示する。未確認の日程・結果・順位は出さない。
+ * 公式ロゴ・選手写真は権利が確認できないため使わない。
+ */
+import type { GetStaticPaths } from 'astro';
+import BrandBase from '../../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
+import {
+  SPORTS_TEAMS, SPORTS_TEAM_BY_SLUG, SPORTS_CONTENT_TYPES,
+  upcomingMatches, finishedMatches, type SportsContentType,
+} from '../../data/sports';
+import { MUNICIPALITIES } from '../../data/areas';
+import { getSportsNews, getSportsNewsByKeyword } from '../../lib/content';
+
+export const getStaticPaths = (() => SPORTS_TEAMS.map((team) => ({ params: { team: team.slug } }))) satisfies GetStaticPaths;
+
+const { team: slug } = Astro.params;
+const team = SPORTS_TEAM_BY_SLUG[slug as keyof typeof SPORTS_TEAM_BY_SLUG];
+if (!team) return Astro.redirect('/404');
+
+const upcoming = upcomingMatches(team.slug);
+const finished = finishedMatches(team.slug);
+
+// sportsTeam で分類された記事。将来CMSから追加されるぶんはここに入る。
+const tagged = await getSportsNews(team.slug);
+// 既存記事は分類を持たないため、チーム名で拾って橋渡しする（推測はしない）。
+const legacy = await getSportsNewsByKeyword([team.name]);
+const seen = new Set<string>();
+const articles = [...tagged, ...legacy].filter((item) => {
+  if (seen.has(item.id)) return false;
+  seen.add(item.id);
+  return true;
+});
+
+/** 種類ごとに束ねる。分類が未設定の既存記事は「関連記事」へ寄せる。 */
+const byType = new Map<SportsContentType, typeof articles>();
+const untyped: typeof articles = [];
+for (const item of articles) {
+  const t = item.data.sportsContentType as SportsContentType | undefined;
+  if (t) byType.set(t, [...(byType.get(t) ?? []), item]);
+  else untyped.push(item);
+}
+
+const towns = team.municipalitySlugs
+  .map((s) => MUNICIPALITIES.find((m) => m.slug === s))
+  .filter((m): m is NonNullable<typeof m> => Boolean(m));
+
+const crumbs: Crumb[] = [
+  { name: 'ホーム', href: '/' },
+  { name: '茨城のスポーツ', href: '/sports/' },
+  { name: team.name },
+];
+const pageUrl = new URL(`/sports/${team.slug}/`, Astro.site).href;
+const newsPath = (id: string) => `/news/${id.split('/').pop()}/`;
+const fmt = (d: Date) => new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
+
+const jsonLd = [
+  breadcrumbJsonLd(crumbs, Astro.site),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${team.name}｜イバトコ`,
+    url: pageUrl,
+    description: team.summary,
+  },
+];
+---
+
+<BrandBase
+  title={`${team.name}｜試合と観戦、その周りのこと｜イバトコ`}
+  description={`${team.name}（${team.sport}）に関する記事、試合の情報、観戦と遠征の手引きをまとめています。${team.venue ? `本拠地は${team.venue}。` : ''}確かめられたことだけを載せます。`}
+  jsonLd={jsonLd}
+>
+  <header class="tm-head bp-wrap">
+    <Breadcrumbs items={crumbs} />
+    <p class="bp-kicker">{team.sport}</p>
+    <h1>{team.name}</h1>
+    <p>{team.summary}</p>
+    {(team.league || team.venue) && (
+      <dl class="tm-facts">
+        {team.league && <div><dt>リーグ</dt><dd>{team.league}</dd></div>}
+        {team.venue && <div><dt>本拠地</dt><dd>{team.venue}</dd></div>}
+      </dl>
+    )}
+    {team.basicsPending && (
+      <p class="tm-pending">所属リーグや本拠地などの基本情報は、公式で確認できしだい追記します。確認できていないことは書きません。</p>
+    )}
+  </header>
+
+  <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-next">
+    <h2 id="tm-next" class="bp-section-title">次の試合</h2>
+    {upcoming.length > 0 ? (
+      <ul class="tm-matches">{upcoming.map((m) => (
+        <li>
+          <span class="tm-date">{m.date}{m.startTime ? ` ${m.startTime}` : ''}</span>
+          <strong>{m.homeAway === 'home' ? 'ホーム' : m.homeAway === 'away' ? 'アウェイ' : '中立'}　vs {m.opponent}</strong>
+          <span class="tm-meta">{m.competition}／{m.venue}</span>
+          {m.articleUrl && <a href={m.articleUrl}>この試合の記事 →</a>}
+        </li>
+      ))}</ul>
+    ) : (
+      <p class="tm-empty">日程はまだ掲載していません。公式で確認できたものから順に載せます。</p>
+    )}
+  </section>
+
+  <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-recent">
+    <h2 id="tm-recent" class="bp-section-title">最近の試合</h2>
+    {finished.length > 0 ? (
+      <ul class="tm-matches">{finished.map((m) => (
+        <li>
+          <span class="tm-date">{m.date}</span>
+          <strong>vs {m.opponent}{m.score ? `　${m.score.own} - ${m.score.opponent}` : ''}</strong>
+          <span class="tm-meta">{m.competition}／{m.venue}</span>
+          {m.articleUrl && <a href={m.articleUrl}>試合結果を読む →</a>}
+        </li>
+      ))}</ul>
+    ) : (
+      <p class="tm-empty">試合結果はまだ掲載していません。順位や成績も、確認できるまで書きません。</p>
+    )}
+  </section>
+
+  {[...Object.keys(SPORTS_CONTENT_TYPES)].map((key) => {
+    const type = key as SportsContentType;
+    const list = byType.get(type) ?? [];
+    return list.length > 0 ? (
+      <section class="tm-block bp-wrap bp-section">
+        <h2 class="bp-section-title">{SPORTS_CONTENT_TYPES[type].label}</h2>
+        <ul class="tm-articles">{list.map((item) => (
+          <li><a href={newsPath(item.id)}>
+            <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
+            <strong>{item.data.title}</strong>
+          </a></li>
+        ))}</ul>
+      </section>
+    ) : null;
+  })}
+
+  {untyped.length > 0 && (
+    <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-related">
+      <h2 id="tm-related" class="bp-section-title">関連記事</h2>
+      <ul class="tm-articles">{untyped.map((item) => (
+        <li><a href={newsPath(item.id)}>
+          <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
+          <strong>{item.data.title}</strong>
+        </a></li>
+      ))}</ul>
+    </section>
+  )}
+
+  {articles.length === 0 && (
+    <section class="tm-block bp-wrap bp-section">
+      <h2 class="bp-section-title">記事</h2>
+      <p class="tm-empty">このチームの記事はこれから公開します。</p>
+    </section>
+  )}
+
+  <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-area">
+    <h2 id="tm-area" class="bp-section-title">この街のこと</h2>
+    <ul class="tm-links">
+      {towns.map((m) => <li><a href={`/area/${m.slug}/`}>{m.name}の地域情報 →</a></li>)}
+      <li><a href="/sports/">茨城のスポーツ 一覧へ戻る →</a></li>
+      <li><a href="/news/">茨城ニュース解説 →</a></li>
+    </ul>
+    {towns.length === 0 && (
+      <p class="tm-empty">ホームタウンとして確認できた市町村がまだありません。確認できしだい、街のページへつなぎます。</p>
+    )}
+  </section>
+</BrandBase>
+
+<style>
+  /* 上下の余白と全幅の背景は interior.css の見出しバンドが持つ */
+  .tm-head h1{margin-top:.8rem;font:600 clamp(2.2rem,5vw,3.6rem)/1.25 var(--font-brand-display);color:var(--color-ink)}
+  .tm-head>p{max-width:52ch;margin-top:1.3rem;line-height:2;color:var(--color-soil)}
+  .tm-facts{display:flex;flex-wrap:wrap;gap:.6rem 2.2rem;margin:1.6rem 0 0}
+  .tm-facts div{display:grid;gap:.15rem}
+  .tm-facts dt{font:700 .66rem var(--font-brand-meta);letter-spacing:.12em;color:var(--color-tide)}
+  .tm-facts dd{margin:0;font:600 1rem var(--font-brand-display);color:var(--color-ink)}
+  .tm-pending{max-width:52ch;margin-top:1.4rem;padding:.9rem 1.1rem;border-left:2px solid var(--color-mist);color:var(--color-soil);font-size:.8rem;line-height:1.85}
+
+  .tm-block .bp-section-title{margin-bottom:1.2rem}
+  .tm-empty{color:var(--color-soil);line-height:1.9;font-size:.9rem}
+
+  .tm-matches{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
+  .tm-matches li{display:grid;gap:.3rem;padding:1.1rem 0;border-bottom:1px solid var(--color-mist)}
+  .tm-date{font:.74rem var(--font-brand-meta);color:var(--color-tide)}
+  .tm-matches strong{font:600 1.05rem var(--font-brand-display);color:var(--color-ink)}
+  .tm-meta{color:var(--color-soil);font-size:.78rem}
+  .tm-matches a{font-size:.8rem;font-weight:700;color:var(--interior-blue,#174f99)}
+
+  .tm-articles{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
+  .tm-articles li{border-bottom:1px solid var(--color-mist)}
+  .tm-articles a{display:grid;gap:.3rem;padding:1rem 0;color:var(--color-ink)}
+  .tm-articles a:hover{color:var(--interior-blue,#174f99)}
+  .tm-articles time{font:.72rem var(--font-brand-meta);color:var(--color-soil)}
+  .tm-articles strong{font:600 1rem/1.65 var(--font-brand-display)}
+
+  .tm-links{list-style:none;padding:0;display:grid;gap:.7rem}
+  .tm-links a{color:var(--interior-blue,#174f99);font-size:.9rem;font-weight:700}
+</style>

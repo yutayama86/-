@@ -84,17 +84,14 @@ const newsLinks: NavDropdownItem[] = [
     })),
 ];
 
-// スポーツは5チーム。競技とリーグは data/sports.ts の確認済みの値だけを使う。
-// リーグ名の丸括弧の中は略す。ナビでは
-// 「バスケットボール・WJBL（バスケットボール女子日本リーグ）」のように
-// 競技名が二重になって読みにくいため。正式名称はチームページに出す。
-const shortLeague = (league: string) => league.replace(/（[^）]*）$/, '');
+// スポーツは5チーム。競技とリーグは data/sports.ts の確認済みの値をそのまま使う。
+// リーグ名は data 側で短く統一してあるので、ここで加工しない。
 const sportsLinks: NavDropdownItem[] = [
   { label: '茨城のスポーツ', href: '/sports/', note: '観戦・遠征・地域から読む' },
   ...SPORTS_TEAMS.map((team) => ({
     label: team.name,
     href: `/sports/${team.slug}/`,
-    note: team.league ? `${team.sport}・${shortLeague(team.league)}` : team.sport,
+    note: team.league ? `${team.sport}・${team.league}` : team.sport,
   })),
 ];
 ---

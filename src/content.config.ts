@@ -191,6 +191,12 @@ const news = defineCollection({
     municipalities: z.array(z.enum(municipalitySlugs)).default([]),
     /** スポーツ記事のときだけ指定する。/sports/ 配下の絞り込みに使う */
     sportsTeam: z.enum(sportsTeamSlugs).optional(),
+    /**
+     * 1記事を複数チームのページへ出すときに使う（例：水戸 vs 鹿島）。
+     * 先頭のチームが sportsMatch の「視点」になる。
+     * sportsTeam 単体の既存記事はそのまま動く（後方互換）。
+     */
+    sportsTeams: z.array(z.enum(sportsTeamSlugs)).min(1).optional(),
     sportsContentType: z.enum(sportsContentTypes).optional(),
     /**
      * 試合そのものを扱う記事だけに付ける。チームページの
@@ -260,11 +266,17 @@ const news = defineCollection({
     }
     // スポーツ用のフィールドは、どのチームの記事か決まっていないと置き場所が無い。
     // 付け忘れるとチームページに出ないまま気づけないので、ビルドで止める。
-    if (data.sportsContentType && !data.sportsTeam) {
-      ctx.addIssue({ code: 'custom', path: ['sportsTeam'], message: 'sportsContentType を指定した記事には sportsTeam が必要です。' });
+    // sportsTeam（単体）と sportsTeams（複数）のどちらかがあればよい。
+    const hasTeam = Boolean(data.sportsTeam) || (data.sportsTeams?.length ?? 0) > 0;
+    if (data.sportsContentType && !hasTeam) {
+      ctx.addIssue({ code: 'custom', path: ['sportsTeam'], message: 'sportsContentType を指定した記事には sportsTeam または sportsTeams が必要です。' });
     }
-    if (data.sportsMatch && !data.sportsTeam) {
-      ctx.addIssue({ code: 'custom', path: ['sportsTeam'], message: 'sportsMatch を指定した記事には sportsTeam が必要です。' });
+    if (data.sportsMatch && !hasTeam) {
+      ctx.addIssue({ code: 'custom', path: ['sportsTeam'], message: 'sportsMatch を指定した記事には sportsTeam または sportsTeams が必要です。' });
+    }
+    // 対戦カード記事で相手を自分自身にしていると、反転表示が壊れる
+    if (data.sportsMatch && data.sportsTeams && data.sportsTeams.length > 2) {
+      ctx.addIssue({ code: 'custom', path: ['sportsTeams'], message: 'sportsMatch のある記事の sportsTeams は2チームまでです（1試合の当事者は2チームのため）。' });
     }
     if (!data.draft && data.sourceUrls.length === 0) {
       ctx.addIssue({ code: 'custom', path: ['sourceUrls'], message: '公開ニュースには一次情報または信頼できる情報源URLが必要です。' });

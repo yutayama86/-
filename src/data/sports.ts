@@ -197,6 +197,42 @@ export const SPORTS_TEAM_BY_SLUG: Record<SportsTeamSlug, SportsTeam> = Object.fr
   SPORTS_TEAMS.map((team) => [team.slug, team])
 ) as Record<SportsTeamSlug, SportsTeam>;
 
+/**
+ * 記事がどのチームに属するかを解決する。
+ *
+ * 1記事を複数チームへ出せるようにするため、指定の仕方は2通りある。
+ *   sportsTeam:  "mito-hollyhock"                      … 1チーム（従来どおり）
+ *   sportsTeams: ["mito-hollyhock", "kashima-antlers"] … 複数チーム
+ * 両方書いてもよい。重複は取り除く。
+ */
+export interface SportsArticleTeamFields {
+  sportsTeam?: string;
+  sportsTeams?: string[];
+}
+
+const isTeamSlug = (value: string): value is SportsTeamSlug =>
+  SPORTS_TEAMS.some((team) => team.slug === value);
+
+/** この記事を出すチームすべて。並び順は「視点のチーム」を先頭に保つ */
+export function articleTeamSlugs(data: SportsArticleTeamFields): SportsTeamSlug[] {
+  const ordered = [data.sportsTeam, ...(data.sportsTeams ?? [])].filter(
+    (slug): slug is string => Boolean(slug)
+  );
+  return [...new Set(ordered)].filter(isTeamSlug);
+}
+
+/**
+ * sportsMatch の opponent / homeAway / score を「どのチームから見た値か」。
+ * 明示が無ければ最初のチーム。
+ *
+ * 複数チームの記事では、視点でないチームのページに出すとき、
+ * lib/sports.ts が HOME/AWAY とスコアを入れ替えて表示する。
+ * 同じ試合を、両クラブそれぞれの立場で正しく見せるため。
+ */
+export function articleAnchorTeam(data: SportsArticleTeamFields): SportsTeamSlug | undefined {
+  return articleTeamSlugs(data)[0];
+}
+
 /** 区分をまたいだ市町村slugの重複なし一覧。関係する街の記事を引くのに使う */
 export function townSlugsOf(team: SportsTeam): string[] {
   return [...new Set(team.towns.flatMap((group) => group.slugs))];

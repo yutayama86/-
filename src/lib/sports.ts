@@ -12,7 +12,10 @@
  * スコアが無ければ点差を書かない。空欄を埋めるための推測はしない。
  */
 import type { CollectionEntry } from 'astro:content';
-import { SPORTS_MATCHES, type SportsMatch, type SportsTeamSlug } from '../data/sports';
+import {
+  SPORTS_MATCHES, SPORTS_TEAM_BY_SLUG, articleAnchorTeam, articleTeamSlugs,
+  type SportsMatch, type SportsTeamSlug,
+} from '../data/sports';
 import { getSportsNews } from './content';
 
 /** 画面に出す試合1件。記事から来たものは articleUrl と articleTitle を持つ */
@@ -51,20 +54,47 @@ function fromManual(entry: SportsMatch): ResolvedMatch | null {
   };
 }
 
-function fromArticle(item: CollectionEntry<'news'>): ResolvedMatch | null {
+const FLIP: Record<ResolvedMatch['homeAway'], ResolvedMatch['homeAway']> = {
+  home: 'away',
+  away: 'home',
+  neutral: 'neutral',
+};
+
+/**
+ * 記事から、指定チーム視点の試合を取り出す。
+ *
+ * sportsMatch の opponent / homeAway / score は「視点のチーム」から見た値。
+ * 対戦カード記事（水戸 vs 鹿島）を相手側のチームページに出すときは、
+ * 相手＝視点のチーム、HOME↔AWAY、スコアの左右を入れ替える。
+ * そうしないと鹿島のページに「HOME vs 鹿島アントラーズ」と出てしまう。
+ */
+function fromArticle(item: CollectionEntry<'news'>, forTeam: SportsTeamSlug): ResolvedMatch | null {
   const match = item.data.sportsMatch;
-  if (!match || !item.data.sportsTeam) return null;
-  return {
-    team: item.data.sportsTeam as SportsTeamSlug,
+  if (!match) return null;
+  const teams = articleTeamSlugs(item.data);
+  if (!teams.includes(forTeam)) return null;
+
+  const anchor = articleAnchorTeam(item.data);
+  const base = {
+    team: forTeam,
     date: match.date,
-    opponent: match.opponent,
-    homeAway: match.homeAway,
     kickoff: match.kickoff,
     competition: match.competition,
     venue: match.venue,
-    score: match.score,
     articleUrl: newsPath(item.id),
     articleTitle: item.data.title,
+  };
+
+  // 視点のチーム自身、または相手がイバトコの扱うチームでない場合は、書かれたまま
+  if (!anchor || anchor === forTeam) {
+    return { ...base, opponent: match.opponent, homeAway: match.homeAway, score: match.score };
+  }
+
+  return {
+    ...base,
+    opponent: SPORTS_TEAM_BY_SLUG[anchor].name,
+    homeAway: FLIP[match.homeAway],
+    score: match.score ? { own: match.score.opponent, opponent: match.score.own } : undefined,
   };
 }
 
@@ -82,7 +112,7 @@ export async function getTeamMatches(team: SportsTeamSlug): Promise<ResolvedMatc
   }
 
   for (const item of await getSportsNews(team)) {
-    const resolved = fromArticle(item);
+    const resolved = fromArticle(item, team);
     if (!resolved) continue;
     const key = matchKey(resolved);
     const existing = byKey.get(key);

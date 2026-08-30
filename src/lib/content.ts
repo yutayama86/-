@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { articleTeamSlugs } from '../data/sports';
 
 /** 公開記事を新しい順に。draft または未レビューは環境に関係なく除外。 */
 export async function getArticles(): Promise<CollectionEntry<'articles'>[]> {
@@ -260,8 +261,11 @@ export function formatDate(d: Date): string {
 export async function getSportsNews(team?: string): Promise<CollectionEntry<'news'>[]> {
   const all = await getIndexableNews();
   return all.filter((item) => {
-    if (!item.data.sportsTeam) return false;
-    return team ? item.data.sportsTeam === team : true;
+    // sportsTeam（単体）と sportsTeams（複数）の両方を見る。
+    // 1記事を複数チームのページへ出すため（例：水戸 vs 鹿島）。
+    const teams = articleTeamSlugs(item.data);
+    if (teams.length === 0) return false;
+    return team ? teams.includes(team as (typeof teams)[number]) : true;
   });
 }
 

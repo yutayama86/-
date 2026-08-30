@@ -42,7 +42,7 @@ ChatGPTで書いた原稿を、そのまま `src/content/news/<slug>.md` に置�
 |---|---|
 | publishedAt | `pubDate` |
 | updatedAt | `updatedDate` |
-| team | `sportsTeam` |
+| team | `sportsTeam`（1チーム）／ `sportsTeams`（複数チーム） |
 | contentType | `sportsContentType` |
 | matchDate / opponent / homeAway / competition / venue | `sportsMatch` の中 |
 | areas | `municipalities`（市町村slug） |
@@ -64,7 +64,10 @@ prefecture: "茨城県"
 municipalities: [mito]    # 44slugのみ。県全体の話題は []
 
 # ─ スポーツ用 ─────────────────────────────
-sportsTeam: "mito-hollyhock"      # 下記4
+sportsTeam: "mito-hollyhock"      # 1チームのとき。下記4
+# sportsTeams:                    # 対戦カード記事のとき（両チームのページへ出る）
+#   - mito-hollyhock              #   先頭が sportsMatch の「視点」になる
+#   - kashima-antlers
 sportsContentType: "match-result" # 下記4
 sportsMatch:                      # 試合を扱う記事だけ。それ以外は丸ごと省く
   date: 2026-09-06
@@ -133,6 +136,41 @@ sportsContentType:
 試合結果 / プレビュー / 観戦・ホームガイド / アウェイ遠征 / ニュース・コラム
 ```
 （`news` と `column` は「ニュース・コラム」にまとまる）
+
+## 4-2. 1記事を2チームへ出す（対戦カード）
+
+水戸 vs 鹿島のように、両クラブのページへ同じ記事を出したいときは
+`sportsTeam` の代わりに `sportsTeams` を使う。**記事は1本・URLも1つ**のまま、
+両方のチームページに出る。
+
+```yaml
+sportsTeams:
+  - mito-hollyhock      # ← 先頭が「視点」。sportsMatch はこのチームから見て書く
+  - kashima-antlers
+sportsContentType: "preview"
+sportsMatch:
+  date: 2026-09-02
+  opponent: "鹿島アントラーズ"      # 視点チームから見た相手
+  homeAway: home                    # 視点チームから見た home/away
+  venue: "水戸信用金庫スタジアム"
+  score:                            # 終了後に追記する。予定の記事では省く
+    own: 2                          # 視点チームの得点
+    opponent: 1
+```
+
+相手チームのページでは、**HOME/AWAY・対戦相手・スコアが自動で入れ替わる**。
+上の例なら、
+
+```
+水戸ページ   HOME vs 鹿島アントラーズ    2 - 1  勝
+鹿島ページ   AWAY vs 水戸ホーリーホック  1 - 2  敗
+```
+
+書き直す必要はない。視点は先頭のチームに固定で書く。
+
+- `sportsMatch` を持つ記事の `sportsTeams` は**2チームまで**（1試合の当事者は2つのため）。3つ以上を書くとビルドが止まる
+- 試合を扱わない記事（コラムなど）なら3チーム以上でも可
+- `sportsTeam`（単体）で書かれた既存記事はそのまま動く。書き換えは不要
 
 ## 5. category の選び方
 

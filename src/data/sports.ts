@@ -4,8 +4,10 @@
  * 事実の扱い（重要）:
  *  - チームの所属リーグ・本拠地・ホームタウンは、**公式で確認できたものだけ**を書く。
  *    確認できていない項目は undefined のままにし、画面側で「準備中」または非表示にする。
- *    2026年8月30日時点で確認できたのは水戸ホーリーホックの本拠地のみ
- *    （既に公開済みの当サイト記事「水戸信用金庫スタジアムのアクセス・駐車場」で確認）。
+ *    2026年8月30日に各チームの公式サイトで確認した。確認できなかったものは書いていない。
+ *    ホームタウンを公式に明記しているのはアストロプラネッツのみで、
+ *    鹿島・ロボッツは本拠地スタジアム名までしか確認できていない。
+ *    クーガーズは公式サイトにリーグ・本拠地の記載がなかった。
  *  - 試合日程・結果・順位は SPORTS_MATCHES に入れるが、**現時点では空**。
  *    未確認のまま入れない。外部APIの自動取得は今回実装していない。
  *  - 公式ロゴ・選手写真など権利の確認できない素材は使わない。テキストだけで構成する。
@@ -74,24 +76,36 @@ export const SPORTS_TEAMS: SportsTeam[] = [
     name: '鹿島アントラーズ',
     sport: 'サッカー',
     summary: '茨城県を拠点とするサッカークラブ。',
+    // 公式サイトで確認（2026年8月30日）
+    league: '明治安田Ｊ１リーグ',
+    venue: 'メルカリスタジアム',
+    // ホームタウンの市町村名は公式サイトに記載がなかったため空のまま
     municipalitySlugs: [],
-    basicsPending: true,
+    basicsPending: false,
   },
   {
     slug: 'ibaraki-robots',
     name: '茨城ロボッツ',
     sport: 'バスケットボール',
     summary: '茨城県を拠点とするバスケットボールクラブ。',
+    // 公式サイトで確認（2026年8月30日）。ディビジョンは「B.LEAGUE」表記に従う
+    league: 'B.LEAGUE',
+    venue: 'アダストリアみとアリーナ',
     municipalitySlugs: [],
-    basicsPending: true,
+    basicsPending: false,
   },
   {
     slug: 'ibaraki-astroplanets',
     name: '茨城アストロプラネッツ',
     sport: '野球',
-    summary: '茨城県を拠点とする野球チーム。',
-    municipalitySlugs: [],
-    basicsPending: true,
+    summary: '茨城県を拠点とする野球チーム。公式サイトは県内14市町村をフランチャイズとして挙げています。',
+    // 公式サイトで確認（2026年8月30日）。本拠地球場の記載はなかった
+    league: 'ルートインBCリーグ',
+    municipalitySlugs: [
+      'mito', 'hitachi', 'tsuchiura', 'koga', 'ryugasaki', 'takahagi', 'kasama',
+      'ushiku', 'hitachiomiya', 'tsukubamirai', 'omitama', 'oarai', 'miho', 'kamisu',
+    ],
+    basicsPending: false,
   },
   {
     slug: 'hitachi-hightech-cougars',

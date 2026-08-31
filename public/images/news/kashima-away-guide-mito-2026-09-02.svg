@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="9月2日19時キックオフの水戸信用金庫スタジアムについて、駐車場開門6時30分から一般入場16時45分までの当日の流れと、東海駅西口から約10分、新光町臨時駐車場から約25分という無料シャトルバスの所要時間を示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城のスポーツ</text>
+
+  <text x="100" y="176" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">2026年9月2日（水）19:00 KICK OFF ／ 水戸信用金庫スタジアム（那珂市）</text>
+
+  <text x="100" y="222" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a">当日の流れ</text>
+  <line x1="100" y1="248" x2="1016" y2="248" stroke="#d9d0c0" stroke-width="2"/>
+  <g font-family="'Source Sans 3', sans-serif" text-anchor="middle">
+    <circle cx="140" cy="248" r="6" fill="#315c68"/>
+    <text x="140" y="278" font-size="17" font-weight="600" fill="#315c68">6:30</text>
+    <text x="140" y="300" font-size="14" fill="#75695a">駐車場開門</text>
+
+    <circle cx="470" cy="248" r="6" fill="#315c68"/>
+    <text x="470" y="278" font-size="17" font-weight="600" fill="#315c68">15:30</text>
+    <text x="470" y="300" font-size="14" fill="#75695a">道の駅ブース</text>
+
+    <circle cx="700" cy="248" r="6" fill="#315c68"/>
+    <text x="700" y="278" font-size="17" font-weight="600" fill="#315c68">16:45</text>
+    <text x="700" y="300" font-size="14" fill="#75695a">一般入場</text>
+
+    <circle cx="1016" cy="248" r="7" fill="#a63f32"/>
+    <text x="1016" y="278" font-size="17" font-weight="600" fill="#a63f32">19:00</text>
+    <text x="1016" y="300" font-size="14" fill="#a63f32">キックオフ</text>
+  </g>
+
+  <text x="100" y="356" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a">無料シャトルバス（試合開始6時間前より随時運行）</text>
+  <rect x="100" y="374" width="410" height="52" fill="none" stroke="#315c68" stroke-width="1.8"/>
+  <text x="305" y="406" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#315c68" text-anchor="middle">JR東海駅 西口 　── 約10分</text>
+  <rect x="530" y="374" width="410" height="52" fill="none" stroke="#315c68" stroke-width="1.8"/>
+  <text x="735" y="406" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#315c68" text-anchor="middle">新光町臨時駐車場 　── 約25分</text>
+
+  <text x="100" y="500" font-family="'Shippori Mincho', serif" font-size="46" font-weight="600" fill="#172b35">今節は、乗り場が変わる。</text>
+
+  <text x="1100" y="546" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a" text-anchor="end">予約制駐車場の一部が利用不可／シャトルの運行ルート変更</text>
+</svg>

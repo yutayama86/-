@@ -15,7 +15,10 @@ const SITE = 'https://ibatoco.jp';
 const args = process.argv.slice(2);
 const timeoutIdx = args.indexOf('--timeout');
 const timeoutSec = timeoutIdx >= 0 ? Number(args[timeoutIdx + 1]) : 600;
-const [path, needle] = args.filter((a, i) => !a.startsWith('--') && i !== timeoutIdx + 1);
+// --timeout を付けなかったとき timeoutIdx は -1 になる。
+// そのまま timeoutIdx + 1 を除外すると、添字0（＝path）が消える。
+const skipIdx = timeoutIdx >= 0 ? timeoutIdx + 1 : -1;
+const [path, needle] = args.filter((a, i) => !a.startsWith('--') && i !== skipIdx);
 
 if (!path || !needle) {
   console.error('使い方: node scripts/wait-deploy.mjs <path> <含まれるはずの文字列> [--timeout 秒]');

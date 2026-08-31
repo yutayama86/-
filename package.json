@@ -9,6 +9,8 @@
     "build": "astro build",
     "check": "astro check && astro build",
     "audit:site": "npm run build && node scripts/quality-audit.mjs",
+    "verify:article": "node scripts/verify-article.mjs",
+    "wait:deploy": "node scripts/wait-deploy.mjs",
     "deploy": "npm run audit:site && npx wrangler deploy",
     "preview": "astro preview",
     "astro": "astro",

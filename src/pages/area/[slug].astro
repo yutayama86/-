@@ -145,9 +145,6 @@ const jsonLd: Record<string, unknown>[] = [
     </div> : <section class="area-empty bp-reading"><p class="bp-kicker">FIELD NOTE</p><h2>この街の記録は、これから。</h2><p>公開確認済みの記事・場所はまだありません。架空のおすすめや未確認情報では埋めず、現地で確認できた内容から掲載します。</p><a href="/contact/">この街の“いいとこ”を教える →</a></section>}
 
 
-    <section class="neighbors">
-      <div class="bp-wrap"><p class="bp-kicker">NEARBY CITIES</p><h2>{region.label}の、ほかの街。</h2><ul>{neighbors.map((item) => <li><a href={`/area/${item.slug}/`}>{item.name}</a></li>)}</ul></div>
-    </section>
   </article>}
 
   {areaNews.length > 0 && (
@@ -167,6 +164,10 @@ const jsonLd: Record<string, unknown>[] = [
       </div>
     </section>
   )}
+
+  <section class="neighbors">
+    <div class="bp-wrap"><p class="bp-kicker">NEARBY CITIES</p><h2>{region.label}の、ほかの街。</h2><ul>{neighbors.map((item) => <li><a href={`/area/${item.slug}/`}>{item.name}</a></li>)}</ul></div>
+  </section>
 
   {(relatedThemes.length > 0 || areaMichinoeki.length > 0) && (
     <section class="area-themes">

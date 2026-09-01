@@ -119,9 +119,6 @@ if (guide.beforeYouGo?.length) jump.push({ href: '#plan', label: '旅の準備' 
     </aside>
   </div>
 
-  <section class="neighbors">
-    <div class="bp-wrap"><p class="bp-kicker">NEARBY CITIES</p><h2>{region.label}の、ほかの街。</h2><ul>{neighbors.map((item) => <li><a href={`/area/${item.slug}/`}>{item.name}</a></li>)}</ul></div>
-  </section>
 </article>
 
 <style>
@@ -154,7 +151,6 @@ if (guide.beforeYouGo?.length) jump.push({ href: '#plan', label: '旅の準備' 
   .source-note{display:grid;grid-template-columns:.7fr 1fr;gap:2.5rem;padding:clamp(2rem,5vw,3.5rem);background:var(--color-ink);color:var(--color-white)}
   .source-note h2{margin-top:.8rem;font:600 1.4rem var(--font-brand-display)}.source-note p{margin-top:1rem;line-height:1.8}.source-note>div:last-child p{font-size:.85rem}
   .ag-sources{margin-top:1rem;border-top:1px solid rgba(255,255,255,.2)}.ag-sources li a{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.2);color:var(--color-white);font-size:.82rem}
-  .neighbors{padding-block:clamp(4rem,8vw,6rem);background:var(--color-white)}.neighbors h2{margin-top:.8rem;font:600 clamp(1.8rem,4vw,3.3rem) var(--font-brand-display);color:var(--color-ink)}.neighbors ul{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;margin-top:2rem}.neighbors a{color:var(--color-soil);border-bottom:1px solid var(--color-mist);padding-bottom:.2rem}.neighbors a:hover{color:var(--color-tide);border-color:var(--color-tide)}
   @media(max-width:900px){.ag-grid-3{grid-template-columns:1fr}.route-section ol{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:640px){.area-guide{padding-top:2.5rem}.ag-head h1{font-size:3.2rem}.ag-grid,.season-grid{grid-template-columns:1fr}.route-section ol{grid-template-columns:1fr}.route-section li{border-right:0;border-bottom:1px solid var(--color-mist)}.route-extra,.source-note{grid-template-columns:1fr}}
 </style>

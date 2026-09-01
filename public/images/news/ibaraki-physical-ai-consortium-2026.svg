@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="研究、実証、事業化、県外への販売という四つの段階を並べ、地域に産業として残るかどうかは最後の段階まで回せるかで決まることを示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="122" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+
+  <text x="100" y="178" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">つくば・日立・ひたちなかの集積を、どこまで回せるか</text>
+
+  <g font-family="'Source Sans 3', sans-serif">
+    <rect x="100" y="208" width="200" height="58" fill="none" stroke="#315c68" stroke-width="1.8"/>
+    <text x="200" y="244" font-size="18" fill="#315c68" text-anchor="middle">研究</text>
+
+    <rect x="332" y="208" width="200" height="58" fill="none" stroke="#315c68" stroke-width="1.8"/>
+    <text x="432" y="244" font-size="18" fill="#315c68" text-anchor="middle">実証</text>
+
+    <rect x="564" y="208" width="200" height="58" fill="none" stroke="#315c68" stroke-width="1.8"/>
+    <text x="664" y="244" font-size="18" fill="#315c68" text-anchor="middle">事業化</text>
+
+    <rect x="796" y="208" width="220" height="58" fill="none" stroke="#a63f32" stroke-width="2"/>
+    <text x="906" y="238" font-size="18" font-weight="600" fill="#a63f32" text-anchor="middle">県外への販売</text>
+    <text x="906" y="258" font-size="13" fill="#a63f32" text-anchor="middle">外から売上が入る</text>
+  </g>
+  <g fill="none" stroke="#315c68" stroke-width="1.8">
+    <path d="M304 237 H322"/><path d="M314 229 L326 237 L314 245"/>
+    <path d="M536 237 H554"/><path d="M546 229 L558 237 L546 245"/>
+    <path d="M768 237 H786"/><path d="M778 229 L790 237 L778 245"/>
+  </g>
+
+  <text x="100" y="316" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a">AIサービスを導入するだけなら、支払いは県外のベンダーへ出ていく</text>
+
+  <text x="100" y="404" font-family="'Shippori Mincho', serif" font-size="48" font-weight="600" fill="#172b35">AIを使う地域か、</text>
+  <text x="100" y="462" font-family="'Shippori Mincho', serif" font-size="48" font-weight="600" fill="#172b35">AI産業を生む地域か。</text>
+
+  <text x="1100" y="486" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a" text-anchor="end">コンソーシアムは2026年7月3日設立</text>
+  <text x="1100" y="516" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a" text-anchor="end">研究開発・実証への支援経費は補正予算案に計上</text>
+  <text x="1100" y="546" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a" text-anchor="end">予算案は提出段階。参加企業・実証内容は未公表</text>
+</svg>

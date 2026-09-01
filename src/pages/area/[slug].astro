@@ -8,7 +8,7 @@ import AreaGuide from '../../components/AreaGuide.astro';
 import { AREA_GUIDES, type AreaGuide as AreaGuideData } from '../../data/area-guides';
 import { MUNICIPALITY_CONTENT } from '../../data/municipality-content';
 import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, municipalitiesByRegion } from '../../data/areas';
-import { getPublishedArticles, getPublishedStores } from '../../lib/content';
+import { getPublishedArticles, getPublishedStores, getIndexableNews } from '../../lib/content';
 import { themesForArea } from '../../data/themes';
 import { michinoekiForArea } from '../../data/michinoeki';
 import { areaToSlug } from '../../data/areas';
@@ -23,7 +23,17 @@ const [allArticles, allStores] = await Promise.all([getPublishedArticles(), getP
 const articles = allArticles.filter((article) => areaToSlug(article.data.area) === slug);
 const stores = allStores.filter((store) => areaToSlug(store.data.area) === slug);
 const neighbors = municipalitiesByRegion(municipality.region).filter((item) => item.slug !== slug);
-const hasContent = articles.length + stores.length > 0;
+// この街を扱ったニュース解説。記事側の municipalities から自動で拾う。
+// 記事URLの一覧を手で持たないので、記事を1本足せばこの街のページが自動で厚くなる。
+// 該当が無い街ではセクションごと出さない（空の見出しを作らない）。
+const areaNews = (await getIndexableNews())
+  .filter((item) => item.data.municipalities.includes(slug!))
+  .slice(0, 8);
+const newsPath = (id: string) => `/news/${id.split('/').pop()}/`;
+const newsDate = (d: Date) => new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
+// ニュース解説もこの街の記録に数える。数えないと、記事があるのに
+// 「まだありません」と出てしまう。
+const hasContent = articles.length + stores.length + areaNews.length > 0;
 // 日立市＝出典・CCクレジット付きで作り込んだ旗艦ガイド（指示書 v1.0＋追補v1.1）。index。
 // 最終バッチ18市町村＝データ駆動の旅ガイド（text-forward）。「要確認」項目の人手検証まで noindex。
 // 残り25市町村は取材記事が付くまでミニマル表示（架空情報で埋めない）。
@@ -134,10 +144,29 @@ const jsonLd: Record<string, unknown>[] = [
       {stores.length > 0 && <section><p class="bp-kicker">PLACES</p><h2 class="bp-section-title">確認できた場所</h2><ul class="place-list">{stores.map((store) => <li><a href={`/place/${store.id}/`}><span><small>{store.data.category}</small><strong>{store.data.name}</strong><span>{store.data.tagline}</span></span><span aria-hidden="true">→</span></a></li>)}</ul></section>}
     </div> : <section class="area-empty bp-reading"><p class="bp-kicker">FIELD NOTE</p><h2>この街の記録は、これから。</h2><p>公開確認済みの記事・場所はまだありません。架空のおすすめや未確認情報では埋めず、現地で確認できた内容から掲載します。</p><a href="/contact/">この街の“いいとこ”を教える →</a></section>}
 
+
     <section class="neighbors">
       <div class="bp-wrap"><p class="bp-kicker">NEARBY CITIES</p><h2>{region.label}の、ほかの街。</h2><ul>{neighbors.map((item) => <li><a href={`/area/${item.slug}/`}>{item.name}</a></li>)}</ul></div>
     </section>
   </article>}
+
+  {areaNews.length > 0 && (
+    <section class="area-news">
+      <div class="bp-wrap">
+        <p class="bp-kicker">NEWS</p>
+        <h2>{municipality.name}のニュース解説</h2>
+        <p class="area-news__lead">この街を扱った記事です。発表そのものだけでなく、地域にどう効くのかまで書いています。</p>
+        <ul>{areaNews.map((item) => (
+          <li><a href={newsPath(item.id)}>
+            <time datetime={item.data.pubDate.toISOString()}>{newsDate(item.data.pubDate)}</time>
+            <strong>{item.data.title}</strong>
+            <b aria-hidden="true">→</b>
+          </a></li>
+        ))}</ul>
+        <p class="area-news__more"><a href="/news/">茨城ニュース解説をすべて見る →</a></p>
+      </div>
+    </section>
+  )}
 
   {(relatedThemes.length > 0 || areaMichinoeki.length > 0) && (
     <section class="area-themes">
@@ -162,6 +191,23 @@ const jsonLd: Record<string, unknown>[] = [
   .area-content{display:grid;gap:clamp(5rem,10vw,9rem);padding-block:clamp(4rem,9vw,8rem)}.area-content h2{margin-top:.7rem}.story-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem;margin-top:2rem}
   .place-list{margin-top:2rem;border-top:1px solid var(--color-mist)}.place-list a{display:flex;justify-content:space-between;gap:2rem;padding-block:1.4rem;border-bottom:1px solid var(--color-mist);color:var(--color-ink)}.place-list a>span:first-child{display:grid;gap:.25rem}.place-list small{color:var(--color-tide);font:.68rem var(--font-brand-meta);letter-spacing:.1em}.place-list strong{font:600 1.3rem var(--font-brand-display)}.place-list strong+span{color:var(--color-soil);font-size:.85rem}
   .area-empty{padding-block:clamp(5rem,11vw,9rem)}.area-empty h2{margin-top:1rem;font:600 clamp(2rem,5vw,4rem)/1.3 var(--font-brand-display);color:var(--color-ink)}.area-empty>p:not(.bp-kicker){margin-top:1.5rem;line-height:2;color:var(--color-soil)}.area-empty a{display:inline-block;margin-top:2rem;color:var(--color-tide);border-bottom:1px solid}
+  /* この街のニュース解説。見出しと余白は .area-themes と同じ組みにそろえる */
+  .area-news{padding-block:clamp(3.5rem,7vw,5.5rem);border-top:1px solid var(--color-mist)}
+  .area-news h2{margin-top:.8rem;font:600 clamp(1.6rem,3.4vw,2.6rem) var(--font-brand-display);color:var(--color-ink)}
+  .area-news__lead{margin-top:.8rem;max-width:52ch;color:var(--color-soil);font-size:.9rem;line-height:1.9}
+  .area-news ul{margin-top:2rem;list-style:none;padding:0;border-top:1px solid var(--color-mist)}
+  .area-news li{border-bottom:1px solid var(--color-mist)}
+  .area-news a{display:grid;grid-template-columns:1fr auto;gap:.3rem 1.5rem;align-items:center;padding-block:1.25rem;color:var(--color-ink)}
+  .area-news time{grid-column:1;font:.72rem var(--font-brand-meta);color:var(--color-soil)}
+  .area-news strong{grid-column:1;font:600 1.08rem/1.6 var(--font-brand-display)}
+  .area-news b{grid-column:2;grid-row:1/3;font-weight:400;color:var(--color-tide);transition:transform .2s ease}
+  .area-news a:hover strong{color:var(--color-tide)}
+  .area-news a:hover b{transform:translateX(.25rem)}
+  .area-news a:focus-visible{outline:2px solid var(--color-tide);outline-offset:2px}
+  .area-news__more{margin-top:1.4rem;font-size:.86rem;font-weight:700}
+  .area-news__more a{color:var(--color-tide)}
+  @media(prefers-reduced-motion:reduce){.area-news b{transition:none}}
+
   .area-themes{padding-block:clamp(3.5rem,7vw,5.5rem);border-top:1px solid var(--color-mist)}
   .area-themes h2{margin-top:.8rem;font:600 clamp(1.6rem,3.4vw,2.6rem) var(--font-brand-display);color:var(--color-ink)}
   .area-themes__lead{margin-top:.8rem;color:var(--color-soil);font-size:.9rem}

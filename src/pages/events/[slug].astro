@@ -136,7 +136,11 @@ if (d.faq.length > 0) {
       <div class="ev-picks">{d.picks.map((p) => (
         <article>
           <p class="ev-picks__area">{p.area}</p>
-          <h3>{p.url ? <a href={p.url} target="_blank" rel="noopener noreferrer">{p.name} ↗</a> : p.name}</h3>
+          <h3>{p.url
+            ? (p.url.startsWith('/')
+                ? <a href={p.url}>{p.name} →</a>
+                : <a href={p.url} target="_blank" rel="noopener noreferrer">{p.name} ↗</a>)
+            : p.name}</h3>
           <p class="ev-picks__for">こんな人に：{p.forWhom}</p>
           <p>{p.detail}</p>
         </article>

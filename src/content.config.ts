@@ -369,7 +369,9 @@ const events = defineCollection({
       area: z.string().min(1),
       forWhom: z.string().min(1),
       detail: z.string().min(1),
-      url: z.url().optional(),
+      /** 外部の公式サイト（絶対URL）か、サイト内のページ（/ 始まり）。
+          サイト内リンクを絶対URLで書くと外部リンク扱いになるため、/ で書く */
+      url: z.union([z.url(), z.string().startsWith('/')]).optional(),
     })).default([]),
     faq: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).default([]),
 

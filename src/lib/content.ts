@@ -282,3 +282,23 @@ export async function getSportsNewsByKeyword(keywords: string[]): Promise<Collec
     return keywords.some((k) => haystack.includes(k));
   });
 }
+
+/** イベント・おでかけ記事（/events/）。公開済みのみ。新しい開催日が先。 */
+export async function getEvents(): Promise<CollectionEntry<'events'>[]> {
+  const all = await getCollection('events', ({ data }) => !data.draft && data.reviewed);
+  return all.sort((a, b) => {
+    const ad = a.data.eventInfo?.startDate?.valueOf() ?? a.data.pubDate.valueOf();
+    const bd = b.data.eventInfo?.startDate?.valueOf() ?? b.data.pubDate.valueOf();
+    return ad - bd;
+  });
+}
+
+/** sitemap・一覧に載せるもの（noindex を除く） */
+export async function getIndexableEvents(): Promise<CollectionEntry<'events'>[]> {
+  return (await getEvents()).filter((item) => !item.data.noindex);
+}
+
+/** その市町村のイベント記事。/area/<slug>/ から引く */
+export async function getEventsByMunicipality(slug: string) {
+  return (await getIndexableEvents()).filter((item) => item.data.municipalities.includes(slug as never));
+}

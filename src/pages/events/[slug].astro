@@ -1,0 +1,216 @@
+---
+/**
+ * /events/<slug>/ — イベント・おでかけの実用記事。
+ *
+ * /news/ の「解説」とは器を分けている。ここに来る人が知りたいのは
+ * 日程・場所・料金・駐車場で、編集部の考察ではない。
+ *
+ * 確認できていない項目は出さない。推測で埋めるくらいなら、
+ * 「公式発表を確認できていません」と書いて公式へ送るほうが役に立つ。
+ */
+import type { GetStaticPaths } from 'astro';
+import BrandBase from '../../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
+import { getEvents } from '../../lib/content';
+import { MUNI_BY_SLUG } from '../../data/areas';
+
+export const getStaticPaths = (async () => {
+  const events = await getEvents();
+  return events.map((entry) => ({ params: { slug: entry.id.split('/').pop() }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const d = entry.data;
+const info = d.eventInfo;
+
+const fmtDate = (x: Date) => new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' }).format(x);
+const iso = (x: Date) => x.toISOString().slice(0, 10);
+
+/** 実務情報の行。値が無い項目は行ごと出さない */
+const factRows = info ? ([
+  ['開催日', info.endDate ? `${fmtDate(info.startDate)} 〜 ${fmtDate(info.endDate)}` : fmtDate(info.startDate)],
+  ['時間', info.time],
+  ['会場', info.venue],
+  ['住所', info.address],
+  ['料金', info.fee],
+  ['アクセス', info.access],
+  ['公共交通', info.publicTransport],
+  ['駐車場', info.parking],
+  ['雨天・荒天時', info.weatherPolicy],
+] as [string, string | undefined][]).filter(([, v]) => Boolean(v)) : [];
+
+/** 埋まっていない実務項目。読者に「調べたが無い」と伝えるため名前を出す */
+const unknownLabels = info ? ([
+  ['時間', info.time], ['会場', info.venue], ['住所', info.address], ['料金', info.fee],
+  ['アクセス', info.access], ['公共交通', info.publicTransport], ['駐車場', info.parking],
+  ['雨天・荒天時', info.weatherPolicy],
+] as [string, string | undefined][]).filter(([, v]) => !v).map(([k]) => k) : [];
+
+const towns = d.municipalities.map((s) => MUNI_BY_SLUG.get(s)).filter(Boolean);
+const crumbs: Crumb[] = [
+  { name: 'ホーム', href: '/' },
+  { name: '茨城のイベント・おでかけ', href: '/events/' },
+  { name: d.title },
+];
+const pageUrl = new URL(`/events/${entry.id.split('/').pop()}/`, Astro.site).href;
+
+const jsonLd: Record<string, unknown>[] = [breadcrumbJsonLd(crumbs, Astro.site)];
+if (info) {
+  jsonLd.push({
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: info.name,
+    startDate: iso(info.startDate),
+    ...(info.endDate ? { endDate: iso(info.endDate) } : {}),
+    ...(info.venue ? { location: { '@type': 'Place', name: info.venue, ...(info.address ? { address: info.address } : {}) } } : {}),
+    ...(info.officialUrl ? { url: info.officialUrl } : {}),
+    description: d.description,
+  });
+}
+if (d.faq.length > 0) {
+  jsonLd.push({
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })),
+  });
+}
+---
+
+<BrandBase
+  title={`${d.title}｜イバトコ`}
+  description={d.description}
+  image={d.ogImage}
+  imageAlt={d.ogImageAlt}
+  type="article"
+  publishedAt={d.pubDate}
+  updatedAt={d.updatedDate ?? d.pubDate}
+  jsonLd={jsonLd}
+  noindex={d.noindex}
+>
+  <header class="ev-head bp-wrap">
+    <Breadcrumbs items={crumbs} />
+    <p class="bp-kicker">{d.articleType === 'event' ? 'EVENT' : d.articleType === 'roundup' ? 'ROUNDUP' : 'GUIDE'}</p>
+    <h1>{d.title}</h1>
+    <p class="ev-lead">{d.summary}</p>
+    <p class="ev-meta">
+      <time datetime={d.pubDate.toISOString()}>公開 {fmtDate(d.pubDate)}</time>
+      {d.updatedDate && <> ／ <time datetime={d.updatedDate.toISOString()}>更新 {fmtDate(d.updatedDate)}</time></>}
+    </p>
+  </header>
+
+  {factRows.length > 0 && (
+    <section class="bp-wrap bp-section" aria-labelledby="ev-facts">
+      <h2 id="ev-facts" class="bp-section-title">開催情報</h2>
+      <dl class="ev-facts">
+        {factRows.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      {unknownLabels.length > 0 && (
+        <p class="ev-unknown">
+          {unknownLabels.join('、')}については、この記事の更新時点で公式発表を確認できていません。
+          推測では書かないため、{info?.officialUrl ? '公式サイト' : '主催者の発表'}で最新の情報をご確認ください。
+        </p>
+      )}
+      {info?.officialUrl && (
+        <p class="ev-official"><a href={info.officialUrl} target="_blank" rel="noopener noreferrer">{info.officialName ?? '公式サイト'}で最新情報を見る ↗</a></p>
+      )}
+    </section>
+  )}
+
+  {d.keyPoints.length > 0 && (
+    <section class="bp-wrap bp-section" aria-labelledby="ev-points">
+      <h2 id="ev-points" class="bp-section-title">押さえておきたいこと</h2>
+      <ul class="ev-points">{d.keyPoints.map((p) => <li>{p}</li>)}</ul>
+    </section>
+  )}
+
+  {d.highlights.length > 0 && (
+    <section class="bp-wrap bp-section" aria-labelledby="ev-high">
+      <h2 id="ev-high" class="bp-section-title">見どころ</h2>
+      <dl class="ev-list">{d.highlights.map((h) => <div><dt>{h.title}</dt><dd>{h.detail}</dd></div>)}</dl>
+    </section>
+  )}
+
+  {d.picks.length > 0 && (
+    <section class="bp-wrap bp-section" aria-labelledby="ev-picks">
+      <h2 id="ev-picks" class="bp-section-title">候補</h2>
+      <div class="ev-picks">{d.picks.map((p) => (
+        <article>
+          <p class="ev-picks__area">{p.area}</p>
+          <h3>{p.url ? <a href={p.url} target="_blank" rel="noopener noreferrer">{p.name} ↗</a> : p.name}</h3>
+          <p class="ev-picks__for">こんな人に：{p.forWhom}</p>
+          <p>{p.detail}</p>
+        </article>
+      ))}</div>
+    </section>
+  )}
+
+  {d.notes.length > 0 && (
+    <section class="bp-wrap bp-section" aria-labelledby="ev-notes">
+      <h2 id="ev-notes" class="bp-section-title">行く前に</h2>
+      <ul class="ev-points">{d.notes.map((n) => <li>{n}</li>)}</ul>
+    </section>
+  )}
+
+  {d.faq.length > 0 && (
+    <section class="bp-wrap bp-section" aria-labelledby="ev-faq">
+      <h2 id="ev-faq" class="bp-section-title">よくある質問</h2>
+      <dl class="ev-list">{d.faq.map((f) => <div><dt>{f.question}</dt><dd>{f.answer}</dd></div>)}</dl>
+    </section>
+  )}
+
+  <section class="bp-wrap bp-section" aria-labelledby="ev-src">
+    <h2 id="ev-src" class="bp-section-title">情報源</h2>
+    <ul class="ev-sources">{d.sourceUrls.map((s) => (
+      <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.label} ↗</a>{s.accessedAt && <small>（{fmtDate(s.accessedAt)}確認）</small>}</li>
+    ))}</ul>
+    <p class="ev-caution">開催内容・日程・料金・交通は変更されることがあります。お出かけ前に必ず公式の最新情報をご確認ください。</p>
+  </section>
+
+  {(towns.length > 0 || d.relatedArticleUrls.length > 0) && (
+    <section class="bp-wrap bp-section" aria-labelledby="ev-rel">
+      <h2 id="ev-rel" class="bp-section-title">この街のこと</h2>
+      <ul class="ev-links">
+        {towns.map((m) => <li><a href={`/area/${m!.slug}/`}>{m!.name}の地域情報 →</a></li>)}
+        {d.relatedArticleUrls.map((u) => <li><a href={u}>{u} →</a></li>)}
+        <li><a href="/events/">茨城のイベント・おでかけ一覧 →</a></li>
+      </ul>
+    </section>
+  )}
+</BrandBase>
+
+<style>
+  .ev-head h1{margin-top:.8rem;font:600 clamp(1.9rem,4vw,3rem)/1.4 var(--font-brand-display);color:var(--color-ink)}
+  .ev-lead{max-width:56ch;margin-top:1.3rem;line-height:2;color:var(--color-soil)}
+  .ev-meta{margin-top:1rem;color:var(--color-soil);font:.74rem var(--font-brand-meta)}
+
+  .ev-facts{display:grid;gap:0;margin:0;border-top:1px solid var(--color-mist)}
+  .ev-facts div{display:grid;grid-template-columns:7.5rem 1fr;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--color-mist)}
+  .ev-facts dt{font:700 .74rem/1.7 var(--font-brand-meta);letter-spacing:.06em;color:var(--color-tide)}
+  .ev-facts dd{margin:0;line-height:1.8;color:var(--color-ink)}
+  .ev-unknown{margin-top:1.2rem;padding:1rem 1.2rem;border-left:2px solid var(--color-mist);color:var(--color-soil);font-size:.86rem;line-height:1.9}
+  .ev-official{margin-top:1.2rem;font-weight:700}
+  .ev-official a{color:var(--interior-blue,#174f99)}
+
+  .ev-points{display:grid;gap:.7rem;padding-left:1.2rem;color:var(--color-ink);line-height:1.9}
+  .ev-list{display:grid;gap:1.4rem;margin:0}
+  .ev-list dt{font:600 1.05rem/1.6 var(--font-brand-display);color:var(--color-ink)}
+  .ev-list dd{margin:.4rem 0 0;line-height:1.95;color:var(--color-soil)}
+
+  .ev-picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--color-mist);border:1px solid var(--color-mist)}
+  .ev-picks article{padding:1.3rem 1.2rem;background:var(--color-white)}
+  .ev-picks__area{font:700 .66rem var(--font-brand-meta);letter-spacing:.1em;color:var(--color-tide)}
+  .ev-picks h3{margin:.4rem 0 .5rem;font:600 1.1rem var(--font-brand-display)}
+  .ev-picks h3 a{color:var(--color-ink)}
+  .ev-picks__for{color:var(--color-tide);font-size:.8rem;font-weight:700}
+  .ev-picks p:last-child{margin-top:.5rem;color:var(--color-soil);font-size:.86rem;line-height:1.85}
+
+  .ev-sources{display:grid;gap:.6rem;padding:0;list-style:none}
+  .ev-sources a{color:var(--interior-blue,#174f99);font-size:.9rem}
+  .ev-sources small{margin-left:.4rem;color:var(--color-soil);font-size:.74rem}
+  .ev-caution{margin-top:1.2rem;color:var(--color-soil);font-size:.82rem;line-height:1.9}
+
+  .ev-links{display:grid;gap:.7rem;padding:0;list-style:none}
+  .ev-links a{color:var(--interior-blue,#174f99);font-size:.9rem;font-weight:700}
+
+  @media(max-width:560px){.ev-facts div{grid-template-columns:6rem 1fr;gap:.7rem}}
+</style>

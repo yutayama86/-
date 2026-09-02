@@ -1,0 +1,130 @@
+---
+/**
+ * /events/ — イベント・おでかけの入口。
+ *
+ * 「茨城 イベント」「茨城 9月 イベント」のような検索に対して、
+ * 開催が近い順に並べる。記事が増えたぶんだけ厚くなる。
+ * 終わったイベントは下の「開催が終わったもの」へ落とし、消さない
+ * （翌年の同時期に更新して使うため）。
+ */
+import BrandBase from '../../layouts/BrandBase.astro';
+import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
+import { breadcrumbJsonLd } from '../../lib/seo';
+import { getIndexableEvents } from '../../lib/content';
+import { MUNI_BY_SLUG } from '../../data/areas';
+
+const all = await getIndexableEvents();
+const now = new Date();
+const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+const dateOf = (e: (typeof all)[number]) => e.data.eventInfo?.endDate ?? e.data.eventInfo?.startDate;
+const upcoming = all.filter((e) => { const d = dateOf(e); return !d || d >= today; });
+const past = all.filter((e) => { const d = dateOf(e); return d && d < today; }).reverse();
+
+/** 月ごとにまとめる。月別の検索意図にそのまま応えるため */
+const byMonth = new Map<string, typeof all>();
+for (const e of upcoming) {
+  const d = e.data.eventInfo?.startDate;
+  const key = d ? `${d.getFullYear()}年${d.getMonth() + 1}月` : 'いつでも';
+  byMonth.set(key, [...(byMonth.get(key) ?? []), e]);
+}
+
+const path = (e: (typeof all)[number]) => `/events/${e.id.split('/').pop()}/`;
+const fmt = (x: Date) => new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric', weekday: 'short' }).format(x);
+const townNames = (e: (typeof all)[number]) =>
+  e.data.municipalities.map((s) => MUNI_BY_SLUG.get(s)?.name).filter(Boolean).join('・');
+
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '茨城のイベント・おでかけ' }];
+const jsonLd = [
+  breadcrumbJsonLd(crumbs, Astro.site),
+  {
+    '@context': 'https://schema.org', '@type': 'CollectionPage',
+    name: '茨城のイベント・おでかけ',
+    url: new URL('/events/', Astro.site).href,
+    description: '茨城県のイベント、花火大会、祭り、季節のおでかけ。公式で確認できた日程・会場・駐車場だけをまとめています。',
+  },
+];
+---
+
+<BrandBase
+  title="茨城のイベント・おでかけ｜日程・会場・駐車場｜イバトコ"
+  description="茨城県のイベント、花火大会、祭り、季節のおでかけ情報。開催日・会場・料金・駐車場・アクセスを、公式で確認できたものだけまとめています。確認できていないことは、確認できていないと書きます。"
+  jsonLd={jsonLd}
+>
+  <header class="ev-head bp-wrap">
+    <Breadcrumbs items={crumbs} />
+    <p class="bp-kicker">EVENTS &amp; OUTINGS</p>
+    <h1>茨城のイベント・おでかけ</h1>
+    <p>日程、会場、料金、駐車場。出かける前に知りたいことを、公式で確認できたものだけ載せています。確認できていない項目は、埋めずに「確認できていない」と書きます。</p>
+  </header>
+
+  {upcoming.length > 0 ? (
+    [...byMonth.entries()].map(([month, items]) => (
+      <section class="bp-wrap bp-section">
+        <h2 class="bp-section-title">{month}</h2>
+        <ul class="ev-index">{items.map((e) => (
+          <li><a href={path(e)}>
+            <span class="ev-index__meta">
+              {e.data.eventInfo?.startDate && <time datetime={e.data.eventInfo.startDate.toISOString()}>{fmt(e.data.eventInfo.startDate)}</time>}
+              {townNames(e) && <b>{townNames(e)}</b>}
+            </span>
+            <strong>{e.data.title}</strong>
+            <small>{e.data.summary.slice(0, 78)}…</small>
+          </a></li>
+        ))}</ul>
+      </section>
+    ))
+  ) : (
+    <section class="bp-wrap bp-section">
+      <p class="ev-empty">これから開催されるイベントの記事は、まだ公開していません。公式で確認できたものから順に載せます。</p>
+    </section>
+  )}
+
+  {past.length > 0 && (
+    <section class="bp-wrap bp-section">
+      <h2 class="bp-section-title">開催が終わったもの</h2>
+      <p class="ev-note">来年の開催が発表されたら、同じ記事を更新します。</p>
+      <ul class="ev-index ev-index--past">{past.map((e) => (
+        <li><a href={path(e)}>
+          <span class="ev-index__meta">
+            {e.data.eventInfo?.startDate && <time datetime={e.data.eventInfo.startDate.toISOString()}>{fmt(e.data.eventInfo.startDate)}</time>}
+            {townNames(e) && <b>{townNames(e)}</b>}
+          </span>
+          <strong>{e.data.title}</strong>
+        </a></li>
+      ))}</ul>
+    </section>
+  )}
+
+  <section class="bp-wrap bp-section">
+    <h2 class="bp-section-title">ほかの入口から探す</h2>
+    <ul class="ev-links">
+      <li><a href="/hanabi/">茨城の花火 →</a></li>
+      <li><a href="/matsuri/">茨城の祭り →</a></li>
+      <li><a href="/kouyou/">茨城の紅葉 →</a></li>
+      <li><a href="/odekake/">茨城のおでかけ →</a></li>
+      <li><a href="/area/">44市町村から探す →</a></li>
+      <li><a href="/news/">茨城ニュース解説 →</a></li>
+    </ul>
+  </section>
+</BrandBase>
+
+<style>
+  .ev-head h1{margin-top:.9rem;font:600 clamp(2.2rem,5vw,3.6rem)/1.3 var(--font-brand-display);color:var(--color-ink)}
+  .ev-head>p:last-child{max-width:54ch;margin-top:1.4rem;line-height:2;color:var(--color-soil)}
+
+  .ev-index{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
+  .ev-index li{border-bottom:1px solid var(--color-mist)}
+  .ev-index a{display:grid;gap:.35rem;padding:1.2rem 0;color:var(--color-ink)}
+  .ev-index a:hover strong{color:var(--interior-blue,#174f99)}
+  .ev-index__meta{display:flex;gap:.8rem;align-items:center;font:.72rem var(--font-brand-meta);color:var(--color-soil)}
+  .ev-index__meta b{padding:.1rem .45rem;border:1px solid var(--color-mist);font-weight:700}
+  .ev-index strong{font:600 1.1rem/1.6 var(--font-brand-display)}
+  .ev-index small{color:var(--color-soil);font-size:.82rem;line-height:1.8}
+  .ev-index--past a{opacity:.72}
+
+  .ev-note{margin-bottom:1rem;color:var(--color-soil);font-size:.86rem}
+  .ev-empty{color:var(--color-soil);line-height:1.9}
+  .ev-links{display:grid;gap:.7rem;padding:0;list-style:none}
+  .ev-links a{color:var(--interior-blue,#174f99);font-size:.9rem;font-weight:700}
+</style>

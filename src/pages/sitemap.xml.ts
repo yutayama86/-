@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getAreaCounts, getArticles, getIndexableNews, getStores } from '../lib/content';
+import { getAreaCounts, getArticles, getIndexableNews, getIndexableEvents, getStores } from '../lib/content';
 import { CATEGORIES, SITE_CONFIG } from '../data/site';
 import { VISIBLE_GUIDES } from '../data/guides';
 import { VISIBLE_REPORTERS } from '../data/reporters';
@@ -27,6 +27,7 @@ export const GET: APIRoute = async () => {
     { path: '/biz/' },
     { path: '/contact/' },
     { path: '/news/' },
+    { path: '/events/' },
     { path: '/sports/' },
   ];
 
@@ -42,6 +43,11 @@ export const GET: APIRoute = async () => {
   }
 
   for (const item of news) entries.push({ path: `/news/${item.id.split('/').pop()}/`, lastmod: item.data.updatedDate ?? item.data.pubDate });
+
+  // イベント・おでかけ記事。開催日が過ぎても消さない（翌年に更新して使う）。
+  for (const item of await getIndexableEvents()) {
+    entries.push({ path: `/events/${item.id.split('/').pop()}/`, lastmod: item.data.updatedDate ?? item.data.pubDate });
+  }
 
   // ニュースのカテゴリ別一覧。記事が1本以上あるものだけ（ページ側の生成条件と同じ）。
   // 最終更新はそのカテゴリで一番新しい記事に合わせる。

@@ -53,11 +53,22 @@ if (slug.startsWith('_')) {
 }
 
 // ── 1. ソースの frontmatter ───────────────────────────────
-const srcPath = join('src/content/news', `${slug}.md`);
-if (!(await exists(srcPath))) {
-  console.log(ng(`記事ファイルが見つかりません: ${srcPath}`));
+// news と events の両方を見る。どちらに置いたかを呼び出し側が意識しなくてよいように。
+const CANDIDATES = [
+  { dir: 'src/content/news', route: 'news' },
+  { dir: 'src/content/events', route: 'events' },
+];
+let srcPath = '';
+let route = 'news';
+for (const c of CANDIDATES) {
+  const p = join(c.dir, `${slug}.md`);
+  if (await exists(p)) { srcPath = p; route = c.route; break; }
+}
+if (!srcPath) {
+  console.log(ng(`記事ファイルが見つかりません（news / events のどちらにも）: ${slug}.md`));
   process.exit(1);
 }
+console.log(`  コレクション        ${route}`);
 const src = await readFile(srcPath, 'utf8');
 const fm = src.split(/^---$/m)[1] ?? '';
 const field = (k) => fm.match(new RegExp(`^${k}:\\s*(.+)$`, 'm'))?.[1]?.trim();
@@ -87,6 +98,13 @@ if (ogLocalPath && !(await exists(join('public', ogLocalPath)))) {
 }
 if (ogLocalPath && !field('ogImageAlt')) fail('ogImage があるのに ogImageAlt がありません');
 
+// events だけの必須項目。あとでGSCと突き合わせる軸なので、空だと分析できない
+if (route === 'events') {
+  for (const k of ['articleType', 'searchIntent', 'keyword']) {
+    if (!field(k)) fail(`${k} が設定されていません（GSC分析の軸になるため必須）`);
+  }
+}
+
 // 内部リンクのラベル漏れ（未登録だと「関連情報」という汎用表示になる）
 const relBlock = fm.split('relatedArticleUrls:')[1] ?? '';
 const relUrls = [...relBlock.matchAll(/^\s{2}- ["'](\/[^"']+)["']/gm)].map((m) => m[1]);
@@ -99,14 +117,14 @@ if (relUrls.length > 0) {
 }
 
 // ── 2. ビルド成果物 ───────────────────────────────────────
-const distPath = join(DIST, 'news', slug, 'index.html');
+const distPath = join(DIST, route, slug, 'index.html');
 const built = await exists(distPath);
 
 if (isDraft) {
   if (built) fail('draft:true なのにページが生成されています');
   else pass('draft記事のためページ未生成（想定どおり）');
-  const list = await readFile(join(DIST, 'news/index.html'), 'utf8').catch(() => '');
-  if (list.includes(slug)) fail('draft記事が /news/ 一覧に出ています');
+  const list = await readFile(join(DIST, route, 'index.html'), 'utf8').catch(() => '');
+  if (list.includes(slug)) fail(`draft記事が /${route}/ 一覧に出ています`);
 } else {
   if (!built) {
     fail(`ページが生成されていません: ${distPath}（先に npm run audit:site を実行してください）`);
@@ -129,7 +147,7 @@ if (isDraft) {
     console.log(`  description        ${desc.length}字  ${desc.length >= 40 && desc.length <= 180 ? 'OK' : '\x1b[31m範囲外\x1b[0m'}`);
     if (desc.length < 40 || desc.length > 180) fail('description が 40〜180字の範囲外です');
 
-    const wantCanonical = `${SITE}/news/${slug}/`;
+    const wantCanonical = `${SITE}/${route}/${slug}/`;
     if (canonical !== wantCanonical) fail(`canonical が想定と違います: ${canonical}`);
     else console.log(`  canonical          ${canonical}`);
 
@@ -149,8 +167,14 @@ if (isDraft) {
       }
     }
     console.log(`  JSON-LD            ${types.join(', ') || 'なし'}`);
-    for (const required of ['NewsArticle', 'BreadcrumbList']) {
+    // 必要な型はコレクションで違う。news は NewsArticle、events は
+    // BreadcrumbList（個別イベントはさらに Event）
+    const requiredTypes = route === 'news' ? ['NewsArticle', 'BreadcrumbList'] : ['BreadcrumbList'];
+    for (const required of requiredTypes) {
       if (!types.includes(required)) fail(`JSON-LD に ${required} がありません`);
+    }
+    if (route === 'events' && field('articleType')?.includes('event') && !types.includes('Event')) {
+      fail('articleType が event なのに JSON-LD に Event がありません');
     }
 
     if (html.includes('name="robots"') && html.includes('noindex')) {
@@ -164,14 +188,14 @@ if (isDraft) {
     // 掲載先
     const where = [];
     for (const [p, label] of [
-      ['news/index.html', '/news/'],
+      [`${route}/index.html`, `/${route}/`],
       ['sports/index.html', '/sports/'],
       ['sitemap.xml', 'sitemap'],
     ]) {
       const body = await readFile(join(DIST, p), 'utf8').catch(() => '');
       if (body.includes(slug)) where.push(label);
     }
-    const category = field('category')?.replace(/["']/g, '');
+    const category = route === 'news' ? field('category')?.replace(/["']/g, '') : undefined;
     if (category) {
       const catBody = await readFile(join(DIST, 'news/category', category, 'index.html'), 'utf8').catch(() => '');
       if (catBody.includes(slug)) where.push(`/news/category/${category}/`);
@@ -185,7 +209,7 @@ if (isDraft) {
 // ── 3. 本番（--prod のときだけ） ──────────────────────────
 if (checkProd && !isDraft) {
   console.log('\n  本番の確認');
-  const url = `${SITE}/news/${slug}/`;
+  const url = `${SITE}/${route}/${slug}/`;
   const res = await fetch(url).catch(() => null);
   if (!res || !res.ok) fail(`本番が ${res ? res.status : '取得失敗'} です: ${url}`);
   else {

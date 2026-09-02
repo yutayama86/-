@@ -34,6 +34,15 @@ export interface ResolvedMatch {
 
 const newsPath = (id: string) => `/news/${id.split('/').pop()}/`;
 
+/** 値のある項目だけを上書きする。undefined で既存の値を消さないため */
+function mergeDefined(base: ResolvedMatch, next: ResolvedMatch): ResolvedMatch {
+  const out = { ...base };
+  for (const [k, v] of Object.entries(next)) {
+    if (v !== undefined) (out as Record<string, unknown>)[k] = v;
+  }
+  return out;
+}
+
 /** 同じ試合を2回出さないための鍵。日付と相手が一致すれば同じ試合とみなす */
 const matchKey = (m: { team: string; date: Date; opponent: string }) =>
   `${m.team}|${m.date.toISOString().slice(0, 10)}|${m.opponent}`;
@@ -116,8 +125,10 @@ export async function getTeamMatches(team: SportsTeamSlug): Promise<ResolvedMatc
     if (!resolved) continue;
     const key = matchKey(resolved);
     const existing = byKey.get(key);
-    // 手入力側にしか無い項目（会場など）は残したまま、記事側で上書きする
-    byKey.set(key, existing ? { ...existing, ...resolved } : resolved);
+    // 同じ試合を複数の記事が扱うことがある（プレビューと試合結果など）。
+    // 単純に展開すると、スコアを持たないプレビュー側の undefined が
+    // 結果側のスコアを消してしまう。値のある項目だけを上書きする。
+    byKey.set(key, existing ? mergeDefined(existing, resolved) : resolved);
   }
 
   return [...byKey.values()].sort((a, b) => a.date.valueOf() - b.date.valueOf());

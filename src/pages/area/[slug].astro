@@ -8,7 +8,7 @@ import AreaGuide from '../../components/AreaGuide.astro';
 import { AREA_GUIDES, type AreaGuide as AreaGuideData } from '../../data/area-guides';
 import { MUNICIPALITY_CONTENT } from '../../data/municipality-content';
 import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, municipalitiesByRegion } from '../../data/areas';
-import { getPublishedArticles, getPublishedStores, getIndexableNews } from '../../lib/content';
+import { getPublishedArticles, getPublishedStores, getIndexableNews, getEventsByMunicipality } from '../../lib/content';
 import { themesForArea } from '../../data/themes';
 import { michinoekiForArea } from '../../data/michinoeki';
 import { areaToSlug } from '../../data/areas';
@@ -29,11 +29,22 @@ const neighbors = municipalitiesByRegion(municipality.region).filter((item) => i
 const areaNews = (await getIndexableNews())
   .filter((item) => item.data.municipalities.includes(slug!))
   .slice(0, 8);
+// この街のイベント。開催が近い順。終わったものは出さない
+const nowD = new Date();
+const todayD = new Date(nowD.getFullYear(), nowD.getMonth(), nowD.getDate());
+const areaEvents = (await getEventsByMunicipality(slug!))
+  .filter((e) => {
+    const end = e.data.eventInfo?.endDate ?? e.data.eventInfo?.startDate;
+    return !end || end >= todayD;
+  })
+  .slice(0, 6);
+const eventPath = (id: string) => `/events/${id.split('/').pop()}/`;
+const eventDate = (x: Date) => new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric', weekday: 'short' }).format(x);
 const newsPath = (id: string) => `/news/${id.split('/').pop()}/`;
 const newsDate = (d: Date) => new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
 // ニュース解説もこの街の記録に数える。数えないと、記事があるのに
 // 「まだありません」と出てしまう。
-const hasContent = articles.length + stores.length + areaNews.length > 0;
+const hasContent = articles.length + stores.length + areaNews.length + areaEvents.length > 0;
 // 日立市＝出典・CCクレジット付きで作り込んだ旗艦ガイド（指示書 v1.0＋追補v1.1）。index。
 // 最終バッチ18市町村＝データ駆動の旅ガイド（text-forward）。「要確認」項目の人手検証まで noindex。
 // 残り25市町村は取材記事が付くまでミニマル表示（架空情報で埋めない）。
@@ -146,6 +157,24 @@ const jsonLd: Record<string, unknown>[] = [
 
 
   </article>}
+
+  {areaEvents.length > 0 && (
+    <section class="area-news area-events">
+      <div class="bp-wrap">
+        <p class="bp-kicker">EVENTS</p>
+        <h2>{municipality.name}のイベント</h2>
+        <p class="area-news__lead">これから開催されるものだけを出しています。日程・料金は変わることがあるため、必ず公式でご確認ください。</p>
+        <ul>{areaEvents.map((e) => (
+          <li><a href={eventPath(e.id)}>
+            {e.data.eventInfo?.startDate && <time datetime={e.data.eventInfo.startDate.toISOString()}>{eventDate(e.data.eventInfo.startDate)}</time>}
+            <strong>{e.data.title}</strong>
+            <b aria-hidden="true">→</b>
+          </a></li>
+        ))}</ul>
+        <p class="area-news__more"><a href="/events/">茨城のイベント・おでかけをすべて見る →</a></p>
+      </div>
+    </section>
+  )}
 
   {areaNews.length > 0 && (
     <section class="area-news">

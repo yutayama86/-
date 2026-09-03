@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="移住を前提にした採用と、副業・兼業で仕事から関わる形を並べ、後者なら生活の拠点を動かさず週数時間から県外の専門人材と協働できることを示した図">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="100" y="120" font-family="'Source Sans 3', sans-serif" font-size="22" font-weight="600" letter-spacing="4" fill="#315c68">IBATOCO ・ 茨城ニュース解説</text>
+  <text x="100" y="174" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">地方企業が県外の専門スキルを取り込む、二つの道</text>
+
+  <rect x="100" y="204" width="430" height="132" fill="none" stroke="#75695a" stroke-width="1.6" stroke-dasharray="5 5"/>
+  <text x="128" y="242" font-family="'Source Sans 3', sans-serif" font-size="16" font-weight="600" fill="#75695a">これまで：移住してもらう</text>
+  <text x="128" y="276" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a">生活ごと動いてもらう</text>
+  <text x="128" y="304" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a">採用市場で競い合う</text>
+
+  <rect x="586" y="204" width="430" height="132" fill="none" stroke="#315c68" stroke-width="2"/>
+  <text x="614" y="242" font-family="'Source Sans 3', sans-serif" font-size="16" font-weight="600" fill="#315c68">iBARAKICK!：仕事で関わる</text>
+  <text x="614" y="276" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#315c68">拠点は動かさない（副業・兼業）</text>
+  <text x="614" y="304" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#315c68">週2〜3時間から、約半年</text>
+
+  <text x="100" y="386" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a">2026年度：県内企業 13社 × 県外人材 14名 ／ 9月5日キックオフ、2027年2月まで</text>
+
+  <text x="100" y="470" font-family="'Shippori Mincho', serif" font-size="46" font-weight="600" fill="#172b35">半年後に残るのは、</text>
+  <text x="100" y="524" font-family="'Shippori Mincho', serif" font-size="46" font-weight="600" fill="#172b35">その人ではなく、やり方。</text>
+
+  <text x="1100" y="496" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a" text-anchor="end">移住を条件とする制度ではない</text>
+  <text x="1100" y="524" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a" text-anchor="end">人員不足の補填は対象外（県の条件）</text>
+  <text x="1100" y="552" font-family="'Source Sans 3', sans-serif" font-size="16" fill="#75695a" text-anchor="end">成果は実施前。累計59社71名（運営者発表）</text>
+</svg>

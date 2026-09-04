@@ -5,6 +5,8 @@
  * ※固有名詞は一般に知られた名所を中心に記載。詳細・最新情報は取材で更新前提。
  */
 
+import { getSpot } from './spots';
+
 export interface Item {
   name: string;
   desc: string;
@@ -19,14 +21,24 @@ export interface MuniContent {
   experiences?: Item[]; // 体験・遊び
 }
 
+/**
+ * スポットは spots.ts のマスターから引く。
+ * 名称と所在地はマスターが正で、ここには紹介文だけを書く。
+ * slug を打ち間違えるとビルドが落ちる。
+ */
+function spot(slug: string, desc: string): Item {
+  const s = getSpot(slug);
+  return { name: s.name, desc };
+}
+
 export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
   mito: {
     catch: '梅と歴史が薫る、茨城の県都。',
     intro: '水戸藩・徳川家ゆかりの城下町。日本三名園「偕楽園」の梅、千波湖のほとりの散策、水戸黄門でおなじみの歴史が息づく、茨城の中心都市です。',
     spots: [
-      { name: '偕楽園', desc: '日本三名園のひとつ。約100品種3000本の梅が咲く早春が圧巻。' },
-      { name: '弘道館', desc: '水戸藩の藩校。日本最大級の藩校跡で学問の歴史にふれる。' },
-      { name: '千波湖', desc: '市街地に隣接する湖。ジョギングや白鳥・黒鳥とのふれあいスポット。' },
+      spot('kairakuen', '日本三名園のひとつ。約100品種3000本の梅が咲く早春が圧巻。'),
+      spot('kodokan', '水戸藩の藩校。日本最大級の藩校跡で学問の歴史にふれる。'),
+      spot('senba-ko', '市街地に隣接する湖。ジョギングや白鳥・黒鳥とのふれあいスポット。'),
     ],
     gourmet: [
       { name: '水戸納豆', desc: '言わずと知れた水戸名物。土産にも食にも欠かせない。' },
@@ -38,9 +50,9 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '海の見える駅と、ものづくりの街。',
     intro: '太平洋に面した県北の工業都市。ガラス張りの日立駅から望む朝日、御岩神社のパワースポット、春の桜まつりが有名です。',
     spots: [
-      { name: '日立駅', desc: '海に突き出したガラス張りの駅舎。カフェから望むオーシャンビューが人気。' },
-      { name: '御岩神社', desc: '「日本最強のパワースポット」とも称される山岳信仰の聖地。' },
-      { name: 'かみね公園', desc: '動物園・遊園地・展望台を備えた総合公園。日立さくらまつりの名所。' },
+      spot('hitachi-station', '海に突き出したガラス張りの駅舎。カフェから望むオーシャンビューが人気。'),
+      spot('oiwa-jinja', '「日本最強のパワースポット」とも称される山岳信仰の聖地。'),
+      spot('kamine-park', '動物園・遊園地・展望台を備えた総合公園。日立さくらまつりの名所。'),
     ],
     gourmet: [{ name: 'しらす・常陸牛', desc: '海の幸と県産ブランド牛、どちらも楽しめる。' }],
   },
@@ -48,9 +60,9 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '花火と霞ヶ浦、水辺の県南都市。',
     intro: '日本最大級の「土浦全国花火競技大会」で知られる街。日本第2の湖・霞ヶ浦を望み、サイクリングの拠点としても人気です。',
     spots: [
-      { name: '霞ヶ浦', desc: '日本第2の広さを誇る湖。帆引き船やサイクリングロードが名物。' },
-      { name: '亀城公園', desc: '土浦城跡の公園。「亀城」の愛称で親しまれる市民の憩いの場。' },
-      { name: 'りんりんロード', desc: '霞ヶ浦・筑波山をつなぐサイクリングコースの拠点。' },
+      spot('kasumigaura', '日本第2の広さを誇る湖。帆引き船やサイクリングロードが名物。'),
+      spot('kijo-park', '土浦城跡の公園。「亀城」の愛称で親しまれる市民の憩いの場。'),
+      spot('rinrin-road', '霞ヶ浦・筑波山をつなぐサイクリングコースの拠点。'),
     ],
     gourmet: [
       { name: 'れんこん', desc: '霞ヶ浦沿岸にれんこん畑が広がる、地域を代表する農産物。' },
@@ -62,10 +74,10 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '桃の花咲く、県西の歴史ある街。',
     intro: '古河公方ゆかりの城下町。春の桃まつり、渡良瀬遊水地の広大な自然、歴史ある町並みが魅力です。',
     spots: [
-      { name: '古河公方公園（古河総合公園）', desc: '春に花桃が咲き誇る「古河桃まつり」の会場。' },
-      { name: '渡良瀬遊水地', desc: 'ラムサール条約登録湿地。広大なヨシ原と気球・サイクリング。' },
-      { name: '古河歴史博物館', desc: '城下町・古河の歴史と文化を伝える博物館。' },
-      { name: 'サンワ設計ネーブルパーク', desc: 'アスレチックや釣り、ポニーとふれあえる総合公園。' },
+      spot('koga-kubo-park', '春に花桃が咲き誇る「古河桃まつり」の会場。'),
+      spot('watarase', 'ラムサール条約登録湿地。広大なヨシ原と気球・サイクリング。'),
+      spot('koga-rekishi', '城下町・古河の歴史と文化を伝える博物館。'),
+      spot('nable-park', 'アスレチックや釣り、ポニーとふれあえる総合公園。'),
     ],
     gourmet: [{ name: '鮒の甘露煮', desc: '利根川・渡良瀬の水郷が育む郷土の味。' }],
   },
@@ -73,9 +85,9 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '常陸国のはじまりの地。',
     intro: 'かつて常陸国の国府が置かれた歴史の街。関東三大祭のひとつ「石岡のおまつり」、里山とフラワーパークが楽しめます。',
     spots: [
-      { name: '常陸國總社宮', desc: '関東三大祭「石岡のおまつり」で知られる由緒ある神社。' },
-      { name: '茨城県フラワーパーク', desc: 'バラをはじめ四季の花が咲く。夜のイルミネーションも人気。' },
-      { name: '朝日里山', desc: '棚田や里山風景が広がる、のどかなグリーンツーリズムの拠点。' },
+      spot('sosyagu', '関東三大祭「石岡のおまつり」で知られる由緒ある神社。'),
+      spot('ibaraki-flowerpark', 'バラをはじめ四季の花が咲く。夜のイルミネーションも人気。'),
+      spot('asahi-satoyama', '棚田や里山風景が広がる、のどかなグリーンツーリズムの拠点。'),
     ],
     gourmet: [{ name: '地酒', desc: '常陸の水と米で醸す造り酒屋が点在する。' }],
   },
@@ -83,8 +95,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '結城紬と蔵の街。',
     intro: 'ユネスコ無形文化遺産「結城紬」の産地。蔵造りの町並みが残り、手仕事の文化に触れられます。',
     spots: [
-      { name: '結城の蔵の街', desc: '見世蔵や酒蔵が残る歴史的な町並み。散策が楽しい。' },
-      { name: 'つむぎの館', desc: '結城紬の歴史・工程を学べる複合施設。' },
+      spot('yuki-kura', '見世蔵や酒蔵が残る歴史的な町並み。散策が楽しい。'),
+      spot('tsumugi-no-yakata', '結城紬の歴史・工程を学べる複合施設。'),
     ],
     gourmet: [{ name: '結城の地酒', desc: '造り酒屋が育んだ地酒。' }],
     experiences: [{ name: '結城紬の機織り体験', desc: '国の重要無形文化財の手仕事にふれる。' }],
@@ -93,8 +105,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: 'コロッケと自然の街。',
     intro: '「コロッケの街」として知られる県南の街。般若院のしだれ桜や牛久沼のほとりの風景も魅力です。',
     spots: [
-      { name: '般若院のしだれ桜', desc: '樹齢400年超といわれる県指定天然記念物の名桜。' },
-      { name: '牛久沼', desc: '河童伝説の残る沼。ほとりの風景と釣りが楽しめる。' },
+      spot('hannyain', '樹齢400年超といわれる県指定天然記念物の名桜。'),
+      spot('ushikunuma', '河童伝説の残る沼。ほとりの風景と釣りが楽しめる。'),
     ],
     gourmet: [{ name: '龍ケ崎コロッケ', desc: 'まちを挙げて推す名物グルメ。' }],
   },
@@ -102,8 +114,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '花と水辺、映画の舞台の街。',
     intro: '「下妻物語」の舞台としても知られる街。砂沼のほとりや小貝川のポピー・コスモスなど、花と水辺が広がります。',
     spots: [
-      { name: '砂沼', desc: 'ぐるりと一周できる遊歩道とビアスパークが人気の憩いの沼。' },
-      { name: '小貝川ふれあい公園', desc: '春はポピー、秋はコスモスが一面に咲く花畑。' },
+      spot('sanuma', 'ぐるりと一周できる遊歩道とビアスパークが人気の憩いの沼。'),
+      spot('kokaigawa-fureai', '春はポピー、秋はコスモスが一面に咲く花畑。'),
     ],
     gourmet: [{ name: '下妻甘熟梨', desc: '糖度の高いブランド梨。夏の名産。' }],
   },
@@ -111,8 +123,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '水海道、水と米の街。',
     intro: '鬼怒川・小貝川に育まれた田園の街。豊田城のシンボルタワーや自然体験施設「あすなろの里」が親しまれています。',
     spots: [
-      { name: '地域交流センター（豊田城）', desc: 'お城の形をした展望タワー。関東平野を一望できる。' },
-      { name: 'あすなろの里', desc: 'キャンプや動物ふれあいが楽しめる自然体験施設。' },
+      spot('toyodajo', 'お城の形をした展望タワー。関東平野を一望できる。'),
+      spot('asunaro-no-sato', 'キャンプや動物ふれあいが楽しめる自然体験施設。'),
     ],
     gourmet: [{ name: '常総の米', desc: '肥沃な田園が育む美味しいお米。' }],
   },
@@ -120,9 +132,9 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '吊橋と渓谷、黄門さまの隠居所。',
     intro: '県内で最も広い面積を持つ街。竜神大吊橋のバンジー、水戸黄門が晩年を過ごした西山荘、奥久慈の味覚で知られます。',
     spots: [
-      { name: '竜神大吊橋', desc: '長さ375mの歩行者専用吊橋。日本最大級のバンジージャンプでも有名。' },
-      { name: '西山荘', desc: '水戸黄門（徳川光圀）が晩年を過ごした静かな史跡。' },
-      { name: '竜神峡', desc: '新緑と紅葉の渓谷。ダム湖と吊橋を望みます。' },
+      spot('ryujin-ohtsuribashi', '長さ375mの歩行者専用吊橋。日本最大級のバンジージャンプでも有名。'),
+      spot('nishiyama-goten', '水戸黄門（徳川光圀）が晩年を過ごした静かな史跡。'),
+      spot('ryujinkyo', '新緑と紅葉の渓谷。ダム湖と吊橋を望みます。'),
     ],
     gourmet: [
       { name: '奥久慈しゃも', desc: '歯ごたえと旨みで名高い地鶏のブランド。' },
@@ -134,16 +146,16 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '渓谷の紅葉と海の街。',
     intro: '花貫渓谷の紅葉と、太平洋岸の小浜海岸が楽しめる県北の街です。',
     spots: [
-      { name: '花貫渓谷', desc: '汐見滝吊橋を彩る紅葉のトンネルで知られる渓谷。' },
-      { name: '高戸小浜海岸', desc: '奇岩と入り江が美しい、隠れ家的な海岸。' },
+      spot('hananuki', '汐見滝吊橋を彩る紅葉のトンネルで知られる渓谷。'),
+      spot('takado-kohama', '奇岩と入り江が美しい、隠れ家的な海岸。'),
     ],
   },
   kitaibaraki: {
     catch: 'あんこうと、五浦の海。',
     intro: '岡倉天心ゆかりの五浦海岸で知られる県最北の街。冬のあんこう料理は北茨城の看板グルメです。',
     spots: [
-      { name: '五浦海岸・六角堂', desc: '岡倉天心が思索した六角堂と、荒々しい太平洋を望む海岸。' },
-      { name: '平潟港', desc: 'あんこうの水揚げで知られる漁港。新鮮な海の幸が集まる。' },
+      spot('izura-rokkakudo', '岡倉天心が思索した六角堂と、荒々しい太平洋を望む海岸。'),
+      spot('hirakata-ko', 'あんこうの水揚げで知られる漁港。新鮮な海の幸が集まる。'),
     ],
     gourmet: [{ name: 'あんこう鍋', desc: '「西のふぐ、東のあんこう」。北茨城は名産地。' }],
   },
@@ -151,9 +163,9 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '稲荷と焼きもの、栗の里。',
     intro: '日本三大稲荷「笠間稲荷神社」と、伝統工芸「笠間焼」の街。芸術と栗の名産地としても知られます。',
     spots: [
-      { name: '笠間稲荷神社', desc: '日本三大稲荷のひとつ。門前の賑わいと胡桃饅頭が名物。' },
-      { name: '笠間芸術の森公園', desc: '笠間焼を体感できる陶炎祭（ひまつり）の会場。' },
-      { name: '笠間つつじ公園', desc: '春に約8500株のつつじが山肌を彩る名所。' },
+      spot('kasama-inari', '日本三大稲荷のひとつ。門前の賑わいと胡桃饅頭が名物。'),
+      spot('kasama-geijutsu', '笠間焼を体感できる陶炎祭（ひまつり）の会場。'),
+      spot('kasama-tsutsuji', '春に約8500株のつつじが山肌を彩る名所。'),
     ],
     gourmet: [
       { name: '笠間の栗', desc: '栽培面積日本有数。モンブランなど栗スイーツが充実。' },
@@ -165,16 +177,16 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '利根川と宿場のまち。',
     intro: '利根川に面した県南の玄関口。旧水戸街道の宿場町の面影と、川辺の緑地が親しまれています。',
     spots: [
-      { name: '旧取手宿本陣', desc: '水戸街道の宿場を今に伝える茅葺きの本陣建築。' },
-      { name: '取手緑地・利根川', desc: '川沿いのサイクリングや散策が気持ちいい。' },
+      spot('toride-honjin', '水戸街道の宿場を今に伝える茅葺きの本陣建築。'),
+      spot('toride-ryokuchi', '川沿いのサイクリングや散策が気持ちいい。'),
     ],
   },
   ushiku: {
     catch: '大仏とワイナリーの街。',
     intro: '世界最大級の青銅製立像「牛久大仏」と、日本初の本格ワイナリー「牛久シャトー」で知られる街です。',
     spots: [
-      { name: '牛久大仏', desc: '全高120m、ギネス認定の世界最大級ブロンズ立像。胎内拝観も。' },
-      { name: '牛久シャトー', desc: '日本初の本格的ワイナリー。歴史ある赤レンガとレストラン。' },
+      spot('ushiku-daibutsu', '全高120m、ギネス認定の世界最大級ブロンズ立像。胎内拝観も。'),
+      spot('ushiku-chateau', '日本初の本格的ワイナリー。歴史ある赤レンガとレストラン。'),
     ],
     gourmet: [{ name: '牛久ワイン', desc: '日本ワインのルーツを味わう。' }],
   },
@@ -182,9 +194,9 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '山と宇宙、知の学園都市。',
     intro: '日本百名山「筑波山」と、研究学園都市が共存する街。自然と科学、どちらにも触れられます。',
     spots: [
-      { name: '筑波山', desc: '「西の富士、東の筑波」。ケーブルカー・ロープウェイで気軽に登れる名峰。' },
-      { name: 'JAXA筑波宇宙センター', desc: '本物のロケットや宇宙開発の最前線を無料で見学できる。' },
-      { name: 'つくばエキスポセンター', desc: '大型のプラネタリウムと科学体験の施設。' },
+      spot('tsukubasan', '「西の富士、東の筑波」。ケーブルカー・ロープウェイで気軽に登れる名峰。'),
+      spot('jaxa-tsukuba', '本物のロケットや宇宙開発の最前線を無料で見学できる。'),
+      spot('expocenter', '大型のプラネタリウムと科学体験の施設。'),
     ],
     gourmet: [
       { name: '筑波山ガマ／福来みかん', desc: '筑波山名物のみかんと、門前のグルメ。' },
@@ -196,9 +208,9 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: 'ネモフィラと、干し芋の海辺。',
     intro: '国営ひたち海浜公園のネモフィラ・コキアで世界的に有名。那珂湊の魚市場と、古くからの干し芋づくりでも知られます。',
     spots: [
-      { name: '国営ひたち海浜公園', desc: '春は青いネモフィラの丘、秋は赤いコキアが一面に色づきます。' },
-      { name: '那珂湊おさかな市場', desc: '新鮮な海鮮と回転寿司が並ぶ人気の市場。' },
-      { name: '阿字ヶ浦海岸', desc: '遠浅で人気の海水浴場。' },
+      spot('hitachi-seaside', '春は青いネモフィラの丘、秋は赤いコキアが一面に色づきます。'),
+      spot('nakaminato-market', '新鮮な海鮮と回転寿司が並ぶ人気の市場。'),
+      spot('ajigaura', '遠浅で人気の海水浴場。'),
     ],
     gourmet: [
       { name: '干し芋', desc: 'ひたちなか周辺で長く作られてきた、茨城の冬を代表する味。' },
@@ -210,8 +222,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '神宮とサッカーの街。',
     intro: '東国三社のひとつに数えられる古社「鹿島神宮」と、鹿島アントラーズの本拠地。歴史とスポーツが同居する鹿行の街です。',
     spots: [
-      { name: '鹿島神宮', desc: '東国三社の一つ。奥参道の杜と、地震を鎮めると伝わる要石で知られます。' },
-      { name: '県立カシマサッカースタジアム', desc: 'Jリーグ・鹿島アントラーズの本拠地。' },
+      spot('kashima-jingu', '東国三社の一つ。奥参道の杜と、地震を鎮めると伝わる要石で知られます。'),
+      spot('kashima-stadium', 'Jリーグ・鹿島アントラーズの本拠地。'),
     ],
     gourmet: [{ name: 'はまぐり', desc: '鹿島灘の焼きはまぐりは絶品。' }],
   },
@@ -219,8 +231,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '水郷のあやめと嫁入り舟。',
     intro: '水郷筑波国定公園の一部。初夏のあやめ祭りと、伝統の「嫁入り舟」が有名な水の街です。',
     spots: [
-      { name: '水郷潮来あやめ園', desc: '約500種100万株のあやめ。祭り期間の嫁入り舟が風情たっぷり。' },
-      { name: '前川・加藤洲十二橋', desc: 'ろ舟でめぐる水郷の原風景。' },
+      spot('itako-ayame', '約500種100万株のあやめ。祭り期間の嫁入り舟が風情たっぷり。'),
+      spot('maekawa-junikyo', 'ろ舟でめぐる水郷の原風景。'),
     ],
     gourmet: [{ name: 'うなぎ・鯉', desc: '水郷ならではの川の幸。' }],
   },
@@ -228,16 +240,16 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: 'TXで結ばれる、暮らしやすい街。',
     intro: 'つくばエクスプレスの結節点として発展した街。ビール工場見学や四季の里公園など、家族で楽しめるスポットがあります。',
     spots: [
-      { name: 'アサヒビール茨城工場', desc: '製造ラインの見学と、できたてビールの試飲が人気。' },
-      { name: '四季の里公園', desc: '花菖蒲やホタルが楽しめる、緑豊かな公園。' },
+      spot('asahi-moriya', '製造ラインの見学と、できたてビールの試飲が人気。'),
+      spot('shiki-no-sato', '花菖蒲やホタルが楽しめる、緑豊かな公園。'),
     ],
   },
   hitachiomiya: {
     catch: '川と山、常陸秋そばの郷。',
     intro: '久慈川・那珂川の清流に恵まれた自然の街。「関東の嵐山」御前山や、道の駅かわプラザが人気です。',
     spots: [
-      { name: '御前山（関東の嵐山）', desc: '那珂川沿いの紅葉が美しい景勝地。' },
-      { name: '道の駅 かわプラザ', desc: '那珂川に面した人気の道の駅。川遊びやBBQも。' },
+      spot('gozenyama', '那珂川沿いの紅葉が美しい景勝地。'),
+      spot('michinoeki-kawaplaza', '那珂川に面した人気の道の駅。川遊びやBBQも。'),
     ],
     gourmet: [{ name: '常陸秋そば・鮎', desc: '清流が育む香り高いそばと川魚。' }],
   },
@@ -245,15 +257,15 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '八重桜の里。',
     intro: '静峰ふるさと公園の八重桜で知られる、水戸に隣接する街です。',
     spots: [
-      { name: '静峰ふるさと公園', desc: '「日本さくら名所100選」。約2000本の八重桜が咲き誇る。' },
+      spot('shizumine', '「日本さくら名所100選」。約2000本の八重桜が咲き誇る。'),
     ],
   },
   chikusei: {
     catch: '下館、芸術と味覚の街。',
     intro: '陶芸家・板谷波山を生んだ下館の街。美術館や大型道の駅、こだますいか・梨などの味覚が楽しめます。',
     spots: [
-      { name: '道の駅 グランテラス筑西', desc: '県内最大級の道の駅。地元の農産物や遊び場が充実。' },
-      { name: 'しもだて美術館', desc: '板谷波山ゆかりの美術に親しめる。' },
+      spot('granterrace', '県内最大級の道の駅。地元の農産物や遊び場が充実。'),
+      spot('shimodate-museum', '板谷波山ゆかりの美術に親しめる。'),
     ],
     gourmet: [{ name: 'こだますいか・梨', desc: '筑西を代表するフルーツ。' }],
   },
@@ -261,7 +273,7 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '自然博物館と将門のふるさと。',
     intro: '平将門ゆかりの地。人気の県自然博物館や、体験型の公園がファミリーに親しまれています。',
     spots: [
-      { name: 'ミュージアムパーク茨城県自然博物館', desc: '巨大な恐竜やマンモス展示で子どもに大人気の博物館。' },
+      spot('shizen-hakubutsukan', '巨大な恐竜やマンモス展示で子どもに大人気の博物館。'),
     ],
     gourmet: [{ name: 'ねぎ・レタス', desc: '関東有数の野菜産地。' }],
   },
@@ -269,8 +281,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: 'あんばさまと花の里。',
     intro: '「あんばさま」の愛称で親しまれる大杉神社を擁する街。チューリップの和田公園など花の名所もあります。',
     spots: [
-      { name: '大杉神社', desc: '「あんばさま」と親しまれる、日本唯一の夢むすびの神社。' },
-      { name: '和田公園', desc: '春は約26万本のチューリップが咲く霞ヶ浦畔の公園。' },
+      spot('oosugi-jinja', '「あんばさま」と親しまれる、日本唯一の夢むすびの神社。'),
+      spot('wada-park', '春は約26万本のチューリップが咲く霞ヶ浦畔の公園。'),
     ],
     gourmet: [{ name: '江戸崎かぼちゃ', desc: 'ブランドかぼちゃとして名高い。' }],
   },
@@ -278,8 +290,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '霞ヶ浦と、水郷の恵み。',
     intro: '日本第2の湖・霞ヶ浦に面した街。歩崎公園の眺めや水族館、れんこん・ぶどうなど水郷の恵みが魅力です。',
     spots: [
-      { name: '歩崎公園', desc: '霞ヶ浦を一望する景勝地。帆引き船の眺めが美しい。' },
-      { name: 'かすみがうら市水族館', desc: '霞ヶ浦の生き物に出会える、湖畔の小さな水族館。' },
+      spot('ayumisaki-park', '霞ヶ浦を一望する景勝地。帆引き船の眺めが美しい。'),
+      spot('kasumigaura-aquarium', '霞ヶ浦の生き物に出会える、湖畔の小さな水族館。'),
     ],
     gourmet: [{ name: 'れんこん・ぶどう', desc: '霞ヶ浦沿岸の名産。ぶどう狩りも楽しめる。' }],
   },
@@ -287,17 +299,17 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '桜と雛と、石の街。',
     intro: '桜の名所・磯部桜川公園や、重要伝統的建造物群「真壁」の雛まつりで知られる街です。',
     spots: [
-      { name: '真壁の町並み', desc: '見世蔵が残る重伝建。冬の「真壁のひなまつり」が風物詩。' },
-      { name: '雨引観音（楽法寺）', desc: 'あじさいと安産・子育ての祈願で知られる古刹。' },
-      { name: '磯部桜川公園', desc: '「桜川のサクラ」で知られる古来の桜の名所。' },
+      spot('makabe', '見世蔵が残る重伝建。冬の「真壁のひなまつり」が風物詩。'),
+      spot('amabiki-kannon', 'あじさいと安産・子育ての祈願で知られる古刹。'),
+      spot('isobe-sakuragawa', '「桜川のサクラ」で知られる古来の桜の名所。'),
     ],
   },
   kamisu: {
     catch: 'ピーマンと、太平洋の風。',
-    intro: '鹿島灘に沿う工業と農業の街。温暖な気候を生かしたピーマン栽培が盛んです。港公園の展望塔や海岸が親しまれています。',
+    intro: '鹿島灘に沿う工業と農業の街。温暖な気候を生かしたピーマン栽培が盛んです。港公園や海岸が親しまれています。',
     spots: [
-      { name: '港公園', desc: '高さ52mの展望塔から鹿島港と太平洋を一望。' },
-      { name: '日川浜海岸', desc: '広々とした砂浜。海水浴やサーフィンに。' },
+      spot('minato-park', '鹿島港に面した公園。高さ52mの展望塔は利用休止中です。'),
+      spot('nikkawahama', '広々とした砂浜。海水浴やサーフィンに。'),
     ],
     gourmet: [{ name: 'ピーマン', desc: '温暖な気候を生かして栽培される、神栖を代表する野菜。' }],
   },
@@ -305,8 +317,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: 'さつまいもと、二つの湖。',
     intro: '霞ヶ浦と北浦に挟まれた街。さつまいもの一大産地で、体験型施設があります。',
     spots: [
-      { name: 'なめがたファーマーズヴィレッジ', desc: '廃校を活用したさつまいもテーマパーク。焼き芋工場見学も。' },
-      { name: '天王崎公園', desc: '霞ヶ浦の夕日が美しい、水辺のレジャースポット。' },
+      spot('namegata-fv', '廃校を活用したさつまいもテーマパーク。焼き芋工場見学も。'),
+      spot('tennozaki-park', '霞ヶ浦の夕日が美しい、水辺のレジャースポット。'),
     ],
     gourmet: [{ name: 'さつまいも・行方バーガー', desc: '芋グルメとご当地バーガーが名物。' }],
   },
@@ -314,7 +326,7 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: 'メロンの畑と、海の街。',
     intro: '初夏のメロンで知られる街。鹿島灘の海岸線と、豊かな農の恵みが広がります。',
     spots: [
-      { name: '鹿島灘海岸', desc: 'まっすぐ続く砂浜と、サーフィンが楽しめる海。' },
+      spot('kashimanada-kaigan', 'まっすぐ続く砂浜と、サーフィンが楽しめる海。'),
     ],
     gourmet: [
       { name: 'メロン', desc: '鉾田の畑で育てられる、初夏を代表する味。' },
@@ -325,16 +337,16 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '時代劇のロケ地と、桜の堰。',
     intro: '数々の時代劇が撮影された「ワープステーション江戸」や、桜の名所・福岡堰がある街です。',
     spots: [
-      { name: 'ワープステーション江戸', desc: '江戸の町並みを再現した野外ロケ施設（一般公開日あり）。' },
-      { name: '福岡堰', desc: '関東三大堰のひとつ。約1.8kmの桜並木が見事。' },
+      spot('warp-station-edo', '江戸の町並みを再現した野外ロケ施設（一般公開日あり）。'),
+      spot('fukuoka-zeki', '関東三大堰のひとつ。約1.8kmの桜並木が見事。'),
     ],
   },
   omitama: {
     catch: '空の駅と、ヨーグルトの里。',
     intro: '茨城空港の玄関口。酪農がさかんで、ヨーグルトなどの乳製品が名物です。',
     spots: [
-      { name: '茨城空港', desc: '首都圏の空の玄関。展望デッキから間近に飛行機を眺められる。' },
-      { name: '空のえき そ・ら・ら', desc: '地元の乳製品・農産物が集まる人気の交流施設。' },
+      spot('ibaraki-airport', '首都圏の空の玄関。展望デッキから間近に飛行機を眺められる。'),
+      spot('solala', '地元の乳製品・農産物が集まる人気の交流施設。'),
     ],
     gourmet: [{ name: 'ヨーグルト・卵', desc: '酪農の街ならではの新鮮な乳製品。' }],
   },
@@ -342,8 +354,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '涸沼の恵み、大和しじみ。',
     intro: 'ラムサール条約登録湿地「涸沼」を擁する街。汽水湖ならではの大和しじみが名産です。',
     spots: [
-      { name: '涸沼', desc: 'ラムサール条約登録の汽水湖。野鳥観察や夕景が美しい。' },
-      { name: '涸沼自然公園', desc: 'キャンプやアスレチックが楽しめる湖畔の公園。' },
+      spot('hinuma', 'ラムサール条約登録の汽水湖。野鳥観察や夕景が美しい。'),
+      spot('hinuma-shizen', 'キャンプやアスレチックが楽しめる湖畔の公園。'),
     ],
     gourmet: [{ name: '涸沼の大和しじみ', desc: '大粒で旨みの濃い汽水のしじみ。' }],
   },
@@ -351,9 +363,9 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '神磯の鳥居と、海の幸。',
     intro: '海に立つ「神磯の鳥居」と大型水族館で人気の海辺の町。あんこう・しらすなど海の幸と、アニメの聖地としても賑わいます。',
     spots: [
-      { name: '大洗磯前神社（神磯の鳥居）', desc: '波間に立つ鳥居からの日の出で知られる、茨城を代表する眺め。' },
-      { name: 'アクアワールド茨城県大洗水族館', desc: 'サメに力を入れた展示で知られる水族館。' },
-      { name: '大洗サンビーチ', desc: 'バリアフリーで人気の海水浴場。' },
+      spot('oarai-isosaki', '波間に立つ鳥居からの日の出で知られる、茨城を代表する眺め。'),
+      spot('aquaworld-oarai', 'サメに力を入れた展示で知られる水族館。'),
+      spot('oarai-sunbeach', 'バリアフリーで人気の海水浴場。'),
     ],
     gourmet: [
       { name: 'あんこう鍋', desc: '冬の大洗の看板。' },
@@ -365,8 +377,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '那珂川と、里山の湯。',
     intro: '那珂川の清流と里山に恵まれた街。温泉施設や自然体験が楽しめます。',
     spots: [
-      { name: 'ホロルの湯', desc: '里山に湧く日帰り温泉とプールの複合施設。' },
-      { name: '那珂川の清流', desc: '鮎釣りやカヌーが楽しめる自然豊かな川。' },
+      spot('hororu', '里山に湧く日帰り温泉とプールの複合施設。'),
+      spot('nakagawa', '鮎釣りやカヌーが楽しめる自然豊かな川。'),
     ],
     gourmet: [{ name: 'ゆず', desc: '城里の特産。加工品も人気。' }],
   },
@@ -374,17 +386,17 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '科学と信仰が息づく村。',
     intro: '原子力研究の拠点として知られる一方、村松山虚空蔵堂などの古い信仰も残る村です。',
     spots: [
-      { name: '村松山虚空蔵堂', desc: '日本三大虚空蔵尊のひとつ。初詣や十三詣りで賑わう。' },
-      { name: '阿漕ヶ浦公園', desc: '池を中心とした緑地。散策やスポーツに。' },
+      spot('muramatsu-kokuzo', '日本三大虚空蔵尊のひとつ。初詣や十三詣りで賑わう。'),
+      spot('akogigaura-park', '池を中心とした緑地。散策やスポーツに。'),
     ],
   },
   daigo: {
     catch: '袋田の滝と、奥久慈の味覚。',
     intro: '日本三名瀑「袋田の滝」を擁する山あいの町。温泉、しゃも、りんごなど奥久慈の恵みが豊かです。',
     spots: [
-      { name: '袋田の滝', desc: '「四度の滝」とも呼ばれる日本三名瀑。冬の氷瀑も見どころ。' },
-      { name: '月待の滝', desc: '裏側から眺められる珍しい滝。マイナスイオンたっぷり。' },
-      { name: '奥久慈温泉郷', desc: '滝と山に抱かれた静かな湯の里。' },
+      spot('fukuroda', '「四度の滝」とも呼ばれる日本三名瀑。冬の氷瀑も見どころ。'),
+      spot('tsukimachi-taki', '裏側から眺められる珍しい滝。マイナスイオンたっぷり。'),
+      spot('okukuji-onsen', '滝と山に抱かれた静かな湯の里。'),
     ],
     gourmet: [
       { name: '奥久慈しゃも', desc: '全国的に知られるブランド地鶏。' },
@@ -396,23 +408,23 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '競走馬と、貝塚の村。',
     intro: 'JRAの美浦トレーニング・センターで知られる村。霞ヶ浦に面し、古代の陸平貝塚も残ります。',
     spots: [
-      { name: '美浦トレーニング・センター', desc: 'JRAの競走馬育成拠点。早朝の調教見学（要確認）が名物。' },
-      { name: '陸平貝塚', desc: '国史跡の縄文貝塚。歴史ロマンにふれる。' },
+      spot('miho-tc', 'JRAの競走馬育成拠点。早朝の調教見学（要確認）が名物。'),
+      spot('okadaira', '国史跡の縄文貝塚。歴史ロマンにふれる。'),
     ],
   },
   ami: {
     catch: '予科練の記憶と、アウトレット。',
     intro: '海軍航空隊「予科練」ゆかりの地。平和記念館と大型アウトレットが共存する街です。',
     spots: [
-      { name: '予科練平和記念館', desc: '若き予科練習生の歴史と平和を伝える資料館。' },
-      { name: 'あみプレミアム・アウトレット', desc: '国内外ブランドが集まる人気のショッピングモール。' },
+      spot('yokaren', '若き予科練習生の歴史と平和を伝える資料館。'),
+      spot('ami-outlet', '国内外ブランドが集まる人気のショッピングモール。'),
     ],
   },
   kawachi: {
     catch: '利根の水郷、田園の町。',
     intro: '利根川と新利根川に囲まれた水郷の町。のどかな田園風景が広がります。',
     spots: [
-      { name: '水郷の田園', desc: '利根川沿いに広がる、のどかな田んぼと水辺の風景。' },
+      spot('kawachi-denen', '利根川沿いに広がる、のどかな田んぼと水辺の風景。'),
     ],
     gourmet: [{ name: '米・れんこん', desc: '水郷が育む農の恵み。' }],
   },
@@ -420,7 +432,7 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '白菜と梨の、農の町。',
     intro: '白菜の生産量が全国トップ級の農業の町。梨やぶどうなど果物も豊富です。',
     spots: [
-      { name: '八千代グリーンビレッジ', desc: '温泉・宿泊・農業体験ができる交流施設。' },
+      spot('yachiyo-green', '温泉・宿泊・農業体験ができる交流施設。'),
     ],
     gourmet: [
       { name: '白菜', desc: '全国有数の産地。冬の鍋に欠かせない。' },
@@ -431,7 +443,7 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '二つの川に挟まれた、交通の要。',
     intro: '利根川と江戸川に挟まれた、県最西端の町。圏央道の結節点で、道の駅が賑わいます。',
     spots: [
-      { name: '道の駅 ごか', desc: '圏央道近くの人気の道の駅。地元野菜や物産が並ぶ。' },
+      spot('michinoeki-goka', '圏央道近くの人気の道の駅。地元野菜や物産が並ぶ。'),
     ],
     gourmet: [{ name: '地元野菜', desc: '肥沃な土地が育む新鮮な野菜。' }],
   },
@@ -439,8 +451,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '利根川河岸と、さしま茶。',
     intro: '利根川の水運で栄えた河岸の町。近年は隈研吾建築や道の駅で注目される、挑戦する町です。',
     spots: [
-      { name: '道の駅 さかい', desc: '利根川沿いの人気道の駅。さしま茶や特産品が揃う。' },
-      { name: 'S-Gallery（さかいサンド）', desc: '隈研吾デザインの建築が点在する、話題の町づくり。' },
+      spot('michinoeki-sakai', '利根川沿いの人気道の駅。さしま茶や特産品が揃う。'),
+      spot('s-gallery', '画家・粛粲寶の作品を展示する、隈研吾設計の美術館。'),
     ],
     gourmet: [{ name: 'さしま茶', desc: '古くからの銘茶。日本茶の海外輸出の先駆け。' }],
   },
@@ -448,8 +460,8 @@ export const MUNICIPALITY_CONTENT: Record<string, MuniContent> = {
     catch: '利根の川辺、民話の里。',
     intro: '利根川に面した県最南端の町。柳田國男ゆかりの布川など、川と民話の風景が残ります。',
     spots: [
-      { name: '布川の町並み', desc: '柳田國男が少年期を過ごした、利根川沿いの静かな町。' },
-      { name: '蛟蝄神社', desc: '水の神を祀る古社。' },
+      spot('fukawa', '柳田國男が少年期を過ごした、利根川沿いの静かな町。'),
+      spot('koumou-jinja', '水の神を祀る古社。'),
     ],
   },
 };

@@ -54,9 +54,10 @@ const isDaigo = slug === 'daigo';
 const relatedThemes = themesForArea(slug!);
 // この街にある道の駅（公式一覧で確認済みのものだけ）
 const areaMichinoeki = michinoekiForArea(slug!);
-// 指示書のあるガイド（日立＝別コンポーネント／最終バッチ18）はそれを使用。
-// 残り25市町村は、既存の municipality-content.ts（catch/intro/spots/gourmet/experiences）を
-// そのままガイド形式へ変換して表示（＝架空の加筆はしない。写真・出典・季節等は持たないので出さない）。
+// 指示書のあるガイド（日立＝別コンポーネント）はそれを使用。
+// 現在は43市町村にガイドがあり、日立は専用コンポーネントなので、この分岐は実質通らない。
+// ガイドが無い市町村を足したときのフォールバックとして残している。
+// なお municipality-content.ts 自体は、TOPのエリアマップ（HomeAreaExplorer）が使う。
 const explicitGuide = AREA_GUIDES[slug!];
 const mc = !explicitGuide && !isHitachi ? MUNICIPALITY_CONTENT[slug!] : undefined;
 const basicGuide: AreaGuideData | undefined = mc && (mc.catch || mc.spots?.length)

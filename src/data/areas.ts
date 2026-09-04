@@ -25,7 +25,7 @@ export interface Municipality {
   lon: number;
 }
 
-export const MUNICIPALITIES: Municipality[] = [
+export const MUNICIPALITIES = [
   // ── 県北 ──
   { slug: 'daigo', name: '大子町', region: 'kenpoku', lat: 36.77, lon: 140.35 },
   { slug: 'hitachiomiya', name: '常陸大宮市', region: 'kenpoku', lat: 36.55, lon: 140.41 },
@@ -75,9 +75,19 @@ export const MUNICIPALITIES: Municipality[] = [
   { slug: 'koga', name: '古河市', region: 'kensei', lat: 36.19, lon: 139.71 },
   { slug: 'goka', name: '五霞町', region: 'kensei', lat: 36.11, lon: 139.75 },
   { slug: 'sakai', name: '境町', region: 'kensei', lat: 36.11, lon: 139.8 },
-];
+] as const satisfies readonly Municipality[];
 
-export const MUNI_BY_SLUG = new Map(MUNICIPALITIES.map((m) => [m.slug, m]));
+/** 44市町村のslug。スポットなど他のデータは、この型で市町村を指定する */
+export type MunicipalitySlug = (typeof MUNICIPALITIES)[number]['slug'];
+
+/**
+ * slug から市町村を引く。
+ * キーを string にしているのは、記事のfrontmatterなど「実行時に来る文字列」で
+ * 引くため。編集して書くデータ側の型安全は MunicipalitySlug で担保する。
+ */
+export const MUNI_BY_SLUG: ReadonlyMap<string, Municipality> = new Map(
+  MUNICIPALITIES.map((m) => [m.slug, m]),
+);
 
 /** 自由記述の area 文字列（例「つくば市」）を市町村slugに正規化 */
 export function areaToSlug(area?: string): string | null {

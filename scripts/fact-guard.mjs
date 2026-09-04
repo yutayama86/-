@@ -8,7 +8,9 @@
  *  2. 地域区分が茨城県の公式区分と一致しているか
  *  3. 「X月Y日（曜）」の曜日が実際の曜日と合っているか
  *  4. 同じ施設名が複数の市町村に割り当てられていないか
- *  5. 公開記事に出典があるか
+ *  5. spots.ts（スポットのマスター）の市町村・出典・確認日がそろっているか
+ *  6. spot() の参照先が、その市町村の節と 食い違っていないか
+ *  7. 公開記事に出典があるか
  *
  * 使い方: node scripts/fact-guard.mjs
  */
@@ -135,6 +137,73 @@ for (const [nm, slugs] of byName) {
   if (slugs.size > 1) {
     fail('施設と市町村', `「${nm}」が複数の市町村にある（${[...slugs].join(', ')}）。所在地を一次情報で確かめ、正しい市町村へ寄せるか、複数にまたがるなら SHARED_NAMES へ追加する`);
   }
+}
+
+// ── 4b. スポットマスターの検査 ────────────────────────────────
+// spots.ts は施設と市町村の対応の唯一の正。ここが崩れると全ページに波及する。
+const spotsSrc = await read('src/data/spots.ts');
+const spotEntries = [...spotsSrc.matchAll(/\{ slug: '([^']+)',(.*?) \},$/gm)].map(([, slug, rest]) => {
+  const pick = (k) => rest.match(new RegExp(`${k}: '([^']*)'`))?.[1];
+  const list = (k) => {
+    const raw = rest.match(new RegExp(`${k}: \\[([^\\]]*)\\]`))?.[1];
+    return raw ? [...raw.matchAll(/'([^']+)'/g)].map((x) => x[1]) : [];
+  };
+  return { slug, name: pick('name'), aka: pick('aka'), municipality: pick('municipality'),
+    alsoIn: list('alsoIn'), mentionedIn: list('mentionedIn'),
+    sourceUrl: pick('sourceUrl'), verifiedAt: pick('verifiedAt') };
+});
+const seenSlug = new Set();
+for (const s of spotEntries) {
+  if (seenSlug.has(s.slug)) fail('spots.ts', `slug が重複している: ${s.slug}`);
+  seenSlug.add(s.slug);
+  if (!validSlugs.has(s.municipality)) fail('spots.ts', `${s.name}: 市町村slugが44件に無い（${s.municipality}）`);
+  if (!s.sourceUrl) fail('spots.ts', `${s.name}: sourceUrl が無い。何を見て確認したかを必ず残す`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s.verifiedAt ?? '')) fail('spots.ts', `${s.name}: verifiedAt が YYYY-MM-DD でない`);
+}
+const spotMuni = new Map(spotEntries.map((s) => [s.slug, s.municipality]));
+
+// municipality-content.ts の spot('slug', ...) が、その市町村の節に置かれているか
+{
+  const src = await read('src/data/municipality-content.ts');
+  let cur = null;
+  src.split('\n').forEach((line, i) => {
+    const sec = line.match(/^ {2}'?([a-z-]+)'?:\s*\{/);
+    if (sec) { cur = sec[1]; return; }
+    const m = line.match(/spot\('([^']+)'/);
+    if (!m || !cur) return;
+    const owner = spotMuni.get(m[1]);
+    if (!owner) fail(`municipality-content.ts:${i + 1}`, `spots.ts に無いスポット: ${m[1]}`);
+    else if (owner !== cur) {
+      fail(`municipality-content.ts:${i + 1}`, `${m[1]} は spots.ts では ${owner} のスポット。${cur} の節に置かれている`);
+    }
+  });
+}
+
+// area-guides.ts / themes.ts でも、マスターにある施設名が
+// 別の市町村の節に出ていないかを見る。ネーブルパークはここにも載っていた。
+{
+  const byName = new Map();
+  for (const s of spotEntries) {
+    for (const n of [s.name, s.aka].filter(Boolean)) byName.set(n, s);
+  }
+  const scan = (src, re, label) => {
+    let cur = null;
+    src.split('\n').forEach((line, i) => {
+      const sec = line.match(/^ {2}'?([a-z-]+)'?:\s*\{/);
+      if (sec) { cur = sec[1]; return; }
+      if (!cur || !validSlugs.has(cur)) return;
+      for (const m of line.matchAll(re)) {
+        const s = byName.get(m[1]);
+        if (!s) continue;
+        const allowed = [s.municipality, ...(s.alsoIn ?? []), ...(s.mentionedIn ?? [])];
+        if (!allowed.includes(cur)) {
+          fail(`${label}:${i + 1}`, `「${m[1]}」は spots.ts では ${s.municipality} のスポット。${cur} の節に出ている`);
+        }
+      }
+    });
+  };
+  scan(await read('src/data/area-guides.ts'), /\{ title: '([^']+)'/g, 'area-guides.ts');
+  scan(await read('src/data/area-guides.ts'), /place: '([^']+)'/g, 'area-guides.ts');
 }
 
 // ── 5. 公開記事の出典 ─────────────────────────────────────────

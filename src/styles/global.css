@@ -144,6 +144,16 @@ body {
   background-size: 4px 4px;
 }
 
+/*
+ * 横スクロールする帯（ページ内ナビ、広い表など）で指を横に振り切ったとき、
+ * スクロールがページ側へ連鎖して画面全体が左右に動くのを止める。
+ * iOS ではこの連鎖が「戻る」スワイプの誤爆にもつながる。
+ * 新しく横スクロール領域を作るときは、この指定が効く形にすること。
+ */
+[data-xscroll], .ag-jump > div, .area-jump > div {
+  overscroll-behavior-x: contain;
+}
+
 img, picture, svg, video { display: block; max-width: 100%; height: auto; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; cursor: pointer; }

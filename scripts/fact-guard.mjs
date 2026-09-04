@@ -137,20 +137,13 @@ for (const [nm, slugs] of byName) {
   }
 }
 
-// ── 5. 市町村slugの妥当性と、公開記事の出典 ────────────────────
+// ── 5. 公開記事の出典 ─────────────────────────────────────────
+// 記事の municipalities は content.config.ts が z.enum(municipalitySlugs) で
+// 検証しているため、ここでは見ない。二重に持つと、片方だけ直して食い違う。
 for (const file of contentFiles.filter((f) => f.startsWith('src/content') && f.endsWith('.md'))) {
   if (path.basename(file).startsWith('_')) continue;
-  const txt = await read(file);
-  const fm = txt.split('---')[1] ?? '';
-  for (const m of fm.matchAll(/^\s+-\s+([a-z][a-z-]+)\s*$/gm)) {
-    // municipalities 直下の項目だけを見たいので、既知slugに似たものだけ判定する
-    const v = m[1];
-    if (/^[a-z-]+$/.test(v) && fm.includes('municipalities:') && !validSlugs.has(v) && v.includes('-') === false && v.length > 2) {
-      // タグ等の英字リストと区別しきれないため、警告ではなく無視する
-    }
-  }
-  const published = /^draft:\s*false/m.test(fm);
-  if (published && !/sourceUrls:/.test(fm)) {
+  const fm = (await read(file)).split('---')[1] ?? '';
+  if (/^draft:\s*false/m.test(fm) && !/sourceUrls:/.test(fm)) {
     fail(file, '公開記事なのに sourceUrls が無い');
   }
 }

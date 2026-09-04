@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="茨城県のロケ支援実績と経済波及効果推計をテーマにしたイバトコの記事画像">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="28" y="28" width="1144" height="574" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="76" y="104" font-family="'Source Sans 3', sans-serif" font-size="21" font-weight="600" letter-spacing="4.5" fill="#75695a">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g stroke="#315c68" fill="none">
+    <rect x="76" y="150" width="152" height="66" stroke-width="2"/>
+    <rect x="300" y="150" width="152" height="66" stroke-width="2"/>
+    <rect x="524" y="150" width="152" height="66" stroke-width="2"/>
+    <path d="M232 183 H294" stroke-width="2" stroke-dasharray="7 6"/>
+    <path d="M456 183 H518" stroke-width="2" stroke-dasharray="7 6"/>
+    <path d="M286 176 l10 7 l-10 7 Z" fill="#315c68" stroke="none"/>
+    <path d="M510 176 l10 7 l-10 7 Z" fill="#315c68" stroke="none"/>
+  </g>
+  <text x="152" y="190" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="21" fill="#172b35">県外の制作費</text>
+  <text x="376" y="190" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="21" fill="#172b35">県内での撮影</text>
+  <text x="600" y="190" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="21" fill="#172b35">公開後の来訪</text>
+
+  <g>
+    <circle cx="880" cy="183" r="58" fill="none" stroke="#a63f32" stroke-width="2"/>
+    <text x="880" y="176" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="34" font-weight="700" fill="#a63f32">9.5</text>
+    <text x="880" y="203" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="17" font-weight="600" fill="#a63f32">億円</text>
+    <text x="962" y="177" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">経済波及効果</text>
+    <text x="962" y="204" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">の推計額</text>
+  </g>
+
+  <path d="M76 268 H1124" stroke="#d9d0c0" stroke-width="1"/>
+
+  <text x="76" y="352" font-family="'Shippori Mincho', serif" font-size="52" font-weight="700" fill="#172b35">茨城のロケ誘致、経済効果は過去最高。</text>
+  <text x="76" y="424" font-family="'Shippori Mincho', serif" font-size="52" font-weight="700" fill="#172b35">「撮影場所」を地域産業に変えるには</text>
+
+  <text x="76" y="486" font-family="'Shippori Mincho', serif" font-size="24" fill="#315c68">令和7年度は582作品・1,168日を支援。橋も、工場も、庁舎も、地域の外から売上を得る資源になる。</text>
+
+  <text x="76" y="556" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">出典：茨城県「令和7年度茨城県内のロケ支援実績について」（2026年9月4日）</text>
+  <text x="1124" y="556" text-anchor="end" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">9.5億円は実測値ではなく推計額です</text>
+</svg>

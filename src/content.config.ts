@@ -343,8 +343,19 @@ const events = defineCollection({
       name: z.string().min(1),
       startDate: z.coerce.date(),
       endDate: z.coerce.date().optional(),
-      /** 開催時間。例「19:00〜20:30」 */
+      /** 開催時間。画面表示用の自由文。例「18:05〜19:50（開場は青ゲート14:00）」 */
       time: z.string().optional(),
+      /**
+       * 構造化データ（schema.org Event）用の開始・終了時刻。HH:mm。
+       *
+       * time は自由文なので機械可読ではない。JSON-LD の startDate / endDate に
+       * 時刻まで載せたいときだけ、ここへ分けて書く。
+       * **公式で確認できた時刻だけを入れる。** 分からないものは書かない。
+       * 書かなければ JSON-LD は日付だけ（例 2026-11-07）になり、
+       * 誤った時刻を主張することはない。
+       */
+      startTime: z.string().regex(/^\d{2}:\d{2}$/).optional(),
+      endTime: z.string().regex(/^\d{2}:\d{2}$/).optional(),
       venue: z.string().optional(),
       address: z.string().optional(),
       /** 料金。無料なら「無料」と書く */

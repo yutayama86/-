@@ -25,7 +25,20 @@ const d = entry.data;
 const info = d.eventInfo;
 
 const fmtDate = (x: Date) => new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' }).format(x);
-const iso = (x: Date) => x.toISOString().slice(0, 10);
+
+/**
+ * 日付を YYYY-MM-DD にする。
+ * toISOString() はUTCへ寄せるため、日本時間の日付とズレることがある。
+ * frontmatter の日付は日本のイベントの日付なので、日本時間で組み立てる。
+ */
+const iso = (x: Date) =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(x);
+
+/**
+ * schema.org の日時。時刻が分かっているときだけ +09:00 付きの
+ * ISO 8601 にする。分からなければ日付だけを返す（推測で 00:00 を足さない）。
+ */
+const isoDateTime = (x: Date, time?: string) => (time ? `${iso(x)}T${time}:00+09:00` : iso(x));
 
 /** 実務情報の行。値が無い項目は行ごと出さない */
 const factRows = info ? ([
@@ -56,14 +69,38 @@ const crumbs: Crumb[] = [
 const pageUrl = new URL(`/events/${entry.id.split('/').pop()}/`, Astro.site).href;
 
 const jsonLd: Record<string, unknown>[] = [breadcrumbJsonLd(crumbs, Astro.site)];
-if (info) {
+// Google の Event は location が必須。会場も住所も確認できていないイベントで
+// Event を出すと、リッチリザルトの対象にならないうえ Search Console に
+// エラーとして積み上がる。確認できるまで出力しない（推測で会場を書かない）。
+// frontmatter に venue か address を足せば、自動的に出力が始まる。
+const canEmitEvent = Boolean(info && (info.venue || info.address));
+if (info && canEmitEvent) {
+  // endDate は「終了日」または「開始日＋終了時刻」から作る。
+  // 複数日イベントは endDate を持ち、単日イベントでも終了時刻が分かっていれば
+  // その日の終了時刻を endDate にできる。どちらも無ければ出力しない
+  // （推測で startDate と同じ値を入れることはしない）。
+  const endBase = info.endDate ?? (info.endTime ? info.startDate : undefined);
+  const endValue = endBase ? isoDateTime(endBase, info.endTime) : undefined;
+
   jsonLd.push({
     '@context': 'https://schema.org',
     '@type': 'Event',
     name: info.name,
-    startDate: iso(info.startDate),
-    ...(info.endDate ? { endDate: iso(info.endDate) } : {}),
-    ...(info.venue ? { location: { '@type': 'Place', name: info.venue, ...(info.address ? { address: info.address } : {}) } } : {}),
+    startDate: isoDateTime(info.startDate, info.startTime),
+    ...(endValue ? { endDate: endValue } : {}),
+    // location は Google の Event 必須項目。venue（会場名）が無くても
+    // address（住所）だけ分かっていれば Place として出せる。
+    // 以前は venue がある場合しか出しておらず、住所だけ確認できている
+    // イベントで location ごと欠落していた。
+    ...(info.venue || info.address
+      ? {
+          location: {
+            '@type': 'Place',
+            name: info.venue ?? info.address,
+            ...(info.address ? { address: info.address } : {}),
+          },
+        }
+      : {}),
     ...(info.officialUrl ? { url: info.officialUrl } : {}),
     description: d.description,
   });

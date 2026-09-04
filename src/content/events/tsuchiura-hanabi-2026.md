@@ -29,6 +29,8 @@ eventInfo:
   name: "第95回土浦全国花火競技大会"
   startDate: 2026-11-07
   time: "午後5時30分競技開始、午後8時終了予定"
+  startTime: "17:30"
+  endTime: "20:00"
   address: "土浦市 桜川畔（学園大橋付近）"
   weatherPolicy: "荒天の場合は11月14日（土曜日）に延期"
   officialName: "土浦全国花火競技大会実行委員会 公式サイト"

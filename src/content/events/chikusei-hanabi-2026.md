@@ -30,6 +30,7 @@ eventInfo:
   name: "ちくせい花火大会2026"
   startDate: 2026-10-17
   time: "午後6時開始"
+  startTime: "18:00"
   venue: "道の駅グランテラス筑西周辺"
   weatherPolicy: "荒天時は10月18日（日曜日）に順延"
   officialName: "筑西市｜ちくせい花火大会2026の開催が決定しました！"

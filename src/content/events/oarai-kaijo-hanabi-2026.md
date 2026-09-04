@@ -26,6 +26,7 @@ keyPoints:
 eventInfo:
   name: "大洗海上花火大会2026"
   startDate: 2026-09-26
+  venue: "大洗サンビーチ"
   officialName: "大洗観光協会"
   officialUrl: "https://www.oarai-info.jp/event/"
 highlights:

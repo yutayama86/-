@@ -29,6 +29,7 @@ eventInfo:
   name: "大洗秋まつり 商工感謝祭＆大洗あんこう祭"
   startDate: 2026-11-14
   endDate: 2026-11-15
+  venue: "大洗マリンタワー前広場"
   officialName: "大洗観光協会"
   officialUrl: "https://www.oarai-info.jp/event/"
 highlights:

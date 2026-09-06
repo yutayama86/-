@@ -86,11 +86,13 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
       <Breadcrumbs items={crumbs} />
       <p class="bp-kicker">JOIN IBATOCO ／ 協力してくれる人へ</p>
       <h1>その街のこと、<br />あなたが一番<br />知っている。</h1>
-      <div class="rp-hero-lead">
-        <p>イバトコは、茨城を自分の足で歩き、人に会い、確かめたことだけを書くローカルメディアです。</p>
-        <p>大きな発信力より、その街を好きな気持ちと、事実への誠実さを大切にします。あなたの知っている“いいとこ”を、一緒に記録しませんか。</p>
+      <div class="rp-hero-body">
+        <div class="rp-hero-lead">
+          <p>イバトコは、茨城を自分の足で歩き、人に会い、確かめたことだけを書くローカルメディアです。</p>
+          <p>大きな発信力より、その街を好きな気持ちと、事実への誠実さを大切にします。あなたの知っている“いいとこ”を、一緒に記録しませんか。</p>
+        </div>
+        <p class="rp-note">先にお伝えします。イバトコはまだ収益を得ていないため、<strong>報酬や交通費はお支払いできません</strong>。求人ではなく、無償での協力のお願いです。それでも面白がってくれる方と、街を歩きたいと思っています。</p>
       </div>
-      <p class="rp-note">先にお伝えします。イバトコはまだ収益を得ていないため、<strong>報酬や交通費はお支払いできません</strong>。求人ではなく、無償での協力のお願いです。それでも面白がってくれる方と、街を歩きたいと思っています。</p>
       <div class="rp-cta-row">
         <a class="btn-primary" href={CTA_EDITOR}>協力したいと伝える →</a>
         <a class="btn-ghost" href={CTA_TIP}>まず街のいいとこを教える</a>
@@ -100,8 +102,10 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
 
   <!-- WHY -->
   <section class="rp-why"><div class="bp-wrap">
-    <p class="bp-kicker">WHY YOU</p>
-    <h2 class="bp-section-title">魅力は、足りないのではない。<br />「伝わっていない」だけ。</h2>
+    <div>
+      <p class="bp-kicker">WHY YOU</p>
+      <h2 class="bp-section-title">魅力は、足りないのではない。<br />「伝わっていない」だけ。</h2>
+    </div>
     <p>地域のいいものは、たいてい足りていないのではなく、見つけられない・伝わっていない。だからこそ、実際にそこへ通い、好きだと言える人の一次情報がいちばん強い。肩書きよりも、その現場を知っているあなたと組みたいと思っています。</p>
   </div></section>
 
@@ -205,10 +209,12 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
   /* 日本語の見出しは、行が不均等だと「の、」のような断片が行頭に落ちる */
   .rp-hero h1,.rp-hero-lead,.rp-note,section h2,section h3{text-wrap:pretty}
   section h2{text-wrap:balance}
-  .rp-hero-lead{display:grid;gap:1rem;max-width:var(--rp-measure);margin-top:1.8rem;color:var(--color-soil);line-height:2}
+  /* 横に長い画面で右半分が空いていたので、リードと注記を並べて幅を使う */
+  .rp-hero-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:clamp(1.6rem,3vw,3rem);align-items:start;margin-top:1.8rem}
+  .rp-hero-lead{display:grid;gap:1rem;max-width:var(--rp-measure);color:var(--color-soil);line-height:2}
   /* 報酬が出ないことの注記。リードの 52ch（日本語だと約26字）に入れると
      窮屈で改行が汚くなるため、リードの外に出して独自の幅を持たせる。 */
-  .rp-note{max-width:var(--rp-measure);margin-top:1.6rem;padding:1.15rem 1.4rem;border-left:3px solid var(--color-tide);background:color-mix(in srgb,var(--color-mist) 50%,transparent);color:var(--color-soil);font-size:.92rem;line-height:1.95}
+  .rp-note{max-width:var(--rp-measure);padding:1.15rem 1.4rem;border-left:3px solid var(--color-tide);background:color-mix(in srgb,var(--color-mist) 50%,transparent);color:var(--color-soil);font-size:.92rem;line-height:1.95}
   .rp-note strong{color:var(--color-ink);font-weight:600}
   .rp-cta-row{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.4rem;align-items:center}
   .btn-primary{display:inline-block;padding:1rem 1.8rem;background:var(--color-ink);color:var(--color-paper);font:600 1rem var(--font-brand-body);border:1px solid var(--color-ink);transition:background .2s,color .2s}
@@ -219,7 +225,7 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
   .btn-ghost.invert{color:var(--color-paper);border-color:rgba(255,255,255,.5)}.btn-ghost.invert:hover{color:#fff;border-color:#fff}
 
   /* WHY */
-  .rp-why{padding-block:clamp(4rem,9vw,7rem)}.rp-why h2{margin-top:.7rem;max-width:20ch}.rp-why>div>p:last-child{max-width:var(--rp-measure);margin-top:1.5rem;color:var(--color-soil);line-height:2}
+  .rp-why{padding-block:clamp(4rem,9vw,7rem)}/* 見出しの下に本文を積むと広い画面で右が丸ごと空くため、.rp-who と同じ2カラムに揃える */.rp-why>div{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(2rem,6vw,5rem);align-items:start}.rp-why h2{margin-top:.7rem}.rp-why>div>p:last-child{max-width:var(--rp-measure);color:var(--color-soil);line-height:2}
 
   /* WAYS */
   .rp-ways{padding-block:clamp(4rem,9vw,7rem);border-top:1px solid var(--color-mist)}
@@ -295,7 +301,7 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
 
   @media(max-width:820px){
     .rp-ways-grid,.rp-standard-grid,.rp-people-grid,.rp-promise dl{grid-template-columns:1fr}
-    .rp-who>div,.rp-people-empty{grid-template-columns:1fr}
+    .rp-who>div,.rp-people-empty,.rp-why>div{grid-template-columns:1fr}
     .rp-steps-list{grid-template-columns:1fr 1fr}
     .rp-steps-list li:nth-child(2){border-right:0}
   }

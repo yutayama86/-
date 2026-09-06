@@ -71,6 +71,7 @@ sourceUrls:
     url: "https://www.mito-hollyhock.net/lp26/20260902/"
     accessedAt: 2026-09-02
 relatedArticleUrls:
+  - "/news/mito-hollyhock-new-stadium-access/"
   - "/news/mito-kashima-ibaraki-derby-2026-09-02/"
   - "/news/kashima-away-guide-mito-2026-09-02/"
   - "/sports/mito-hollyhock/"

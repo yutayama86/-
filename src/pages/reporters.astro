@@ -89,8 +89,8 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
       <div class="rp-hero-lead">
         <p>イバトコは、茨城を自分の足で歩き、人に会い、確かめたことだけを書くローカルメディアです。</p>
         <p>大きな発信力より、その街を好きな気持ちと、事実への誠実さを大切にします。あなたの知っている“いいとこ”を、一緒に記録しませんか。</p>
-        <p class="rp-note">先にお伝えします。イバトコはまだ収益を得ていないため、<strong>報酬や交通費はお支払いできません</strong>。求人ではなく、無償での協力のお願いです。それでも面白がってくれる方と、街を歩きたいと思っています。</p>
       </div>
+      <p class="rp-note">先にお伝えします。イバトコはまだ収益を得ていないため、<strong>報酬や交通費はお支払いできません</strong>。求人ではなく、無償での協力のお願いです。それでも面白がってくれる方と、街を歩きたいと思っています。</p>
       <div class="rp-cta-row">
         <a class="btn-primary" href={CTA_EDITOR}>協力したいと伝える →</a>
         <a class="btn-ghost" href={CTA_TIP}>まず街のいいとこを教える</a>
@@ -120,7 +120,7 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
 
   <!-- WHAT EDITORS DO -->
   <section class="rp-standard bp-wrap">
-    <header><p class="bp-kicker">WHAT EDITORS DO</p><h2 class="bp-section-title">ローカルエディターの、たった3つの約束。</h2><p>むずかしい資格はいりません。この3つを守れる人と、街を歩きます。</p></header>
+    <header><p class="bp-kicker">WHAT EDITORS DO</p><h2 class="bp-section-title">ローカルエディターの、<br />たった3つの約束。</h2><p>むずかしい資格はいりません。この3つを守れる人と、街を歩きます。</p></header>
     <div class="rp-standard-grid">{standards.map((s) => (
       <article><span class="rp-num">{s.no}</span><h3>{s.title}</h3><p>{s.text}</p></article>
     ))}</div>
@@ -155,6 +155,10 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
       <p class="bp-kicker">LOCAL EDITORS</p>
       <h2 class="bp-section-title">最初のひとりに、なりませんか。</h2>
       <p>いま公開できるプロフィールはありません。本人確認と掲載許諾が済んだ人だけを公開する方針だからです。あなたの参加を、待っています。</p>
+      <div class="rp-cta-row">
+        <a class="btn-primary" href={CTA_EDITOR}>協力したいと伝える →</a>
+        <a class="btn-ghost" href={CTA_TIP}>まず街のいいとこを教える</a>
+      </div>
     </section>
   )}
 
@@ -187,9 +191,14 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
   /* HERO */
   .rp-hero{padding-block:clamp(4.5rem,10vw,8.5rem);border-bottom:1px solid var(--color-mist)}
   .rp-hero h1{margin-top:1.2rem;font:600 clamp(2.8rem,8vw,6.4rem)/1.08 var(--font-brand-display);color:var(--color-ink);letter-spacing:.01em}
+  /* 日本語の見出しは、行が不均等だと「の、」のような断片が行頭に落ちる */
+  .rp-hero h1,.rp-hero-lead,.rp-note,section h2,section h3{text-wrap:pretty}
+  section h2{text-wrap:balance}
   .rp-hero-lead{display:grid;gap:1rem;max-width:52ch;margin-top:1.8rem;color:var(--color-soil);line-height:2}
-  .rp-hero-lead .rp-note{margin-top:.4rem;padding:1rem 1.15rem;border-left:3px solid var(--color-tide);background:color-mix(in srgb,var(--color-mist) 55%,transparent);font-size:.92rem;line-height:1.95}
-  .rp-hero-lead .rp-note strong{color:var(--color-ink);font-weight:600}
+  /* 報酬が出ないことの注記。リードの 52ch（日本語だと約26字）に入れると
+     窮屈で改行が汚くなるため、リードの外に出して独自の幅を持たせる。 */
+  .rp-note{max-width:38em;margin-top:1.6rem;padding:1.15rem 1.4rem;border-left:3px solid var(--color-tide);background:color-mix(in srgb,var(--color-mist) 50%,transparent);color:var(--color-soil);font-size:.92rem;line-height:1.95}
+  .rp-note strong{color:var(--color-ink);font-weight:600}
   .rp-cta-row{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.4rem;align-items:center}
   .btn-primary{display:inline-block;padding:1rem 1.8rem;background:var(--color-ink);color:var(--color-paper);font:600 1rem var(--font-brand-body);border:1px solid var(--color-ink);transition:background .2s,color .2s}
   .btn-primary:hover{background:var(--color-tide);border-color:var(--color-tide);color:#fff}
@@ -241,13 +250,14 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
   .rp-people{padding-block:clamp(4rem,9vw,7rem);border-top:1px solid var(--color-mist)}.rp-people>header{margin-bottom:2rem}
   .rp-people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem}
   .rp-people-empty{padding-block:clamp(4rem,9vw,7rem);border-top:1px solid var(--color-mist)}
-  .rp-people-empty h2{margin-top:.7rem}.rp-people-empty>p:not(.bp-kicker){max-width:52ch;margin-top:1.3rem;color:var(--color-soil);line-height:2}
+  .rp-people-empty h2{margin-top:.7rem}.rp-people-empty .rp-cta-row{margin-top:2rem}.rp-people-empty>p:not(.bp-kicker){max-width:52ch;margin-top:1.3rem;color:var(--color-soil);line-height:2}
 
   /* PROMISE */
   .rp-promise{background:var(--color-ink);color:var(--color-paper)}
   .rp-promise>div{padding-block:clamp(4rem,9vw,7rem)}
   .rp-promise header h2{margin-top:.7rem;color:#fff}
-  .rp-promise dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem;margin-top:2.5rem}
+  /* 項目数を変えても余りが出ないよう、固定3列ではなく詰められる形にする */
+  .rp-promise dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:2rem 2.5rem;margin-top:2.5rem}
   .rp-promise dt{font:600 1.15rem var(--font-brand-display);color:#fff}
   .rp-promise dd{margin:.7rem 0 0;color:color-mix(in srgb,var(--color-paper) 82%,transparent);line-height:1.85;font-size:.92rem}
   .rp-inline-link{display:inline-block;margin-top:2.5rem;color:var(--color-paper);border-bottom:1px solid rgba(255,255,255,.5)}.rp-inline-link:hover{border-color:#fff}

@@ -67,7 +67,7 @@ tags: ["…"]
 prefecture: "茨城県"
 municipalities: [mito]        # 下記6のslugのみ。該当なしは []
 featured: true
-draft: true                   # 作成時は true。検証を通ったら false にして公開（下記11）
+draft: true                   # 作成時は true。AGENTSの公開条件を満たし、公開する場合だけ false
 reviewed: false               # 公開時 true（未確認のまま公開不可）
 sample: false                 # true なら noindex: true が必須
 noindex: false
@@ -210,44 +210,20 @@ npm run wait:deploy -- /news/<slug>/ "新版にしかない文字列"
 ### サイト全体の検証
 
 ```bash
-npm run audit:site
+npm run verify
 ```
 
-`astro build` + `scripts/quality-audit.mjs` が走り、次を自動検出する：
-リンク切れ / h1重複 / description・canonical不足 / JSON-LD構文エラー / img alt漏れ / 禁止語
-
-型検査も通す：
-
-```bash
-npx astro check
-```
+事実ガード、型検査、ビルド、品質監査を順に実行する。
+リンク切れ / h1重複 / description・canonical不足 / JSON-LD構文エラー / img alt漏れ / 禁止語を確認する。
+成功後に差分が増えていなければ、同じ全体検証を公開手順で繰り返さない。
 
 加えて `draft: true` の記事は**ページが生成されないこと**を確認する
 （`dist/news/<slug>/index.html` が無く、`dist/news/index.html` にも載らない）。
 
 ## 11. 下書きと公開の判断
 
-**公開は自動でよい**（2026年8月31日にユーザーが承認。毎回の確認は不要）。
-下記の「公開してよい条件」をすべて満たしたら、`draft: false` / `reviewed: true` にして
-そのまま公開まで進め、事後に報告する。
-
-### 公開してよい条件（すべて満たすこと）
-
-- 記事内の事実が、すべて公式一次情報または報道で裏が取れている
-- 裏が取れなかったことは**書いていない**（「未確認のまま載せる」で妥協しない）
-- `npx astro check` が 0 errors
-- `npm run audit:site` が通る
-- 既存URLを変更していない
-
-### 公開せず、先に確認すること
-
-条件を満たさないときは公開しない。下書きのまま、何が足りないかを伝える。
-
-- **裏が取れない事実が記事の骨格に必要**なとき。埋めずに止める
-- **既存記事の訂正・取り下げ**にあたるとき（誤りを公開済みの場合は、直ちに報告して指示を仰ぐ）
-- **既存URLの変更やリダイレクト**が必要なとき
-- **広告・提供・PR記事**のとき（Editorialと混同させない判断が要る）
-- 事実の解釈が分かれ、書き方でニュアンスが変わるとき
+公開可否・自動公開の条件・個別確認が必要な例外は、[プロジェクトのAGENTS.md](../../../AGENTS.md) の「公開の判断」を読んで適用する。ここで別の公開許可を定義しない。
+下書きのみの依頼や期限を過ぎた定期タスクから、公開を開始しない。
 
 ### 判断を止めなくてよいもの（自分で決めて、報告に書く）
 
@@ -261,14 +237,19 @@ npx astro check
 
 ```bash
 git fetch origin -q                 # origin/main と一致しているか確認
-npx astro check                     # 0 errors
-npm run audit:site                  # 検証を通す
+# 直前の npm run verify が成功し、以後に差分が増えていないことを確認
 git add <記事.md> <OG画像> [変更したページ]
+git diff --cached --name-only
+```
+
+staged一覧が今回の公開対象だけであることを確認する。対象外の変更が含まれる場合は保持して止め、勝手にunstageしない。この確認が終わるまでは次のcommit・pushを実行しない。
+
+```bash
 git commit                          # 変更理由を日本語で。Co-Authored-By を付ける
 git push origin main                # Cloudflare が自動デプロイ
 ```
 
-差分があるときは `git rebase origin/main` してから進める。
+未コミット差分や進行中のGit操作がある場合は保護する。公開対象以外を混ぜず、自動でrebase・cherry-pick続行・中断をしない。
 `.github/workflows/` を含む変更はPATのスコープ不足でpushが弾かれる（内容だけのpushは通る）。
 
 ## 13. 本番反映の確認
@@ -293,5 +274,4 @@ HTMLへインライン出力するため、素のセレクタでgrepしても一
 **自分で判断した箇所**（カテゴリ選定、書き起こした項目、立てた出典など）/
 **裏取りできなかったため書かなかったこと**。
 
-公開を自動で進めるぶん、報告は「何を確認し、何を確認できなかったか」を厚く書く。
-あとから検証できる状態にしておくことが、事前承認の代わりになる。
+公開した場合は「何を確認し、何を確認できなかったか」を報告し、あとから検証できる状態にする。報告をAGENTS.mdの公開条件や必要な承認の代わりにしない。

@@ -268,7 +268,7 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
   .rp-people-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem}
   /* 縦積みだと、幅の広い画面でカードの右側が丸ごと空いてしまう。
      同ページの .rp-who と同じ2カラムに揃えて、視線が左右に流れるようにする。 */
-  .rp-people-empty{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(2rem,6vw,5rem);align-items:start;padding-block:clamp(4rem,9vw,7rem);border-top:1px solid var(--color-mist)}
+  /* interior.css の共通ルールで、このセクションだけ白いカードになる（.rp-way と同じ扱い）。しかし左右の余白が付かないため、文字がカードの端に張り付いていた。ヒーローのカードと同じ 3.6rem を上限に左右を入れて、内側の位置を揃える。 */.rp-people-empty{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(1.5rem,4vw,3.5rem);align-items:center;padding-block:clamp(2.75rem,5vw,4rem);padding-inline:clamp(1.5rem,3.5vw,3.6rem);border-top:1px solid var(--color-mist)}
   .rp-people-empty h2{margin-top:.7rem}
   .rp-people-empty .rp-cta-row{margin-top:2rem}
   .rp-people-empty p:not(.bp-kicker){max-width:var(--rp-measure);color:var(--color-soil);line-height:2}

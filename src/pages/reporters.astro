@@ -192,16 +192,23 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
 </BrandBase>
 
 <style>
+  /*
+   * 本文の基準幅。日本語1文字＝1em なので em で測る。
+   * ch は半角基準のため、56ch と書いても28字にしかならない。
+   * このページはそれで幅が6種類にばらけ、右の余白が不揃いに見えていた。
+   */
+  .rp-hero,.rp-why,.rp-ways,.rp-standard,.rp-who,.rp-steps,.rp-people-empty,.rp-faq{--rp-measure:36em}
+
   /* HERO */
   .rp-hero{padding-block:clamp(4.5rem,10vw,8.5rem);border-bottom:1px solid var(--color-mist)}
   .rp-hero h1{margin-top:1.2rem;font:600 clamp(2.8rem,8vw,6.4rem)/1.08 var(--font-brand-display);color:var(--color-ink);letter-spacing:.01em}
   /* 日本語の見出しは、行が不均等だと「の、」のような断片が行頭に落ちる */
   .rp-hero h1,.rp-hero-lead,.rp-note,section h2,section h3{text-wrap:pretty}
   section h2{text-wrap:balance}
-  .rp-hero-lead{display:grid;gap:1rem;max-width:52ch;margin-top:1.8rem;color:var(--color-soil);line-height:2}
+  .rp-hero-lead{display:grid;gap:1rem;max-width:var(--rp-measure);margin-top:1.8rem;color:var(--color-soil);line-height:2}
   /* 報酬が出ないことの注記。リードの 52ch（日本語だと約26字）に入れると
      窮屈で改行が汚くなるため、リードの外に出して独自の幅を持たせる。 */
-  .rp-note{max-width:38em;margin-top:1.6rem;padding:1.15rem 1.4rem;border-left:3px solid var(--color-tide);background:color-mix(in srgb,var(--color-mist) 50%,transparent);color:var(--color-soil);font-size:.92rem;line-height:1.95}
+  .rp-note{max-width:var(--rp-measure);margin-top:1.6rem;padding:1.15rem 1.4rem;border-left:3px solid var(--color-tide);background:color-mix(in srgb,var(--color-mist) 50%,transparent);color:var(--color-soil);font-size:.92rem;line-height:1.95}
   .rp-note strong{color:var(--color-ink);font-weight:600}
   .rp-cta-row{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.4rem;align-items:center}
   .btn-primary{display:inline-block;padding:1rem 1.8rem;background:var(--color-ink);color:var(--color-paper);font:600 1rem var(--font-brand-body);border:1px solid var(--color-ink);transition:background .2s,color .2s}
@@ -212,11 +219,11 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
   .btn-ghost.invert{color:var(--color-paper);border-color:rgba(255,255,255,.5)}.btn-ghost.invert:hover{color:#fff;border-color:#fff}
 
   /* WHY */
-  .rp-why{padding-block:clamp(4rem,9vw,7rem)}.rp-why h2{margin-top:.7rem;max-width:20ch}.rp-why>div>p:last-child{max-width:60ch;margin-top:1.5rem;color:var(--color-soil);line-height:2}
+  .rp-why{padding-block:clamp(4rem,9vw,7rem)}.rp-why h2{margin-top:.7rem;max-width:20ch}.rp-why>div>p:last-child{max-width:var(--rp-measure);margin-top:1.5rem;color:var(--color-soil);line-height:2}
 
   /* WAYS */
   .rp-ways{padding-block:clamp(4rem,9vw,7rem);border-top:1px solid var(--color-mist)}
-  .rp-ways>header{max-width:56ch;margin-bottom:2.5rem}.rp-ways>header>p:last-child{margin-top:1rem;color:var(--color-soil);line-height:1.9}
+  .rp-ways>header{max-width:var(--rp-measure);margin-bottom:2.5rem}.rp-ways>header>p:last-child{margin-top:1rem;color:var(--color-soil);line-height:1.9}
   .rp-ways-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.4rem}
   .rp-way{display:flex;flex-direction:column;padding:1.8rem;background:var(--color-white);border:1px solid var(--color-mist);transition:border-color .2s,transform .2s}
   .rp-way:hover{border-color:var(--color-tide);transform:translateY(-2px)}
@@ -227,7 +234,7 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
 
   /* STANDARD */
   .rp-standard{padding-block:clamp(4rem,9vw,7rem);border-top:1px solid var(--color-mist)}
-  .rp-standard>header{max-width:56ch;margin-bottom:2.5rem}.rp-standard>header>p:last-child{margin-top:1rem;color:var(--color-soil);line-height:1.9}
+  .rp-standard>header{max-width:var(--rp-measure);margin-bottom:2.5rem}.rp-standard>header>p:last-child{margin-top:1rem;color:var(--color-soil);line-height:1.9}
   .rp-standard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem}
   .rp-standard-grid article{border-top:2px solid var(--color-ink);padding-top:1.1rem}
   .rp-num{font:600 .78rem var(--font-brand-meta);color:var(--color-tide)}
@@ -237,13 +244,13 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
   /* WHO */
   .rp-who{background:var(--color-white);border-top:1px solid var(--color-mist)}
   .rp-who>div{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(2rem,6vw,5rem);padding-block:clamp(4rem,9vw,7rem);align-items:start}
-  .rp-who h2{margin-top:.7rem}.rp-who-note{margin-top:1.3rem;color:var(--color-soil);line-height:1.95;max-width:38ch}
+  .rp-who h2{margin-top:.7rem}.rp-who-note{margin-top:1.3rem;color:var(--color-soil);line-height:1.95;max-width:var(--rp-measure)}
   .rp-who-list{display:grid;gap:0}.rp-who-list li{padding:1.2rem 0;border-bottom:1px solid var(--color-mist);color:var(--color-ink);font:500 clamp(1.05rem,1.9vw,1.35rem)/1.6 var(--font-brand-display)}
   .rp-who-list li:first-child{border-top:1px solid var(--color-mist)}
 
   /* STEPS */
   .rp-steps{padding-block:clamp(4rem,9vw,7rem);border-top:1px solid var(--color-mist)}
-  .rp-steps>header{max-width:56ch;margin-bottom:2.5rem}.rp-steps>header>p:last-child{margin-top:1rem;color:var(--color-soil);line-height:1.9}
+  .rp-steps>header{max-width:var(--rp-measure);margin-bottom:2.5rem}.rp-steps>header>p:last-child{margin-top:1rem;color:var(--color-soil);line-height:1.9}
   .rp-steps-list{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0;padding:0;border-top:1px solid var(--color-ink)}
   .rp-steps-list li{display:grid;gap:.5rem;padding:1.3rem 1.2rem 1.6rem;border-right:1px solid var(--color-mist)}
   .rp-steps-list li:last-child{border-right:0}
@@ -258,7 +265,7 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
   .rp-people-empty{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(2rem,6vw,5rem);align-items:start;padding-block:clamp(4rem,9vw,7rem);border-top:1px solid var(--color-mist)}
   .rp-people-empty h2{margin-top:.7rem}
   .rp-people-empty .rp-cta-row{margin-top:2rem}
-  .rp-people-empty p:not(.bp-kicker){max-width:34em;color:var(--color-soil);line-height:2}
+  .rp-people-empty p:not(.bp-kicker){max-width:var(--rp-measure);color:var(--color-soil);line-height:2}
 
   /* PROMISE */
   .rp-promise{background:var(--color-ink);color:var(--color-paper)}

@@ -85,7 +85,7 @@ export const GET: APIRoute = async () => {
   entries.push({ path: '/michinoeki/' });
   entries.push({ path: '/odekake/' });
 
-  // /reporters/ はローカルエディター募集ページ。公開中の人物が0人でも内容が成立するため常に掲載する。
+  // /reporters/ はローカルエディター（協力者）の案内ページ。公開中の人物が0人でも内容が成立するため常に掲載する。
   entries.push({ path: '/reporters/' });
   for (const person of VISIBLE_REPORTERS) entries.push({ path: `/reporter/${person.slug}/` });
 

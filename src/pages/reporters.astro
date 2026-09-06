@@ -1,10 +1,13 @@
 ---
 /**
- * /reporters/ — ローカルエディター募集・参加のランディングページ。
- *   目的：「参加したい／協力したい」を引き出す。関わり方を段階的に提示する。
+ * /reporters/ — ローカルエディター（協力者）の案内ページ。
+ *   目的：「協力したい」を引き出す。関わり方を段階的に提示する。
+ *   前提：イバトコは収益化前で、金銭の支払いができない。求人・募集ではなく、
+ *     無償の協力であることを、隠さず先に伝える。これを曖昧にすると、
+ *     来てくれた人との認識がずれて、いちばん失礼なことになる。
  *   方針(CLAUDE.md)：虚偽の実績・数値・口コミ・SNSを作らない。PR/提供/招待は明示。
  *     断定・順位表現を使わない。本人確認と掲載許諾が済んだ人だけを公開する。
- *   公開中のエディターがいれば一覧表示、いなければ募集に集中する。
+ *   公開中のエディターがいれば一覧表示、いなければ参加の呼びかけに集中する。
  */
 import BrandBase from '../layouts/BrandBase.astro';
 import Breadcrumbs, { type Crumb } from '../components/Breadcrumbs.astro';
@@ -21,7 +24,7 @@ const ways = [
   { tag: 'いちばん気軽に', title: '街の“いいとこ”を教える', text: 'お店、景色、季節の風景。「ここ、いいよ」のひとことで十分です。あなたの一言が、取材のきっかけになります。', cta: CTA_TIP, label: '教える' },
   { tag: '写真・体験で', title: '写真や感想を寄せる', text: '撮った一枚や、行ってみた感想を。掲載するときは、提供者としてクレジットを明記します。', cta: CTA_PHOTO, label: '寄せる' },
   { tag: '地元の力で', title: '取材に同行・案内する', text: '地元だから知っている道、人、時間帯。編集部の取材に、案内役として加わってもらえます。', cta: CTA_GUIDE, label: '案内する' },
-  { tag: '書き手として', title: 'ローカルエディターとして書く', text: '自分の足で取材し、記事にする。バイライン（署名）とプロフィールを公開し、続けて活動します。', cta: CTA_EDITOR, label: '応募する' },
+  { tag: '書き手として', title: 'ローカルエディターとして書く', text: '自分の足で取材し、記事にする。バイライン（署名）とプロフィールを公開します。無償での協力になりますが、書いたものはあなたの記事として残ります。', cta: CTA_EDITOR, label: '書いてみる' },
 ];
 
 const standards = [
@@ -48,44 +51,48 @@ const promises = [
   ['本人確認と掲載許諾', '本人確認と掲載の許諾が済んだ人だけを、プロフィールとして公開します。'],
   ['PRと編集を分ける', '広告・提供・招待を受けた記事は、その旨を必ず明示します。編集の評価と混同しません。'],
   ['断定しない', '根拠のない断定や、順位づけの表現はしません。確かめられた事実にもとづいて書きます。'],
+  ['払えないことは、先に言う', '現在は報酬も交通費もお支払いできません。曖昧にしたまま来ていただくことはしません。条件が変わったら、その時点でお伝えします。'],
 ];
 
 const faq = [
   { q: '取材や執筆の経験がなくても参加できますか？', a: '参加できます。大切なのは経歴よりも、自分の足で確かめる姿勢です。まずは情報提供や写真から関わることもできます。' },
-  { q: '茨城に住んでいないと応募できませんか？', a: 'いいえ。県外の方でも、通って・調べて確かめられれば大丈夫です。ただし、現地での取材を前提にしています。' },
+  { q: '茨城に住んでいないと参加できませんか？', a: 'いいえ。県外の方でも、通って・調べて確かめられれば大丈夫です。ただし、現地での取材を前提にしています。交通費はお支払いできないため、無理なく通える範囲でお願いしています。' },
   { q: '書くのは苦手です。写真や情報の提供だけでもいいですか？', a: 'もちろんです。「ここがいい」という情報や、撮った写真を寄せていただくだけでも、大きな力になります。' },
-  { q: '費用や報酬はどうなりますか？', a: '関わり方に応じて、個別にご相談します。まずはお気軽にご連絡ください。' },
+  { q: '報酬は出ますか？', a: 'いまは出せません。イバトコはまだ収益を得ていないため、金銭のお支払いはありません。お渡しできるのは、署名（バイライン）とプロフィールの公開、編集部と一緒に取材・編集する経験、そして掲載された記事そのものです。将来もし収益が立ったときの扱いは、そのときに改めて相談させてください。' },
+  { q: '交通費や取材にかかる費用は？', a: '現時点では負担できません。ご自身の移動範囲・無理のない範囲でお願いしています。遠方への取材をお願いすることはありません。' },
+  { q: 'ノルマや締め切りはありますか？', a: 'ありません。本数の約束もしていません。書ける時に、書けるぶんだけで大丈夫です。しばらく間が空いても、こちらから催促はしません。' },
 ];
 
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'ホーム', item: new URL('/', Astro.site).href },
-    { '@type': 'ListItem', position: 2, name: 'ローカルエディター募集', item: new URL('/reporters/', Astro.site).href },
+    { '@type': 'ListItem', position: 2, name: 'ローカルエディター（協力者）', item: new URL('/reporters/', Astro.site).href },
   ] },
   { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({
     '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
-const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカルエディター募集' }];
+const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカルエディター（協力者）' }];
 ---
 
 <BrandBase
-  title="ローカルエディター募集｜一緒に茨城を記録する｜イバトコ"
+  title="ローカルエディター（協力者）｜一緒に茨城を記録する｜イバトコ"
   ogTitle="その街のいいとこ、あなたが一番知っている。｜イバトコ"
-  description="茨城を自分の足で歩き、確かめたことを記録するイバトコのローカルエディターと協力者を募集しています。情報提供・写真提供・取材同行から、記事を書くエディターまで。参加の流れとよくある質問。"
+  description="茨城を自分の足で歩き、確かめたことを記録するイバトコに、協力してくれる人を歓迎しています。情報提供・写真提供・取材同行から、記事を書くローカルエディターまで。収益化前のため報酬はお支払いできません。関わり方と、よくある質問。"
   jsonLd={jsonLd}
 >
   <!-- HERO -->
   <header class="rp-hero">
     <div class="bp-wrap">
       <Breadcrumbs items={crumbs} />
-      <p class="bp-kicker">JOIN IBATOCO ／ 仲間募集</p>
+      <p class="bp-kicker">JOIN IBATOCO ／ 協力してくれる人へ</p>
       <h1>その街のこと、<br />あなたが一番<br />知っている。</h1>
       <div class="rp-hero-lead">
         <p>イバトコは、茨城を自分の足で歩き、人に会い、確かめたことだけを書くローカルメディアです。</p>
         <p>大きな発信力より、その街を好きな気持ちと、事実への誠実さを大切にします。あなたの知っている“いいとこ”を、一緒に記録しませんか。</p>
+        <p class="rp-note">先にお伝えします。イバトコはまだ収益を得ていないため、<strong>報酬や交通費はお支払いできません</strong>。求人ではなく、無償での協力のお願いです。それでも面白がってくれる方と、街を歩きたいと思っています。</p>
       </div>
       <div class="rp-cta-row">
-        <a class="btn-primary" href={CTA_EDITOR}>ローカルエディターに応募する →</a>
+        <a class="btn-primary" href={CTA_EDITOR}>協力したいと伝える →</a>
         <a class="btn-ghost" href={CTA_TIP}>まず街のいいとこを教える</a>
       </div>
     </div>
@@ -169,7 +176,7 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
     <p class="bp-kicker">START HERE</p>
     <h2>その街の“いいとこ”を、<br />いちばん知っているのは、あなたです。</h2>
     <div class="rp-cta-row">
-      <a class="btn-primary invert" href={CTA_EDITOR}>ローカルエディターに応募する →</a>
+      <a class="btn-primary invert" href={CTA_EDITOR}>協力したいと伝える →</a>
       <a class="btn-ghost invert" href={CTA_TIP}>街のいいとこを教える</a>
     </div>
     <p class="rp-final-sub">お店・企業として協力したい方は <a href="/biz/">地域事業者向けのご案内</a> をご覧ください。</p>
@@ -181,6 +188,8 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
   .rp-hero{padding-block:clamp(4.5rem,10vw,8.5rem);border-bottom:1px solid var(--color-mist)}
   .rp-hero h1{margin-top:1.2rem;font:600 clamp(2.8rem,8vw,6.4rem)/1.08 var(--font-brand-display);color:var(--color-ink);letter-spacing:.01em}
   .rp-hero-lead{display:grid;gap:1rem;max-width:52ch;margin-top:1.8rem;color:var(--color-soil);line-height:2}
+  .rp-hero-lead .rp-note{margin-top:.4rem;padding:1rem 1.15rem;border-left:3px solid var(--color-tide);background:color-mix(in srgb,var(--color-mist) 55%,transparent);font-size:.92rem;line-height:1.95}
+  .rp-hero-lead .rp-note strong{color:var(--color-ink);font-weight:600}
   .rp-cta-row{display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.4rem;align-items:center}
   .btn-primary{display:inline-block;padding:1rem 1.8rem;background:var(--color-ink);color:var(--color-paper);font:600 1rem var(--font-brand-body);border:1px solid var(--color-ink);transition:background .2s,color .2s}
   .btn-primary:hover{background:var(--color-tide);border-color:var(--color-tide);color:#fff}

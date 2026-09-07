@@ -69,6 +69,22 @@ const crumbs: Crumb[] = [
 ];
 const pageUrl = new URL(`/events/${entry.id.split('/').pop()}/`, Astro.site).href;
 
+/**
+ * 目次と見出し番号は、実際に描画されるセクションから作る。
+ * ここを1か所にしないと、条件で消えたセクションの番号が飛ぶ。
+ */
+const highlightLabel = d.articleType === 'event' || d.articleType === 'roundup' ? '見どころ' : 'くわしく';
+const sections = ([
+  factRows.length > 0 && { id: 'facts', label: '開催情報', en: 'FACTS' },
+  d.keyPoints.length > 0 && { id: 'points', label: '押さえておきたいこと', en: 'KEY POINTS' },
+  d.highlights.length > 0 && { id: 'highlights', label: highlightLabel, en: 'DETAILS' },
+  d.picks.length > 0 && { id: 'picks', label: '候補', en: 'PICKS' },
+  d.notes.length > 0 && { id: 'notes', label: '行く前に', en: 'BEFORE YOU GO' },
+  d.faq.length > 0 && { id: 'faq', label: 'よくある質問', en: 'FAQ' },
+  { id: 'sources', label: '情報源', en: 'SOURCES' },
+] as const).filter(Boolean) as { id: string; label: string; en: string }[];
+const no = (id: string) => String(sections.findIndex((s) => s.id === id) + 1).padStart(2, '0');
+
 const jsonLd: Record<string, unknown>[] = [breadcrumbJsonLd(crumbs, Astro.site)];
 // Google の Event は location が必須。会場も住所も確認できていないイベントで
 // Event を出すと、リッチリザルトの対象にならないうえ Search Console に
@@ -136,8 +152,16 @@ if (d.faq.length > 0) {
     </p>
   </header>
 
+  <div class="ev-layout bp-wrap">
+    <aside class="ev-toc" aria-label="この記事の目次">
+      <p>この記事の構成</p>
+      <ol>{sections.map((s) => <li><a href={`#${s.id}`}>{s.label}</a></li>)}</ol>
+    </aside>
+
+    <div class="ev-body">
   {factRows.length > 0 && (
-    <section class="bp-wrap bp-section" aria-labelledby="ev-facts">
+    <section id="facts" aria-labelledby="ev-facts">
+      <p class="section-number">{no('facts')} / FACTS</p>
       <h2 id="ev-facts" class="bp-section-title">開催情報</h2>
       <dl class="ev-facts">
         {factRows.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
@@ -155,21 +179,24 @@ if (d.faq.length > 0) {
   )}
 
   {d.keyPoints.length > 0 && (
-    <section class="bp-wrap bp-section" aria-labelledby="ev-points">
+    <section id="points" aria-labelledby="ev-points">
+      <p class="section-number">{no('points')} / KEY POINTS</p>
       <h2 id="ev-points" class="bp-section-title">押さえておきたいこと</h2>
       <ul class="ev-points">{d.keyPoints.map((p) => <li>{p}</li>)}</ul>
     </section>
   )}
 
   {d.highlights.length > 0 && (
-    <section class="bp-wrap bp-section" aria-labelledby="ev-high">
-      <h2 id="ev-high" class="bp-section-title">見どころ</h2>
+    <section id="highlights" aria-labelledby="ev-high">
+      <p class="section-number">{no('highlights')} / DETAILS</p>
+      <h2 id="ev-high" class="bp-section-title">{highlightLabel}</h2>
       <dl class="ev-list">{d.highlights.map((h) => <div><dt>{h.title}</dt><dd>{h.detail}</dd></div>)}</dl>
     </section>
   )}
 
   {d.picks.length > 0 && (
-    <section class="bp-wrap bp-section" aria-labelledby="ev-picks">
+    <section id="picks" aria-labelledby="ev-picks">
+      <p class="section-number">{no('picks')} / PICKS</p>
       <h2 id="ev-picks" class="bp-section-title">候補</h2>
       <div class="ev-picks">{d.picks.map((p) => (
         <article>
@@ -187,26 +214,31 @@ if (d.faq.length > 0) {
   )}
 
   {d.notes.length > 0 && (
-    <section class="bp-wrap bp-section" aria-labelledby="ev-notes">
+    <section id="notes" aria-labelledby="ev-notes">
+      <p class="section-number">{no('notes')} / BEFORE YOU GO</p>
       <h2 id="ev-notes" class="bp-section-title">行く前に</h2>
       <ul class="ev-points">{d.notes.map((n) => <li>{n}</li>)}</ul>
     </section>
   )}
 
   {d.faq.length > 0 && (
-    <section class="bp-wrap bp-section" aria-labelledby="ev-faq">
+    <section id="faq" aria-labelledby="ev-faq">
+      <p class="section-number">{no('faq')} / FAQ</p>
       <h2 id="ev-faq" class="bp-section-title">よくある質問</h2>
       <dl class="ev-list">{d.faq.map((f) => <div><dt>{f.question}</dt><dd>{f.answer}</dd></div>)}</dl>
     </section>
   )}
 
-  <section class="bp-wrap bp-section" aria-labelledby="ev-src">
+  <section id="sources" aria-labelledby="ev-src">
+    <p class="section-number">{no('sources')} / SOURCES</p>
     <h2 id="ev-src" class="bp-section-title">情報源</h2>
     <ul class="ev-sources">{d.sourceUrls.map((s) => (
       <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.label} ↗</a>{s.accessedAt && <small>（{fmtDate(s.accessedAt)}確認）</small>}</li>
     ))}</ul>
     <p class="ev-caution">開催内容・日程・料金・交通は変更されることがあります。お出かけ前に必ず公式の最新情報をご確認ください。</p>
   </section>
+    </div>
+  </div>
 
   {(towns.length > 0 || d.relatedArticleUrls.length > 0) && (
     <section class="bp-wrap bp-section" aria-labelledby="ev-rel">
@@ -221,37 +253,60 @@ if (d.faq.length > 0) {
 </BrandBase>
 
 <style>
+  /*
+   * 本文の基準幅。日本語は1文字＝1emなので em で測る。
+   * ch は「0」の字幅＝半角が基準で、56ch と書いても28字にしかならない。
+   * 実際 .ev-lead は 1920px 画面で 451px まで潰れ、逆に本文は幅指定が無く
+   * 1280px いっぱいに伸びて1行80字を超えていた。両方ここで揃える。
+   */
+  .ev-head, .ev-body { --ev-measure: 38em; }
+
+  /* ニュース記事（.news-detail__layout）と同じ作り。左に目次、右に本文。 */
+  .ev-layout{display:grid;grid-template-columns:210px minmax(0,700px);justify-content:center;gap:clamp(2rem,6vw,5rem);padding-block:clamp(3.5rem,7vw,6rem)}
+  .ev-toc{position:sticky;top:1rem;align-self:start;padding-top:.5rem;color:var(--color-soil);font-size:.72rem}
+  .ev-toc>p{padding-bottom:.65rem;border-bottom:1px solid var(--color-mist);font-weight:700;color:var(--color-ink)}
+  .ev-toc ol{display:grid;gap:.5rem;margin-top:.75rem;padding-left:1.2rem;list-style:decimal}
+  .ev-toc a:hover{color:var(--color-tide)}
+  .ev-body section{scroll-margin-top:1rem}
+  .ev-body section+section{margin-top:4rem;padding-top:3rem;border-top:1px solid var(--color-mist)}
+  .ev-body h2{margin-top:.6rem}
+  @media(max-width:760px){.ev-layout{grid-template-columns:1fr}.ev-toc{position:static}}
+
   .ev-head h1{margin-top:.8rem;font:600 clamp(1.9rem,4vw,3rem)/1.4 var(--font-brand-display);color:var(--color-ink)}
-  .ev-lead{max-width:56ch;margin-top:1.3rem;line-height:2;color:var(--color-soil)}
+  .ev-lead{max-width:var(--ev-measure);margin-top:1.5rem;font-size:1.02rem;line-height:2.05;color:var(--color-soil)}
   .ev-meta{margin-top:1rem;color:var(--color-soil);font:.74rem var(--font-brand-meta)}
 
-  .ev-facts{display:grid;gap:0;margin:0;border-top:1px solid var(--color-mist)}
+  .ev-facts{display:grid;gap:0;max-width:var(--ev-measure);margin:0;border-top:1px solid var(--color-mist)}
   .ev-facts div{display:grid;grid-template-columns:7.5rem 1fr;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--color-mist)}
   .ev-facts dt{font:700 .74rem/1.7 var(--font-brand-meta);letter-spacing:.06em;color:var(--color-tide)}
   .ev-facts dd{margin:0;line-height:1.8;color:var(--color-ink)}
-  .ev-unknown{margin-top:1.2rem;padding:1rem 1.2rem;border-left:2px solid var(--color-mist);color:var(--color-soil);font-size:.86rem;line-height:1.9}
+  .ev-unknown{max-width:var(--ev-measure);margin-top:1.2rem;padding:1rem 1.2rem;border-left:2px solid var(--color-mist);color:var(--color-soil);font-size:.86rem;line-height:1.9}
   .ev-official{margin-top:1.2rem;font-weight:700}
   .ev-official a{color:var(--interior-blue,#174f99)}
 
-  .ev-points{display:grid;gap:.7rem;padding-left:1.2rem;color:var(--color-ink);line-height:1.9}
-  .ev-list{display:grid;gap:1.4rem;margin:0}
-  .ev-list dt{font:600 1.05rem/1.6 var(--font-brand-display);color:var(--color-ink)}
-  .ev-list dd{margin:.4rem 0 0;line-height:1.95;color:var(--color-soil)}
+  .ev-points{display:grid;gap:.85rem;max-width:var(--ev-measure);margin:0;padding:1.5rem 1.7rem;list-style:none;border-left:3px solid var(--color-tide);background:color-mix(in srgb,var(--color-mist) 45%,transparent);color:var(--color-ink);line-height:1.95}
+  .ev-points li{position:relative;padding-left:1.1rem}
+  .ev-points li::before{content:'';position:absolute;left:0;top:.78em;width:.38rem;height:.38rem;border-radius:50%;background:var(--color-tide)}
+  .ev-list{display:grid;gap:0;max-width:var(--ev-measure);margin:0}
+  .ev-list>div{padding:1.5rem 0;border-top:1px solid var(--color-mist)}
+  .ev-list>div:last-child{border-bottom:1px solid var(--color-mist)}
+  .ev-list dt{font:600 clamp(1.1rem,1.6vw,1.28rem)/1.6 var(--font-brand-display);color:var(--color-ink);text-wrap:pretty}
+  .ev-list dd{margin:.6rem 0 0;line-height:2;color:var(--color-soil)}
 
-  .ev-picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--color-mist);border:1px solid var(--color-mist)}
-  .ev-picks article{padding:1.3rem 1.2rem;background:var(--color-white)}
+  .ev-picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:1rem}
+  .ev-picks article{padding:1.4rem 1.3rem;background:var(--color-white);border:1px solid var(--color-mist)}
   .ev-picks__area{font:700 .66rem var(--font-brand-meta);letter-spacing:.1em;color:var(--color-tide)}
   .ev-picks h3{margin:.4rem 0 .5rem;font:600 1.1rem var(--font-brand-display)}
   .ev-picks h3 a{color:var(--color-ink)}
   .ev-picks__for{color:var(--color-tide);font-size:.8rem;font-weight:700}
   .ev-picks p:last-child{margin-top:.5rem;color:var(--color-soil);font-size:.86rem;line-height:1.85}
 
-  .ev-sources{display:grid;gap:.6rem;padding:0;list-style:none}
+  .ev-sources{display:grid;gap:.7rem;max-width:var(--ev-measure);padding:0;list-style:none}
   .ev-sources a{color:var(--interior-blue,#174f99);font-size:.9rem}
   .ev-sources small{margin-left:.4rem;color:var(--color-soil);font-size:.74rem}
-  .ev-caution{margin-top:1.2rem;color:var(--color-soil);font-size:.82rem;line-height:1.9}
+  .ev-caution{max-width:var(--ev-measure);margin-top:1.4rem;color:var(--color-soil);font-size:.82rem;line-height:1.9}
 
-  .ev-links{display:grid;gap:.7rem;padding:0;list-style:none}
+  .ev-links{display:grid;gap:.7rem;max-width:var(--ev-measure);padding:0;list-style:none}
   .ev-links a{color:var(--interior-blue,#174f99);font-size:.9rem;font-weight:700}
 
   @media(max-width:560px){.ev-facts div{grid-template-columns:6rem 1fr;gap:.7rem}}

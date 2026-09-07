@@ -154,6 +154,59 @@ body {
   overscroll-behavior-x: contain;
 }
 
+/*
+ * 本文の基準幅。サイト全体で1つに揃える。
+ *
+ * これまで各ページが 20ch〜64ch をばらばらに指定していて、
+ * 実測で 160px〜512px と3倍の開きがあった。下層ページが統一されて
+ * 見えなかった原因はこれ。
+ *
+ * ch は「0」の字幅＝半角が基準なので、日本語では 56ch と書いても28字にしか
+ * ならない。日本語は1文字＝1em なので em で測る。
+ */
+:root {
+  --measure: 36em;
+}
+
+/*
+ * 幅指定が無いまま全幅に伸びていた文章に、基準幅を当てる。
+ * 1920pxで1行1280px（約80字）になっていた箇所。
+ * リスト行そのものは幅を取ってよいので、中の文章だけを絞る。
+ */
+.route-extra > p,
+.ok-note > p,
+.rp-faq dl dd,
+.ag-section dl dd {
+  max-width: var(--measure);
+}
+
+/* strong と small はインラインなので、そのままでは max-width が効かない */
+.ev-index li strong,
+.ev-index li small,
+.tm-articles li strong,
+.sp-articles li strong {
+  display: block;
+  max-width: var(--measure);
+}
+
+/*
+ * 日本語の改行。サイト全体の既定にする。
+ *
+ * 既定（word-break:normal）だと日本語はどこでも折れるため、「狩り」が
+ * 「狩／り」のように語の途中で割れる。短い文字列（見出し・箇条書き・
+ * カード見出し）は auto-phrase で文節を見て折る。
+ *
+ * 長い本文に auto-phrase を掛けると、こんどは行末が大きく波打つ。
+ * 散文には禁則（line-break:strict）だけを効かせる。
+ * 未対応のブラウザでは既定に戻るだけで、副作用はない。
+ */
+h1, h2, h3, h4, .bp-section-title, .bp-kicker, li, dt, figcaption, .btn-primary, .btn-ghost {
+  word-break: auto-phrase;
+}
+p, dd, blockquote, td {
+  line-break: strict;
+}
+
 img, picture, svg, video { display: block; max-width: 100%; height: auto; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; cursor: pointer; }

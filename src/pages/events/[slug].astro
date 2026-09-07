@@ -267,13 +267,6 @@ if (d.faq.length > 0) {
    * auto-phrase は文節を見て折るので、これが起きない。
    * 未対応の環境では normal に戻るだけなので、副作用はない。
    */
-  .ev-body h2, .ev-head h1, .ev-points li, .ev-list dt, .ev-picks h3 {
-    word-break: auto-phrase;
-  }
-  /* 長い本文は禁則だけ効かせる。auto-phrase を掛けると行末が大きく波打つ */
-  .ev-lead, .ev-list dd, .ev-facts dd, .ev-caution, .ev-unknown, .ev-picks p {
-    line-break: strict;
-  }
 
   /* ニュース記事（.news-detail__layout）と同じ作り。左に目次、右に本文。 */
   .ev-layout{display:grid;grid-template-columns:210px minmax(0,700px);justify-content:center;gap:clamp(2rem,6vw,5rem);padding-block:clamp(3.5rem,7vw,6rem)}

@@ -6,6 +6,7 @@ import { CATEGORIES, SITE_CONFIG } from '../../data/site';
 import { NEWS_CATEGORIES } from '../../data/news';
 import { MUNI_BY_SLUG, areaToSlug } from '../../data/areas';
 import { formatDate, getArticles, getNews, getRelatedNews, getStores, tagToSlug } from '../../lib/content';
+import { INTERNAL_LINK_LABELS } from '../../data/internal-links';
 
 export const getStaticPaths = (async () => (await getNews()).map((item) => ({
   params: { slug: item.id.split('/').pop() },

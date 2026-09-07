@@ -210,7 +210,8 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'ローカル
   .rp-hero h1,.rp-hero-lead,.rp-note,section h2,section h3{text-wrap:pretty}
   section h2{text-wrap:balance}
   /* 横に長い画面で右半分が空いていたので、リードと注記を並べて幅を使う */
-  .rp-hero-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:clamp(1.6rem,3vw,3rem);align-items:start;margin-top:1.8rem}
+  /* 読みカラム(780px)では2列にすると1列366px＝日本語で約21字になる。30remで縦積みにする */
+  .rp-hero-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,30rem),1fr));gap:clamp(1.6rem,3vw,3rem);align-items:start;margin-top:1.8rem}
   .rp-hero-lead{display:grid;gap:1rem;max-width:var(--rp-measure);color:var(--color-soil);line-height:2}
   /* 報酬が出ないことの注記。リードの 52ch（日本語だと約26字）に入れると
      窮屈で改行が汚くなるため、リードの外に出して独自の幅を持たせる。 */

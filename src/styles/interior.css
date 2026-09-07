@@ -24,6 +24,12 @@ body.interior-site {
    * 全幅の背景を敷きつつ文字だけカラムに揃えたいときに padding として使う。
    */
   --interior-gutter: max(clamp(1rem, 3.5vw, 3.75rem), calc((100% - 1280px) / 2));
+  /*
+   * 見出しの読みカラム。下層ページの見出しは全部この幅の中央カラムに置く。
+   * 基準は /events/[slug]/。揃える前の h1 の左端は
+   * 320 / 360 / 375 / 379 / 385 / 540 / 570 / 602 の8種類に散っていた。
+   */
+  --reading-col: 780px;
   background: var(--color-paper);
 }
 
@@ -107,6 +113,33 @@ body.interior-site .crumbs a:hover,
 body.interior-site .crumbs a:focus-visible {
   color: var(--interior-blue);
   border-color: currentColor;
+}
+
+/* --- 読みカラム（見出しの位置を全下層で揃える） --------------------------
+ *
+ * 実装は grid の単一カラム（justify-content: center）。
+ * padding で寄せる方法（padding-inline: calc((100% - 780px) / 2)）は使わない。
+ * % は「自分の幅」ではなく「親（＝包含ブロック）の幅」で解決されるため、
+ * すでに幅の決まった要素へ当てると内容が潰れる。実際にこれを .ev-head
+ * （780px幅）へ当てて本番の見出しが1文字ずつ折り返した。
+ * 全幅（width:auto）のバンドに限れば % でも正しく解決するので、下の
+ * .policy 系だけは既存の padding 方式のまま数値を共通変数へ寄せている。
+ *
+ * 除外したもの（構造上、中央の読みカラムに載せられない）
+ * - .tg-head__copy … テーマページ。右半分が写真の分割ヒーロー
+ * - .contact       … 左に案内・右にフォームの2カラム
+ * - 多言語トップ    … ヘッダーから別テンプレート
+ * - /area/         … 44市町村マップ本体
+ */
+body.interior-site :is(
+  .news-index__head, .category-head, .about-head, .biz-head, .places-head,
+  .hanabi-head, .person-head, .sp-head, .tm-head, .ev-head,
+  .news-detail__head, .story-head, .ag-head-copy, .guide-index-head, .tag-hero
+),
+body.interior-site :is(.area-head, .ok-head, .me-head, .rp-hero) > .bp-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, var(--reading-col));
+  justify-content: center;
 }
 
 /* --- Editorial hero ---------------------------------------------------- */
@@ -303,7 +336,8 @@ body.interior-site :is(
   .sp-head,
   .tm-head
 ) > p:last-of-type {
-  max-width: 55ch;
+  /* 幅は読みカラムが決める。ここで更に絞ると基準ページと段の幅が変わる */
+  max-width: none;
   margin-top: clamp(1.2rem, 2.4vw, 1.8rem);
   color: #5f6d73;
   font-size: clamp(.94rem, 1.35vw, 1.08rem);
@@ -331,33 +365,23 @@ body.interior-site .category-head nav:not(.crumbs) a:hover {
   color: #fff;
 }
 
-/* ニュース一覧は、長い説明をタイトルの右へ置いて高さを抑える。 */
+/*
+ * ニュース一覧の見出しは、説明をタイトルの右へ置く2カラムだった。
+ * 読みカラムに揃えるため縦積みにする（この段だけ左端が 320px に残っていた）。
+ */
 @media (min-width: 901px) {
   body.interior-site.route-news .news-index__head {
-    display: grid;
-    grid-template-columns: minmax(0, 1.08fr) minmax(20rem, .72fr);
-    grid-template-rows: auto auto 1fr;
-    column-gap: clamp(3rem, 7vw, 6rem);
+    grid-template-columns: minmax(0, var(--reading-col));
     row-gap: .8rem;
-    align-items: end;
   }
 
   body.interior-site.route-news .news-index__head nav {
-    grid-column: 1 / -1;
     margin-bottom: 1rem;
   }
 
   body.interior-site.route-news .news-index__head h1 {
     margin-top: .2rem;
     font-size: var(--interior-title-xl);
-  }
-
-  body.interior-site.route-news .news-index__head > p:last-of-type {
-    grid-column: 2;
-    grid-row: 2 / 4;
-    align-self: end;
-    margin-top: 0;
-    padding-bottom: .2rem;
   }
 }
 
@@ -492,15 +516,13 @@ body.interior-site :is(.news-detail, .story, .place) {
   padding-top: clamp(2rem, 3.5vw, 3.25rem);
 }
 
+/*
+ * 記事の見出しは、紙色に浮いた角丸カードだった。基準ページ（イベント記事）は
+ * カードを持たない素の読みカラムなので、装飾を外して同じ組みにする。
+ * 上部の淡い青は #main-content::before が引き続き受け持つ。
+ */
 body.interior-site :is(.news-detail__head, .story-head) {
-  width: min(calc(100% - 2rem), 930px);
-  padding: clamp(1.8rem, 3vw, 2.75rem);
-  border: 1px solid rgba(31, 99, 191, .12);
-  border-radius: clamp(.9rem, 1.6vw, 1.2rem);
-  background:
-    radial-gradient(circle at 90% 0%, rgba(123, 185, 241, .24), transparent 30%),
-    linear-gradient(135deg, rgba(255, 255, 255, .98), rgba(240, 247, 255, .9));
-  box-shadow: 0 18px 58px rgba(36, 77, 110, .07);
+  padding-block: clamp(1.8rem, 3vw, 2.75rem);
 }
 
 body.interior-site :is(.news-detail__head, .story-head) h1 {
@@ -979,8 +1001,9 @@ body.interior-site .ok-region a:hover {
  * 方針・規約などの文章ページ。ほかの下層と同じくヘッダーに接する全幅にする。
  * 紙色の上に浮いた角丸カードのままだと、ここだけ旧デザインとして残る。
  *
- * ただし読み幅は変えない。背景だけ全幅に広げ、本文は 716px の段のまま
- * 中央に置く（カード時代の 860px から左右padding 72px を引いた実測値）。
+ * 背景だけ全幅に広げ、本文は --reading-col の段として中央に置く。
+ * ここは width:auto の全幅ブロックなので、padding の % は親（＝画面幅）で
+ * 正しく解決する。幅の決まった要素へ同じ書き方をしてはいけない。
  * width の !important は、狭い画面用の .wrap 指定が後ろで勝つため。
  */
 body.interior-site :is(.policy, .pv, .rsv, .nf) {
@@ -988,7 +1011,7 @@ body.interior-site :is(.policy, .pv, .rsv, .nf) {
   width: auto !important;
   max-width: none !important;
   margin: 0 0 clamp(2rem, 5vw, 4rem);
-  padding: clamp(2rem, 5vw, 4.5rem) max(1.25rem, calc((100% - 716px) / 2));
+  padding: clamp(2rem, 5vw, 4.5rem) max(1.25rem, calc((100% - var(--reading-col)) / 2));
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -1549,18 +1572,10 @@ body.interior-site .ok-note {
   background: rgba(255,255,255,.76);
 }
 
+/* 道の駅・reporters の見出しも、記事と同じく素の読みカラムに揃える */
 body.interior-site .me-head > .bp-wrap,
 body.interior-site .rp-hero > .bp-wrap {
-  margin-top: clamp(1.25rem, 3vw, 2.5rem);
-  padding: clamp(2.1rem, 3.8vw, 3.6rem);
-  overflow: hidden;
-  border: 1px solid rgba(31,99,191,.12);
-  border-radius: 1.35rem;
-  background:
-    radial-gradient(circle at 90% 0%, rgba(123,185,241,.28), transparent 30%),
-    radial-gradient(circle at 0 100%, rgba(190,203,139,.18), transparent 29%),
-    linear-gradient(135deg, rgba(255,255,255,.98), rgba(238,246,255,.9));
-  box-shadow: var(--interior-shadow);
+  padding-block: clamp(2.1rem, 3.8vw, 3.6rem);
 }
 
 body.interior-site :is(.me-head h1, .rp-hero h1) {
@@ -1611,6 +1626,15 @@ body.interior-site .rp-final {
 
   body.interior-site .news-detail__toc {
     display: none;
+  }
+
+  /*
+   * 情報源パネルは本文より左右へ 1.2rem はみ出す組み。この幅では
+   * .bp-wrap の余白が 1rem しかないので、はみ出しが画面を 3px 超えて
+   * 横スクロールが出ていた。狭い画面では広げない。
+   */
+  body.interior-site .news-detail__body #sources {
+    margin-inline: 0;
   }
 
   body.interior-site :is(.area-jump, .ag-jump, .me-jump) {
@@ -1673,9 +1697,7 @@ body.interior-site .rp-final {
   }
 
   body.interior-site :is(.news-detail__head, .story-head) {
-    width: min(calc(100% - 1.5rem), 930px);
-    padding: 1.5rem 1.2rem 1.8rem;
-    border-radius: .95rem;
+    padding-block: 1.5rem 1.8rem;
   }
 
   body.interior-site :is(.news-detail__head, .story-head) h1 {
@@ -1719,7 +1741,7 @@ body.interior-site .rp-final {
   /* 狭い画面でも全幅のまま。上の余白と角丸は付け直さない */
   body.interior-site :is(.policy, .pv, .rsv, .nf) {
     margin: 0 0 2rem;
-    padding: 1.35rem max(1rem, calc((100% - 716px) / 2)) 1.75rem;
+    padding: 1.35rem max(1rem, calc((100% - var(--reading-col)) / 2)) 1.75rem;
     border-radius: 0;
   }
 

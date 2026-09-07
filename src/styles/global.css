@@ -200,7 +200,8 @@ body {
  * 散文には禁則（line-break:strict）だけを効かせる。
  * 未対応のブラウザでは既定に戻るだけで、副作用はない。
  */
-h1, h2, h3, h4, .bp-section-title, .bp-kicker, li, dt, figcaption, .btn-primary, .btn-ghost {
+h1, h2, h3, h4, .bp-section-title, .bp-kicker, li, dt, figcaption, .btn-primary, .btn-ghost,
+.ag-catch {
   word-break: auto-phrase;
 }
 p, dd, blockquote, td {

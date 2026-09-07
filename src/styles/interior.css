@@ -109,6 +109,54 @@ body.interior-site .crumbs a:focus-visible {
   border-color: currentColor;
 }
 
+/* --- 読みカラム（イベント記事と同じ組み） --------------------------------
+ *
+ * /events/[slug]/ の見え方を、下層ページ共通の標準にする。
+ * ・見出しは全幅バンドのまま、中の文字だけを 780px の中央カラムへ
+ * ・本文セクションも同じ 780px 中央カラムに揃える
+ *
+ * バンド自体を消さないのは、下のEditorial heroのコメントにある理由
+ * （ヘッダーとの二重帯を避ける／vwによる横スクロールを避ける）が
+ * そのまま生きているため。中身の位置だけを揃える。
+ *
+ * interior-site は下層ページ共通のクラス。TOPは home-site なので影響しない。
+ */
+body.interior-site {
+  --reading-col: 780px;
+}
+
+body.interior-site :is(
+  .news-index__head, .category-head, .about-head, .biz-head, .places-head,
+  .area-head, .hanabi-head, .ok-head, .person-head,
+  .sp-head, .tm-head, .me-head, .ev-head
+) {
+  padding-inline: max(var(--interior-gutter), calc((100% - var(--reading-col)) / 2)) !important;
+}
+body.interior-site :is(
+  .news-index__head, .category-head, .about-head, .biz-head, .places-head,
+  .area-head, .hanabi-head, .ok-head, .person-head,
+  .sp-head, .tm-head, .me-head, .ev-head
+) > * {
+  max-width: var(--reading-col);
+}
+
+body.interior-site .bp-wrap:not(
+  .news-index__head, .category-head, .about-head, .biz-head, .places-head,
+  .area-head, .hanabi-head, .ok-head, .person-head,
+  .sp-head, .tm-head, .me-head, .ev-head
+) {
+  width: min(calc(100% - 2rem), var(--reading-col));
+}
+
+/*
+ * 読みカラム（780px）では、見出し左・本文右の2カラムは狭すぎる。
+ * 実測で左カラムが315pxまで縮み、見出しが「足りないのではな／い。」と割れた。
+ * 縦に積む。
+ */
+body.interior-site :is(.rp-why > div, .rp-who > div, .rp-people-empty) {
+  grid-template-columns: 1fr;
+}
+
 /* --- Editorial hero ---------------------------------------------------- */
 body.interior-site :is(
   .news-index__head,

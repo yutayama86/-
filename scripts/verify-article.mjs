@@ -109,7 +109,8 @@ if (route === 'events') {
 const relBlock = fm.split('relatedArticleUrls:')[1] ?? '';
 const relUrls = [...relBlock.matchAll(/^\s{2}- ["'](\/[^"']+)["']/gm)].map((m) => m[1]);
 if (relUrls.length > 0) {
-  const slugPage = await readFile('src/pages/news/[slug].astro', 'utf8');
+  // ラベルは src/data/internal-links.ts に集約した（ニュースとイベントの共通置き場）
+  const slugPage = await readFile('src/data/internal-links.ts', 'utf8');
   const labels = new Set([...slugPage.matchAll(/'(\/[^']+)':\s*'/g)].map((m) => m[1]));
   const missing = relUrls.filter((u) => !labels.has(u));
   if (missing.length > 0) fail(`内部リンクのラベル未登録 ${missing.length}件 → ${missing.join(', ')}`);

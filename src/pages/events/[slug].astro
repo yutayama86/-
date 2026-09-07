@@ -12,6 +12,7 @@ import type { GetStaticPaths } from 'astro';
 import BrandBase from '../../layouts/BrandBase.astro';
 import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
 import { breadcrumbJsonLd } from '../../lib/seo';
+import { INTERNAL_LINK_LABELS } from '../../data/internal-links';
 import { getEvents } from '../../lib/content';
 import { MUNI_BY_SLUG } from '../../data/areas';
 
@@ -212,7 +213,7 @@ if (d.faq.length > 0) {
       <h2 id="ev-rel" class="bp-section-title">この街のこと</h2>
       <ul class="ev-links">
         {towns.map((m) => <li><a href={`/area/${m!.slug}/`}>{m!.name}の地域情報 →</a></li>)}
-        {d.relatedArticleUrls.map((u) => <li><a href={u}>{u} →</a></li>)}
+        {d.relatedArticleUrls.map((u) => <li><a href={u}>{INTERNAL_LINK_LABELS[u] ?? u} →</a></li>)}
         <li><a href="/events/">茨城のイベント・おでかけ一覧 →</a></li>
       </ul>
     </section>

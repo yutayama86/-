@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260908-news-mito-hollyhock-new-stadium-access',
+    date: '2026-09-08',
+    url: '/news/mito-hollyhock-new-stadium-access/',
+    kind: 'on-page',
+    change: 'title/descriptionでアクセス・駐車場・最寄り駅を明確化。冒頭に電車・車・駐車場の早見回答、徒歩FAQを1問追加。試合限定の交通案内を日付付きに修正。SPORTS・水戸チームページから文脈に沿うリンクを追加し、関連5記事の既存リンク文言を改善。',
+    queries: ['水戸信用金庫スタジアム アクセス', '水戸信用金庫スタジアム 駐車場', '水戸信用金庫スタジアム 最寄り駅'],
+    commit: 'PENDING',
+    note: 'ユーザー指定により変更前GSC値を参考記録：2026-09-04単日、113表示・4クリック・CTR3.54%・平均8.02位。アクセスKW10.83位／駐車場KW11.67位。最寄り駅KWの厳密値は未提供。今回GSCから再取得した値ではない。7日後の確認日2026-09-15：ページ平均5〜7位、CTR3.54%超、日平均クリック4超、アクセス／駐車場KW各7位以内を検証目標とする（予測・保証ではない）。前7日9/1〜9/7と後7日9/8〜9/14を同条件で比較し、CTRはクリック合計÷表示合計、順位はGSC集計値を使う。GSC確定の遅延時は後日再確認。9/6にも改稿済みで9/2ダービー等の需要変動があり、今回だけの因果効果は断定しない。一次情報は9/8にクラブのスタジアム案内・9/12試合ページ・9/2交通案内・akippa公式予約ページを確認。URL・SPORTS/frontmatter/構造化データ設計は維持。',
+  },
+  {
     id: '20260830-news-ishioka-noriai-taxi-weekend-2026',
     date: '2026-08-30',
     url: '/news/ishioka-noriai-taxi-weekend-2026/',

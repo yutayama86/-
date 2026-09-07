@@ -9,7 +9,7 @@ export const INTERNAL_LINK_LABELS: Record<string, string> = {
   '/news/': '茨城ニュース解説の新着記事',
   '/news/ibaraki-airport-busan-air-busan-charter-2026/': '茨城空港に初の「釜山便」（解説）',
   '/news/mito-hollyhock-soccer-tourism-2026/': '水戸ホーリーホックのサッカーツーリズム（解説）',
-  '/news/mito-hollyhock-new-stadium-access/': '水戸信用金庫スタジアムのアクセス・駐車場（水戸駅・東海駅から）',
+  '/news/mito-hollyhock-new-stadium-access/': '水戸信用金庫スタジアムのアクセス・駐車場・最寄り駅',
   '/news/mito-hollyhock-home-opening-13226-regional-impact/': '13,226人が集まったJ1ホーム開幕戦（解説）',
   '/news/mito-kashima-ibaraki-derby-2026-09-02/': '9月2日“茨城ダービー”の見どころ（解説）',
   '/news/mito-kashima-derby-result-2026-09-02/': '水戸4-2鹿島 茨城ダービーの結果（渡邉新太4ゴール）',

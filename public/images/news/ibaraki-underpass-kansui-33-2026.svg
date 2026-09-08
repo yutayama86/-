@@ -5,28 +5,28 @@
   <text x="76" y="104" font-family="'Source Sans 3', sans-serif" font-size="21" font-weight="600" letter-spacing="4.5" fill="#75695a">IBATOCO ・ 茨城ニュース解説</text>
 
   <g fill="none" stroke="#315c68" stroke-width="2">
-    <path d="M76 150 H196 L268 214 H432 L504 150 H624"/>
-    <path d="M232 130 H468" stroke-dasharray="8 7"/>
+    <path d="M76 150 H468" stroke-dasharray="8 7"/>
+    <path d="M76 170 H172 L244 234 H408 L480 170 H600"/>
   </g>
-  <text x="350" y="120" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">線路・幹線道路</text>
-  <path d="M268 214 H432 L432 196 L268 196 Z" fill="#315c68" opacity=".22"/>
-  <text x="350" y="246" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="19" fill="#315c68">くぐる道は周りより低い</text>
+  <text x="490" y="156" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">線路・幹線道路</text>
+  <path d="M244 234 H408 L408 216 L244 216 Z" fill="#315c68" opacity=".22"/>
+  <text x="76" y="268" font-family="'Shippori Mincho', serif" font-size="19" fill="#315c68">くぐる道は、周りより低い</text>
 
   <g>
-    <circle cx="800" cy="180" r="60" fill="none" stroke="#a63f32" stroke-width="2"/>
-    <text x="800" y="172" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="42" font-weight="700" fill="#a63f32">33</text>
-    <text x="800" y="202" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="17" font-weight="600" fill="#a63f32">か所</text>
-    <text x="886" y="174" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">県が公表する</text>
-    <text x="886" y="201" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">道路冠水危険箇所</text>
+    <circle cx="800" cy="192" r="60" fill="none" stroke="#a63f32" stroke-width="2"/>
+    <text x="800" y="184" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="42" font-weight="700" fill="#a63f32">33</text>
+    <text x="800" y="214" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="17" font-weight="600" fill="#a63f32">か所</text>
+    <text x="886" y="186" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">県が公表する</text>
+    <text x="886" y="213" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">道路冠水危険箇所</text>
   </g>
 
-  <path d="M76 288 H1124" stroke="#d9d0c0" stroke-width="1"/>
+  <path d="M76 306 H1124" stroke="#d9d0c0" stroke-width="1"/>
 
-  <text x="76" y="368" font-family="'Shippori Mincho', serif" font-size="50" font-weight="700" fill="#172b35">茨城のアンダーパス33か所と、</text>
-  <text x="76" y="434" font-family="'Shippori Mincho', serif" font-size="50" font-weight="700" fill="#172b35">入ってはいけない理由。</text>
+  <text x="76" y="366" font-family="'Shippori Mincho', serif" font-size="50" font-weight="700" fill="#172b35">茨城のアンダーパス33か所と、</text>
+  <text x="76" y="428" font-family="'Shippori Mincho', serif" font-size="50" font-weight="700" fill="#172b35">入ってはいけない理由。</text>
 
-  <text x="76" y="496" font-family="'Shippori Mincho', serif" font-size="24" fill="#75695a">市町村別の全一覧／水深とドアの関係／確認先</text>
+  <text x="76" y="484" font-family="'Shippori Mincho', serif" font-size="24" fill="#75695a">市町村別の全一覧／水深とドアの関係／確認先</text>
 
-  <text x="76" y="560" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a">出典：茨城県 道路冠水危険箇所一覧（2026年9月1日更新）／国土交通省</text>
-  <text x="1124" y="560" text-anchor="end" font-family="'Source Sans 3', sans-serif" font-size="18" letter-spacing="2" fill="#75695a">ibatoco.jp</text>
+  <text x="76" y="556" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a">出典：茨城県 道路冠水危険箇所一覧（2026年9月1日更新）／国土交通省</text>
+  <text x="1124" y="556" text-anchor="end" font-family="'Source Sans 3', sans-serif" font-size="18" letter-spacing="2" fill="#75695a">ibatoco.jp</text>
 </svg>

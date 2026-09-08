@@ -116,8 +116,11 @@ const jsonLd = [
       <ul class="sp-articles">{articles.map((item) => (
         <li>
           <a href={newsPath(item.id)}>
-            <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
-            <strong>{item.data.title}</strong>
+            <img src={item.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+            <span>
+              <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
+              <strong>{item.data.title}</strong>
+            </span>
           </a>
         </li>
       ))}</ul>
@@ -157,10 +160,14 @@ const jsonLd = [
 
   .sp-articles{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
   .sp-articles li{border-bottom:1px solid var(--color-mist)}
-  .sp-articles a{display:grid;gap:.35rem;padding:1.05rem 0;color:var(--color-ink)}
+  /* サムネイルは各記事の自作OG画像。公式ロゴ・選手写真は使わない */
+  .sp-articles a{display:grid;grid-template-columns:clamp(6.5rem,13vw,10.5rem) minmax(0,1fr);align-items:center;gap:1.15rem;padding:1.05rem 0;color:var(--color-ink)}
+  .sp-articles a>span{display:grid;gap:.35rem;min-width:0}
+  .sp-articles img{width:100%;height:auto;aspect-ratio:1.9/1;object-fit:cover;border:1px solid var(--color-mist);background:var(--color-white)}
   .sp-articles a:hover{color:var(--interior-blue,#174f99)}
   .sp-articles time{font:.72rem var(--font-brand-meta);color:var(--color-soil)}
   .sp-articles strong{font:600 1.02rem/1.65 var(--font-brand-display)}
+  @media(max-width:520px){.sp-articles a{grid-template-columns:5rem minmax(0,1fr);gap:.85rem}}
   .sp-empty{color:var(--color-soil);line-height:1.9}
   .sp-more{margin-top:1.2rem;font-size:.82rem;font-weight:700}
 

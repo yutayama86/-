@@ -147,8 +147,11 @@ const jsonLd = [
       <h2 class="bp-section-title">{section.title}</h2>
       <ul class="tm-articles">{section.items.map((item) => (
         <li><a href={newsPath(item.id)}>
-          <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
-          <strong>{item.data.title}</strong>
+          <img src={item.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+          <span>
+            <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
+            <strong>{item.data.title}</strong>
+          </span>
         </a></li>
       ))}</ul>
     </section>
@@ -159,8 +162,11 @@ const jsonLd = [
       <h2 id="tm-related" class="bp-section-title">関連記事</h2>
       <ul class="tm-articles">{untyped.map((item) => (
         <li><a href={newsPath(item.id)}>
-          <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
-          <strong>{item.data.title}</strong>
+          <img src={item.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+          <span>
+            <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
+            <strong>{item.data.title}</strong>
+          </span>
         </a></li>
       ))}</ul>
     </section>
@@ -179,8 +185,11 @@ const jsonLd = [
       <p class="tm-lead">ホームタウンの市町村を扱った記事です。試合とは別の切り口で、同じ街を追っています。</p>
       <ul class="tm-articles">{townNews.map((item) => (
         <li><a href={newsPath(item.id)}>
-          <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
-          <strong>{item.data.title}</strong>
+          <img src={item.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+          <span>
+            <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
+            <strong>{item.data.title}</strong>
+          </span>
         </a></li>
       ))}</ul>
     </section>
@@ -233,10 +242,14 @@ const jsonLd = [
 
   .tm-articles{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
   .tm-articles li{border-bottom:1px solid var(--color-mist)}
-  .tm-articles a{display:grid;gap:.3rem;padding:1rem 0;color:var(--color-ink)}
+  /* サムネイルは各記事の自作OG画像。公式ロゴ・選手写真は使わない */
+  .tm-articles a{display:grid;grid-template-columns:clamp(6.5rem,13vw,10.5rem) minmax(0,1fr);align-items:center;gap:1.15rem;padding:1.05rem 0;color:var(--color-ink)}
+  .tm-articles a>span{display:grid;gap:.3rem;min-width:0}
+  .tm-articles img{width:100%;height:auto;aspect-ratio:1.9/1;object-fit:cover;border:1px solid var(--color-mist);background:var(--color-white)}
   .tm-articles a:hover{color:var(--interior-blue,#174f99)}
   .tm-articles time{font:.72rem var(--font-brand-meta);color:var(--color-soil)}
   .tm-articles strong{font:600 1rem/1.65 var(--font-brand-display)}
+  @media(max-width:520px){.tm-articles a{grid-template-columns:5rem minmax(0,1fr);gap:.85rem}}
 
   .tm-lead{max-width:var(--measure);margin-bottom:1.6rem;color:var(--color-soil);font-size:.86rem;line-height:1.9}
   .tm-towns{margin-bottom:1.8rem}

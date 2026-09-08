@@ -237,6 +237,21 @@ const news = defineCollection({
       publicTransport: z.array(z.object({ heading: z.string().min(1), detail: z.string().min(1) })).min(1),
       returnTrip: z.string().min(1),
     }).optional(),
+    /**
+     * 一覧記事の本体。冠水注意箇所や河川の指定状況のように、
+     * 何十件かをまとまりごとに並べるためのもの。
+     * 段落フィールドへ詰め込むと1つの <p> になって読めないので、
+     * accessGuide と同じく「何が起きた？」の中に置いて表として出す。
+     */
+    referenceList: z.object({
+      heading: z.string().min(1),
+      intro: z.string().optional(),
+      groups: z.array(z.object({
+        label: z.string().min(1),
+        items: z.array(z.string().min(1)).min(1),
+      })).min(1),
+      note: z.string().optional(),
+    }).optional(),
     editorialAnalysis: z.string().min(1),
     regionalImpact: z.string().min(1),
     businessImplications: z.array(z.string().min(1)).min(1),

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="茨城の洪水予報河川と水位周知河川、水位の危険度レベルをテーマにしたイバトコの記事画像">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="28" y="28" width="1144" height="574" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="76" y="104" font-family="'Source Sans 3', sans-serif" font-size="21" font-weight="600" letter-spacing="4.5" fill="#75695a">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g stroke="#315c68" fill="none" stroke-width="2">
+    <path d="M76 236 C150 236 150 152 224 152 S298 236 372 236 S446 152 520 152"/>
+    <path d="M76 268 H520" stroke-dasharray="7 6" opacity=".6"/>
+  </g>
+  <text x="76" y="300" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">洪水予報河川 1／水位周知河川 16</text>
+
+  <g>
+    <rect x="600" y="130" width="524" height="34" fill="#a63f32" opacity=".16"/>
+    <rect x="600" y="172" width="524" height="34" fill="#a63f32" opacity=".1"/>
+    <rect x="600" y="214" width="524" height="34" fill="#315c68" opacity=".1"/>
+    <rect x="600" y="256" width="524" height="34" fill="#315c68" opacity=".06"/>
+    <text x="616" y="153" font-family="'Source Sans 3', sans-serif" font-size="17" font-weight="700" fill="#a63f32">LV5</text>
+    <text x="616" y="195" font-family="'Source Sans 3', sans-serif" font-size="17" font-weight="700" fill="#a63f32">LV4</text>
+    <text x="616" y="237" font-family="'Source Sans 3', sans-serif" font-size="17" font-weight="700" fill="#315c68">LV3</text>
+    <text x="616" y="279" font-family="'Source Sans 3', sans-serif" font-size="17" font-weight="700" fill="#315c68">LV2</text>
+    <text x="676" y="153" font-family="'Shippori Mincho', serif" font-size="20" fill="#172b35">氾濫発生水位</text>
+    <text x="676" y="195" font-family="'Shippori Mincho', serif" font-size="20" fill="#172b35">氾濫危険水位</text>
+    <text x="676" y="237" font-family="'Shippori Mincho', serif" font-size="20" fill="#172b35">避難判断水位</text>
+    <text x="676" y="279" font-family="'Shippori Mincho', serif" font-size="20" fill="#172b35">氾濫注意水位</text>
+  </g>
+
+  <path d="M76 332 H1124" stroke="#d9d0c0" stroke-width="1"/>
+
+  <text x="76" y="404" font-family="'Shippori Mincho', serif" font-size="50" font-weight="700" fill="#172b35">茨城の川で「氾濫危険」が</text>
+  <text x="76" y="466" font-family="'Shippori Mincho', serif" font-size="50" font-weight="700" fill="#172b35">発表されるのは、どこか。</text>
+
+  <text x="76" y="522" font-family="'Shippori Mincho', serif" font-size="24" fill="#75695a">対象17河川と関係市町村／2026年5月に変わった呼び方</text>
+
+  <text x="76" y="572" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a">出典：茨城県 河川課／気象庁 指定河川洪水予報</text>
+  <text x="1124" y="572" text-anchor="end" font-family="'Source Sans 3', sans-serif" font-size="18" letter-spacing="2" fill="#75695a">ibatoco.jp</text>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="水戸信用金庫スタジアムのホームゲーム運営改善をテーマにしたイバトコの記事画像">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="28" y="28" width="1144" height="574" fill="none" stroke="#d9d0c0" stroke-width="2"/>
+
+  <text x="76" y="104" font-family="'Source Sans 3', sans-serif" font-size="21" font-weight="600" letter-spacing="4.5" fill="#75695a">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g stroke="#315c68" fill="none" stroke-width="2">
+    <rect x="76" y="152" width="176" height="62"/>
+    <rect x="300" y="152" width="176" height="62"/>
+    <rect x="524" y="152" width="176" height="62"/>
+    <path d="M256 183 H294" stroke-dasharray="7 6"/>
+    <path d="M480 183 H518" stroke-dasharray="7 6"/>
+    <path d="M286 176 l10 7 l-10 7 Z" fill="#315c68" stroke="none"/>
+    <path d="M510 176 l10 7 l-10 7 Z" fill="#315c68" stroke="none"/>
+  </g>
+  <text x="164" y="180" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="19" fill="#172b35">8月15日</text>
+  <text x="164" y="204" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="17" fill="#75695a">ホーム開幕</text>
+  <text x="388" y="180" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="19" fill="#172b35">8月29日</text>
+  <text x="388" y="204" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="17" fill="#75695a">売店を移設</text>
+  <text x="612" y="180" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="19" fill="#172b35">9月2日</text>
+  <text x="612" y="204" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="17" fill="#75695a">臨時駐車場・勝田駅便</text>
+
+  <g>
+    <circle cx="880" cy="183" r="58" fill="none" stroke="#a63f32" stroke-width="2"/>
+    <text x="880" y="176" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="40" font-weight="700" fill="#a63f32">8</text>
+    <text x="880" y="203" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="17" font-weight="600" fill="#a63f32">項目</text>
+    <text x="962" y="177" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">クラブが発表した</text>
+    <text x="962" y="204" font-family="'Shippori Mincho', serif" font-size="19" fill="#75695a">運営改善の内容</text>
+  </g>
+
+  <path d="M76 274 H1124" stroke="#d9d0c0" stroke-width="1"/>
+
+  <text x="76" y="352" font-family="'Shippori Mincho', serif" font-size="48" font-weight="700" fill="#172b35">ホーム3試合で、スタジアムを</text>
+  <text x="76" y="414" font-family="'Shippori Mincho', serif" font-size="48" font-weight="700" fill="#172b35">どう作り直したか。</text>
+
+  <text x="76" y="474" font-family="'Shippori Mincho', serif" font-size="24" fill="#75695a">シャトルバス／グッズ売店／通信環境／再入場券</text>
+
+  <text x="76" y="546" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a">出典：水戸ホーリーホック公式サイト（2026年9月7日発表）</text>
+  <text x="1124" y="546" text-anchor="end" font-family="'Source Sans 3', sans-serif" font-size="18" letter-spacing="2" fill="#75695a">ibatoco.jp</text>
+</svg>

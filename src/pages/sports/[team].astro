@@ -58,16 +58,27 @@ for (const item of articles) {
  * 一覧の見出し。0件の束は作らないので、記事が増えるまで自然に出てこない。
  * ニュースとコラムは1つにまとめる（分けるほど本数が無い段階で細かく割らない）。
  */
-const SECTIONS: { title: string; types: SportsContentType[] }[] = [
-  { title: '試合結果', types: ['match-result'] },
-  { title: 'プレビュー', types: ['preview'] },
-  { title: '観戦・ホームガイド', types: ['home-guide'] },
-  { title: 'アウェイ遠征', types: ['away-guide'] },
-  { title: 'ニュース・コラム', types: ['news', 'column'] },
+const SECTIONS: { title: string; en: string; types: SportsContentType[] }[] = [
+  { title: '試合とガイド', en: 'MATCHES & GUIDES', types: ['match-result', 'preview', 'home-guide', 'away-guide'] },
+  { title: 'ニュース・コラム', en: 'NEWS & COLUMNS', types: ['news', 'column'] },
 ];
 const sections = SECTIONS
-  .map((s) => ({ title: s.title, items: s.types.flatMap((t) => byType.get(t) ?? []) }))
+  .map((s) => ({
+    title: s.title,
+    en: s.en,
+    items: s.types
+      .flatMap((t) => byType.get(t) ?? [])
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+  }))
   .filter((s) => s.items.length > 0);
+
+/** 記事の種類は、節の見出しではなくカードの札で示す */
+const typeLabelOf = (item: (typeof articles)[number]) => {
+  const t = item.data.sportsContentType as SportsContentType | undefined;
+  return t ? SPORTS_CONTENT_TYPES[t].label : undefined;
+};
+const thumbOf = (item: (typeof articles)[number]) =>
+  item.data.ogImage ?? '/images/news/news-placeholder.svg';
 
 /** 上部の LATEST STORIES。種類の札を添えて3件まで */
 const stories = articles.slice(0, 3).map((item) => {
@@ -144,14 +155,16 @@ const jsonLd = [
 
   {sections.map((section) => (
     <section class="tm-block bp-wrap bp-section">
-      <h2 class="bp-section-title">{section.title}</h2>
-      <ul class="tm-articles">{section.items.map((item) => (
+      <p class="tm-eyebrow">{section.en}</p>
+      <h2 class="tm-title">{section.title}</h2>
+      <ul class="tm-cards">{section.items.map((item) => (
         <li><a href={newsPath(item.id)}>
-          <img src={item.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
-          <span>
+          <img src={thumbOf(item)} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+          <span class="tm-card__meta">
+            {typeLabelOf(item) && <em>{typeLabelOf(item)}</em>}
             <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
-            <strong>{item.data.title}</strong>
           </span>
+          <strong>{item.data.title}</strong>
         </a></li>
       ))}</ul>
     </section>
@@ -159,14 +172,16 @@ const jsonLd = [
 
   {untyped.length > 0 && (
     <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-related">
-      <h2 id="tm-related" class="bp-section-title">関連記事</h2>
-      <ul class="tm-articles">{untyped.map((item) => (
+      <p class="tm-eyebrow">RELATED</p>
+      <h2 id="tm-related" class="tm-title">関連記事</h2>
+      <ul class="tm-cards">{untyped.map((item) => (
         <li><a href={newsPath(item.id)}>
-          <img src={item.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
-          <span>
+          <img src={thumbOf(item)} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+          <span class="tm-card__meta">
+            {typeLabelOf(item) && <em>{typeLabelOf(item)}</em>}
             <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
-            <strong>{item.data.title}</strong>
           </span>
+          <strong>{item.data.title}</strong>
         </a></li>
       ))}</ul>
     </section>
@@ -174,29 +189,33 @@ const jsonLd = [
 
   {articles.length === 0 && (
     <section class="tm-block bp-wrap bp-section">
-      <h2 class="bp-section-title">記事</h2>
+      <p class="tm-eyebrow">ARTICLES</p>
+      <h2 class="tm-title">記事</h2>
       <p class="tm-empty">このチームの記事はこれから公開します。</p>
     </section>
   )}
 
   {townNews.length > 0 && (
     <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-townnews">
-      <h2 id="tm-townnews" class="bp-section-title">この街のニュース</h2>
+      <p class="tm-eyebrow">THE TOWN</p>
+      <h2 id="tm-townnews" class="tm-title">この街のニュース</h2>
       <p class="tm-lead">ホームタウンの市町村を扱った記事です。試合とは別の切り口で、同じ街を追っています。</p>
-      <ul class="tm-articles">{townNews.map((item) => (
+      <ul class="tm-cards">{townNews.map((item) => (
         <li><a href={newsPath(item.id)}>
-          <img src={item.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
-          <span>
+          <img src={thumbOf(item)} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+          <span class="tm-card__meta">
+            {typeLabelOf(item) && <em>{typeLabelOf(item)}</em>}
             <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
-            <strong>{item.data.title}</strong>
           </span>
+          <strong>{item.data.title}</strong>
         </a></li>
       ))}</ul>
     </section>
   )}
 
   <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-area">
-    <h2 id="tm-area" class="bp-section-title">この街のこと</h2>
+    <p class="tm-eyebrow">HOMETOWN</p>
+    <h2 id="tm-area" class="tm-title">この街のこと</h2>
     {townGroups.length > 0 ? (
       <>
         <p class="tm-lead">クラブが公式に挙げている市町村です。区分はクラブの表記に合わせています。</p>
@@ -230,8 +249,30 @@ const jsonLd = [
   .tm-facts dd{margin:0;font:600 1rem var(--font-brand-display);color:var(--color-ink)}
   .tm-pending{max-width:var(--measure);margin-top:1.4rem;padding:.9rem 1.1rem;border-left:2px solid var(--color-mist);color:var(--color-soil);font-size:.8rem;line-height:1.85}
 
-  .tm-block .bp-section-title{margin-bottom:1.2rem}
+  /*
+   * 節の見出し。以前は 2.45rem の明朝が1件のリンクの上に載っていて、
+   * 見出しだけが目立つ状態だった。記事ページと同じ「英字ラベル＋見出し」に揃え、
+   * 中身のカードに主役を渡す。
+   */
+  .tm-eyebrow{color:var(--color-tide);font:700 .68rem var(--font-brand-meta);letter-spacing:.14em}
+  .tm-title{margin:.5rem 0 1.4rem;font:600 clamp(1.35rem,2vw,1.75rem)/1.45 var(--font-brand-display);color:var(--color-ink)}
   .tm-empty{color:var(--color-soil);line-height:1.9;font-size:.9rem}
+
+  /*
+   * 記事はカードで並べる。罫線だけのテキストリストだと、1件の節が
+   * 広い余白に浮いて読みづらかった。サムネイルは各記事の自作OG画像で、
+   * 公式ロゴ・選手写真は使わない。
+   */
+  .tm-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,17rem),1fr));gap:clamp(1rem,2vw,1.5rem);list-style:none;padding:0}
+  .tm-cards li{display:flex}
+  .tm-cards a{display:grid;grid-template-rows:auto auto 1fr;width:100%;border:1px solid var(--color-mist);background:var(--color-white);color:var(--color-ink);transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease}
+  .tm-cards a:hover,.tm-cards a:focus-visible{border-color:var(--color-tide);transform:translateY(-2px);box-shadow:0 12px 30px rgba(36,77,110,.09)}
+  .tm-cards img{width:100%;height:auto;aspect-ratio:1.9/1;object-fit:cover;border-bottom:1px solid var(--color-mist)}
+  .tm-card__meta{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;padding:.95rem 1.05rem 0}
+  .tm-card__meta em{padding:.2rem .5rem;background:color-mix(in srgb,var(--color-tide) 10%,var(--color-white));color:var(--color-tide);font:700 .66rem var(--font-brand-meta);font-style:normal;letter-spacing:.06em}
+  .tm-card__meta time{color:var(--color-soil);font:.7rem var(--font-brand-meta)}
+  .tm-cards strong{padding:.5rem 1.05rem 1.15rem;font:600 .97rem/1.7 var(--font-brand-display)}
+  @media(prefers-reduced-motion:reduce){.tm-cards a{transition:none}.tm-cards a:hover{transform:none}}
 
   .tm-matches{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
   .tm-matches li{display:grid;gap:.3rem;padding:1.1rem 0;border-bottom:1px solid var(--color-mist)}
@@ -240,16 +281,6 @@ const jsonLd = [
   .tm-meta{color:var(--color-soil);font-size:.78rem}
   .tm-matches a{font-size:.8rem;font-weight:700;color:var(--interior-blue,#174f99)}
 
-  .tm-articles{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
-  .tm-articles li{border-bottom:1px solid var(--color-mist)}
-  /* サムネイルは各記事の自作OG画像。公式ロゴ・選手写真は使わない */
-  .tm-articles a{display:grid;grid-template-columns:clamp(6.5rem,13vw,10.5rem) minmax(0,1fr);align-items:center;gap:1.15rem;padding:1.05rem 0;color:var(--color-ink)}
-  .tm-articles a>span{display:grid;gap:.3rem;min-width:0}
-  .tm-articles img{width:100%;height:auto;aspect-ratio:1.9/1;object-fit:cover;border:1px solid var(--color-mist);background:var(--color-white)}
-  .tm-articles a:hover{color:var(--interior-blue,#174f99)}
-  .tm-articles time{font:.72rem var(--font-brand-meta);color:var(--color-soil)}
-  .tm-articles strong{font:600 1rem/1.65 var(--font-brand-display)}
-  @media(max-width:520px){.tm-articles a{grid-template-columns:5rem minmax(0,1fr);gap:.85rem}}
 
   .tm-lead{max-width:var(--measure);margin-bottom:1.6rem;color:var(--color-soil);font-size:.86rem;line-height:1.9}
   .tm-towns{margin-bottom:1.8rem}

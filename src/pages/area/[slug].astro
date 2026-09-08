@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from 'astro';
 import BrandBase from '../../layouts/BrandBase.astro';
 import BrandStoryCard from '../../components/BrandStoryCard.astro';
+import NewsCard from '../../components/NewsCard.astro';
 import HitachiAreaGuide from '../../components/HitachiAreaGuide.astro';
 import DaigoAreaGuide from '../../components/DaigoAreaGuide.astro';
 import AreaGuide from '../../components/AreaGuide.astro';
@@ -165,11 +166,11 @@ const jsonLd: Record<string, unknown>[] = [
         <p class="bp-kicker">EVENTS</p>
         <h2>{municipality.name}のイベント</h2>
         <p class="area-news__lead">これから開催されるものだけを出しています。日程・料金は変わることがあるため、必ず公式でご確認ください。</p>
-        <ul>{areaEvents.map((e) => (
+        <ul class="area-evcards">{areaEvents.map((e) => (
           <li><a href={eventPath(e.id)}>
+            <img src={e.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
             {e.data.eventInfo?.startDate && <time datetime={e.data.eventInfo.startDate.toISOString()}>{eventDate(e.data.eventInfo.startDate)}</time>}
             <strong>{e.data.title}</strong>
-            <b aria-hidden="true">→</b>
           </a></li>
         ))}</ul>
         <p class="area-news__more"><a href="/events/">茨城のイベント・おでかけをすべて見る →</a></p>
@@ -183,13 +184,7 @@ const jsonLd: Record<string, unknown>[] = [
         <p class="bp-kicker">NEWS</p>
         <h2>{municipality.name}のニュース解説</h2>
         <p class="area-news__lead">この街を扱った記事です。発表そのものだけでなく、地域にどう効くのかまで書いています。</p>
-        <ul>{areaNews.map((item) => (
-          <li><a href={newsPath(item.id)}>
-            <time datetime={item.data.pubDate.toISOString()}>{newsDate(item.data.pubDate)}</time>
-            <strong>{item.data.title}</strong>
-            <b aria-hidden="true">→</b>
-          </a></li>
-        ))}</ul>
+        <div class="area-cards">{areaNews.map((item) => <NewsCard item={item} />)}</div>
         <p class="area-news__more"><a href="/news/">茨城ニュース解説をすべて見る →</a></p>
       </div>
     </section>
@@ -224,7 +219,7 @@ const jsonLd: Record<string, unknown>[] = [
   .area-empty{padding-block:clamp(5rem,11vw,9rem)}.area-empty h2{margin-top:1rem;font:600 clamp(2rem,5vw,4rem)/1.3 var(--font-brand-display);color:var(--color-ink)}.area-empty>p:not(.bp-kicker){margin-top:1.5rem;line-height:2;color:var(--color-soil)}.area-empty a{display:inline-block;margin-top:2rem;color:var(--color-tide);border-bottom:1px solid}
   /* この街のニュース解説。見出しと余白は .area-themes と同じ組みにそろえる */
   .area-news{padding-block:clamp(3.5rem,7vw,5.5rem);border-top:1px solid var(--color-mist)}
-  .area-news h2{margin-top:.8rem;font:600 clamp(1.6rem,3.4vw,2.6rem) var(--font-brand-display);color:var(--color-ink)}
+  .area-news h2{margin-top:.8rem;font:600 clamp(1.55rem,2.5vw,2.45rem) var(--font-brand-display);color:var(--color-ink)}
   .area-news__lead{margin-top:.8rem;max-width:var(--measure);color:var(--color-soil);font-size:.9rem;line-height:1.9}
   .area-news ul{margin-top:2rem;list-style:none;padding:0;border-top:1px solid var(--color-mist)}
   .area-news li{border-bottom:1px solid var(--color-mist)}
@@ -236,11 +231,28 @@ const jsonLd: Record<string, unknown>[] = [
   .area-news a:hover b{transform:translateX(.25rem)}
   .area-news a:focus-visible{outline:2px solid var(--color-tide);outline-offset:2px}
   .area-news__more{margin-top:1.4rem;font-size:.86rem;font-weight:700}
+  /* ニュースは既存の NewsCard を、/news/ /tag/ と同じ組みで並べる */
+  .area-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.2rem,2.4vw,1.8rem);margin-top:1.8rem}
+  @media(max-width:1000px){.area-cards{grid-template-columns:1fr 1fr}}
+  @media(max-width:640px){.area-cards{grid-template-columns:1fr}}
+  /* イベントは別コレクションなので NewsCard を使えない。見え方をカードに揃える */
+  .area-evcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.2rem,2.4vw,1.8rem);margin-top:1.8rem;list-style:none;padding:0}
+  .area-evcards li{display:flex}
+  .area-evcards a{display:grid;grid-template-rows:auto auto 1fr;width:100%;padding:0;overflow:hidden;border:1px solid rgba(23,79,153,.12);border-radius:1rem;background:rgba(255,255,255,.94);box-shadow:0 12px 34px rgba(25,55,88,.06);transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease}
+  .area-evcards a:hover,.area-evcards a:focus-visible{transform:translateY(-3px);border-color:rgba(23,79,153,.27)}
+  .area-evcards img{width:100%;height:auto;aspect-ratio:1.9/1;object-fit:cover}
+  .area-evcards time{grid-column:1;padding:.95rem 1.15rem 0;font:.72rem var(--font-brand-meta);color:var(--color-tide)}
+  .area-evcards strong{grid-column:1;padding:.45rem 1.15rem 1.15rem;font:600 1rem/1.65 var(--font-brand-display);color:var(--color-deep-blue)}
+  /* eventInfo が無い記事は日付が出ないので、画像の直下に来たときは上余白を足す */
+  .area-evcards img+strong{padding-top:.95rem}
+  @media(max-width:1000px){.area-evcards{grid-template-columns:1fr 1fr}}
+  @media(max-width:640px){.area-evcards{grid-template-columns:1fr}}
+  @media(prefers-reduced-motion:reduce){.area-evcards a{transition:none}.area-evcards a:hover{transform:none}}
   .area-news__more a{color:var(--color-tide)}
   @media(prefers-reduced-motion:reduce){.area-news b{transition:none}}
 
   .area-themes{padding-block:clamp(3.5rem,7vw,5.5rem);border-top:1px solid var(--color-mist)}
-  .area-themes h2{margin-top:.8rem;font:600 clamp(1.6rem,3.4vw,2.6rem) var(--font-brand-display);color:var(--color-ink)}
+  .area-themes h2{margin-top:.8rem;font:600 clamp(1.55rem,2.5vw,2.45rem) var(--font-brand-display);color:var(--color-ink)}
   .area-themes__lead{margin-top:.8rem;color:var(--color-soil);font-size:.9rem}
   .area-themes__eki{margin-top:1rem;padding:1rem 1.2rem;background:var(--color-white);border:1px solid var(--color-mist);color:var(--color-soil);font-size:.88rem;line-height:1.8}
   .area-themes__eki a{color:var(--color-tide);border-bottom:1px solid;white-space:nowrap}
@@ -251,6 +263,8 @@ const jsonLd: Record<string, unknown>[] = [
   .area-themes small{color:var(--color-tide);font:.64rem var(--font-brand-meta);letter-spacing:.1em}
   .area-themes span{font:600 1.05rem var(--font-brand-display)}
   .area-themes b{position:absolute;right:1.1rem;bottom:1rem;color:var(--color-tide);font-weight:400}
-  .neighbors{padding-block:clamp(4rem,8vw,6rem);background:var(--color-white)}.neighbors h2{margin-top:.8rem;font:600 clamp(1.8rem,4vw,3.3rem) var(--font-brand-display);color:var(--color-ink)}.neighbors ul{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;margin-top:2rem}.neighbors a{color:var(--color-soil);border-bottom:1px solid var(--color-mist);padding-bottom:.2rem}.neighbors a:hover{color:var(--color-tide);border-color:var(--color-tide)}
+  .neighbors{padding-block:clamp(4rem,8vw,6rem);background:var(--color-white)}/* 節の見出しはサイト共通の .bp-section-title と同じ大きさにする。
+     以前は .neighbors だけ3.3rem（53px）、他が2.6rem（42px）、AreaGuide側が2.45rem（39px）と3種類あった */
+  .neighbors h2{margin-top:.8rem;font:600 clamp(1.55rem,2.5vw,2.45rem) var(--font-brand-display);color:var(--color-ink)}.neighbors ul{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;margin-top:2rem}.neighbors a{color:var(--color-soil);border-bottom:1px solid var(--color-mist);padding-bottom:.2rem}.neighbors a:hover{color:var(--color-tide);border-color:var(--color-tide)}
   @media(max-width:800px){.story-grid{grid-template-columns:1fr}.area-head h1{font-size:clamp(3.5rem,20vw,6rem)}}
 </style>

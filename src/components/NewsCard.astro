@@ -11,7 +11,15 @@ interface Props {
 
 const { item, compact = false } = Astro.props;
 const slug = item.id.split('/').pop();
-const municipalities = item.data.municipalities.map((value) => MUNI_BY_SLUG.get(value)?.name).filter(Boolean);
+const allMunicipalities = item.data.municipalities.map((value) => MUNI_BY_SLUG.get(value)?.name).filter(Boolean);
+/**
+ * 市町村を全部並べると、16件持つ記事でカードの札が3行になり、
+ * 見出しが押し下がって隣のカードと頭がそろわなくなる。3件までにして残りは数で示す。
+ */
+const MUNI_SHOWN = 3;
+const municipalities = allMunicipalities.length > MUNI_SHOWN
+  ? [...allMunicipalities.slice(0, MUNI_SHOWN), `ほか${allMunicipalities.length - MUNI_SHOWN}市町村`]
+  : allMunicipalities;
 const image = item.data.ogImage;
 const imageAlt = item.data.ogImageAlt || '';
 ---

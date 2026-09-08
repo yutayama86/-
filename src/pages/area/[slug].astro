@@ -157,7 +157,6 @@ const jsonLd: Record<string, unknown>[] = [
       {stores.length > 0 && <section><p class="bp-kicker">PLACES</p><h2 class="bp-section-title">確認できた場所</h2><ul class="place-list">{stores.map((store) => <li><a href={`/place/${store.id}/`}><span><small>{store.data.category}</small><strong>{store.data.name}</strong><span>{store.data.tagline}</span></span><span aria-hidden="true">→</span></a></li>)}</ul></section>}
     </div> : <section class="area-empty bp-reading"><p class="bp-kicker">FIELD NOTE</p><h2>この街の記録は、これから。</h2><p>公開確認済みの記事・場所はまだありません。架空のおすすめや未確認情報では埋めず、現地で確認できた内容から掲載します。</p><a href="/contact/">この街の“いいとこ”を教える →</a></section>}
 
-
   </article>}
 
   {areaEvents.length > 0 && (
@@ -166,10 +165,10 @@ const jsonLd: Record<string, unknown>[] = [
         <p class="bp-kicker">EVENTS</p>
         <h2>{municipality.name}のイベント</h2>
         <p class="area-news__lead">これから開催されるものだけを出しています。日程・料金は変わることがあるため、必ず公式でご確認ください。</p>
-        <ul class="area-evcards">{areaEvents.map((e) => (
+        <ul class="bp-cards">{areaEvents.map((e) => (
           <li><a href={eventPath(e.id)}>
             <img src={e.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
-            {e.data.eventInfo?.startDate && <time datetime={e.data.eventInfo.startDate.toISOString()}>{eventDate(e.data.eventInfo.startDate)}</time>}
+            {e.data.eventInfo?.startDate && <span class="bp-card__meta"><time datetime={e.data.eventInfo.startDate.toISOString()}>{eventDate(e.data.eventInfo.startDate)}</time></span>}
             <strong>{e.data.title}</strong>
           </a></li>
         ))}</ul>
@@ -221,35 +220,15 @@ const jsonLd: Record<string, unknown>[] = [
   .area-news{padding-block:clamp(3.5rem,7vw,5.5rem);border-top:1px solid var(--color-mist)}
   .area-news h2{margin-top:.8rem;font:600 clamp(1.55rem,2.5vw,2.45rem) var(--font-brand-display);color:var(--color-ink)}
   .area-news__lead{margin-top:.8rem;max-width:var(--measure);color:var(--color-soil);font-size:.9rem;line-height:1.9}
-  .area-news ul{margin-top:2rem;list-style:none;padding:0;border-top:1px solid var(--color-mist)}
-  .area-news li{border-bottom:1px solid var(--color-mist)}
-  .area-news a{display:grid;grid-template-columns:1fr auto;gap:.3rem 1.5rem;align-items:center;padding-block:1.25rem;color:var(--color-ink)}
-  .area-news time{grid-column:1;font:.72rem var(--font-brand-meta);color:var(--color-soil)}
-  .area-news strong{grid-column:1;font:600 1.08rem/1.6 var(--font-brand-display)}
-  .area-news b{grid-column:2;grid-row:1/3;font-weight:400;color:var(--color-tide);transition:transform .2s ease}
-  .area-news a:hover strong{color:var(--color-tide)}
-  .area-news a:hover b{transform:translateX(.25rem)}
+
   .area-news a:focus-visible{outline:2px solid var(--color-tide);outline-offset:2px}
   .area-news__more{margin-top:1.4rem;font-size:.86rem;font-weight:700}
   /* ニュースは既存の NewsCard を、/news/ /tag/ と同じ組みで並べる */
   .area-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.2rem,2.4vw,1.8rem);margin-top:1.8rem}
   @media(max-width:1000px){.area-cards{grid-template-columns:1fr 1fr}}
   @media(max-width:640px){.area-cards{grid-template-columns:1fr}}
-  /* イベントは別コレクションなので NewsCard を使えない。見え方をカードに揃える */
-  .area-evcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.2rem,2.4vw,1.8rem);margin-top:1.8rem;list-style:none;padding:0}
-  .area-evcards li{display:flex}
-  .area-evcards a{display:grid;grid-template-rows:auto auto 1fr;width:100%;padding:0;overflow:hidden;border:1px solid rgba(23,79,153,.12);border-radius:1rem;background:rgba(255,255,255,.94);box-shadow:0 12px 34px rgba(25,55,88,.06);transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease}
-  .area-evcards a:hover,.area-evcards a:focus-visible{transform:translateY(-3px);border-color:rgba(23,79,153,.27)}
-  .area-evcards img{width:100%;height:auto;aspect-ratio:1.9/1;object-fit:cover}
-  .area-evcards time{grid-column:1;padding:.95rem 1.15rem 0;font:.72rem var(--font-brand-meta);color:var(--color-tide)}
-  .area-evcards strong{grid-column:1;padding:.45rem 1.15rem 1.15rem;font:600 1rem/1.65 var(--font-brand-display);color:var(--color-deep-blue)}
-  /* eventInfo が無い記事は日付が出ないので、画像の直下に来たときは上余白を足す */
-  .area-evcards img+strong{padding-top:.95rem}
-  @media(max-width:1000px){.area-evcards{grid-template-columns:1fr 1fr}}
-  @media(max-width:640px){.area-evcards{grid-template-columns:1fr}}
-  @media(prefers-reduced-motion:reduce){.area-evcards a{transition:none}.area-evcards a:hover{transform:none}}
   .area-news__more a{color:var(--color-tide)}
-  @media(prefers-reduced-motion:reduce){.area-news b{transition:none}}
+  @media(prefers-reduced-motion:reduce){}
 
   .area-themes{padding-block:clamp(3.5rem,7vw,5.5rem);border-top:1px solid var(--color-mist)}
   .area-themes h2{margin-top:.8rem;font:600 clamp(1.55rem,2.5vw,2.45rem) var(--font-brand-display);color:var(--color-ink)}

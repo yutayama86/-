@@ -180,15 +180,6 @@ body {
   max-width: var(--measure);
 }
 
-/* strong と small はインラインなので、そのままでは max-width が効かない */
-.ev-index li strong,
-.ev-index li small,
-.tm-articles li strong,
-.sp-articles li strong {
-  display: block;
-  max-width: var(--measure);
-}
-
 /*
  * 日本語の改行。サイト全体の既定にする。
  *

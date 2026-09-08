@@ -157,10 +157,10 @@ const jsonLd = [
     <section class="tm-block bp-wrap bp-section">
       <p class="tm-eyebrow">{section.en}</p>
       <h2 class="tm-title">{section.title}</h2>
-      <ul class="tm-cards">{section.items.map((item) => (
+      <ul class="bp-cards">{section.items.map((item) => (
         <li><a href={newsPath(item.id)}>
           <img src={thumbOf(item)} alt="" loading="lazy" decoding="async" width="1200" height="630" />
-          <span class="tm-card__meta">
+          <span class="bp-card__meta">
             {typeLabelOf(item) && <em>{typeLabelOf(item)}</em>}
             <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
           </span>
@@ -174,10 +174,10 @@ const jsonLd = [
     <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-related">
       <p class="tm-eyebrow">RELATED</p>
       <h2 id="tm-related" class="tm-title">関連記事</h2>
-      <ul class="tm-cards">{untyped.map((item) => (
+      <ul class="bp-cards">{untyped.map((item) => (
         <li><a href={newsPath(item.id)}>
           <img src={thumbOf(item)} alt="" loading="lazy" decoding="async" width="1200" height="630" />
-          <span class="tm-card__meta">
+          <span class="bp-card__meta">
             {typeLabelOf(item) && <em>{typeLabelOf(item)}</em>}
             <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
           </span>
@@ -200,10 +200,10 @@ const jsonLd = [
       <p class="tm-eyebrow">THE TOWN</p>
       <h2 id="tm-townnews" class="tm-title">この街のニュース</h2>
       <p class="tm-lead">ホームタウンの市町村を扱った記事です。試合とは別の切り口で、同じ街を追っています。</p>
-      <ul class="tm-cards">{townNews.map((item) => (
+      <ul class="bp-cards">{townNews.map((item) => (
         <li><a href={newsPath(item.id)}>
           <img src={thumbOf(item)} alt="" loading="lazy" decoding="async" width="1200" height="630" />
-          <span class="tm-card__meta">
+          <span class="bp-card__meta">
             {typeLabelOf(item) && <em>{typeLabelOf(item)}</em>}
             <time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time>
           </span>
@@ -258,21 +258,6 @@ const jsonLd = [
   .tm-title{margin:.5rem 0 1.4rem;font:600 clamp(1.35rem,2vw,1.75rem)/1.45 var(--font-brand-display);color:var(--color-ink)}
   .tm-empty{color:var(--color-soil);line-height:1.9;font-size:.9rem}
 
-  /*
-   * 記事はカードで並べる。罫線だけのテキストリストだと、1件の節が
-   * 広い余白に浮いて読みづらかった。サムネイルは各記事の自作OG画像で、
-   * 公式ロゴ・選手写真は使わない。
-   */
-  .tm-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,17rem),1fr));gap:clamp(1rem,2vw,1.5rem);list-style:none;padding:0}
-  .tm-cards li{display:flex}
-  .tm-cards a{display:grid;grid-template-rows:auto auto 1fr;width:100%;border:1px solid var(--color-mist);background:var(--color-white);color:var(--color-ink);transition:border-color .2s ease,transform .2s ease,box-shadow .2s ease}
-  .tm-cards a:hover,.tm-cards a:focus-visible{border-color:var(--color-tide);transform:translateY(-2px);box-shadow:0 12px 30px rgba(36,77,110,.09)}
-  .tm-cards img{width:100%;height:auto;aspect-ratio:1.9/1;object-fit:cover;border-bottom:1px solid var(--color-mist)}
-  .tm-card__meta{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;padding:.95rem 1.05rem 0}
-  .tm-card__meta em{padding:.2rem .5rem;background:color-mix(in srgb,var(--color-tide) 10%,var(--color-white));color:var(--color-tide);font:700 .66rem var(--font-brand-meta);font-style:normal;letter-spacing:.06em}
-  .tm-card__meta time{color:var(--color-soil);font:.7rem var(--font-brand-meta)}
-  .tm-cards strong{padding:.5rem 1.05rem 1.15rem;font:600 .97rem/1.7 var(--font-brand-display)}
-  @media(prefers-reduced-motion:reduce){.tm-cards a{transition:none}.tm-cards a:hover{transform:none}}
 
   .tm-matches{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
   .tm-matches li{display:grid;gap:.3rem;padding:1.1rem 0;border-bottom:1px solid var(--color-mist)}

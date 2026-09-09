@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260910-en-hitachi-seaside-park-autumn',
+    date: '2026-09-10',
+    url: '/en/hitachi-seaside-park-from-tokyo/',
+    kind: 'on-page',
+    change: '英語ガイドのdescription・早見回答・料金表・季節案内に、公式発表の2026年秋の季節料金期間とコキア紅葉予想を追加。title/H1・交通案内・URL・構造化データ設計は維持。',
+    queries: ['hitachi seaside park from tokyo', 'tokyo to hitachi seaside park', 'how to get to hitachi seaside park from tokyo'],
+    commit: '8de342f',
+    note: '9/9に公園公式page001038（季節料金10/9〜11/3、入園料に350円加算）とpage001040（9/6時点の紅葉予想）を確認。10/10頃の紅葉始め・10/15頃の紅葉見頃は天候で変動する予想として記載し、料金期間と見頃を区別。出典2件を追加し、英語版のみ更新日を変更。7日評価は9/17、28日評価は10/8を目安とし、比較期間全体のGSC確定後に評価する。変更前9/3〜9/9、変更後9/11〜9/17の7日間を同条件で比較。9/9の候補選定時点の最新GSCは9/6のため、変更前期間は後日再取得する。8/28の先行変更と季節需要の影響も考慮し、少数表示のクエリ順位だけで再改稿しない。',
+  },
+  {
     id: '20260908-news-mito-hollyhock-new-stadium-access',
     date: '2026-09-08',
     url: '/news/mito-hollyhock-new-stadium-access/',

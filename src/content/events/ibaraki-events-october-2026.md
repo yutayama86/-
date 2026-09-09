@@ -62,6 +62,7 @@ sourceUrls:
 relatedArticleUrls:
   - "/events/"
   - "/kouyou/"
+  - "/events/ibaraki-events-november-2026/"
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

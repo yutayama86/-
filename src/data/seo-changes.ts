@@ -416,6 +416,25 @@ export const SEO_CHANGES: SeoChange[] = [
     queries: [],
     commit: '9701cc2',
   },
+  {
+    id: '20260910-events-nov-onpage',
+    date: '2026-09-10',
+    url: '/events/ibaraki-events-november-2026/',
+    kind: 'on-page',
+    change: 'titleに開催日を出し、descriptionと本文に会場（桜川畔／大洗マリンタワー前広場）を追記。FAQをアクセス・駐車場・雨天・Night Parkの4観点に拡張',
+    queries: ['茨城 11月 イベント', '茨城 11月 花火', '大洗あんこう祭 2026', '土浦全国花火競技大会 2026'],
+    commit: 'PENDING',
+    note: '変更前は47表示・0クリック・CTR0%・平均8.21位。会場は大洗観光協会の令和8年度年間イベントスケジュールで確認。あんこう祭の開催時間と駐車場は2026年分の発表が無いため書いていない。Event構造化データは複数イベントのまとめのため出していない（1件だけEventにすると内容と食い違うため）',
+  },
+  {
+    id: '20260910-events-nov-links',
+    date: '2026-09-10',
+    url: '/events/ibaraki-events-november-2026/',
+    kind: 'internal-link',
+    change: '10月まとめ・土浦花火・大洗あんこう祭の各記事から11月まとめへの導線を追加。11月まとめ側の関連リンクも3本から7本へ',
+    queries: ['茨城 11月 イベント'],
+    commit: 'PENDING',
+  },
 ];
 
 /** 判定に使うしきい値。Apps Script側と共有する。 */

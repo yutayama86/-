@@ -1279,63 +1279,16 @@ body.interior-site :is(.contact-form button, .biz-cta > a, .biz-head > a):hover 
   box-shadow: 0 12px 28px rgba(7,28,76,.18);
 }
 
-body.interior-site :is(.belief, .policies, .separation, .scope, .biz-cta, .about-info) {
+body.interior-site :is(.separation, .scope, .biz-cta) {
   border-top-color: var(--interior-line);
 }
 
-/*
- * 「知らないことは、知らないまま書かない。」の一文は、
- * 囲うほど強くならない。枠・角丸・影・地色をやめて文字だけで置く。
- * 上下の余白は残し、前後の節と混ざらないようにする。
- */
-body.interior-site .belief {
-  /* 節の上下余白は共通スケールに揃える（他の節と同じ値にする） */
-  margin-block: var(--interior-section-y);
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-}
-
-body.interior-site .belief h2 {
-  color: var(--color-deep-blue);
-  text-wrap: balance;
-}
-
-body.interior-site :is(.policies, .separation, .scope) {
+body.interior-site :is(.separation, .scope) {
   background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(239,247,255,.34));
 }
 
-body.interior-site :is(.policies a, .services li, .about-info dl div) {
+body.interior-site .services li {
   border-color: var(--interior-line);
-}
-
-body.interior-site .policies nav {
-  border-top: 0;
-}
-
-body.interior-site .policies nav a {
-  align-items: center;
-  min-height: 5.6rem;
-  padding-inline: 1rem;
-  transition: transform .2s ease, background-color .2s ease, color .2s ease;
-}
-
-body.interior-site .policies nav a:hover,
-body.interior-site .policies nav a:focus-visible {
-  transform: translateX(.35rem);
-  background: rgba(237,246,255,.72);
-}
-
-body.interior-site .about-info > div a {
-  display: inline-flex;
-  justify-content: center;
-  min-height: 3rem;
-  padding: .7rem 1.1rem;
-  border: 1px solid rgba(31,99,191,.28);
-  border-radius: 999px;
-  color: var(--interior-blue);
 }
 
 body.interior-site .types article {

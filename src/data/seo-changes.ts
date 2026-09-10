@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260911-hoshiimo-shake-fair-new-article',
+    date: '2026-09-11',
+    url: '/news/hoshiimo-shake-fair-2026/',
+    kind: 'new-article',
+    change: 'ほしいもシェイクフェア2026の期間・販売開始日の例外・キャンペーン条件と地域事業者向けの考察を公開',
+    queries: ['ほしいもシェイクフェア2026', 'ほしいもシェイク 参加店舗'],
+    commit: '7820612',
+    note: '茨城県公式案内を2026-09-11に確認。7日評価は9/18、28日評価は10/9を目安に確定データで行う。新規記事のため既存記事改稿との順位差評価は行わず、公開後の表示・クリック・CTR・順位を確認。',
+  },
+  {
     id: '20260910-en-hitachi-seaside-park-autumn',
     date: '2026-09-10',
     url: '/en/hitachi-seaside-park-from-tokyo/',

@@ -20,7 +20,12 @@ const MUNI_SHOWN = 3;
 const municipalities = allMunicipalities.length > MUNI_SHOWN
   ? [...allMunicipalities.slice(0, MUNI_SHOWN), `ほか${allMunicipalities.length - MUNI_SHOWN}市町村`]
   : allMunicipalities;
-const image = item.data.ogImage;
+/**
+ * 個別のOG画像を持たない記事でも、カードが絵なしにならないようにする。
+ * /og/news/<slug>.png はビルド時に全記事ぶん自動生成されるので、
+ * 記事を足すたびに画像を作る必要がない。
+ */
+const image = item.data.ogImage ?? `/og/news/${slug}.png`;
 const imageAlt = item.data.ogImageAlt || '';
 ---
 

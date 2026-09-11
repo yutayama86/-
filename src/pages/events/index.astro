@@ -72,7 +72,7 @@ const jsonLd = [
         <h2 class="bp-section-title">{month}</h2>
         <ul class="bp-cards">{items.map((e) => (
           <li><a href={path(e)}>
-            <img src={e.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+            <img src={e.data.ogImage ?? `/og/events/${e.id.split('/').pop()}.png`} alt="" loading="lazy" decoding="async" width="1200" height="630" />
             <span class="bp-card__meta">
               {e.data.eventInfo?.startDate && <time datetime={e.data.eventInfo.startDate.toISOString()}>{fmt(e.data.eventInfo.startDate)}</time>}
               {townNames(e) && <b>{townNames(e)}</b>}
@@ -95,7 +95,7 @@ const jsonLd = [
       <p class="ev-note">来年の開催が発表されたら、同じ記事を更新します。</p>
       <ul class="bp-cards ev-past">{past.map((e) => (
         <li><a href={path(e)}>
-          <img src={e.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+          <img src={e.data.ogImage ?? `/og/events/${e.id.split('/').pop()}.png`} alt="" loading="lazy" decoding="async" width="1200" height="630" />
           <span class="bp-card__meta">
             {e.data.eventInfo?.startDate && <time datetime={e.data.eventInfo.startDate.toISOString()}>{fmt(e.data.eventInfo.startDate)}</time>}
             {townNames(e) && <b>{townNames(e)}</b>}

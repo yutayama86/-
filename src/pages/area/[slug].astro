@@ -167,7 +167,7 @@ const jsonLd: Record<string, unknown>[] = [
         <p class="area-news__lead">これから開催されるものだけを出しています。日程・料金は変わることがあるため、必ず公式でご確認ください。</p>
         <ul class="bp-cards">{areaEvents.map((e) => (
           <li><a href={eventPath(e.id)}>
-            <img src={e.data.ogImage ?? '/images/news/news-placeholder.svg'} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+            <img src={e.data.ogImage ?? `/og/events/${e.id.split('/').pop()}.png`} alt="" loading="lazy" decoding="async" width="1200" height="630" />
             {e.data.eventInfo?.startDate && <span class="bp-card__meta"><time datetime={e.data.eventInfo.startDate.toISOString()}>{eventDate(e.data.eventInfo.startDate)}</time></span>}
             <strong>{e.data.title}</strong>
           </a></li>

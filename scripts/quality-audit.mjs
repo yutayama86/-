@@ -68,7 +68,9 @@ for (const file of files) {
   }
 
   for (const match of html.matchAll(/<img\b([^>]*)>/gi)) {
-    if (!/\balt=["'][^"']*["']/i.test(match[1])) failures.push(`${path}: alt のない画像`);
+    // 装飾画像の alt="" を Astro は `alt` とだけ出力する。これは正しい空altなので通す。
+    // 属性そのものが無いものだけを落とす。
+    if (!/(^|\s)alt(\s*=\s*["'][^"']*["'])?(\s|$)/i.test(match[1])) failures.push(`${path}: alt のない画像`);
   }
 
   for (const match of html.matchAll(/<a\b[^>]*\bhref=["']([^"']+)["']/gi)) {

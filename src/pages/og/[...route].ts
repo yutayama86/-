@@ -1,4 +1,5 @@
 import { OGImageRoute } from 'astro-og-canvas';
+import { getCollection } from 'astro:content';
 import { getArticles, getNews, getStores } from '../../lib/content';
 import { CATEGORIES } from '../../data/site';
 import { NEWS_CATEGORIES } from '../../data/news';
@@ -14,6 +15,8 @@ import { VISIBLE_GUIDES as GUIDES } from '../../data/guides';
 const articles = await getArticles();
 const places = await getStores();
 const news = await getNews();
+// イベント記事も対象にする。個別のOG画像を持たない記事でも、一覧カードに出す絵が必ずある状態にする
+const events = (await getCollection('events')).filter((e) => !e.data.draft);
 
 type OgPage = { title: string; description: string; accent: [number, number, number] };
 
@@ -38,6 +41,13 @@ for (const item of news) {
     title: item.data.title,
     description: `${NEWS_CATEGORIES[item.data.category].label}｜茨城ニュース解説｜IBATOCO`,
     accent: hexRgb('#315c68'),
+  };
+}
+for (const item of events) {
+  pages[`events/${item.id.split('/').pop()}`] = {
+    title: item.data.title,
+    description: '茨城のイベント・おでかけ｜IBATOCO',
+    accent: hexRgb('#a63f32'),
   };
 }
 for (const p of places) {

@@ -78,7 +78,7 @@ const typeLabelOf = (item: (typeof articles)[number]) => {
   return t ? SPORTS_CONTENT_TYPES[t].label : undefined;
 };
 const thumbOf = (item: (typeof articles)[number]) =>
-  item.data.ogImage ?? '/images/news/news-placeholder.svg';
+  item.data.ogImage ?? `/og/news/${item.id.split('/').pop()}.png`;
 
 /** 上部の LATEST STORIES。種類の札を添えて3件まで */
 const stories = articles.slice(0, 3).map((item) => {

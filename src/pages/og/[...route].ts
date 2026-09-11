@@ -20,6 +20,17 @@ const events = (await getCollection('events')).filter((e) => !e.data.draft);
 
 type OgPage = { title: string; description: string; accent: [number, number, number] };
 
+/**
+ * OG画像の見出しは ShipporiMincho-Bold で描くが、このフォントに
+ * 全角縦線「｜」(U+FF5C) が入っていない。記事タイトルの区切りに使っているため、
+ * 25記事で豆腐（□）になっていた。SNSのシェア画像にもそのまま出ていた。
+ * フォントが持つ全角スラッシュへ置き換える。記事タイトル自体は変えない。
+ * 対応表に無い文字が混ざったら scripts/check-og-glyphs.mjs が検出する。
+ */
+const OG_TITLE_REPLACEMENTS: Record<string, string> = { '｜': '／' };
+const ogTitle = (s: string) =>
+  s.replace(/[｜]/g, (c) => OG_TITLE_REPLACEMENTS[c] ?? c);
+
 // #d8452b → [216,69,43] のように16進をRGBへ
 const hexRgb = (hex: string): [number, number, number] => {
   const n = parseInt(hex.replace('#', ''), 16);
@@ -31,21 +42,21 @@ const pages: Record<string, OgPage> = {};
 for (const a of articles) {
   const cat = CATEGORIES[a.data.category];
   pages[`${cat.path}/${a.id.split('/').pop()}`] = {
-    title: a.data.title,
+    title: ogTitle(a.data.title),
     description: a.data.area ? `${a.data.area}｜${cat.label}｜IBATOCO` : `${cat.label}｜IBATOCO`,
     accent: hexRgb(cat.accent),
   };
 }
 for (const item of news) {
   pages[`news/${item.id.split('/').pop()}`] = {
-    title: item.data.title,
+    title: ogTitle(item.data.title),
     description: `${NEWS_CATEGORIES[item.data.category].label}｜茨城ニュース解説｜IBATOCO`,
     accent: hexRgb('#315c68'),
   };
 }
 for (const item of events) {
   pages[`events/${item.id.split('/').pop()}`] = {
-    title: item.data.title,
+    title: ogTitle(item.data.title),
     description: '茨城のイベント・おでかけ｜IBATOCO',
     accent: hexRgb('#a63f32'),
   };
@@ -53,14 +64,14 @@ for (const item of events) {
 for (const p of places) {
   const cat = CATEGORIES[p.data.category as keyof typeof CATEGORIES];
   pages[`place/${p.id.split('/').pop()}`] = {
-    title: p.data.name,
+    title: ogTitle(p.data.name),
     description: `${p.data.tagline}　—　${p.data.area}｜IBATOCO`,
     accent: hexRgb(cat.accent),
   };
 }
 for (const g of GUIDES) {
   pages[`guide/${g.slug}`] = {
-    title: g.title.split('。')[0],
+    title: ogTitle(g.title.split('。')[0]),
     description: `${g.lead}　—　まとめ・モデルコース｜IBATOCO`,
     accent: hexRgb(g.accent ?? '#46798b'),
   };

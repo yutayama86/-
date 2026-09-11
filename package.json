@@ -7,8 +7,8 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "check": "node scripts/fact-guard.mjs && astro check && astro build",
-    "audit:site": "node scripts/fact-guard.mjs && npm run build && node scripts/quality-audit.mjs",
+    "check": "node scripts/fact-guard.mjs && node scripts/check-og-glyphs.mjs && astro check && astro build",
+    "audit:site": "node scripts/fact-guard.mjs && node scripts/check-og-glyphs.mjs && npm run build && node scripts/quality-audit.mjs",
     "verify": "npm run check && node scripts/quality-audit.mjs",
     "verify:article": "node scripts/verify-article.mjs",
     "wait:deploy": "node scripts/wait-deploy.mjs",
@@ -20,7 +20,8 @@
     "og:check": "node scripts/check-ogp.mjs",
     "seo:log": "node scripts/seo-change.mjs",
     "seo:seal": "node scripts/seo-seal.mjs",
-    "fact:guard": "node scripts/fact-guard.mjs"
+    "fact:guard": "node scripts/fact-guard.mjs",
+    "og:glyphs": "node scripts/check-og-glyphs.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

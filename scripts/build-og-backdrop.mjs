@@ -37,12 +37,17 @@ const VH = Number(view[2]);
 /** `d: "M.. L.. L.."` を座標の配列にする */
 const polys = [];
 const bySlug = new Map();
-for (const m of src.matchAll(/"([a-z-]+)":\s*\{\s*d:\s*"([^"]+)"/g)) {
+const centroid = new Map();
+for (const m of src.matchAll(/"([a-z-]+)":\s*\{\s*d:\s*"([^"]+)",\s*cx:\s*(-?[\d.]+),\s*cy:\s*(-?[\d.]+)/g)) {
   const pts = [];
   for (const seg of m[2].matchAll(/([ML])\s*(-?[\d.]+)\s+(-?[\d.]+)/g)) {
     pts.push([Number(seg[2]), Number(seg[3])]);
   }
-  if (pts.length > 2) { polys.push(pts); bySlug.set(m[1], pts); }
+  if (pts.length > 2) {
+    polys.push(pts);
+    bySlug.set(m[1], pts);
+    centroid.set(m[1], [Number(m[3]), Number(m[4])]);
+  }
 }
 if (polys.length !== 44) {
   console.error(`市町村の数が44ではありません（${polys.length}）。地図データを確認してください。`);
@@ -88,6 +93,20 @@ function fillPoly(pts, color) {
       const x1 = Math.max(0, Math.round(hits[k]));
       const x2 = Math.min(sw - 1, Math.round(hits[k + 1]));
       for (let x = x1; x <= x2; x++) blend(x, y, color);
+    }
+  }
+}
+
+/** 塗りつぶした円（アンチエイリアスあり）。重心の目印に使う */
+function fillCircle(cx, cy, r, color) {
+  const x0 = Math.max(0, Math.floor(cx - r - 1));
+  const x1 = Math.min(sw - 1, Math.ceil(cx + r + 1));
+  const y0 = Math.max(0, Math.floor(cy - r - 1));
+  const y1 = Math.min(sh - 1, Math.ceil(cy + r + 1));
+  for (let y = y0; y <= y1; y++) {
+    for (let x = x0; x <= x1; x++) {
+      const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy);
+      if (d <= r) blend(x, y, color);
     }
   }
 }
@@ -221,6 +240,20 @@ function renderCard(active) {
   offY = ((H - targetH) / 2) * SS;
   for (const [slug, pts] of bySlug) fillPoly(pts, active.has(slug) ? HIT_FILL : BASE_FILL);
   for (const [, pts] of bySlug) strokePoly(pts, [246, 242, 233, 170]);
+  /*
+   * 塗るだけだと、大洗町や土浦市のように面積の小さい市町村は
+   * カードの大きさ（約300px）では点にもならず、光って見えなかった。
+   * 重心に一定の大きさの印を打って、面積によらず読めるようにする。
+   */
+  const dotR = 9 * SS;
+  for (const slug of active) {
+    const c = centroid.get(slug);
+    if (!c) continue;
+    const x = c[0] * scale + offX;
+    const y = c[1] * scale + offY;
+    fillCircle(x, y, dotR + 2.2 * SS, [243, 238, 228, 235]); // 地の色で縁取る
+    fillCircle(x, y, dotR, [166, 63, 50, 255]);              // --color-signal
+  }
 
   const out = Buffer.alloc(W * H * 4);
   for (let y = 0; y < H; y++) {
@@ -254,11 +287,23 @@ function articles() {
       if (!fm) continue;
       if (/^draft:\s*true\s*$/m.test(fm[1])) continue;
       if (/^ogImage:/m.test(fm[1])) continue; // 自作の画像がある記事は作らない
+      /**
+       * municipalities は2通りの書き方が混在している。両方読む。
+       *   municipalities:            municipalities: ["mito", "oarai"]
+       *     - mito
+       * ブロック形式しか見ていなかったため、インライン配列の記事は
+       * 市町村を拾えず、地図が光らないまま出ていた。
+       */
       const munis = [];
-      const block = fm[1].match(/^municipalities:\n((?:\s+-\s+.+\n?)*)/m);
-      if (block) for (const l of block[1].split('\n')) {
-        const v = l.match(/-\s+([a-z-]+)/);
-        if (v) munis.push(v[1]);
+      const inline = fm[1].match(/^municipalities:\s*\[([^\]]*)\]/m);
+      if (inline) {
+        for (const v of inline[1].matchAll(/["']([a-z-]+)["']/g)) munis.push(v[1]);
+      } else {
+        const block = fm[1].match(/^municipalities:\s*\n((?:\s+-\s+.+\n?)*)/m);
+        if (block) for (const l of block[1].split('\n')) {
+          const v = l.match(/-\s+["']?([a-z-]+)["']?/);
+          if (v) munis.push(v[1]);
+        }
       }
       list.push({ slug: name.replace(/\.md$/, ''), munis, src: join(dir, name) });
     }

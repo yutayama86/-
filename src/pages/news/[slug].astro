@@ -17,7 +17,12 @@ const { item } = Astro.props;
 const { data } = item;
 const slug = item.id.split('/').pop();
 const canonical = new URL(`/news/${slug}/`, Astro.site ?? SITE_CONFIG.domain).href;
-const visualImagePath = data.ogImage ?? '/images/news/news-placeholder.svg';
+/**
+ * 冒頭画像は、その記事のために作った図版がある場合だけ出す。
+ * 以前は共通の news-placeholder.svg（「茨城ニュース解説」と書いただけの絵）に
+ * 落としていたが、記事について何も伝えないぶん、無いほうが読みやすい。
+ */
+const visualImagePath = data.ogImage ?? null;
 const imagePath = data.ogImage && !data.ogImage.endsWith('.svg') ? data.ogImage : `/og/news/${slug}.png`;
 const absolute = (path: string) => new URL(path, Astro.site ?? SITE_CONFIG.domain).href;
 const municipalities = data.municipalities.map((value) => MUNI_BY_SLUG.get(value)).filter(Boolean);
@@ -101,7 +106,7 @@ if (data.faq.length > 0) jsonLd.push({
       <aside class="news-detail__toc" aria-label="この記事の目次"><p>この記事の構成</p><ol><li><a href="#conclusion">結論</a></li><li><a href="#points">この記事でわかること</a></li><li><a href="#what-happened">何が起きた？</a></li><li><a href="#changes">{changesHeading}</a></li><li><a href="#analysis">編集部の解説</a></li><li><a href="#impact">地域への影響</a></li><li><a href="#business">地域事業者への示唆</a></li><li><a href="#faq">FAQ</a></li><li><a href="#sources">情報源</a></li></ol></aside>
       <div class="news-detail__body">
         {/* 冒頭画像は本文カラムの先頭に置く（見出しと本文のあいだで浮かせない） */}
-        <figure class="news-detail__hero"><img src={visualImagePath} alt={data.ogImageAlt || '茨城ニュース解説のイメージ'} loading="eager" width="1200" height="630" />{data.imageCredit && <figcaption>写真：<a href={data.imageCreditUrl} target="_blank" rel="noopener noreferrer">{data.imageCredit}</a>{data.imageLicense && <> / <a href={data.imageLicenseUrl} target="_blank" rel="noopener noreferrer">{data.imageLicense}</a></>}</figcaption>}</figure>
+        {visualImagePath && <figure class="news-detail__hero"><img src={visualImagePath} alt={data.ogImageAlt} loading="eager" width="1200" height="630" />{data.imageCredit && <figcaption>写真：<a href={data.imageCreditUrl} target="_blank" rel="noopener noreferrer">{data.imageCredit}</a>{data.imageLicense && <> / <a href={data.imageLicenseUrl} target="_blank" rel="noopener noreferrer">{data.imageLicense}</a></>}</figcaption>}</figure>}
 
         <section id="conclusion" class="news-conclusion"><p class="section-number">01 / CONCLUSION</p><h2>結論</h2><p>{data.conclusion}</p></section>
         <section id="points"><p class="section-number">02 / KEY POINTS</p><h2>この記事でわかること</h2><ul>{data.keyPoints.map((point) => <li>{point}</li>)}</ul></section>

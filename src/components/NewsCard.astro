@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import { NEWS_CATEGORIES } from '../data/news';
 import { MUNI_BY_SLUG } from '../data/areas';
 import { formatDate } from '../lib/content';
+import { CARD_IMAGES } from '../data/card-images';
 
 interface Props {
   item: CollectionEntry<'news'>;
@@ -26,7 +27,7 @@ const municipalities = allMunicipalities.length > MUNI_SHOWN
  * あれは見出しを焼き込んだ画像なので、カードに置くと画像の中の見出しと
  * 下のカード見出しで同じ文字が二度出る。文字の無い既定画像を使う。
  */
-const image = item.data.ogImage ?? `/images/card/${slug}.png`;
+const image = item.data.ogImage ?? CARD_IMAGES[slug as string];
 const imageAlt = item.data.ogImageAlt || '';
 ---
 

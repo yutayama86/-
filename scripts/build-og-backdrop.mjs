@@ -15,7 +15,8 @@
  *   public/images/card/<slug>.png      … 一覧カード。記事の市町村を濃く塗り分ける
  * 地図データを更新したら、これも作り直すこと。
  */
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, statSync, rmSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { deflateSync } from 'node:zlib';
 
@@ -311,12 +312,41 @@ function articles() {
   return list;
 }
 
+/*
+ * ファイル名に内容のハッシュを入れる。
+ * 同じURLのまま中身だけ差し替えると、ブラウザやCDNが古い画像を出し続ける。
+ * 実際、印を入れる修正をしたあとも、読者の画面は以前の「光っていない地図」の
+ * ままだった。名前が変われば必ず新しいものが読まれる。
+ * 参照側は src/data/card-images.ts を通す。
+ */
+const MANIFEST = 'src/data/card-images.ts';
+const manifest = {};
 let made = 0, kept = 0;
+const wanted = new Set();
+
+const prev = existsSync(MANIFEST) ? readFileSync(MANIFEST, 'utf8') : '';
 for (const a of articles()) {
-  const dest = join(CARD_DIR, `${a.slug}.png`);
-  // 記事が更新されていなければ作り直さない（ビルドを遅くしない）
-  if (existsSync(dest) && statSync(dest).mtimeMs > statSync(a.src).mtimeMs) { kept++; continue; }
-  writeFileSync(dest, toPng(renderCard(new Set(a.munis))));
+  const png = toPng(renderCard(new Set(a.munis)));
+  const hash = createHash('sha1').update(png).digest('hex').slice(0, 8);
+  const name = `${a.slug}-${hash}.png`;
+  const dest = join(CARD_DIR, name);
+  wanted.add(name);
+  manifest[a.slug] = `/images/card/${name}`;
+  if (existsSync(dest)) { kept++; continue; }
+  writeFileSync(dest, png);
   made++;
 }
-console.log(`記事カード：${made}枚を生成、${kept}枚は据え置き（${CARD_DIR}/）`);
+
+// 使わなくなった画像（古いハッシュ、消えた記事）を片付ける
+let removed = 0;
+for (const f of readdirSync(CARD_DIR)) {
+  if (f.endsWith('.png') && !wanted.has(f)) { rmSync(join(CARD_DIR, f)); removed++; }
+}
+
+const body = `// 自動生成（scripts/build-og-backdrop.mjs）。手で編集しない。
+// 記事ごとのカード画像。ファイル名に内容のハッシュが入っているので、
+// 中身が変わればURLも変わり、古い画像が表示され続けることがない。
+export const CARD_IMAGES: Record<string, string> = ${JSON.stringify(manifest, null, 2)};
+`;
+if (body !== prev) writeFileSync(MANIFEST, body);
+console.log(`記事カード：${made}枚を生成、${kept}枚は据え置き、${removed}枚を削除（${CARD_DIR}/）`);

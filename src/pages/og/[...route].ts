@@ -84,23 +84,31 @@ export const { getStaticPaths, GET } = await OGImageRoute({
     description: page.description,
     logo: undefined,
     bgGradient: [
-      [245, 241, 232],
-      [231, 223, 205],
+      [246, 242, 233],
+      [233, 226, 211],
     ],
-    border: { color: page.accent, width: 24, side: 'inline-start' },
-    padding: 80,
+    /**
+     * 背景に茨城の形を敷く。以前は文字だけで下半分が空いていた。
+     * 44市町村の実データから scripts/build-og-backdrop.mjs で作ったPNG。
+     * 地図データを更新したら、このPNGも作り直すこと。
+     */
+    bgImage: { path: './src/assets/og/ibaraki-backdrop.png', fit: 'cover' },
+    border: { color: page.accent, width: 26, side: 'inline-start' },
+    padding: 76,
     font: {
       title: {
         families: ['Shippori Mincho'],
         weight: 'Bold',
-        color: [28, 26, 20],
-        lineHeight: 1.3,
+        size: 72,
+        color: [23, 43, 53],
+        lineHeight: 1.36,
       },
       description: {
         families: ['Zen Kaku Gothic New'],
         weight: 'Medium',
-        color: [124, 117, 102],
-        lineHeight: 1.4,
+        size: 30,
+        color: [117, 105, 90],
+        lineHeight: 1.5,
       },
     },
     fonts: [

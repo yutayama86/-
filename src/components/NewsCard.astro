@@ -22,10 +22,11 @@ const municipalities = allMunicipalities.length > MUNI_SHOWN
   : allMunicipalities;
 /**
  * 個別のOG画像を持たない記事でも、カードが絵なしにならないようにする。
- * /og/news/<slug>.png はビルド時に全記事ぶん自動生成されるので、
- * 記事を足すたびに画像を作る必要がない。
+ * ここで /og/news/<slug>.png（SNS用の自動生成画像）は使わない。
+ * あれは見出しを焼き込んだ画像なので、カードに置くと画像の中の見出しと
+ * 下のカード見出しで同じ文字が二度出る。文字の無い既定画像を使う。
  */
-const image = item.data.ogImage ?? `/og/news/${slug}.png`;
+const image = item.data.ogImage ?? `/images/card/${slug}.png`;
 const imageAlt = item.data.ogImageAlt || '';
 ---
 

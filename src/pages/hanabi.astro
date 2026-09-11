@@ -123,7 +123,7 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '茨城の花
         <p class="hanabi-thisyear__lead">公式で開催日を確認できた大会です。時間・会場・荒天時の扱いは大会ごとに違います。</p>
         <ul class="bp-cards">{hanabiEvents.map((e) => (
           <li><a href={evPath(e.id)}>
-            <img src={e.data.ogImage ?? `/og/events/${e.id.split('/').pop()}.png`} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+            <img src={e.data.ogImage ?? `/images/card/${e.id.split('/').pop()}.png`} alt="" loading="lazy" decoding="async" width="1200" height="630" />
             {e.data.eventInfo?.startDate && <span class="bp-card__meta"><time datetime={e.data.eventInfo.startDate.toISOString()}>{evDate(e.data.eventInfo.startDate)}</time></span>}
             <strong>{e.data.eventInfo?.name ?? e.data.title}</strong>
           </a></li>

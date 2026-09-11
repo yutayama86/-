@@ -116,7 +116,7 @@ const jsonLd = [
       <ul class="bp-cards">{articles.map((item) => (
         <li>
           <a href={newsPath(item.id)}>
-            <img src={item.data.ogImage ?? `/og/news/${item.id.split('/').pop()}.png`} alt="" loading="lazy" decoding="async" width="1200" height="630" />
+            <img src={item.data.ogImage ?? `/images/card/${item.id.split('/').pop()}.png`} alt="" loading="lazy" decoding="async" width="1200" height="630" />
             <span class="bp-card__meta"><time datetime={item.data.pubDate.toISOString()}>{fmt(item.data.pubDate)}</time></span>
             <strong>{item.data.title}</strong>
           </a>

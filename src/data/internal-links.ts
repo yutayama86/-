@@ -95,4 +95,6 @@ export const INTERNAL_LINK_LABELS: Record<string, string> = {
   '/events/fukasaku-noen-guide/': '深作農園の場所と時期（メロン狩りは初夏）',
   '/events/oarai-hotel-buffet-guide/': '大洗ホテルの夕食ビュッフェは日帰りでも使える',
   '/events/ibaraki-bus-tour-spots/': '茨城のバスツアーが立ち寄る場所',
+  '/news/hoshiimo-shake-fair-2026/': 'ほしいもシェイクフェア2026（参加店と注意点）',
+  '/news/ibaraki-hoshiimo-haccp-support-2026/': 'ほしいもの民間型HACCP認証取得支援（解説）',
 };

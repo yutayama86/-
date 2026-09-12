@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="全国シェア約9割でも終わらない。茨城のほしいもが次に磨く「品質」という競争力">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="28" y="28" width="1144" height="574" fill="none" stroke="#d9d0c0" stroke-width="1"/>
+
+  <text x="80" y="100" font-family="'Source Sans 3', sans-serif" font-size="20" letter-spacing="2.4" fill="#a63f32">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g>
+    <text x="80" y="160" font-family="'Source Sans 3', sans-serif" font-size="17" letter-spacing="1.6" fill="#75695a">VOLUME</text>
+    <rect x="200" y="143" width="620" height="16" fill="#d9d0c0"/>
+    <rect x="200" y="143" width="558" height="16" fill="#315c68"/>
+    <text x="838" y="158" font-family="'Source Sans 3', sans-serif" font-size="19" fill="#315c68">約9割</text>
+
+    <text x="80" y="208" font-family="'Source Sans 3', sans-serif" font-size="17" letter-spacing="1.6" fill="#75695a">QUALITY</text>
+    <rect x="200" y="191" width="620" height="16" fill="none" stroke="#a63f32" stroke-width="1.5" stroke-dasharray="7 6"/>
+    <text x="838" y="206" font-family="'Source Sans 3', sans-serif" font-size="19" fill="#a63f32">これから</text>
+  </g>
+
+  <text x="80" y="312" font-family="'Shippori Mincho', serif" font-size="56" font-weight="700" fill="#172b35">全国シェア約9割でも、</text>
+  <text x="80" y="384" font-family="'Shippori Mincho', serif" font-size="56" font-weight="700" fill="#172b35">終わらない。</text>
+  <text x="80" y="454" font-family="'Shippori Mincho', serif" font-size="42" font-weight="700" fill="#315c68">次に磨くのは「品質」という競争力</text>
+
+  <line x1="80" y1="496" x2="300" y2="496" stroke="#a63f32" stroke-width="3"/>
+
+  <text x="80" y="540" font-family="'Source Sans 3', sans-serif" font-size="21" fill="#75695a">茨城県が、ほしいもの民間型HACCP認証等の取得支援を開始</text>
+
+  <text x="80" y="576" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a">出典：茨城県の公開情報</text>
+</svg>

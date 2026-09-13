@@ -49,6 +49,11 @@ const guideSchema = z.object({
   title: z.string().min(1),
   /** 公式情報を確認した日 */
   verifiedAt: z.string().regex(DATE),
+  /**
+   * チームページ上部に出す「観戦で押さえること」。試合直前に必要なことだけを短く。
+   * 詳細は sections に書き、ここは要約にとどめる（ここにしか無い事実を書かない）。
+   */
+  keyFacts: z.array(z.string().min(1)).default([]),
   sections: z.array(z.object({
     key: z.enum(GUIDE_SECTION_KEYS),
     title: z.string().min(1),

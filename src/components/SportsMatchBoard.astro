@@ -55,9 +55,12 @@ const withNote = (value?: string, note?: string) => (value ? (note ? `${value}�
             {next.venue && <div><dt>会場</dt><dd>{next.venue}</dd></div>}
             {next.broadcast && <div><dt>中継</dt><dd>{next.broadcast.join('、')}</dd></div>}
           </dl>
-          {guideAnchor
-            ? <a class="mb__link" href={`#${guideAnchor}`}>観戦情報を見る →</a>
-            : next.articleUrl && <a class="mb__link" href={next.articleUrl}>この試合の記事 →</a>}
+          {(guideAnchor || next.articleUrl) && (
+            <p class="mb__links">
+              {guideAnchor && <a class="mb__link" href={`#${guideAnchor}`}>観戦情報を見る →</a>}
+              {next.articleUrl && <a class="mb__link" href={next.articleUrl}>この試合の記事を読む →</a>}
+            </p>
+          )}
         </article>
       )}
 
@@ -137,6 +140,8 @@ const withNote = (value?: string, note?: string) => (value ? (note ? `${value}�
   .mb__recap{margin:0;color:var(--color-soil);font-size:.82rem;line-height:1.85}
 
   .mb__link{margin-top:auto;font-size:.78rem;font-weight:700;color:var(--interior-blue,#174f99)}
+  .mb__links{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;margin:auto 0 0}
+  .mb__links .mb__link{margin-top:0}
 
   .mb__stories{list-style:none;margin:0;padding:0;display:grid}
   .mb__stories li+li{border-top:1px solid var(--color-mist)}

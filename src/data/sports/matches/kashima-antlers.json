@@ -1,6 +1,6 @@
 {
   "team": "kashima-antlers",
-  "updatedAt": "2026-09-13",
+  "updatedAt": "2026-09-14",
   "matches": [
     {
       "id": "kashima-antlers-2026-08-07-j1-01",
@@ -124,13 +124,22 @@
       "officialUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01",
       "guide": {
         "title": "鹿島アントラーズ vs ニューカッスル・ジェッツ 観戦ガイド（9月15日）",
-        "verifiedAt": "2026-09-13",
+        "verifiedAt": "2026-09-14",
+        "keyFacts": [
+          "チケットのWeb販売は9月14日（月）23:59まで。シーズンチケットの対象外で、この試合のチケットが必要です（当日券の販売は未確認）",
+          "16:00 場外飲食店オープン → 16:50 列整理開始（予定）→ 17:00 開場 → 19:00 キックオフ → 21:00 試合終了（予定）",
+          "キックオフ1時間前以降は入場が特に混雑する見込み。クラブは2時間前までの来場を目安にするよう呼びかけています",
+          "試合後は5ゲートとスタジアム前交差点付近が非常に混雑する見込み。3・4・6ゲートへの分散退場の協力が呼びかけられています",
+          "大洗鹿島線で水戸方面へ帰る臨時停車の列車は、スタジアム発21:16と22:00。水戸方面からは交通系ICカードが使えません",
+          "ACL戦での完全キャッシュレスの運用は「決定次第お知らせ」（9月14日時点）。中継はDAZNです"
+        ],
         "sections": [
           {
             "key": "match",
-            "title": "試合情報",
+            "title": "試合情報・当日の流れ",
             "items": [
-              { "text": "2026年9月15日（火）19:00キックオフ。開場は17:00（予定）で、先行入場は実施しません。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
+              { "text": "2026年9月15日（火）19:00キックオフ。16:00に場外飲食店がオープンし、16:50に列整理スタート（予定）、17:00に開場（場内の各店舗もオープン）、21:00に試合終了（予定）です。先行入場は実施しません。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
+              { "text": "キックオフ1時間前以降は特に入場時の混雑が予想されるため、クラブは2時間前までを目安に、余裕を持って来場するよう呼びかけています。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
               { "text": "会場名はカシマサッカースタジアム。Jリーグの試合で使われるメルカリスタジアムと同じスタジアムで、クラブの当日スケジュールでも「メルカリスタジアム開場」と案内されています。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
               { "text": "中継はDAZNです。", "sourceUrl": "https://www.antlers.co.jp/blogs/games" }
             ]
@@ -140,7 +149,7 @@
             "title": "チケット",
             "items": [
               { "text": "シーズンチケットの対象外です。クラブは「天皇杯、AFC主催大会は対象外」としており、観戦にはこの試合のチケットが必要です。", "sourceUrl": "https://www.antlers.co.jp/pages/fanclub-season" },
-              { "text": "Jリーグチケットで販売。販売期限は9月14日（月）23:59（QRチケット・セブン-イレブン店頭発券）です。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2632825/001" },
+              { "text": "Jリーグチケットで販売。販売期限は9月14日（月）23:59（QRチケット・セブン-イレブン店頭発券）です。9月14日時点で、多くの席種が「空席あり」、エグゼクティブ・指定南は「少ない」と表示されています。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2632825/001" },
               { "text": "価格は席種によって異なり、幅があります。購入前に販売ページで確認してください。未就学児は大人1名につき1名まで無料と案内されています。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2632825/001" }
             ]
           },
@@ -148,36 +157,39 @@
             "key": "cashless",
             "title": "支払い（キャッシュレス）",
             "items": [
-              { "text": "クラブは2026/27シーズンからメルカリスタジアムでの決済を「完全キャッシュレス化」していますが、対象試合はJ1・ルヴァンカップ・天皇杯です。ACLエリートなど主催者が異なる試合の運用は「決定次第お知らせ」とされています（9月13日時点）。", "sourceUrl": "https://www.antlers.co.jp/pages/all-cashless" },
+              { "text": "クラブは2026/27シーズンからメルカリスタジアムでの決済を「完全キャッシュレス化」していますが、対象試合はJ1・ルヴァンカップ・天皇杯です。ACLエリートなど主催者が異なる試合の運用は「決定次第お知らせ」とされています（9月14日時点）。", "sourceUrl": "https://www.antlers.co.jp/pages/all-cashless" },
               { "text": "場内には交通系ICカードのチャージ機がありません。クラブは事前のチャージか、鹿島サッカースタジアム駅の簡易チャージ機の利用を案内しています。", "sourceUrl": "https://www.antlers.co.jp/pages/all-cashless" },
               { "text": "場外グルメの「漁師小屋」は決済手段が異なるため、店頭で確認するよう案内されています。", "sourceUrl": "https://www.antlers.co.jp/pages/all-cashless" }
             ]
           },
           {
             "key": "gourmet",
-            "title": "グルメ",
+            "title": "グルメ（公式掲載のメニュー例と価格）",
             "items": [
               { "text": "場外フードコート（スポーツセンター ジーコ像前）は16:00から試合終了後30分まで営業予定。テーブルとイスがあり、試合後も営業します。終了時刻は混雑状況で前後する場合があります。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
-              { "text": "場外の出店は五浦ハム、居酒屋ドリーム、漁師小屋。販売メニューと金額は変わる場合があります。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
-              { "text": "場内売店は2階のメイン・南・北・バックの各スタンドにあります。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" }
+              { "text": "場外（税込）：五浦ハム ハム焼700円・豚ドッグ500円・ハム汁600円／居酒屋ドリーム ハラミメシ（並）1,100円・ハラミメシ（並・温玉）1,200円・生ビール（大）（サン生）800円／漁師小屋 漁師小屋セット1,500円・しらす丼1,000円・BIGエビ1,300円。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
+              { "text": "場内 2階メインスタンド：らぽっぽファーム（ひんやり大学芋500円ほか）、まるだい・ガキゲン（神栖メンチ500円、チャーシュー丼1,100円ほか）。2階南スタンド：満寿屋（中華まぜそば850円ほか）、Drink & Bar Shion（甘熟王濃厚バナナジュース400円ほか）、エミールカレー（カツカレー1,200円ほか）。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
+              { "text": "場内 2階北スタンド：KRCアウェイ売店（キーマカレー・ハヤシライス・カルビ丼 各900円）。2階バックスタンド：サムジィ～（鹿嶋一長いフランクフルト600円ほか）、ゆがふ（特製トマトもつ煮900円ほか）。販売メニュー・金額は変わる場合があります。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" }
             ]
           },
           {
             "key": "event",
             "title": "イベント・グッズ",
             "items": [
-              { "text": "来場者限定のプレゼント抽選「鹿BIG」と、オンラインで応募する「どこでも鹿BIG」があります。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
+              { "text": "来場者限定のプレゼント抽選「鹿BIG」（受付終了20:15）と、オンラインで応募する「どこでも鹿BIG」（受付終了20:00）があります。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
               { "text": "グッズはストア「FAMILY」（場内2階南ゴール裏コンコース）で、17:00の開場から試合終了後30分まで営業予定です。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
               { "text": "場内2か所にファンクラブブースが設置されます。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" }
             ]
           },
           {
             "key": "rules",
-            "title": "応援アイテム・観戦ルール",
+            "title": "入退場・応援アイテム・観戦ルール",
             "items": [
+              { "text": "試合終了後は5ゲートとスタジアム前交差点付近が非常に混雑する見込みです。規制誘導を行う場合があるため係員の誘導に従い、3ゲート・4ゲート・6ゲートへの分散退場に協力するよう呼びかけられています。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
+              { "text": "ホームサポーターズシート指定「上層ゴール裏-北」のチケットを持つ人は、4Fコンコースから上層スタンドへ入るよう案内されています。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
               { "text": "AFC主催試合のため、1.5m×2mを超える旗・バナー、楽器、拡声器（出力10W以下）は、AFCと相手クラブの承認が必要でした（申請期限の9月8日23:59は終了）。クラブが承認していても、AFCが未承認なら持ち込めません。", "sourceUrl": "https://www.antlers.co.jp/blogs/news/260904uuxm4e" },
               { "text": "旭日旗、チェ・ゲバラ、ドクロやガイコツが描かれた旗など、混乱が予想される応援物は使えません。", "sourceUrl": "https://www.antlers.co.jp/blogs/news/260904uuxm4e" },
-              { "text": "クラブの「メルカリスタジアム観戦ルール」では、シートなどによる待ち列の場所取りとスタンド内の席取りは禁止、列整理は開場10分前から、ビジター専用シートは再入場できないとしています。大会によって規程が異なる場合があるとも案内されています。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-rule" }
+              { "text": "クラブの「メルカリスタジアム観戦ルール」では、シートなどによる待ち列の場所取りとスタンド内の席取りは禁止、ビジター専用シートは再入場できないとしています。大会によって規程が異なる場合があるとも案内されています。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-rule" }
             ]
           },
           {
@@ -227,10 +239,10 @@
         "lead": "9月15日は平日のナイトゲームです。午後に鹿嶋へ入り、鹿島神宮に参拝してからスタジアムへ向かう流れを、公式に確認できた時刻だけで組みました。移動にかかる時間は含めていないので、当日の交通案内とあわせて調整してください。",
         "steps": [
           { "time": "〜16:30", "title": "鹿島神宮に参拝", "detail": "参拝は24時間できますが、お守り・御札の授与所と御祈祷の受付は16:30まで。授与所に寄るなら早めに着くのが安心です。", "sourceUrl": "https://kashimajingu.jp/info/%E3%82%88%E3%81%8F%E3%81%82%E3%82%8B%E3%81%94%E8%B3%AA%E5%95%8F/" },
-          { "time": "16:00", "title": "場外フードコートがオープン", "detail": "スポーツセンターのジーコ像前。テーブルとイスがあり、開場前に食事を済ませられます。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
-          { "time": "17:00", "title": "開場（予定）", "detail": "先行入場はありません。クラブの観戦ルールでは、待ち列の場所取りは禁止、列整理は開場10分前からです。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
+          { "time": "16:00", "title": "場外フードコートがオープン", "detail": "スポーツセンターのジーコ像前。テーブルとイスがあり、開場前に食事を済ませられます。五浦ハムのハム焼（700円）や漁師小屋のしらす丼（1,000円）などが公式に掲載されています。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
+          { "time": "17:00", "title": "開場（予定）", "detail": "列整理は16:50スタート（予定）。先行入場はありません。キックオフ1時間前以降は入場が特に混雑する見込みです。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
           { "time": "19:00", "title": "キックオフ", "detail": "ACLエリート リーグステージの初戦。中継はDAZNです。", "sourceUrl": "https://www.antlers.co.jp/blogs/games" },
-          { "time": "試合後", "title": "場外フードコートで一息", "detail": "試合終了後30分まで営業する予定です（混雑状況で前後）。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
+          { "time": "21:00頃", "title": "試合終了（予定）、分散して退場", "detail": "5ゲートとスタジアム前交差点付近は非常に混雑する見込み。3・4・6ゲートへの分散退場が呼びかけられています。場外フードコートは試合終了後30分まで営業予定です。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
           { "time": "帰り", "title": "電車の時刻と道路の混雑を確認", "detail": "大洗鹿島線で水戸方面へ帰るなら、スタジアム発21:16（水戸着22:26）か22:00（水戸着23:11）。水戸方面からは交通系ICカードが使えません。車の場合、帰りは国道51号が非常に混雑すると案内されています。", "sourceUrl": "https://www.rintetsu.co.jp/wp-content/uploads/2026/09/0915.pdf" }
         ],
         "cautions": [
@@ -238,11 +250,11 @@
         ]
       },
       "sources": [
-        { "label": "鹿島アントラーズ公式｜ACL Elite 2026/27 MD1 観戦ガイド", "url": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01", "accessedAt": "2026-09-13" },
+        { "label": "鹿島アントラーズ公式｜ACL Elite 2026/27 MD1 観戦ガイド", "url": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01", "accessedAt": "2026-09-14" },
         { "label": "鹿島アントラーズ公式｜試合日程・結果", "url": "https://www.antlers.co.jp/blogs/games", "accessedAt": "2026-09-13" },
-        { "label": "Jリーグチケット｜鹿島アントラーズ対ニューカッスル・ジェッツ", "url": "https://www.jleague-ticket.jp/sales/perform/2632825/001", "accessedAt": "2026-09-13" },
+        { "label": "Jリーグチケット｜鹿島アントラーズ対ニューカッスル・ジェッツ", "url": "https://www.jleague-ticket.jp/sales/perform/2632825/001", "accessedAt": "2026-09-14" },
         { "label": "鹿島アントラーズ公式｜シーズンチケット 26/27", "url": "https://www.antlers.co.jp/pages/fanclub-season", "accessedAt": "2026-09-13" },
-        { "label": "鹿島アントラーズ公式｜メルカリスタジアム完全キャッシュレス化のご案内", "url": "https://www.antlers.co.jp/pages/all-cashless", "accessedAt": "2026-09-13" },
+        { "label": "鹿島アントラーズ公式｜メルカリスタジアム完全キャッシュレス化のご案内", "url": "https://www.antlers.co.jp/pages/all-cashless", "accessedAt": "2026-09-14" },
         { "label": "鹿島アントラーズ公式｜ニューカッスル戦（9/15）応援アイテムに関するご案内", "url": "https://www.antlers.co.jp/blogs/news/260904uuxm4e", "accessedAt": "2026-09-13" },
         { "label": "鹿島臨海鉄道｜9/15 臨時停車のお知らせ", "url": "https://www.rintetsu.co.jp/9013.html", "accessedAt": "2026-09-13" },
         { "label": "鹿島臨海鉄道｜9/15 鹿島サッカースタジアム駅 臨時停車時刻表（PDF）", "url": "https://www.rintetsu.co.jp/wp-content/uploads/2026/09/0915.pdf", "accessedAt": "2026-09-13" },

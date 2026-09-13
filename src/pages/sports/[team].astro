@@ -210,6 +210,19 @@ const jsonLd = [
 
   <SportsMatchBoard next={nextMatch} latest={latestResult} stories={stories} guideAnchor={guide ? GUIDE_ANCHOR : undefined} />
 
+  {/* 次の試合の直前に必要なことだけを、ページ上部で先に見せる。詳細は MATCH GUIDE と個別記事 */}
+  {nextMatch && guide && guide.keyFacts.length > 0 && (
+    <section class="tm-block bp-wrap tm-keyfacts" aria-labelledby="tm-keyfacts">
+      <p class="tm-eyebrow">MATCH DAY ESSENTIALS</p>
+      <h2 id="tm-keyfacts" class="tm-title">{mdw(nextMatch.date)} {nextMatch.opponent}戦で押さえること</h2>
+      <ul class="tm-keylist">{guide.keyFacts.map((fact) => <li>{fact}</li>)}</ul>
+      <p class="tm-keylinks">
+        <a href={`#${GUIDE_ANCHOR}`}>観戦ガイドの詳細（出典つき）→</a>
+        {nextMatch.articleUrl && <a href={nextMatch.articleUrl}>この試合の観戦記事を読む →</a>}
+      </p>
+    </section>
+  )}
+
   {recentForm.length > 0 && (
     <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-form">
       <p class="tm-eyebrow">RECENT FORM</p>
@@ -358,6 +371,14 @@ const jsonLd = [
   .tm-eyebrow{color:var(--color-tide);font:700 .68rem var(--font-brand-meta);letter-spacing:.14em}
   .tm-title{margin:.5rem 0 1.4rem;font:600 clamp(1.35rem,2vw,1.75rem)/1.45 var(--font-brand-display);color:var(--color-ink);text-wrap:balance}
   .tm-empty{color:var(--color-soil);line-height:1.9;font-size:.9rem}
+
+  /* 観戦で押さえること。ボードの直下に置くため、上の余白を詰める */
+  .tm-keyfacts{padding-top:clamp(.6rem,1.5vw,1.2rem)}
+  .tm-keylist{display:grid;gap:.55rem;max-width:62rem;margin:0;padding:1.2rem 1.3rem;list-style:none;background:var(--color-white);border:1px solid var(--color-mist);border-left:3px solid var(--interior-blue,#174f99)}
+  .tm-keylist li{position:relative;padding-left:1rem;color:var(--color-ink);font-size:.9rem;line-height:1.8}
+  .tm-keylist li::before{content:'';position:absolute;left:0;top:.78em;width:5px;height:5px;background:var(--interior-blue,#174f99)}
+  .tm-keylinks{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:.9rem}
+  .tm-keylinks a{color:var(--interior-blue,#174f99);font-size:.86rem;font-weight:700}
 
   .tm-sources{margin-top:1.4rem;color:var(--color-soil);font-size:.74rem;line-height:1.8}
   .tm-sources p{font-weight:700}

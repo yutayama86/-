@@ -99,4 +99,5 @@ export const INTERNAL_LINK_LABELS: Record<string, string> = {
   '/news/ibaraki-hoshiimo-haccp-support-2026/': 'ほしいもの民間型HACCP認証取得支援（解説）',
   '/news/hitachinaka-brewers-gate-katsuta-2026/': '勝田駅前のビアフェスを地域回遊の入口に（解説）',
   '/events/ibaraki-events-september-2026/': '茨城のイベント2026年9月（利根川・大洗の花火）',
+  '/news/kashima-newcastle-jets-acle-guide-2026-09-15/': '鹿島vsニューカッスル 9/15 ACLE初戦の観戦ガイド',
 };

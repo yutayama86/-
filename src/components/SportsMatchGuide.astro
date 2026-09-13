@@ -1,0 +1,69 @@
+---
+/**
+ * MATCH GUIDE — 次の試合の観戦ガイド。見出しは使う側（チームページ）が持つ。
+ *
+ * 1行ごとに出典を付ける。確認していないことは書かず、unverified で
+ * 「まだ確認できていないこと」として読者にも見せる。
+ * 項目の中身は src/data/sports/matches/*.json の guide が持つ。
+ */
+import type { MatchGuide } from '../data/sports-schedule';
+
+interface Props {
+  guide: MatchGuide;
+}
+
+const { guide } = Astro.props;
+const fmt = (ymd: string) => {
+  const [y, m, d] = ymd.split('-').map(Number);
+  return `${y}年${m}月${d}日`;
+};
+const hostOf = (url: string) => {
+  try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
+};
+---
+
+<div class="mg">
+  <p class="mg__verified">公式情報を確認した日：<time datetime={guide.verifiedAt}>{fmt(guide.verifiedAt)}</time>。各項目の「出典」から、確認したページを開けます。日時や運用は変わることがあるため、お出かけ前に公式の発表もご確認ください。</p>
+  <div class="mg__grid">
+    {guide.sections.map((section) => (
+      <section class="mg__sec" data-key={section.key} aria-label={section.title}>
+        <h3>{section.title}</h3>
+        <ul>
+          {section.items.map((item) => (
+            <li>
+              {item.href ? <a class="mg__inner" href={item.href}>{item.text} →</a> : item.text}
+              {item.sourceUrl && (
+                <a class="mg__src" href={item.sourceUrl} target="_blank" rel="noopener noreferrer" aria-label={`出典（${hostOf(item.sourceUrl)}）`}>出典</a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+  {guide.unverified.length > 0 && (
+    <aside class="mg__todo" aria-label="まだ確認できていないこと">
+      <h3>まだ確認できていないこと</h3>
+      {guide.unverifiedNote && <p>{guide.unverifiedNote}</p>}
+      <ul>{guide.unverified.map((u) => <li>{u}</li>)}</ul>
+    </aside>
+  )}
+</div>
+
+<style>
+  .mg{display:grid;gap:1.4rem}
+  .mg__verified{max-width:var(--measure);color:var(--color-soil);font-size:.8rem;line-height:1.85}
+  .mg__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,19rem),1fr));gap:1px;background:var(--color-mist);border:1px solid var(--color-mist)}
+  .mg__sec{min-width:0;padding:1.2rem 1.2rem 1.35rem;background:var(--color-white)}
+  .mg__sec h3{margin:0 0 .75rem;font:600 1rem/1.5 var(--font-brand-display);color:var(--color-ink)}
+  .mg__sec ul{display:grid;gap:.6rem;margin:0;padding:0;list-style:none}
+  .mg__sec li{position:relative;padding-left:.9rem;color:var(--color-charcoal,var(--color-ink));font-size:.84rem;line-height:1.85}
+  .mg__sec li::before{content:'';position:absolute;left:0;top:.8em;width:4px;height:4px;background:var(--color-tide)}
+  .mg__src{margin-left:.35rem;padding:.02rem .35rem;border:1px solid var(--color-mist);color:var(--color-soil);font:700 .62rem/1.4 var(--font-brand-meta);white-space:nowrap}
+  .mg__src:hover,.mg__src:focus-visible{border-color:var(--interior-blue,#174f99);color:var(--interior-blue,#174f99)}
+  .mg__inner{font-weight:700;color:var(--interior-blue,#174f99)}
+  .mg__todo{padding:1.1rem 1.2rem;border-left:2px solid var(--color-mist);background:color-mix(in srgb,var(--color-mist) 22%,var(--color-white))}
+  .mg__todo h3{margin:0 0 .4rem;font:600 .92rem/1.5 var(--font-brand-display);color:var(--color-ink)}
+  .mg__todo p{margin:0 0 .5rem;color:var(--color-soil);font-size:.78rem;line-height:1.8}
+  .mg__todo ul{display:grid;gap:.3rem;margin:0;padding-left:1.1rem;color:var(--color-soil);font-size:.78rem;line-height:1.75}
+</style>

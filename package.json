@@ -22,7 +22,8 @@
     "seo:seal": "node scripts/seo-seal.mjs",
     "fact:guard": "node scripts/fact-guard.mjs",
     "og:glyphs": "node scripts/check-og-glyphs.mjs",
-    "og:cards": "node scripts/build-og-backdrop.mjs"
+    "og:cards": "node scripts/build-og-backdrop.mjs",
+    "sports:status": "node scripts/sports-status.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

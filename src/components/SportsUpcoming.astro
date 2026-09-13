@@ -1,0 +1,54 @@
+---
+/**
+ * UPCOMING MATCHES — 次の試合より後の日程。見出しは使う側が持つ。
+ * 年間日程のデータから、日付・時刻・会場が確定しているものだけが並ぶ。
+ */
+import { HOME_AWAY_LABEL, competitionLabel, type ResolvedMatch } from '../lib/sports';
+
+interface Props {
+  matches: ResolvedMatch[];
+}
+
+const { matches } = Astro.props;
+const TZ = { timeZone: 'Asia/Tokyo' } as const;
+const md = (d: Date) => new Intl.DateTimeFormat('ja-JP', { ...TZ, month: 'long', day: 'numeric', weekday: 'short' }).format(d);
+const iso = (d: Date) => new Intl.DateTimeFormat('en-CA', { ...TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+---
+
+{matches.length > 0 && (
+  <ol class="up">
+    {matches.map((m) => (
+      <li>
+        <p class="up__when">
+          <time datetime={iso(m.date)}>{md(m.date)}</time>
+          {m.kickoff && <span>{m.kickoff}{m.kickoffNote && `（${m.kickoffNote}）`}</span>}
+        </p>
+        <div class="up__body">
+          {competitionLabel(m) && <p class="up__comp">{competitionLabel(m)}</p>}
+          <p class="up__card"><b data-ha={m.homeAway}>{HOME_AWAY_LABEL[m.homeAway]}</b> vs {m.opponent}</p>
+          <p class="up__meta">
+            {m.venue}
+            {m.broadcast && <span>中継：{m.broadcast.join('、')}</span>}
+          </p>
+        </div>
+      </li>
+    ))}
+  </ol>
+)}
+
+<style>
+  .up{margin:0;padding:0;list-style:none;border-top:1px solid var(--color-mist)}
+  .up li{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:1.2rem;padding:1rem 0;border-bottom:1px solid var(--color-mist)}
+  .up__when{display:grid;gap:.2rem;margin:0;font:700 .86rem/1.5 var(--font-brand-meta);color:var(--color-ink);font-variant-numeric:tabular-nums}
+  .up__when span{font-weight:400;color:var(--color-soil)}
+  .up__body{display:grid;gap:.2rem;min-width:0}
+  .up__comp{margin:0;font:700 .7rem/1.6 var(--font-brand-meta);color:var(--color-tide)}
+  .up__card{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:0;font:600 1rem/1.5 var(--font-brand-display);color:var(--color-ink)}
+  .up__card b{padding:.12rem .4rem;border:1px solid currentColor;font:700 .58rem/1 var(--font-brand-meta);letter-spacing:.1em;color:var(--color-soil)}
+  .up__card b[data-ha="home"]{color:var(--interior-blue,#174f99)}
+  .up__meta{display:flex;flex-wrap:wrap;gap:.2rem 1rem;margin:0;color:var(--color-soil);font-size:.78rem;line-height:1.7}
+  @media(max-width:560px){
+    .up li{grid-template-columns:1fr;gap:.35rem}
+    .up__when{grid-auto-flow:column;justify-content:start;gap:.7rem}
+  }
+</style>

@@ -1,22 +1,27 @@
 /**
- * チームページの NEXT MATCH / LATEST RESULT を組み立てる。
+ * チームページの試合まわり（NEXT MATCH / LAST MATCH / RECENT FORM / UPCOMING）を組み立てる。
  *
  * 試合データの出どころは2つある。
- *  1. src/data/sports.ts の SPORTS_MATCHES（手で入れる。記事が無い試合用）
+ *  1. src/data/sports/matches/*.json（年間日程・結果・観戦ガイド。sports-schedule.ts で検査して読む）
  *  2. 記事frontmatterの sportsMatch（記事を書いた試合は、記事が試合データを兼ねる）
  *
- * 2を用意したのは、試合ごとに「記事URLの一覧」を手で持たないため。
- * 記事を1本足せば、その試合が自動でチームページの上部へ出る。
+ * 同じ試合が両方にあるときは、年間日程を土台にして記事側の値で上書きする。
+ * 記事を1本足せば、その試合の「記事を読む」導線が自動でチームページに出る。
  *
  * 未確認のデータは作らない。日程が無ければ NEXT MATCH は出さないし、
  * スコアが無ければ点差を書かない。空欄を埋めるための推測はしない。
  */
 import type { CollectionEntry } from 'astro:content';
 import {
-  SPORTS_MATCHES, SPORTS_TEAM_BY_SLUG, articleAnchorTeam, articleTeamSlugs,
-  type SportsMatch, type SportsTeamSlug,
+  SPORTS_TEAM_BY_SLUG, articleAnchorTeam, articleTeamSlugs,
+  type SportsTeam, type SportsTeamSlug,
 } from '../data/sports';
+import {
+  SPORTS_MATCHES, type MatchDayPlan, type MatchGuide, type SportsMatch, type SportsSource,
+} from '../data/sports-schedule';
 import { getSportsNews } from './content';
+
+type Score = { own: number; opponent: number };
 
 /** 画面に出す試合1件。記事から来たものは articleUrl と articleTitle を持つ */
 export interface ResolvedMatch {
@@ -24,10 +29,24 @@ export interface ResolvedMatch {
   date: Date;
   opponent: string;
   homeAway: 'home' | 'away' | 'neutral';
+  id?: string;
   kickoff?: string;
+  kickoffNote?: string;
+  openTime?: string;
+  openTimeNote?: string;
   competition?: string;
+  round?: string;
+  kind?: 'league' | 'cup' | 'continental';
   venue?: string;
-  score?: { own: number; opponent: number };
+  score?: Score;
+  pk?: Score;
+  broadcast?: string[];
+  officialUrl?: string;
+  recap?: string;
+  community?: string[];
+  guide?: MatchGuide;
+  matchDay?: MatchDayPlan;
+  sources?: SportsSource[];
   articleUrl?: string;
   articleTitle?: string;
 }
@@ -47,7 +66,7 @@ function mergeDefined(base: ResolvedMatch, next: ResolvedMatch): ResolvedMatch {
 const matchKey = (m: { team: string; date: Date; opponent: string }) =>
   `${m.team}|${m.date.toISOString().slice(0, 10)}|${m.opponent}`;
 
-function fromManual(entry: SportsMatch): ResolvedMatch | null {
+function fromSchedule(entry: SportsMatch): ResolvedMatch | null {
   // 中止・延期は日程としても結果としても出さない
   if (entry.status === 'cancelled' || entry.status === 'postponed') return null;
   return {
@@ -55,10 +74,24 @@ function fromManual(entry: SportsMatch): ResolvedMatch | null {
     date: new Date(entry.date),
     opponent: entry.opponent,
     homeAway: entry.homeAway,
-    kickoff: entry.startTime,
+    id: entry.id,
+    kickoff: entry.kickoff,
+    kickoffNote: entry.kickoffNote,
+    openTime: entry.openTime,
+    openTimeNote: entry.openTimeNote,
     competition: entry.competition,
+    round: entry.round,
+    kind: entry.kind,
     venue: entry.venue,
     score: entry.score,
+    pk: entry.pk,
+    broadcast: entry.broadcast.length > 0 ? entry.broadcast : undefined,
+    officialUrl: entry.officialUrl,
+    recap: entry.recap,
+    community: entry.community.length > 0 ? entry.community : undefined,
+    guide: entry.guide,
+    matchDay: entry.matchDay,
+    sources: entry.sources,
     articleUrl: entry.articleUrl,
   };
 }
@@ -108,15 +141,15 @@ function fromArticle(item: CollectionEntry<'news'>, forTeam: SportsTeamSlug): Re
 }
 
 /**
- * チームの試合を、記事側と手入力側から集めて重複を除く。
- * 同じ試合が両方にあるときは、記事のほう（読み先がある）を優先する。
+ * チームの試合を、年間日程と記事から集めて重複を除く。
+ * 同じ試合が両方にあるときは、年間日程を土台に記事側の値（読み先がある）で上書きする。
  */
 export async function getTeamMatches(team: SportsTeamSlug): Promise<ResolvedMatch[]> {
   const byKey = new Map<string, ResolvedMatch>();
 
   for (const entry of SPORTS_MATCHES) {
     if (entry.team !== team) continue;
-    const resolved = fromManual(entry);
+    const resolved = fromSchedule(entry);
     if (resolved) byKey.set(matchKey(resolved), resolved);
   }
 
@@ -134,19 +167,31 @@ export async function getTeamMatches(team: SportsTeamSlug): Promise<ResolvedMatc
   return [...byKey.values()].sort((a, b) => a.date.valueOf() - b.date.valueOf());
 }
 
-/**
- * 次の試合。基準日は「ビルドした日」。
- * 静的サイトなので、試合日を過ぎても再ビルドするまで表示は変わらない。
- * 記事を追加すればビルドが走るため、運用上はそこで更新される。
- */
+/** 基準日（ビルドした日）の0時。静的サイトなので、試合日を過ぎても再ビルドまで表示は変わらない */
+const startOfDay = (now: Date) => new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+/** 次の試合。当日の試合は、結果が入るまで「次の試合」に残す */
 export function pickNextMatch(matches: ResolvedMatch[], now = new Date()): ResolvedMatch | undefined {
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const today = startOfDay(now);
   return matches.find((m) => m.date >= today && !m.score);
 }
 
 /** 直近の結果。スコアが入っているものだけを「結果」として扱う */
 export function pickLatestResult(matches: ResolvedMatch[]): ResolvedMatch | undefined {
   return [...matches].reverse().find((m) => Boolean(m.score));
+}
+
+/** 直近の成績。結果の入った試合を古い順に最大 n 件（大会はまたいでよい。表示で大会名を添える） */
+export function pickRecentForm(matches: ResolvedMatch[], n = 5): ResolvedMatch[] {
+  return matches.filter((m) => Boolean(m.score)).slice(-n);
+}
+
+/** 今後の試合。次の試合を除いて、日付の近い順に最大 n 件 */
+export function pickUpcoming(
+  matches: ResolvedMatch[], next: ResolvedMatch | undefined, n = 5, now = new Date(),
+): ResolvedMatch[] {
+  const today = startOfDay(now);
+  return matches.filter((m) => m !== next && m.date >= today && !m.score).slice(0, n);
 }
 
 export const HOME_AWAY_LABEL: Record<ResolvedMatch['homeAway'], string> = {
@@ -162,4 +207,64 @@ export function resultLabel(match: ResolvedMatch): string | undefined {
   if (own > opponent) return '勝';
   if (own < opponent) return '敗';
   return '分';
+}
+
+/** 成績の記号。○勝ち △引き分け ●負け */
+export function formMark(match: ResolvedMatch): { mark: '○' | '△' | '●'; label: string } | undefined {
+  const r = resultLabel(match);
+  if (r === '勝') return { mark: '○', label: '勝ち' };
+  if (r === '敗') return { mark: '●', label: '負け' };
+  if (r === '分') return { mark: '△', label: '引き分け' };
+  return undefined;
+}
+
+/** PK戦の結果。「PK 4-1 勝ち」のように、自チーム側を左に書く */
+export function pkText(match: ResolvedMatch): string | undefined {
+  if (!match.pk) return undefined;
+  const won = match.pk.own > match.pk.opponent;
+  return `PK ${match.pk.own}-${match.pk.opponent} ${won ? '勝ち' : '負け'}`;
+}
+
+/** 大会名＋節。記事側の大会名に節が含まれていれば重ねない */
+export function competitionLabel(match: ResolvedMatch): string | undefined {
+  if (!match.competition) return match.round;
+  if (!match.round || match.competition.includes(match.round)) return match.competition;
+  return `${match.competition} ${match.round}`;
+}
+
+/** 成績の一覧で使う短い大会名。リーグ戦とカップ戦を見分けられることを優先する */
+export function competitionShort(match: ResolvedMatch): string {
+  const c = match.competition ?? '';
+  if (c.includes('ルヴァン')) return 'ルヴァン杯';
+  if (c.includes('天皇杯')) return '天皇杯';
+  if (c.includes('AFC') || c.includes('ACL')) return 'ACLE';
+  if (c.includes('J1')) return 'J1';
+  return match.kind === 'league' ? 'リーグ' : '杯';
+}
+
+const JST_DATE = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' });
+export const ymd = (d: Date) => JST_DATE.format(d);
+
+/**
+ * SportsEvent の構造化データ。キックオフ時刻と会場が確認できている、これからの試合だけ出す。
+ * 未確定の値は入れない（住所は確認していないので載せない）。
+ */
+export function sportsEventJsonLd(team: SportsTeam, match: ResolvedMatch): Record<string, unknown> | undefined {
+  if (!match.kickoff || !match.venue || match.score) return undefined;
+  const own = { '@type': 'SportsTeam', name: team.name };
+  const opponent = { '@type': 'SportsTeam', name: match.opponent };
+  const [homeTeam, awayTeam] = match.homeAway === 'away' ? [opponent, own] : [own, opponent];
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SportsEvent',
+    name: `${homeTeam.name} vs ${awayTeam.name}`,
+    ...(competitionLabel(match) ? { description: competitionLabel(match) } : {}),
+    startDate: `${ymd(match.date)}T${match.kickoff}:00+09:00`,
+    eventStatus: 'https://schema.org/EventScheduled',
+    sport: team.sport,
+    location: { '@type': 'Place', name: match.venue },
+    homeTeam,
+    awayTeam,
+    ...(match.officialUrl ? { url: match.officialUrl } : {}),
+  };
 }

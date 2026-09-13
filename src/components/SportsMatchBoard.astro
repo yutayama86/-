@@ -1,12 +1,14 @@
 ---
 /**
- * チームページ上部の3枚組（次の試合 / 直近の結果 / 最新の記事）。
+ * チームページ上部の3枚組（NEXT MATCH / LAST MATCH / 最新の記事）。
  *
  * 5チームとも同じ部品で出す。データが無い枠は出さない。
  * 「未定」「準備中」も書かない。分かっていないことは、黙って出さないほうが正しい。
  * 3枚とも空なら、この部品自体が何も描かない。
  */
-import { HOME_AWAY_LABEL, resultLabel, type ResolvedMatch } from '../lib/sports';
+import {
+  HOME_AWAY_LABEL, competitionLabel, pkText, resultLabel, type ResolvedMatch,
+} from '../lib/sports';
 
 interface Story {
   href: string;
@@ -19,16 +21,20 @@ interface Props {
   next?: ResolvedMatch;
   latest?: ResolvedMatch;
   stories: Story[];
+  /** 観戦ガイドの節があるときのアンカー */
+  guideAnchor?: string;
 }
 
-const { next, latest, stories } = Astro.props;
+const { next, latest, stories, guideAnchor } = Astro.props;
 const hasAnything = Boolean(next) || Boolean(latest) || stories.length > 0;
 
+const TZ = { timeZone: 'Asia/Tokyo' } as const;
 const fullDate = (d: Date) =>
-  new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' }).format(d);
+  new Intl.DateTimeFormat('ja-JP', { ...TZ, year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' }).format(d);
 const shortDate = (d: Date) =>
-  new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
-const iso = (d: Date) => d.toISOString().slice(0, 10);
+  new Intl.DateTimeFormat('ja-JP', { ...TZ, year: 'numeric', month: 'long', day: 'numeric' }).format(d);
+const iso = (d: Date) => new Intl.DateTimeFormat('en-CA', { ...TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+const withNote = (value?: string, note?: string) => (value ? (note ? `${value}（${note}）` : value) : undefined);
 ---
 
 {hasAnything && (
@@ -37,23 +43,28 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
       {next && (
         <article class="mb__card">
           <p class="mb__kicker">NEXT MATCH</p>
+          {competitionLabel(next) && <p class="mb__comp">{competitionLabel(next)}</p>}
           <p class="mb__opponent">
             <span class="mb__ha" data-ha={next.homeAway}>{HOME_AWAY_LABEL[next.homeAway]}</span>
             vs {next.opponent}
           </p>
           <dl class="mb__facts">
             <div><dt>日付</dt><dd><time datetime={iso(next.date)}>{fullDate(next.date)}</time></dd></div>
-            {next.kickoff && <div><dt>開始</dt><dd>{next.kickoff}</dd></div>}
+            {next.kickoff && <div><dt>開始</dt><dd>{withNote(next.kickoff, next.kickoffNote)}</dd></div>}
+            {next.openTime && <div><dt>開場</dt><dd>{withNote(next.openTime, next.openTimeNote)}</dd></div>}
             {next.venue && <div><dt>会場</dt><dd>{next.venue}</dd></div>}
-            {next.competition && <div><dt>大会</dt><dd>{next.competition}</dd></div>}
+            {next.broadcast && <div><dt>中継</dt><dd>{next.broadcast.join('、')}</dd></div>}
           </dl>
-          {next.articleUrl && <a class="mb__link" href={next.articleUrl}>この試合の記事 →</a>}
+          {guideAnchor
+            ? <a class="mb__link" href={`#${guideAnchor}`}>観戦情報を見る →</a>
+            : next.articleUrl && <a class="mb__link" href={next.articleUrl}>この試合の記事 →</a>}
         </article>
       )}
 
       {latest && (
         <article class="mb__card">
-          <p class="mb__kicker">LATEST RESULT</p>
+          <p class="mb__kicker">LAST MATCH</p>
+          {competitionLabel(latest) && <p class="mb__comp">{competitionLabel(latest)}</p>}
           <p class="mb__opponent">
             <span class="mb__ha" data-ha={latest.homeAway}>{HOME_AWAY_LABEL[latest.homeAway]}</span>
             vs {latest.opponent}
@@ -62,12 +73,19 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
             <p class="mb__score">
               <strong>{latest.score.own}</strong><span>-</span><strong>{latest.score.opponent}</strong>
               <em>{resultLabel(latest)}</em>
+              {pkText(latest) && <em>{pkText(latest)}</em>}
             </p>
           )}
           <dl class="mb__facts">
             <div><dt>試合日</dt><dd><time datetime={iso(latest.date)}>{shortDate(latest.date)}</time></dd></div>
             {latest.venue && <div><dt>会場</dt><dd>{latest.venue}</dd></div>}
           </dl>
+          {latest.community && (
+            <ul class="mb__tags" aria-label="この試合の企画">
+              {latest.community.map((c) => <li>{c}</li>)}
+            </ul>
+          )}
+          {latest.recap && <p class="mb__recap">{latest.recap}</p>}
           {latest.articleUrl && <a class="mb__link" href={latest.articleUrl}>試合結果を読む →</a>}
         </article>
       )}
@@ -97,21 +115,26 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 <style>
   .mb{padding-block:clamp(1.6rem,3vw,2.4rem)}
   .mb__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:1px;background:var(--color-mist);border:1px solid var(--color-mist)}
-  .mb__card{display:flex;flex-direction:column;gap:.75rem;padding:1.5rem 1.35rem;background:var(--color-white)}
+  .mb__card{display:flex;flex-direction:column;gap:.75rem;min-width:0;padding:1.5rem 1.35rem;background:var(--color-white)}
   .mb__kicker{font:700 .62rem/1 var(--font-brand-meta);letter-spacing:.16em;color:var(--color-tide)}
+  .mb__comp{font:700 .72rem/1.6 var(--font-brand-meta);color:var(--color-soil)}
   .mb__opponent{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;font:600 1.15rem/1.4 var(--font-brand-display);color:var(--color-ink)}
   .mb__ha{padding:.2rem .5rem;border:1px solid currentColor;font:700 .6rem/1 var(--font-brand-meta);letter-spacing:.1em;color:var(--color-soil)}
   .mb__ha[data-ha="home"]{color:var(--interior-blue,#174f99)}
 
-  .mb__score{display:flex;align-items:baseline;gap:.5rem;margin:0}
+  .mb__score{display:flex;align-items:baseline;flex-wrap:wrap;gap:.5rem;margin:0}
   .mb__score strong{font:600 2.1rem/1 var(--font-brand-display);color:var(--color-ink)}
   .mb__score span{color:var(--color-soil)}
   .mb__score em{margin-left:.3rem;padding:.18rem .5rem;border:1px solid var(--color-mist);font:700 .68rem/1 var(--font-brand-meta);font-style:normal;color:var(--color-soil)}
 
   .mb__facts{display:grid;gap:.4rem;margin:0}
-  .mb__facts div{display:grid;grid-template-columns:3.6rem 1fr;gap:.7rem;align-items:baseline}
+  .mb__facts div{display:grid;grid-template-columns:3.6rem minmax(0,1fr);gap:.7rem;align-items:baseline}
   .mb__facts dt{font:700 .62rem/1.6 var(--font-brand-meta);letter-spacing:.08em;color:var(--color-soil)}
   .mb__facts dd{margin:0;font-size:.84rem;line-height:1.6;color:var(--color-ink)}
+
+  .mb__tags{display:flex;flex-wrap:wrap;gap:.4rem;margin:0;padding:0;list-style:none}
+  .mb__tags li{padding:.2rem .55rem;background:color-mix(in srgb,var(--color-tide) 8%,var(--color-white));color:var(--color-tide);font-size:.72rem;font-weight:700}
+  .mb__recap{margin:0;color:var(--color-soil);font-size:.82rem;line-height:1.85}
 
   .mb__link{margin-top:auto;font-size:.78rem;font-weight:700;color:var(--interior-blue,#174f99)}
 
@@ -125,7 +148,7 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
   .mb__stories strong{font:600 .92rem/1.55 var(--font-brand-display)}
 
   @media(max-width:640px){
-    .mb__facts div{grid-template-columns:3.2rem 1fr}
+    .mb__facts div{grid-template-columns:3.2rem minmax(0,1fr)}
     .mb__score strong{font-size:1.8rem}
   }
 </style>

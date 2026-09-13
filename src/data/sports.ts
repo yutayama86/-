@@ -11,8 +11,8 @@
  *    例：ロボッツのホームタウンは水戸市の1市だけで、つくば市はマザータウン。
  *    検索結果には両者を混ぜた記述があるが、公式の区分に従う。
  *  - 試合日程・結果・順位は、確認できたものだけを入れる。外部APIの自動取得はしない。
- *    出どころは2つ：記事frontmatterの sportsMatch と、下の SPORTS_MATCHES。
- *    記事のある試合は記事側が持ち、記事の無い試合だけ SPORTS_MATCHES に手で入れる。
+ *    出どころは2つ：年間日程の src/data/sports/matches/*.json と、記事frontmatterの sportsMatch。
+ *    年間日程を土台にし、記事のある試合は記事側の値（記事URLなど）で上書きする。
  *    読み出しは lib/sports.ts の getTeamMatches() に一本化する。
  *  - 公式ロゴ・選手写真など権利の確認できない素材は使わない。テキストだけで構成する。
  */
@@ -247,34 +247,7 @@ export function primaryTowns(team: SportsTeam): SportsTownGroup | undefined {
 }
 
 /**
- * 試合の1件。将来ここへ日程・結果を入れる。
- * status で「これから」「終わった」「中止」を分け、画面側の出し分けに使う。
+ * 試合の型と年間日程は src/data/sports-schedule.ts（データは src/data/sports/matches/*.json）へ移した。
+ * ここから値を import すると循環するため、型だけを再公開する。
  */
-export interface SportsMatch {
-  team: SportsTeamSlug;
-  /** 大会・リーグ名（例：リーグ戦、カップ戦） */
-  competition: string;
-  /** 開催日 YYYY-MM-DD */
-  date: string;
-  /** 対戦相手 */
-  opponent: string;
-  homeAway: 'home' | 'away' | 'neutral';
-  venue: string;
-  /** 開始時刻 HH:mm。未定なら undefined */
-  startTime?: string;
-  /** 結果。終了した試合だけ入れる */
-  score?: { own: number; opponent: number };
-  status: 'scheduled' | 'finished' | 'cancelled' | 'postponed';
-  /** 当サイト内の関連記事URL */
-  articleUrl?: string;
-}
-
-/**
- * 記事を書いていない試合を手で入れる場所。**現時点では空**。
- * 記事のある試合は記事frontmatterの sportsMatch が持つので、ここには重複させない。
- * 日程・結果・順位は一次情報で確認できたものだけを入れる。
- *
- * 画面へ出すときは lib/sports.ts の getTeamMatches() を使う。
- * ここと記事の両方をまとめて重複を除くので、読み出し口はそちらに一本化する。
- */
-export const SPORTS_MATCHES: SportsMatch[] = [];
+export type { SportsMatch } from './sports-schedule';

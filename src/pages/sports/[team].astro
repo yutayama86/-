@@ -2,7 +2,13 @@
 /**
  * /sports/<team>/ — チームページ。5チームすべて同じ部品・同じデータ構造で作る。
  *
- * 構成：チーム紹介 / 次の試合・直近の結果・最新記事 / 記事（種類ごと）/ 地域への導線。
+ * 構成：
+ *   チーム紹介（最終更新）
+ *   ① NEXT MATCH ② LAST MATCH（＋最新記事）
+ *   ③ RECENT FORM ④ MATCH GUIDE ⑤ IBARAKI MATCH DAY ⑥ UPCOMING MATCHES
+ *   ⑦ 記事（種類ごと）/ この街のニュース / 地域への導線
+ *
+ * 試合は年間日程（src/data/sports/matches/*.json）と記事の sportsMatch から集める。
  * 記事は sportsTeam で自動的に集まる。記事URLの一覧は持たない。
  * 未確認の日程・結果・順位は出さない。データが無い枠は黙って出さない。
  * 公式ロゴ・選手写真は権利が確認できないため使わない。
@@ -12,14 +18,22 @@ import { CARD_IMAGES } from '../../data/card-images';
 import BrandBase from '../../layouts/BrandBase.astro';
 import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
 import SportsMatchBoard from '../../components/SportsMatchBoard.astro';
+import SportsRecentForm from '../../components/SportsRecentForm.astro';
+import SportsMatchGuide from '../../components/SportsMatchGuide.astro';
+import SportsMatchDay from '../../components/SportsMatchDay.astro';
+import SportsUpcoming from '../../components/SportsUpcoming.astro';
 import { breadcrumbJsonLd } from '../../lib/seo';
 import {
   SPORTS_TEAMS, SPORTS_TEAM_BY_SLUG, SPORTS_CONTENT_TYPES,
   townSlugsOf, type SportsContentType,
 } from '../../data/sports';
+import { scheduleUpdatedAt, type SportsSource } from '../../data/sports-schedule';
 import { MUNICIPALITIES } from '../../data/areas';
 import { getSportsNews, getSportsNewsByKeyword, getIndexableNews } from '../../lib/content';
-import { getTeamMatches, pickNextMatch, pickLatestResult } from '../../lib/sports';
+import {
+  getTeamMatches, pickNextMatch, pickLatestResult, pickRecentForm, pickUpcoming,
+  competitionLabel, sportsEventJsonLd,
+} from '../../lib/sports';
 
 export const getStaticPaths = (() => SPORTS_TEAMS.map((team) => ({ params: { team: team.slug } }))) satisfies GetStaticPaths;
 
@@ -27,10 +41,28 @@ const { team: slug } = Astro.params;
 const team = SPORTS_TEAM_BY_SLUG[slug as keyof typeof SPORTS_TEAM_BY_SLUG];
 if (!team) return Astro.redirect('/404');
 
-// 試合は記事frontmatterと手入力の両方から集める（lib/sports.ts）
+// 試合は年間日程と記事frontmatterの両方から集める（lib/sports.ts）
 const matches = await getTeamMatches(team.slug);
 const nextMatch = pickNextMatch(matches);
 const latestResult = pickLatestResult(matches);
+const recentForm = pickRecentForm(matches, 5);
+const upcoming = pickUpcoming(matches, nextMatch, 5);
+const guide = nextMatch?.guide;
+const matchDay = nextMatch?.matchDay;
+const GUIDE_ANCHOR = 'match-guide';
+
+/** データを公式情報で確認・更新した日。ビルド日ではない（更新していない日に更新したと見せない） */
+const updatedAt = scheduleUpdatedAt(team.slug);
+const fmtYmd = (ymd: string) => {
+  const [y, m, d] = ymd.split('-').map(Number);
+  return `${y}年${m}月${d}日`;
+};
+
+// 日程・結果の出典。ページに出した試合のぶんだけ、重複を除いて並べる
+const shownMatches = [nextMatch, latestResult, ...recentForm, ...upcoming].filter((m): m is NonNullable<typeof m> => Boolean(m));
+const scheduleSources = [...new Map(
+  shownMatches.flatMap((m) => m.sources ?? []).map((s): [string, SportsSource] => [s.url, s])
+).values()];
 
 // sportsTeam で分類された記事。ChatGPTから追加されるぶんはここに入る。
 const tagged = await getSportsNews(team.slug);
@@ -118,6 +150,19 @@ const crumbs: Crumb[] = [
 ];
 const pageUrl = new URL(`/sports/${team.slug}/`, Astro.site).href;
 
+/**
+ * title は試合ごとに変えない（毎節変わると検索結果が安定しない）。
+ * 試合単体の検索には、次戦を入れた description と、ガイドの見出しで答える。
+ * 試合データの無いチームは従来の title・description のまま。
+ */
+const mdw = (d: Date) => new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'long', day: 'numeric', weekday: 'short' }).format(d);
+const pageTitle = updatedAt
+  ? `${team.name}｜次の試合・結果・観戦ガイド｜イバトコ`
+  : `${team.name}｜試合と観戦、その周りのこと｜イバトコ`;
+const pageDescription = nextMatch
+  ? `${team.name}の次の試合は${mdw(nextMatch.date)}${nextMatch.kickoff ? ` ${nextMatch.kickoff}` : ''}、${competitionLabel(nextMatch) ? `${competitionLabel(nextMatch)}の` : ''}${nextMatch.opponent}戦${nextMatch.venue ? `（${nextMatch.venue}）` : ''}。直近の結果と今後の日程${guide ? '、チケットやアクセスなどの観戦ガイド' : ''}を、公式情報で確かめてまとめています。`
+  : `${team.name}（${team.sport}）に関する記事、試合の情報、観戦と遠征の手引きをまとめています。${team.venue ? `本拠地は${team.venue}。` : ''}確かめられたことだけを載せます。`;
+
 const jsonLd = [
   breadcrumbJsonLd(crumbs, Astro.site),
   {
@@ -126,13 +171,18 @@ const jsonLd = [
     name: `${team.name}｜イバトコ`,
     url: pageUrl,
     description: team.summary,
+    ...(updatedAt ? { dateModified: `${updatedAt}T00:00:00+09:00` } : {}),
   },
+  // これからの試合のうち、キックオフ時刻と会場が確定しているものだけ
+  ...[nextMatch, ...upcoming]
+    .map((m) => (m ? sportsEventJsonLd(team, m) : undefined))
+    .filter((ld): ld is Record<string, unknown> => Boolean(ld)),
 ];
 ---
 
 <BrandBase
-  title={`${team.name}｜試合と観戦、その周りのこと｜イバトコ`}
-  description={`${team.name}（${team.sport}）に関する記事、試合の情報、観戦と遠征の手引きをまとめています。${team.venue ? `本拠地は${team.venue}。` : ''}確かめられたことだけを載せます。`}
+  title={pageTitle}
+  description={pageDescription}
   jsonLd={jsonLd}
 >
   <header class="tm-head bp-wrap">
@@ -147,12 +197,58 @@ const jsonLd = [
         {team.venue && <div><dt>本拠地</dt><dd>{team.venue}</dd></div>}
       </dl>
     )}
+    {updatedAt && (
+      <p class="tm-updated">
+        <strong>最終更新：<time datetime={updatedAt}>{fmtYmd(updatedAt)}</time></strong>
+        <span>試合の前後に公式情報を確認し、次の試合・結果・観戦ガイドを更新しています。</span>
+      </p>
+    )}
     {team.basicsPending && (
       <p class="tm-pending">本拠地の会場など、公式で確認できていない基本情報があります。確認できしだい追記します。確認できていないことは書きません。</p>
     )}
   </header>
 
-  <SportsMatchBoard next={nextMatch} latest={latestResult} stories={stories} />
+  <SportsMatchBoard next={nextMatch} latest={latestResult} stories={stories} guideAnchor={guide ? GUIDE_ANCHOR : undefined} />
+
+  {recentForm.length > 0 && (
+    <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-form">
+      <p class="tm-eyebrow">RECENT FORM</p>
+      <h2 id="tm-form" class="tm-title">直近の成績（公式戦{recentForm.length}試合）</h2>
+      <SportsRecentForm matches={recentForm} />
+    </section>
+  )}
+
+  {guide && (
+    <section id={GUIDE_ANCHOR} class="tm-block bp-wrap bp-section" aria-labelledby="tm-guide">
+      <p class="tm-eyebrow">MATCH GUIDE</p>
+      <h2 id="tm-guide" class="tm-title">{guide.title}</h2>
+      <SportsMatchGuide guide={guide} />
+    </section>
+  )}
+
+  {matchDay && (
+    <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-matchday">
+      <p class="tm-eyebrow">IBARAKI MATCH DAY</p>
+      <h2 id="tm-matchday" class="tm-title">{matchDay.title}</h2>
+      <SportsMatchDay plan={matchDay} />
+    </section>
+  )}
+
+  {upcoming.length > 0 && (
+    <section class="tm-block bp-wrap bp-section" aria-labelledby="tm-upcoming">
+      <p class="tm-eyebrow">UPCOMING MATCHES</p>
+      <h2 id="tm-upcoming" class="tm-title">今後の試合</h2>
+      <SportsUpcoming matches={upcoming} />
+      {scheduleSources.length > 0 && (
+        <div class="tm-sources">
+          <p>日程・結果・観戦情報の出典</p>
+          <ul>{scheduleSources.map((s) => (
+            <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></li>
+          ))}</ul>
+        </div>
+      )}
+    </section>
+  )}
 
   {sections.map((section) => (
     <section class="tm-block bp-wrap bp-section">
@@ -249,6 +345,10 @@ const jsonLd = [
   .tm-facts dt{font:700 .66rem var(--font-brand-meta);letter-spacing:.12em;color:var(--color-tide)}
   .tm-facts dd{margin:0;font:600 1rem var(--font-brand-display);color:var(--color-ink)}
   .tm-pending{max-width:var(--measure);margin-top:1.4rem;padding:.9rem 1.1rem;border-left:2px solid var(--color-mist);color:var(--color-soil);font-size:.8rem;line-height:1.85}
+  /* 最終更新。見出し内の他の段落（.tm-head>p）より詳細度を上げて、行間と色を固定する */
+  .tm-head>p.tm-updated{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem .9rem;margin-top:1.4rem;font-size:.8rem;line-height:1.7}
+  .tm-updated strong{font:700 .82rem var(--font-brand-meta);color:var(--color-ink);font-variant-numeric:tabular-nums}
+  .tm-updated span{color:var(--color-soil)}
 
   /*
    * 節の見出し。以前は 2.45rem の明朝が1件のリンクの上に載っていて、
@@ -256,17 +356,13 @@ const jsonLd = [
    * 中身のカードに主役を渡す。
    */
   .tm-eyebrow{color:var(--color-tide);font:700 .68rem var(--font-brand-meta);letter-spacing:.14em}
-  .tm-title{margin:.5rem 0 1.4rem;font:600 clamp(1.35rem,2vw,1.75rem)/1.45 var(--font-brand-display);color:var(--color-ink)}
+  .tm-title{margin:.5rem 0 1.4rem;font:600 clamp(1.35rem,2vw,1.75rem)/1.45 var(--font-brand-display);color:var(--color-ink);text-wrap:balance}
   .tm-empty{color:var(--color-soil);line-height:1.9;font-size:.9rem}
 
-
-  .tm-matches{list-style:none;padding:0;border-top:1px solid var(--color-mist)}
-  .tm-matches li{display:grid;gap:.3rem;padding:1.1rem 0;border-bottom:1px solid var(--color-mist)}
-  .tm-date{font:.74rem var(--font-brand-meta);color:var(--color-tide)}
-  .tm-matches strong{font:600 1.05rem var(--font-brand-display);color:var(--color-ink)}
-  .tm-meta{color:var(--color-soil);font-size:.78rem}
-  .tm-matches a{font-size:.8rem;font-weight:700;color:var(--interior-blue,#174f99)}
-
+  .tm-sources{margin-top:1.4rem;color:var(--color-soil);font-size:.74rem;line-height:1.8}
+  .tm-sources p{font-weight:700}
+  .tm-sources ul{display:flex;flex-wrap:wrap;gap:.2rem 1.1rem;margin:.3rem 0 0;padding:0;list-style:none}
+  .tm-sources a{color:var(--color-soil);text-decoration:underline;text-underline-offset:.15em}
 
   .tm-lead{max-width:var(--measure);margin-bottom:1.6rem;color:var(--color-soil);font-size:.86rem;line-height:1.9}
   .tm-towns{margin-bottom:1.8rem}

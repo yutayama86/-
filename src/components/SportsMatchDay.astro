@@ -1,0 +1,59 @@
+---
+/**
+ * IBARAKI MATCH DAY — 観戦＋地域回遊のモデルコース。見出しは使う側が持つ。
+ *
+ * 時刻は公式に確認できたもの（開場・キックオフ・施設の受付時間など）だけを軸にする。
+ * 移動時間や店の営業は、確認できていなければ書かない。書けなかったことは cautions に残す。
+ */
+import type { MatchDayPlan } from '../data/sports-schedule';
+
+interface Props {
+  plan: MatchDayPlan;
+}
+
+const { plan } = Astro.props;
+---
+
+<div class="md">
+  <p class="md__lead">{plan.lead}</p>
+  <ol class="md__steps">
+    {plan.steps.map((step) => (
+      <li>
+        <span class="md__time">{step.time}</span>
+        <div class="md__body">
+          <strong>{step.title}</strong>
+          <p>
+            {step.detail}
+            {step.href && <a class="md__inner" href={step.href}>詳しく →</a>}
+            {step.sourceUrl && <a class="md__src" href={step.sourceUrl} target="_blank" rel="noopener noreferrer">出典</a>}
+          </p>
+        </div>
+      </li>
+    ))}
+  </ol>
+  {plan.cautions.length > 0 && (
+    <ul class="md__cautions">{plan.cautions.map((c) => <li>{c}</li>)}</ul>
+  )}
+</div>
+
+<style>
+  .md{display:grid;gap:1.3rem}
+  .md__lead{max-width:var(--measure);color:var(--color-soil);font-size:.88rem;line-height:1.95}
+  .md__steps{position:relative;display:grid;gap:0;margin:0;padding:0;list-style:none}
+  .md__steps li{position:relative;display:grid;grid-template-columns:5.2rem minmax(0,1fr);gap:1.1rem;padding:0 0 1.35rem}
+  .md__steps li::before{content:'';position:absolute;left:5.85rem;top:.55rem;bottom:-.2rem;width:1px;background:var(--color-mist)}
+  .md__steps li:last-child::before{display:none}
+  .md__steps li::after{content:'';position:absolute;left:5.6rem;top:.35rem;width:.55rem;height:.55rem;border:2px solid var(--interior-blue,#174f99);border-radius:50%;background:var(--color-white)}
+  .md__time{padding-top:.1rem;font:700 .9rem/1.4 var(--font-brand-meta);color:var(--interior-blue,#174f99);font-variant-numeric:tabular-nums;text-align:right}
+  .md__body{padding-left:1.1rem}
+  .md__body strong{display:block;font:600 1rem/1.5 var(--font-brand-display);color:var(--color-ink)}
+  .md__body p{margin:.3rem 0 0;color:var(--color-soil);font-size:.84rem;line-height:1.85}
+  .md__inner{margin-left:.35rem;font-weight:700;color:var(--interior-blue,#174f99)}
+  .md__src{margin-left:.35rem;padding:.02rem .35rem;border:1px solid var(--color-mist);color:var(--color-soil);font:700 .62rem/1.4 var(--font-brand-meta);white-space:nowrap}
+  .md__cautions{display:grid;gap:.35rem;max-width:var(--measure);margin:0;padding:.9rem 1.1rem .9rem 2rem;border-left:2px solid var(--color-mist);color:var(--color-soil);font-size:.78rem;line-height:1.8}
+  @media(max-width:560px){
+    .md__steps li{grid-template-columns:4.2rem minmax(0,1fr);gap:.8rem}
+    .md__steps li::before{left:4.55rem}
+    .md__steps li::after{left:4.3rem}
+  }
+</style>

@@ -1,0 +1,71 @@
+---
+/**
+ * RECENT FORM — 直近の成績（○△●）。見出しは使う側（チームページ）が持つ。
+ *
+ * 大会が混ざるので、1試合ずつ大会の短い名前を添える。リーグ戦とカップ戦を混同させない。
+ * PK戦は、90分（延長を含む）の結果＝引き分けで記号を付け、PKの結果を併記する。
+ */
+import {
+  HOME_AWAY_LABEL, competitionLabel, competitionShort, formMark, pkText, type ResolvedMatch,
+} from '../lib/sports';
+
+interface Props {
+  matches: ResolvedMatch[];
+}
+
+const { matches } = Astro.props;
+const TZ = { timeZone: 'Asia/Tokyo' } as const;
+const md = (d: Date) => new Intl.DateTimeFormat('ja-JP', { ...TZ, month: 'numeric', day: 'numeric', weekday: 'short' }).format(d);
+const iso = (d: Date) => new Intl.DateTimeFormat('en-CA', { ...TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+const hasPk = matches.some((m) => m.pk);
+---
+
+{matches.length > 0 && (
+  <div class="rf">
+    <p class="rf__marks" aria-hidden="true">
+      {matches.map((m) => <span data-r={formMark(m)?.label}>{formMark(m)?.mark}</span>)}
+    </p>
+    <ol class="rf__list">
+      {matches.map((m) => (
+        <li>
+          <span class="rf__mark" data-r={formMark(m)?.label}>
+            {formMark(m)?.mark}<span class="rf__sr">{formMark(m)?.label}</span>
+          </span>
+          <span class="rf__body">
+            <span class="rf__meta">
+              <time datetime={iso(m.date)}>{md(m.date)}</time>
+              <em title={competitionLabel(m)}>{competitionShort(m)}{m.round && ` ${m.round}`}</em>
+              <b>{HOME_AWAY_LABEL[m.homeAway]}</b>
+            </span>
+            <strong>vs {m.opponent}</strong>
+          </span>
+          <span class="rf__score">
+            {m.score && `${m.score.own}-${m.score.opponent}`}
+            {pkText(m) && <small>{pkText(m)}</small>}
+          </span>
+        </li>
+      ))}
+    </ol>
+    <p class="rf__note">左（上）から古い順。○勝ち　△引き分け　●負け。スコアは左が自チーム。{hasPk && 'PK戦の試合は、120分の結果を引き分けとして記号を付け、PK戦の結果を併記しています。'}</p>
+  </div>
+)}
+
+<style>
+  .rf{display:grid;gap:1.1rem}
+  .rf__marks{display:flex;gap:.45rem;margin:0;font:600 1.6rem/1 var(--font-brand-display)}
+  .rf__marks span,.rf__mark{color:var(--color-soil)}
+  .rf__marks span[data-r="勝ち"],.rf__mark[data-r="勝ち"]{color:var(--interior-blue,#174f99)}
+  .rf__marks span[data-r="負け"],.rf__mark[data-r="負け"]{color:var(--color-ink)}
+  .rf__list{margin:0;padding:0;list-style:none;border-top:1px solid var(--color-mist)}
+  .rf__list li{display:grid;grid-template-columns:2rem minmax(0,1fr) auto;align-items:center;gap:.9rem;padding:.8rem 0;border-bottom:1px solid var(--color-mist)}
+  .rf__mark{font:600 1.25rem/1 var(--font-brand-display);text-align:center}
+  .rf__sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .rf__body{display:grid;gap:.2rem;min-width:0}
+  .rf__meta{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .6rem;font:.7rem var(--font-brand-meta);color:var(--color-soil)}
+  .rf__meta em{font-style:normal;font-weight:700;color:var(--color-tide)}
+  .rf__meta b{padding:.08rem .35rem;border:1px solid var(--color-mist);font-size:.6rem;letter-spacing:.08em}
+  .rf__body strong{font:600 .98rem/1.5 var(--font-brand-display);color:var(--color-ink)}
+  .rf__score{display:grid;justify-items:end;gap:.15rem;font:600 1.1rem/1 var(--font-brand-display);color:var(--color-ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rf__score small{font:700 .62rem/1 var(--font-brand-meta);color:var(--color-soil)}
+  .rf__note{color:var(--color-soil);font-size:.74rem;line-height:1.8}
+</style>

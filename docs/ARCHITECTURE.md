@@ -5,7 +5,7 @@
 > **⚠️ このファイルに認証情報は含めていません。**
 > APIキー・パスワードの類は絶対にここへ書かないでください。第三者に渡す前提のファイルです。
 
-最終更新：2026年9月1日
+最終更新：2026年9月13日
 
 ---
 
@@ -15,7 +15,8 @@
 | --- | --- |
 | サイト名 | シクミベース |
 | 公開URL | https://shikumi-base.com |
-| 目的 | 住宅リフォーム会社向け「リフォーム反響OS 30」と有料診断の適格問い合わせを獲得する反響営業型サイト |
+| 目的 | 中小企業・地域企業の集客・営業・業務・発信・組織を再現可能な仕組みに変える事業ブランドとして、仕組み化の相談を獲得する反響営業型サイト |
+| 廃止済み | 旧リフォーム特化の商品・診断・価格・URL（`/service/reform-lead-os/`、`/diagnosis/reform-lead/`）。記事・CTA・生成プロンプトで使用しない |
 | 運営 | 山野辺 雄太（個人事業。**法人ではない**） |
 | リポジトリ | https://github.com/yutayama86/home |
 | ローカル | `~/Desktop/shikumi-base` |
@@ -81,9 +82,7 @@ shikumi-base/
 │   │   ├── case/index.astro
 │   │   ├── case/[slug].astro
 │   │   ├── service/index.astro
-│   │   ├── service/reform-lead-os.astro
 │   │   ├── service/[id].astro
-│   │   ├── diagnosis/reform-lead.astro
 │   │   ├── contact/index.astro
 │   │   └── contact/thanks.astro
 │   │
@@ -125,8 +124,12 @@ shikumi-base/
 ├── scripts/
 │   ├── quality-check.mjs     記事の品質ゲート（CIで実行）
 │   ├── daily-growth.mjs      改善対象の自動判定＋レポート
-│   ├── generate-article.mjs  記事の公開候補生成（Claude API）
+│   ├── select-daily-topic.mjs 日次の記事テーマ選定（仕組み化テーマの候補）
+│   ├── generate-article.mjs  記事プロンプト作成と公開候補の保存
+│   ├── infer-article.mjs     Cloudflare Workers AI で記事を生成（2回：執筆＋事実監査）
+│   ├── seo-audit.mjs         sitemap・canonical・noindex の監査
 │   └── lib/
+│       ├── brand-guard.mjs   生成プロンプトの最上位制約と旧リフォーム文脈の検出（生成・品質ゲートで共用）
 │       ├── gsc.mjs           Search Console API クライアント
 │       └── ga4.mjs           GA4 Data API クライアント
 │
@@ -238,7 +241,7 @@ draft: false                 # true の間は公開されない
 ```
 記事・サービスページのCTA（data-cta 属性つき）
   ↓
-/contact/  →  最初の入力で contact_form_start
+/contact/  （フォーム開始イベントは現在未実装）
   ↓
 POST /api/contact  →  Cloudflare Pages Functions
   ↓
@@ -246,10 +249,10 @@ Cloudflare Turnstile で正規の操作かを検証
   ↓
 Resend 経由で info@shikumi-base.com へ送信
   ↓
-/contact/thanks/  （generate_lead）
+/contact/thanks/  （送信完了イベントは現在未実装）
 ```
 
-`?topic=reform-audit` または `?topic=reform-os` の場合だけ、会社サイトURL、電話番号、事業区分、月間反響数、平均工事単価、過去90日の営業数字、責任者参加の確認項目を表示します。サーバー側でも同じ項目を必須検証します。
+`?topic=` の値（`system` / `web` / `sns` / `ai-dx` / `local` / `other`）がフォームの相談種別に初期反映されます。
 
 ### 設定ファイル
 
@@ -381,14 +384,10 @@ Search Console（ドメインプロパティ `shikumi-base.com`）と連携済�
 | イベント | 発火タイミング |
 | --- | --- |
 | `cta_click` | CTAクリック（`data-cta` に設置場所、`data-cta-topic` に相談内容） |
-| `contact_form_start` | 問い合わせフォームへの最初の入力 |
-| `generate_lead` | 送信成功 |
-| `form_error` | 送信失敗 |
-| `view_offer` | 主力商品・有料診断ページの表示 |
-| `diagnosis_form_start` | 見積フォロー漏れ診断フォームへの最初の入力 |
-| `diagnosis_application` | 見積フォロー漏れ診断の送信成功 |
 
-氏名、会社名、メールアドレス、電話番号、会社サイトURLはGA4へ送りません。事業区分や反響数帯など、適合判定に使う区分値だけをイベントパラメータへ送ります。
+> `contact_form_start` / `generate_lead` / `form_error` は、2026-09-13時点のフォーム実装から外れており発火しません。GA4の「フォーム開始0・問い合わせ完了0」は未計測の可能性があります。
+
+氏名、会社名、メールアドレスなどの個人情報はGA4へ送りません。
 
 ---
 
@@ -468,12 +467,9 @@ Search Console が未設定の期間は、内部リンク数とカテゴリご�
 /case/ibatoco/
 
 /service/
-/service/reform-lead-os/  リフォーム反響OS 30
-/service/web/             Web改善・制作
-/service/sns/             SNS運用・仕組み化
-/service/ai-dx/           AI・業務改善
-
-/diagnosis/reform-lead/   見積フォロー漏れ診断
+/service/web/             集客・営業の仕組み
+/service/sns/             発信の仕組み
+/service/ai-dx/           業務・改善の仕組み
 ```
 
 ---

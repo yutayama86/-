@@ -1,8 +1,8 @@
 # シクミベース
 
-茨城・近隣の住宅リフォーム会社向けに、問い合わせ対応、案件管理、見積フォローを仕組み化する事業ブランド「シクミベース」の公式サイトです。
+中小企業・地域企業の集客・営業・業務・発信・組織を、属人的な頑張りではなく再現可能な仕組みに変える事業ブランド「シクミベース」の公式サイトです。
 
-主力商品は `リフォーム反響OS 30`。導入前商品は税別55,000円の `見積フォロー漏れ診断` です。
+Web・SNS・AI・SEOは商品そのものではなく、仕組みを実装する手段として扱います。特定業界向けの商品・固定価格のパッケージは提供していません（旧リフォーム特化の商品・診断・URLは廃止済み）。
 
 ## 現在の位置づけ
 
@@ -35,8 +35,6 @@ src/
   content.config.ts       記事のスキーマ。満たさない記事はビルドが通らない
   data/taxonomy.ts        カテゴリとサービスの定義（ナビ・CTA・構造化データの元）
   pages/                  ルーティング
-    service/reform-lead-os.astro   主力商品ページ
-    diagnosis/reform-lead.astro    導入前診断ページ
   layouts/                BaseLayout / PageLayout / ArticleLayout
   components/             共通UI
   styles/global.css       デザイントークンと記事本文のスタイル
@@ -92,13 +90,12 @@ npm run verify   # 型チェック → ビルド → 品質チェック
 ## 問い合わせ導線
 
 サイト内の `/contact/` にフォームを持ち、送信は `functions/api/contact.ts` が受けます。
-フォーム開始（`contact_form_start`）と送信完了（`generate_lead`）をGA4で計測できます。見積フォロー漏れ診断では、`diagnosis_form_start` と `diagnosis_application` も計測します。
+フォームにはCloudflare Turnstileを使います。フォーム開始・送信完了のGA4イベントは現在実装されていません（2026-09-13確認）。
 
 CTAは設置場所ごとに `data-cta` を持ち、クリックが `cta_click` として記録されます。
 どの導線が問い合わせにつながったかを、GA4で追えます。
 
-相談内容は `?topic=` で引き継がれ、フォームの選択肢に初期反映されます。
-`reform-audit` / `reform-os` の場合だけ、事業区分、月間反響数、平均工事単価、過去90日の営業数字、責任者参加などの適合確認項目を表示します。個人情報はGA4へ送信しません。
+相談内容は `?topic=` で引き継がれ、フォームの選択肢に初期反映されます（`system` / `web` / `sns` / `ai-dx` / `local` / `other`）。個人情報はGA4へ送信しません。
 
 ## Deployment
 

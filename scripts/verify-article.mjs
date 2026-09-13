@@ -43,8 +43,14 @@ const exists = async (p) => { try { await access(p); return true; } catch { retu
 /** タグ直打ちを避け、属性が挟まっても一致する形にする */
 const tag = (name, attrs = '') =>
   new RegExp(`<${name}\\b[^>]*${attrs}[^>]*>([\\s\\S]*?)</${name}>`, 'i');
+/**
+ * content の値は、開いた引用符と同じ引用符で閉じるまで読む。
+ * 以前は ["']([^"']*) だったため、値にアポストロフィを含む description
+ * （「BREWERS' GATE HITACHINAKA」など）がそこで切れ、実際は123字でも「51字」と出た。
+ * これだと180字を超えていても短く読めてしまい、範囲外を見逃す。
+ */
 const meta = (key, kind = 'name') =>
-  new RegExp(`<meta\\s+${kind}=["']${key}["']\\s+content=["']([^"']*)["']`, 'i');
+  new RegExp(`<meta\\s+${kind}=["']${key}["']\\s+content=["']((?:(?<=")[^"]*|(?<=')[^']*))["']`, 'i');
 
 console.log(`\n\x1b[1m記事の検証: ${slug}\x1b[0m`);
 

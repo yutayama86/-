@@ -84,10 +84,16 @@ const parseSubmission = async (request: Request): Promise<Submission | null> => 
     return isPlainObject(parsed) ? stringRecord(parsed) : null;
   }
 
-  if (
-    contentType.includes('application/x-www-form-urlencoded') ||
-    contentType.includes('multipart/form-data')
-  ) {
+  // フォームはURLエンコードで送る。Workersの formData() に依存せず、標準の URLSearchParams で読む。
+  if (contentType.includes('application/x-www-form-urlencoded')) {
+    const parsed: Record<string, unknown> = {};
+    new URLSearchParams(raw).forEach((item, key) => {
+      parsed[key] = item;
+    });
+    return stringRecord(parsed);
+  }
+
+  if (contentType.includes('multipart/form-data')) {
     try {
       const form = await new Response(raw, {
         headers: { 'Content-Type': contentType },

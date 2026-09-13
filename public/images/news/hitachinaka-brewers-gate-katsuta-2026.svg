@@ -13,9 +13,9 @@
     <polygon points="762,154 774,160 762,166" fill="#315c68"/>
 
     <circle cx="104" cy="160" r="16" fill="#a63f32"/>
-    <circle cx="346" cy="160" r="11" fill="none" stroke="#315c68" stroke-width="2.5"/>
-    <circle cx="566" cy="160" r="11" fill="none" stroke="#315c68" stroke-width="2.5"/>
-    <circle cx="786" cy="160" r="11" fill="none" stroke="#315c68" stroke-width="2.5"/>
+    <circle cx="346" cy="160" r="11" fill="#f6f2e9" stroke="#315c68" stroke-width="2.5"/>
+    <circle cx="566" cy="160" r="11" fill="#f6f2e9" stroke="#315c68" stroke-width="2.5"/>
+    <circle cx="786" cy="160" r="11" fill="#f6f2e9" stroke="#315c68" stroke-width="2.5"/>
 
     <text x="104" y="206" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">勝田駅</text>
     <text x="346" y="206" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">会場</text>

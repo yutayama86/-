@@ -328,11 +328,9 @@ if (ga4Data) {
   lines.push(`  ユーザー: ${current.activeUsers} ${formatDelta(current.activeUsers, previous.activeUsers)}`);
   lines.push(`  セッション: ${current.sessions} ${formatDelta(current.sessions, previous.sessions)}`);
   lines.push(`  表示ページ数: ${current.screenPageViews} ${formatDelta(current.screenPageViews, previous.screenPageViews)}`);
-  lines.push(`  商品・診断ページ表示: ${event.view_offer}`);
   lines.push(`  CTAクリック: ${event.cta_click}（セッション比 ${ctaRate.toFixed(1)}%）`);
   lines.push(`  フォーム開始: ${event.contact_form_start}（CTA比 ${formRate.toFixed(1)}%）`);
   lines.push(`  問い合わせ完了: ${event.generate_lead}（開始比 ${leadRate.toFixed(1)}%）`);
-  lines.push(`  診断フォーム開始: ${event.diagnosis_form_start} / 診断申込完了: ${event.diagnosis_application}`);
   lines.push(`  フォームエラー: ${event.form_error}`);
 
   if (ga4Data.topPages.length > 0) {

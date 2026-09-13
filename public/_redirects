@@ -4,3 +4,14 @@
 # トップページのHTMLが 200 で返ってしまう。Search Console に過去この URL が
 # 登録されており、HTMLを渡し続けることになるため、正しいサイトマップへ送る。
 /sitemap.xml  /sitemap-index.xml  301
+
+# 廃止した旧リフォーム特化ページ。Pagesのフォールバックでトップページが200で返らないよう、
+# 後継の支援一覧へ恒久転送する。
+/service/reform-lead-os/  /service/  301
+/service/reform-lead-os   /service/  301
+/diagnosis/reform-lead/   /service/  301
+/diagnosis/reform-lead    /service/  301
+
+# 記事の内容を汎用化した際にslugを変更したため、旧URLの評価を引き継ぐ。
+/knowledge/shikumika/renovation-inquiry-management/  /knowledge/shikumika/inquiry-management-systemization/  301
+/knowledge/shikumika/renovation-inquiry-management   /knowledge/shikumika/inquiry-management-systemization/  301

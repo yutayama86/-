@@ -3,6 +3,7 @@ import PageLayout from '../layouts/PageLayout.astro';
 import { site, contact } from '../site.config';
 
 const updated = '2026年9月1日';
+const revised = '2026年9月13日';
 ---
 
 <PageLayout
@@ -23,7 +24,7 @@ const updated = '2026年9月1日';
       <p>当サイトでは、次の情報を取得します。</p>
       <ul>
         <li>
-          <strong>お問い合わせフォームに入力された情報</strong>：ご相談の種類、お名前、会社名・屋号、メールアドレス、ご相談内容。診断・反響OSへのお申し込みでは、会社サイトURL、電話番号、事業区分、月間反響数・平均工事単価の区分、営業数字の確認可否、責任者の参加可否
+          <strong>お問い合わせフォームに入力された情報</strong>：ご相談の種類、お名前、会社名・屋号、メールアドレス、WebサイトURL（任意）、ご相談内容
         </li>
         <li>
           <strong>アクセスに関する情報</strong>：閲覧されたページ、参照元、利用ブラウザ・OS、おおよその地域、滞在時間など
@@ -143,7 +144,7 @@ const updated = '2026年9月1日';
 
       <hr />
 
-      <p class="updated">制定日：{updated}</p>
+      <p class="updated">制定日：{updated}<br />最終改定日：{revised}</p>
     </div>
   </div>
 </PageLayout>

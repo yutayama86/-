@@ -15,13 +15,10 @@ import { createSign } from 'node:crypto';
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const SCOPE = 'https://www.googleapis.com/auth/analytics.readonly';
 const TRACKED_EVENTS = [
-  'view_offer',
   'cta_click',
   'contact_form_start',
   'generate_lead',
   'form_error',
-  'diagnosis_form_start',
-  'diagnosis_application',
 ];
 
 const base64url = (input) =>

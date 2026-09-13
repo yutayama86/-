@@ -3,6 +3,7 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { BRAND_POSITION, BRAND_PRIME_DIRECTIVE, findLegacyTerms } from './lib/brand-guard.mjs';
 
 function arg(name) {
   const index = process.argv.indexOf(`--${name}`);
@@ -33,8 +34,10 @@ if (!accountId || !apiToken) {
 const prompt = readFileSync(promptFile, 'utf-8');
 const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/v1/chat/completions`;
 
-const system =
-  'あなたは住宅リフォーム会社の反響対応を理解する日本語BtoB編集者です。一般論、同語反復、未検証の効果断定を排し、与えられた事実だけで完成原稿を書いてください。';
+const system = `${BRAND_PRIME_DIRECTIVE}
+
+あなたは、中小企業・地域企業の仕組み化を扱う日本語BtoB編集者です。${BRAND_POSITION}
+特定の業界向けの記事にせず、一般論、同語反復、未検証の効果断定を排し、与えられた事実だけで完成原稿を書いてください。`;
 
 async function infer(messages) {
   const response = await fetch(endpoint, {
@@ -80,17 +83,16 @@ try {
       role: 'user',
       content: `上の原稿を事実監査し、Markdown全文をリライトしてください。
 
-- リフォーム反響OS 30は既製SaaSや一括管理ツールではなく、対象フロー1本を実装する支援商品です。
-- 明示されていない画面、連携先、割り振り方法、通知時刻、対応期限、金額基準、問い合わせ件数基準を削除してください。
-- 見積後フォローの間隔・文面・停止条件は「設計時に会社ごとに決める」としてください。
-- 税別55,000円の見積フォロー漏れ診断を、無料・無料診断と表現してはいけません。
-- 診断費は実装契約時に実装費から控除します。「別途請求は発生しない」とは書かないでください。
+- 最上位制約を再確認してください: ${BRAND_PRIME_DIRECTIVE}
+- 特定の業界を前提にした業務フロー、商品名、価格、期間、回数、件数の約束が含まれていれば削除し、多くの中小企業・地域企業に共通する業務の説明へ置き換えてください。
+- Web・SNS・AI・SEOを商品そのものとして売り込まず、仕組みを実装する手段として書いてください。
+- 明示されていない画面、連携先、割り振り方法、通知時刻、対応期限、金額基準、件数基準を削除してください。
 - 効果は保証せず、「防ぐ」「削減できる」ではなく「防止を目的にする」「確認しやすくする」としてください。
-- 商品範囲は、受信確認、現調前情報の回収、案件台帳、未対応通知、見積後3回のフォロー、KPI計測の6要素です。漏れなく説明してください。
 - スプレッドシート、DB、PDF、タグ、フラグなど、採用が決まっていない実装技術を削除してください。
 - 「山野辺雄太さん」「毎日多数」など、不自然な呼び方や根拠のない量表現を削除してください。
-- 診断ページとサービスページへの導線は ](/diagnosis/reform-lead/) と ](/service/reform-lead-os/) の通常のMarkdownリンクにしてください。
-- 外部統計、架空の実績、根拠のない閾値は使わないでください。
+- イバトコに触れる場合は、シクミベースが自ら運営する地域メディアの公開ケーススタディとして扱い、顧客事例として書かないでください。
+- 内部リンクは、最初の指示の「内部リンクに使えるページ」にあるURLだけを通常のMarkdownリンクで使ってください。
+- 外部統計、架空の実績、架空の顧客、根拠のない閾値は使わないでください。
 - frontmatterと必須H2、2,200文字以上、内部リンク3件以上を維持してください。
 
 説明や監査メモは付けず、修正後のMarkdown全文だけを返してください。`,
@@ -103,6 +105,13 @@ try {
 
 if (!markdown) {
   console.error('Cloudflare Workers AIから本文が返りませんでした。');
+  process.exit(1);
+}
+
+// 保存前に止め、旧文脈を含む応答を後続の保存・検証へ渡さない。
+const legacy = findLegacyTerms(markdown);
+if (legacy.length > 0) {
+  console.error(`AI応答に旧リフォーム特化文脈が含まれるため破棄します: ${legacy.join('、')}`);
   process.exit(1);
 }
 

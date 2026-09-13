@@ -24,12 +24,6 @@ interface Submission {
   company?: string;
   email?: string;
   companyUrl?: string;
-  phone?: string;
-  businessType?: string;
-  monthlyLeads?: string;
-  averageOrder?: string;
-  hasSalesData?: string;
-  decisionMaker?: string;
   message?: string;
   agree?: string;
   'cf-turnstile-response'?: string;
@@ -37,49 +31,14 @@ interface Submission {
   website?: string;
 }
 
+// src/pages/contact/index.astro の選択肢（src/data/taxonomy.ts のサービス名）と揃える。
 const TOPIC_LABELS: Record<string, string> = {
-  'reform-audit': '見積フォロー漏れ診断の適合確認',
-  'reform-os': 'リフォーム反響OS 30の導入相談',
-  web: 'Web改善・制作',
-  sns: 'SNS運用・仕組み化',
-  'ai-dx': 'AI・業務改善',
-  organize: 'どこから手を付けるべきか整理したい',
+  system: 'どこから仕組み化すべきか整理したい',
+  web: '集客・営業の仕組み',
+  sns: '発信の仕組み',
+  'ai-dx': '業務・改善の仕組み',
   local: '茨城・地域のプロジェクト',
   other: 'その他',
-};
-
-const BUSINESS_LABELS: Record<string, string> = {
-  'exterior-painting': '外壁塗装',
-  roof: '屋根工事',
-  'home-renovation': '住宅リフォーム',
-  other: 'その他',
-};
-
-const MONTHLY_LEADS_LABELS: Record<string, string> = {
-  '0-4': '0〜4件',
-  '5-9': '5〜9件',
-  '10-19': '10〜19件',
-  '20-plus': '20件以上',
-  unknown: '把握していない',
-};
-
-const AVERAGE_ORDER_LABELS: Record<string, string> = {
-  'under-80': '80万円未満',
-  '80-149': '80万〜149万円',
-  '150-plus': '150万円以上',
-  unknown: '把握していない',
-};
-
-const SALES_DATA_LABELS: Record<string, string> = {
-  yes: '確認できる',
-  partial: '一部なら確認できる',
-  no: '確認できない',
-};
-
-const DECISION_MAKER_LABELS: Record<string, string> = {
-  yes: '社長または担当責任者が参加できる',
-  consult: '社内確認が必要',
-  no: '参加できない',
 };
 
 const json = (status: number, body: Record<string, unknown>) =>
@@ -147,7 +106,6 @@ const parseSubmission = async (request: Request): Promise<Submission | null> => 
 };
 
 const within = (value: string, max: number) => value.length <= max;
-const isOneOf = (value: string, options: Record<string, string>) => Boolean(options[value]);
 
 interface TurnstileResult {
   success?: boolean;
@@ -210,7 +168,6 @@ export const onRequestPost = async ({ request, env }: RequestContext): Promise<R
   const message = (data.message ?? '').trim();
   const topic = (data.topic ?? '').trim();
   const turnstileToken = (data['cf-turnstile-response'] ?? '').trim();
-  const isProductTopic = topic === 'reform-audit' || topic === 'reform-os';
 
   const errors: string[] = [];
   if (!name) errors.push('お名前');
@@ -220,15 +177,6 @@ export const onRequestPost = async ({ request, env }: RequestContext): Promise<R
   if (!topic) errors.push('ご相談の種類');
   if (!data.agree) errors.push('プライバシーポリシーへの同意');
 
-  if (isProductTopic) {
-    if (!(data.companyUrl ?? '').trim()) errors.push('会社サイトURL');
-    if (!(data.phone ?? '').trim()) errors.push('電話番号');
-    if (!(data.businessType ?? '').trim()) errors.push('主な事業');
-    if (!(data.monthlyLeads ?? '').trim()) errors.push('月間反響数');
-    if (!(data.averageOrder ?? '').trim()) errors.push('平均工事単価');
-    if (!(data.hasSalesData ?? '').trim()) errors.push('過去90日の営業数字');
-    if (!(data.decisionMaker ?? '').trim()) errors.push('責任者の参加');
-  }
   if (errors.length > 0) {
     return json(400, { message: `${errors.join('、')}が未入力です` });
   }
@@ -252,33 +200,17 @@ export const onRequestPost = async ({ request, env }: RequestContext): Promise<R
     return json(400, { message: 'お名前、会社名またはメールアドレスが長すぎます' });
   }
 
+  // WebサイトURLは任意。入力された場合だけ形式を確認する。
   const companyUrl = (data.companyUrl ?? '').trim();
-  const phone = (data.phone ?? '').trim();
-  if (isProductTopic) {
-    if (!within(companyUrl, 500) || !within(phone, 40) || /[\r\n]/.test(phone)) {
-      return json(400, { message: '会社サイトURLまたは電話番号が長すぎます' });
+  if (companyUrl) {
+    if (!within(companyUrl, 500) || /[\r\n]/.test(companyUrl)) {
+      return json(400, { message: 'WebサイトURLが長すぎます' });
     }
     try {
       const url = new URL(companyUrl);
       if (url.protocol !== 'https:' && url.protocol !== 'http:') throw new Error('invalid protocol');
     } catch {
-      return json(400, { message: '会社サイトURLの形式が正しくありません' });
-    }
-
-    if (!isOneOf(data.businessType ?? '', BUSINESS_LABELS)) {
-      return json(400, { message: '主な事業の選択が正しくありません' });
-    }
-    if (!isOneOf(data.monthlyLeads ?? '', MONTHLY_LEADS_LABELS)) {
-      return json(400, { message: '月間反響数の選択が正しくありません' });
-    }
-    if (!isOneOf(data.averageOrder ?? '', AVERAGE_ORDER_LABELS)) {
-      return json(400, { message: '平均工事単価の選択が正しくありません' });
-    }
-    if (!isOneOf(data.hasSalesData ?? '', SALES_DATA_LABELS)) {
-      return json(400, { message: '過去90日の営業数字の選択が正しくありません' });
-    }
-    if (!isOneOf(data.decisionMaker ?? '', DECISION_MAKER_LABELS)) {
-      return json(400, { message: '責任者の参加の選択が正しくありません' });
+      return json(400, { message: 'WebサイトURLの形式が正しくありません' });
     }
   }
 
@@ -322,26 +254,12 @@ export const onRequestPost = async ({ request, env }: RequestContext): Promise<R
   }
 
   const topicLabel = TOPIC_LABELS[topic] ?? topic;
-  const qualification = isProductTopic
-    ? [
-        '',
-        '--- 事前確認 ---',
-        `会社サイト: ${companyUrl}`,
-        `電話番号: ${phone}`,
-        `主な事業: ${BUSINESS_LABELS[data.businessType ?? ''] ?? data.businessType}`,
-        `Web・LINE等の月間反響数: ${MONTHLY_LEADS_LABELS[data.monthlyLeads ?? ''] ?? data.monthlyLeads}`,
-        `平均工事単価: ${AVERAGE_ORDER_LABELS[data.averageOrder ?? ''] ?? data.averageOrder}`,
-        `過去90日の営業数字: ${SALES_DATA_LABELS[data.hasSalesData ?? ''] ?? data.hasSalesData}`,
-        `責任者の参加: ${DECISION_MAKER_LABELS[data.decisionMaker ?? ''] ?? data.decisionMaker}`,
-      ]
-    : [];
-
   const body = [
     `ご相談の種類: ${topicLabel}`,
     `お名前: ${name}`,
     `会社名・屋号: ${company}`,
     `メールアドレス: ${email}`,
-    ...qualification,
+    `WebサイトURL: ${companyUrl || '（未記入）'}`,
     '',
     '--- ご相談内容 ---',
     message,

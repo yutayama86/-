@@ -241,7 +241,7 @@ draft: false                 # true の間は公開されない
 ```
 記事・サービスページのCTA（data-cta 属性つき）
   ↓
-/contact/  （フォーム開始イベントは現在未実装）
+/contact/  →  最初の入力で contact_form_start
   ↓
 POST /api/contact  →  Cloudflare Pages Functions
   ↓
@@ -249,7 +249,7 @@ Cloudflare Turnstile で正規の操作かを検証
   ↓
 Resend 経由で info@shikumi-base.com へ送信
   ↓
-/contact/thanks/  （送信完了イベントは現在未実装）
+/contact/thanks/  （generate_lead。失敗時は form_error とメール送信の導線）
 ```
 
 `?topic=` の値（`system` / `web` / `sns` / `ai-dx` / `local` / `other`）がフォームの相談種別に初期反映されます。
@@ -384,8 +384,11 @@ Search Console（ドメインプロパティ `shikumi-base.com`）と連携済�
 | イベント | 発火タイミング |
 | --- | --- |
 | `cta_click` | CTAクリック（`data-cta` に設置場所、`data-cta-topic` に相談内容） |
+| `contact_form_start` | 問い合わせフォームへの最初の入力 |
+| `generate_lead` | 送信成功 |
+| `form_error` | 送信失敗 |
 
-> `contact_form_start` / `generate_lead` / `form_error` は、2026-09-13時点のフォーム実装から外れており発火しません。GA4の「フォーム開始0・問い合わせ完了0」は未計測の可能性があります。
+> 2026-09-05〜09-13 はフォームからこれらのイベントが外れていたため、この期間のフォーム開始・問い合わせ完了は計測されていません。
 
 氏名、会社名、メールアドレスなどの個人情報はGA4へ送りません。
 

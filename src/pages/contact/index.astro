@@ -130,6 +130,64 @@ const turnstileSiteKey = '0x4AAAAAAEmB3I5NAyMoIF6c';
       const errorBox = document.getElementById('form-error');
       if (!(form instanceof HTMLFormElement) || !(errorBox instanceof HTMLElement)) return;
 
+      const submit = form.querySelector('button[type="submit"]');
+      const topicField = form.querySelector('#topic');
+      const track = (name, params) => {
+        if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+      };
+
+      // URLの ?topic= を初期選択に反映し、どのCTAから来たかを引き継ぐ
+      const topicParam = new URLSearchParams(location.search).get('topic');
+      if (topicParam && topicField instanceof HTMLSelectElement) {
+        if ([...topicField.options].some((o) => o.value === topicParam)) topicField.value = topicParam;
+      }
+
+      // 最初の入力時に1度だけ送る。scripts/lib/ga4.mjs が集計に使うイベント名。
+      let started = false;
+      form.addEventListener('input', () => {
+        if (started) return;
+        started = true;
+        track('contact_form_start', { form_id: 'contact', topic: topicField ? topicField.value : '' });
+      });
+
+      const showError = (message, fallbackHref) => {
+        errorBox.textContent = '';
+        const text = document.createElement('p');
+        text.textContent = message;
+        errorBox.appendChild(text);
+
+        if (fallbackHref) {
+          const link = document.createElement('a');
+          link.className = 'btn btn--primary form__fallback';
+          link.href = fallbackHref;
+          link.textContent = 'メールで送る';
+          link.dataset.cta = 'contact-fallback';
+          errorBox.appendChild(link);
+        }
+
+        errorBox.hidden = false;
+        errorBox.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      };
+
+      /** 入力内容を本文に載せた mailto: を組み立てる。 */
+      const mailtoFallback = (data) => {
+        const email = form.dataset.fallbackEmail;
+        if (!email) return null;
+        const topicLabel =
+          topicField instanceof HTMLSelectElement ? topicField.options[topicField.selectedIndex]?.text ?? '' : '';
+        const body = [
+          `ご相談の種類: ${topicLabel}`,
+          `お名前: ${data.get('name') ?? ''}`,
+          `会社名・屋号: ${data.get('company') ?? ''}`,
+          `メールアドレス: ${data.get('email') ?? ''}`,
+          data.get('companyUrl') ? `WebサイトURL: ${data.get('companyUrl')}` : null,
+          '',
+          '--- ご相談内容 ---',
+          data.get('message') ?? '',
+        ].filter((line) => line !== null).join('\n');
+        return `mailto:${email}?subject=${encodeURIComponent(`【お問い合わせ】${topicLabel}`)}&body=${encodeURIComponent(body)}`;
+      };
+
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
         errorBox.hidden = true;
@@ -137,15 +195,46 @@ const turnstileSiteKey = '0x4AAAAAAEmB3I5NAyMoIF6c';
           form.reportValidity();
           return;
         }
-        const submit = form.querySelector('button[type="submit"]');
         if (submit instanceof HTMLButtonElement) submit.disabled = true;
+        const data = new FormData(form);
+        const topic = String(data.get('topic') ?? '');
+
         try {
-          const response = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
-          if (!response.ok) throw new Error('send_failed');
-          window.location.href = '/contact/thanks/';
-        } catch {
-          errorBox.textContent = '送信できませんでした。時間をおいて再度お試しいただくか、メールでご連絡ください。';
-          errorBox.hidden = false;
+          const response = await fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+          if (!response.ok) {
+            const body = await response.json().catch(() => ({}));
+            const error = new Error(body.message || 'send_failed');
+            error.status = response.status;
+            throw error;
+          }
+
+          // 完了イベントが送られる前に遷移して計測が欠けないよう、
+          // GA4のコールバックかタイムアウトの早い方でサンクスページへ進む。
+          let redirected = false;
+          const redirect = () => {
+            if (redirected) return;
+            redirected = true;
+            window.location.href = '/contact/thanks/';
+          };
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', 'generate_lead', { form_id: 'contact', topic, event_callback: redirect, event_timeout: 1500 });
+            setTimeout(redirect, 1600);
+          } else {
+            redirect();
+          }
+        } catch (error) {
+          const status = error && error.status ? error.status : 0;
+          track('form_error', { form_id: 'contact', topic, status });
+          if (status === 400) {
+            showError(error.message, null);
+          } else {
+            showError(
+              '送信できませんでした。お手数ですが、下のボタンからメールでお送りください。入力いただいた内容はそのまま引き継がれます。',
+              mailtoFallback(data)
+            );
+          }
+          // Turnstileのトークンは1回限りのため、再送信できるよう取り直す
+          if (window.turnstile && typeof window.turnstile.reset === 'function') window.turnstile.reset();
           if (submit instanceof HTMLButtonElement) submit.disabled = false;
         }
       });
@@ -172,6 +261,7 @@ const turnstileSiteKey = '0x4AAAAAAEmB3I5NAyMoIF6c';
   .security-check { display: grid; gap: 8px; }
   .security-check p,.form__note { font-size: .75rem; color: var(--text-mute); }
   .form__error { padding: 14px 16px; border-left: 3px solid #b42318; background: #fff1f0; color: #7a271a; font-size: var(--fs-body-sm); }
+  .form__error :global(p + .form__fallback) { margin-top: 12px; }
   .form__submit { width: fit-content; }
   .form__submit:disabled { opacity: .55; cursor: wait; }
   .side { display: grid; gap: 20px; }

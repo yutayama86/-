@@ -90,7 +90,7 @@ npm run verify   # 型チェック → ビルド → 品質チェック
 ## 問い合わせ導線
 
 サイト内の `/contact/` にフォームを持ち、送信は `functions/api/contact.ts` が受けます。
-フォームにはCloudflare Turnstileを使います。フォーム開始・送信完了のGA4イベントは現在実装されていません（2026-09-13確認）。
+フォームにはCloudflare Turnstileを使います。フォーム開始（`contact_form_start`）、送信完了（`generate_lead`）、送信失敗（`form_error`）をGA4で計測します。送信に失敗した場合は、入力内容を引き継いだメール送信の導線を表示します。
 
 CTAは設置場所ごとに `data-cta` を持ち、クリックが `cta_click` として記録されます。
 どの導線が問い合わせにつながったかを、GA4で追えます。

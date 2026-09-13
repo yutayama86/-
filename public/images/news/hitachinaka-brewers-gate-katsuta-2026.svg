@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="勝田駅前を「飲んで終わる場所」にしない。ビアフェスから考える地域回遊">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="28" y="28" width="1144" height="574" fill="none" stroke="#d9d0c0" stroke-width="1"/>
+
+  <text x="80" y="96" font-family="'Source Sans 3', sans-serif" font-size="20" letter-spacing="2.4" fill="#a63f32">IBATOCO ・ 茨城ニュース解説</text>
+
+  <g>
+    <line x1="120" y1="160" x2="322" y2="160" stroke="#315c68" stroke-width="2" stroke-dasharray="6 6"/>
+    <line x1="342" y1="160" x2="542" y2="160" stroke="#315c68" stroke-width="2" stroke-dasharray="6 6"/>
+    <line x1="562" y1="160" x2="762" y2="160" stroke="#315c68" stroke-width="2" stroke-dasharray="6 6"/>
+    <polygon points="322,154 334,160 322,166" fill="#315c68"/>
+    <polygon points="542,154 554,160 542,166" fill="#315c68"/>
+    <polygon points="762,154 774,160 762,166" fill="#315c68"/>
+
+    <circle cx="104" cy="160" r="16" fill="#a63f32"/>
+    <circle cx="346" cy="160" r="11" fill="none" stroke="#315c68" stroke-width="2.5"/>
+    <circle cx="566" cy="160" r="11" fill="none" stroke="#315c68" stroke-width="2.5"/>
+    <circle cx="786" cy="160" r="11" fill="none" stroke="#315c68" stroke-width="2.5"/>
+
+    <text x="104" y="206" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">勝田駅</text>
+    <text x="346" y="206" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">会場</text>
+    <text x="566" y="206" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">周辺の店</text>
+    <text x="786" y="206" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="17" fill="#75695a">また来る理由</text>
+  </g>
+
+  <text x="80" y="312" font-family="'Shippori Mincho', serif" font-size="56" font-weight="700" fill="#172b35">勝田駅前を</text>
+  <text x="80" y="384" font-family="'Shippori Mincho', serif" font-size="56" font-weight="700" fill="#172b35">「飲んで終わる場所」にしない。</text>
+  <text x="80" y="452" font-family="'Shippori Mincho', serif" font-size="40" font-weight="700" fill="#315c68">ビアフェスから考える地域回遊</text>
+
+  <line x1="80" y1="494" x2="300" y2="494" stroke="#a63f32" stroke-width="3"/>
+
+  <text x="80" y="538" font-family="'Source Sans 3', sans-serif" font-size="21" fill="#75695a">BREWERS' GATE HITACHINAKA ・ 2026年9月12日・13日 勝田駅東口</text>
+
+  <text x="80" y="576" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a">出典：ひたちなか市・主催者の公開情報</text>
+</svg>

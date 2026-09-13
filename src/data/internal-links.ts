@@ -97,4 +97,6 @@ export const INTERNAL_LINK_LABELS: Record<string, string> = {
   '/events/ibaraki-bus-tour-spots/': '茨城のバスツアーが立ち寄る場所',
   '/news/hoshiimo-shake-fair-2026/': 'ほしいもシェイクフェア2026（参加店と注意点）',
   '/news/ibaraki-hoshiimo-haccp-support-2026/': 'ほしいもの民間型HACCP認証取得支援（解説）',
+  '/news/hitachinaka-brewers-gate-katsuta-2026/': '勝田駅前のビアフェスを地域回遊の入口に（解説）',
+  '/events/ibaraki-events-september-2026/': '茨城のイベント2026年9月（利根川・大洗の花火）',
 };

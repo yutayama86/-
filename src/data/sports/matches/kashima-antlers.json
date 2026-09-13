@@ -184,10 +184,13 @@
             "key": "access",
             "title": "アクセス（電車・バス）",
             "items": [
-              { "text": "鹿島臨海鉄道は9月15日、この試合に合わせて大洗鹿島線の鹿島サッカースタジアム駅に臨時停車します。時刻は鹿島臨海鉄道の臨時停車時刻表（PDF）で確認してください。", "sourceUrl": "https://www.rintetsu.co.jp/9013.html" },
+              { "text": "鹿島臨海鉄道は9月15日、大洗鹿島線の鹿島サッカースタジアム駅に臨時停車します。水戸方面からの行きは、たとえば水戸16:29発→スタジアム17:37着、水戸17:11発→18:26着。水戸17:59発はスタジアム着が19:17で、キックオフの後になります。", "sourceUrl": "https://www.rintetsu.co.jp/wp-content/uploads/2026/09/0915.pdf" },
+              { "text": "試合後に水戸方面へ帰る列車は、スタジアム発21:16（水戸着22:26）と22:00（水戸着23:11）です。混雑時は希望の列車に乗れない場合があると案内されています。", "sourceUrl": "https://www.rintetsu.co.jp/wp-content/uploads/2026/09/0915.pdf" },
+              { "text": "鹿島臨海鉄道は「水戸方面からは交通系ICカードはご利用いただけません」としています。", "sourceUrl": "https://www.rintetsu.co.jp/wp-content/uploads/2026/09/0915.pdf" },
               { "text": "鹿島サッカースタジアム駅からスタジアムまでは徒歩2分です。", "sourceUrl": "https://www.rintetsu.co.jp/route_map/kashima-stadium" },
               { "text": "東京駅からは、八重洲南口 高速バスターミナル1番乗り場発の高速バス（先着・自由席、約2時間）が主な手段と案内されています。予約制の高速バスや応援ツアーバスもあります。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-from-tokyo/" },
-              { "text": "クラブのアクセス案内には、試合日に鹿島神宮駅とスタジアムを結ぶピストンバスと、勝田駅・水戸駅発の予約制直行バスも載っています。9月15日の運行と時刻は、この記事では確認できていません。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-from-mito/" }
+              { "text": "クラブの案内では、ホームゲーム開催日に勝田駅・水戸駅発の予約制直行バスが運行され、平日19:00キックオフの便は勝田駅16:40・水戸駅17:10発、スタジアム着18:30予定です（大人3,800円・片道も同額、完全予約制、最少催行20名）。9月15日（ACL）に運行するかは確認できていません。催行の有無は公式サイトでも案内されます。", "sourceUrl": "https://www.antlers.co.jp/pages/access-mitobus" },
+              { "text": "鹿島神宮駅とスタジアムを結ぶピストンバス（所要約15分、大人290円、帰りは試合終了20分後に発車）も案内されていますが、9月15日の運行は確認できていません。", "sourceUrl": "https://www.antlers.co.jp/pages/access-pbus" }
             ]
           },
           {
@@ -213,7 +216,6 @@
         "unverified": [
           "当日券の販売の有無",
           "ACLエリートでの完全キャッシュレスの運用",
-          "9月15日の臨時停車の具体的な時刻（鹿島臨海鉄道のPDFに掲載）",
           "鹿島神宮駅からのピストンバス、勝田駅・水戸駅発の予約制直行バスの9月15日の運行",
           "平日の試合終了後に東京方面へ帰る高速バスの便",
           "B駐車場の料金",
@@ -229,7 +231,7 @@
           { "time": "17:00", "title": "開場（予定）", "detail": "先行入場はありません。クラブの観戦ルールでは、待ち列の場所取りは禁止、列整理は開場10分前からです。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
           { "time": "19:00", "title": "キックオフ", "detail": "ACLエリート リーグステージの初戦。中継はDAZNです。", "sourceUrl": "https://www.antlers.co.jp/blogs/games" },
           { "time": "試合後", "title": "場外フードコートで一息", "detail": "試合終了後30分まで営業する予定です（混雑状況で前後）。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01" },
-          { "time": "帰り", "title": "電車の時刻と道路の混雑を確認", "detail": "大洗鹿島線は臨時停車の時刻表で確認を。車の場合、帰りは国道51号が非常に混雑すると案内されています。", "sourceUrl": "https://www.rintetsu.co.jp/9013.html" }
+          { "time": "帰り", "title": "電車の時刻と道路の混雑を確認", "detail": "大洗鹿島線で水戸方面へ帰るなら、スタジアム発21:16（水戸着22:26）か22:00（水戸着23:11）。水戸方面からは交通系ICカードが使えません。車の場合、帰りは国道51号が非常に混雑すると案内されています。", "sourceUrl": "https://www.rintetsu.co.jp/wp-content/uploads/2026/09/0915.pdf" }
         ],
         "cautions": [
           "鹿嶋市内の飲食店・温泉・宿泊施設は、9月15日（火）の営業を公式情報で確認できたものがまだないため載せていません。確認でき次第追加します。"
@@ -243,6 +245,9 @@
         { "label": "鹿島アントラーズ公式｜メルカリスタジアム完全キャッシュレス化のご案内", "url": "https://www.antlers.co.jp/pages/all-cashless", "accessedAt": "2026-09-13" },
         { "label": "鹿島アントラーズ公式｜ニューカッスル戦（9/15）応援アイテムに関するご案内", "url": "https://www.antlers.co.jp/blogs/news/260904uuxm4e", "accessedAt": "2026-09-13" },
         { "label": "鹿島臨海鉄道｜9/15 臨時停車のお知らせ", "url": "https://www.rintetsu.co.jp/9013.html", "accessedAt": "2026-09-13" },
+        { "label": "鹿島臨海鉄道｜9/15 鹿島サッカースタジアム駅 臨時停車時刻表（PDF）", "url": "https://www.rintetsu.co.jp/wp-content/uploads/2026/09/0915.pdf", "accessedAt": "2026-09-13" },
+        { "label": "鹿島アントラーズ公式｜直行バス（予約制）勝田駅・水戸駅⇔メルカリスタジアム", "url": "https://www.antlers.co.jp/pages/access-mitobus", "accessedAt": "2026-09-13" },
+        { "label": "鹿島アントラーズ公式｜路線バス（ピストンバス）鹿島神宮駅⇔メルカリスタジアム", "url": "https://www.antlers.co.jp/pages/access-pbus", "accessedAt": "2026-09-13" },
         { "label": "鹿島神宮｜よくあるご質問", "url": "https://kashimajingu.jp/info/%E3%82%88%E3%81%8F%E3%81%82%E3%82%8B%E3%81%94%E8%B3%AA%E5%95%8F/", "accessedAt": "2026-09-13" }
       ]
     },

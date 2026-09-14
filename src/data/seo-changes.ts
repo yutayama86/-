@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260914-news-ibaraki-passport-2026',
+    date: '2026-09-14',
+    url: '/news/ibaraki-passport-2026/',
+    kind: 'new-article',
+    change: '茨城パスポートの申請・受け取りガイド記事を新規公開。要点カード（申請開始・締切・県民可・抽選・44市町村）、公式申請ページへの導線、交付窓口3か所、スタンプ設置場所61か所の地域別一覧、FAQ4問（FAQPage）を掲載',
+    queries: ['茨城パスポート', 'IBARAKI PASSPORT', '茨城パスポート 申請', '茨城パスポート 県民', '茨城パスポート どこでもらえる', '茨城パスポート スタンプ'],
+    commit: '2c0491f',
+    note: '市町村別記事を公開したら src/data/ibaraki-passport.ts の PASSPORT_MUNICIPALITY_GUIDES に追加し、一覧のリンク先を切り替える',
+  },
+  {
     id: '20260914-events-oarai-kaijo-hanabi-2026',
     date: '2026-09-14',
     url: '/events/oarai-kaijo-hanabi-2026/',

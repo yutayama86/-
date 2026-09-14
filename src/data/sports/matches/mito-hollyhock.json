@@ -1,6 +1,6 @@
 {
   "team": "mito-hollyhock",
-  "updatedAt": "2026-09-13",
+  "updatedAt": "2026-09-14",
   "matches": [
     {
       "id": "mito-hollyhock-2026-08-08-j1-01",
@@ -118,6 +118,8 @@
       "id": "mito-hollyhock-2026-09-19-j1-08",
       "date": "2026-09-19",
       "kickoff": "19:30",
+      "openTime": "17:00",
+      "openTimeNote": "目安",
       "competition": "明治安田J1リーグ",
       "round": "第8節",
       "kind": "league",
@@ -125,15 +127,26 @@
       "homeAway": "away",
       "venue": "日産スタジアム",
       "status": "scheduled",
+      "officialUrl": "https://www.f-marinos.com/matches/20260919/event",
       "guide": {
         "title": "横浜F・マリノス vs 水戸ホーリーホック アウェイ観戦ガイド（9月19日・日産スタジアム）",
-        "verifiedAt": "2026-09-13",
+        "verifiedAt": "2026-09-14",
+        "keyFacts": [
+          "19:30キックオフ、17:00開門（目安）。最寄りは新横浜駅（徒歩10分）と小机駅（徒歩11分）です",
+          "横浜FMのホームゲーム開催時は、一般向けの駐車場が用意されていません。公共交通機関で向かってください",
+          "ビジターサポーターズシートの人は、場内の東・西・北エリアに立ち入れません。場内の売店は南エリア（17:00〜ハーフタイム終了）を使います",
+          "チケットの販売期限は、QRチケットが9月19日（土）21:00、紙チケットが9月16日（水）23:59。当日券は現金のみで手数料300円/枚です",
+          "「J1関東8クラブ×トレインスタンプラリー」のエキタグは、南ゲート（ビジターゲート）付近にも設置されます",
+          "19:18頃、選手入場の演出で場内が暗転します（トリコロールギャラクシー）"
+        ],
         "sections": [
           {
             "key": "match",
-            "title": "試合情報",
+            "title": "試合情報・当日の流れ",
             "items": [
-              { "text": "2026年9月19日（土）19:30キックオフ。会場は日産スタジアムで、横浜F・マリノスのホームゲームです。", "sourceUrl": "https://www.mito-hollyhock.net/match/games" }
+              { "text": "2026年9月19日（土）19:30キックオフ。会場は日産スタジアムで、横浜F・マリノスのホームゲームです。", "sourceUrl": "https://www.mito-hollyhock.net/match/games" },
+              { "text": "横浜FMの当日スケジュール（目安）は、15:00 キッチンカーオープン、15:30 場外イベント開始、17:00 開門・入場開始、19:18 選手紹介、19:30 キックオフ、21:15 試合終了。時間は変わる場合があると案内されています。", "sourceUrl": "https://www.f-marinos.com/matches/20260919/event" },
+              { "text": "19:18頃、選手入場時の演出として場内を暗転する「トリコロールギャラクシー」が行われます。", "sourceUrl": "https://www.f-marinos.com/news/event/10486" }
             ]
           },
           {
@@ -143,31 +156,74 @@
               { "text": "Jリーグチケットで販売。水戸を応援する人は「ビジターサポーターズシート（1階ビジターエリア）」、またはメインスタンドのミックスエリアのチケットを購入するよう案内されています。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2629782/001" },
               { "text": "ビジターサポーターズシートの基本価格は1,600円〜4,000円。ダイナミックプライシングと座席位置による価格設定のため、購入時期や席で変わります。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2629782/001" },
               { "text": "販売期限は、QRチケットが9月19日（土）21:00、セブン-イレブン発券の紙チケットが9月16日（水）23:59です。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2629782/001" },
-              { "text": "会場での当日券は現金払いのみで、販売手数料300円/枚がかかります。未就学児は膝の上で観戦するならチケット不要、座席が必要な場合は小中学生のチケットが必要です。", "sourceUrl": "https://www.f-marinos.com/news/ticket/10307" }
+              { "text": "当日券は東西チケットボックスで、試合当日16:00〜ハーフタイム終了（20:30頃）に販売。現金のみで、販売手数料300円/枚がかかります。", "sourceUrl": "https://www.f-marinos.com/news/ticket/10313" },
+              { "text": "未就学児は膝の上で観戦するならチケット不要、座席が必要な場合は小中学生のチケットが必要です。", "sourceUrl": "https://www.f-marinos.com/news/ticket/10307" }
+            ]
+          },
+          {
+            "key": "rules",
+            "title": "入場・観戦ルール（ビジター席）",
+            "items": [
+              { "text": "全席指定で、購入した座席からの移動はできません。ホーム側の応援席でビジターチームを応援する行為は禁止されています。", "sourceUrl": "https://www.f-marinos.com/watching_information/manner" },
+              { "text": "ビン・缶・その他危険物、花火・爆竹・発煙筒・ガスホーンなどは持ち込めません。入場口で手荷物検査を行う場合があります。", "sourceUrl": "https://www.f-marinos.com/watching_information/manner" },
+              { "text": "横断幕・旗類・楽器や鳴り物は事前申請が必要で、クラブが許可したものだけ使えます。", "sourceUrl": "https://www.f-marinos.com/watching_information/manner" },
+              { "text": "赤ちゃん休憩室は、ビジターサポーターズシートの人は利用できません。エリア内に授乳部屋があり、近くのスタッフに声をかけるよう案内されています。", "sourceUrl": "https://www.f-marinos.com/matches/20260919/event" },
+              { "text": "来場者へのステッカー配布（All Hands on Deck!）は、ビジターサポーターズシートが対象外です。", "sourceUrl": "https://www.f-marinos.com/news/event/10462" }
+            ]
+          },
+          {
+            "key": "gourmet",
+            "title": "グルメ",
+            "items": [
+              { "text": "場内コンコース（4F・5F）の南エリアの店舗は、ビジターサポーターズシートの人だけが利用できます。ビジターサポーターズシートの人は東・西・北エリアに立ち入れません。場内の売店は17:00〜ハーフタイム終了までです。", "sourceUrl": "https://www.f-marinos.com/gourmet_promo/20260919/" },
+              { "text": "場外（トリコロールランド・西ゲート広場・トリコロールポート）の出店は15:00〜19:30。入場前に食事を済ませる選択肢になります。", "sourceUrl": "https://www.f-marinos.com/gourmet_promo/20260919/" },
+              { "text": "限定メニューのM・Cafeは、場内コンコースN24付近（6階）と案内されています。", "sourceUrl": "https://www.f-marinos.com/news/event/10522" }
+            ]
+          },
+          {
+            "key": "event",
+            "title": "水戸サポーターも関係するイベント",
+            "items": [
+              { "text": "「J1関東8クラブ×トレインスタンプラリー」を実施。水戸ホーリーホックも協力クラブで、エキタグは東西ゲート・南ゲート（ビジターゲート）付近に、開門から試合終了1時間後まで（予定）設置されます。", "sourceUrl": "https://www.f-marinos.com/news/event/10421" },
+              { "text": "場外の東・西ゲート前では15:30〜19:15に、キッズパークや逆バンジー（各一般500円）、フットダーツ（1回500円）などの有料イベントがあります。ビジターサポーターが参加できるかは案内に書かれていません。", "sourceUrl": "https://www.f-marinos.com/news/event/10518" },
+              { "text": "西ゲート広場（場外）にフォトスポット「YOKOHAMA巨大モニュメント」が設置されます。", "sourceUrl": "https://www.f-marinos.com/matches/20260919/event" }
             ]
           },
           {
             "key": "access",
             "title": "アクセス",
             "items": [
-              { "text": "日産スタジアムの最寄り駅は新横浜駅と小机駅です。", "sourceUrl": "https://www.nissan-stadium.jp/access/train.php" },
+              { "text": "最寄り駅は新横浜駅（JR東海道新幹線・横浜線、横浜市営地下鉄、相鉄新横浜線、東急新横浜線）で徒歩10分、JR横浜線の小机駅で徒歩11分です。", "sourceUrl": "https://www.f-marinos.com/stadium_nissan" },
               { "text": "スタジアム公式は、大規模イベントの際は歩道も混雑して時間がかかる場合があるとしています。帰りの電車の時間は余裕をもって見ておくのが安心です。", "sourceUrl": "https://www.nissan-stadium.jp/access/train.php" }
+            ]
+          },
+          {
+            "key": "parking",
+            "title": "車・駐車場",
+            "items": [
+              { "text": "横浜FM公式は「ホームゲーム開催時は一般のお客様用の駐車場はご用意しておりません」とし、公共交通機関の利用を案内しています。", "sourceUrl": "https://www.f-marinos.com/stadium_nissan" }
             ]
           }
         ],
-        "unverifiedNote": "次の項目はまだ公式情報で確認できていません。試合3日前（9月16日）の更新で、確認できたものから追加します。",
+        "unverifiedNote": "次の項目はまだ公式情報で確認できていません。確認でき次第追加します。",
         "unverified": [
-          "開場時刻",
-          "入場ゲートとビジターサポーターの待機列",
-          "持ち込み禁止物と応援ルール",
-          "スタジアムグルメ",
-          "駐車場の利用可否",
+          "南エリアの売店の店舗名とメニュー",
+          "ビジター席の当日券の販売の有無",
+          "ビジターサポーターの待機列と入場の案内",
+          "ビジターサポーターが場外イベントに参加できるか",
           "水戸駅・東京方面からの経路と所要時間",
+          "試合後の帰りの混雑・規制",
           "試合前後に利用できる周辺スポットの営業"
         ]
       },
       "sources": [
         { "label": "水戸ホーリーホック公式｜試合日程・結果", "url": "https://www.mito-hollyhock.net/match/games", "accessedAt": "2026-09-13" },
+        { "label": "横浜F・マリノス公式｜明治安田J1 第8節 横浜F・マリノス vs 水戸ホーリーホック 観戦情報", "url": "https://www.f-marinos.com/matches/20260919/event", "accessedAt": "2026-09-14" },
+        { "label": "横浜F・マリノス公式｜9/19(土) スタジアムグルメガイド", "url": "https://www.f-marinos.com/gourmet_promo/20260919/", "accessedAt": "2026-09-14" },
+        { "label": "横浜F・マリノス公式｜観戦ルール", "url": "https://www.f-marinos.com/watching_information/manner", "accessedAt": "2026-09-14" },
+        { "label": "横浜F・マリノス公式｜日産スタジアム アクセス", "url": "https://www.f-marinos.com/stadium_nissan", "accessedAt": "2026-09-14" },
+        { "label": "横浜F・マリノス公式｜当日券販売について", "url": "https://www.f-marinos.com/news/ticket/10313", "accessedAt": "2026-09-14" },
+        { "label": "横浜F・マリノス公式｜9/19（土）水戸戦 J1関東8クラブ×トレインスタンプラリー", "url": "https://www.f-marinos.com/news/event/10421", "accessedAt": "2026-09-14" },
         { "label": "Jリーグチケット｜横浜F・マリノス対水戸ホーリーホック", "url": "https://www.jleague-ticket.jp/sales/perform/2629782/001", "accessedAt": "2026-09-13" },
         { "label": "横浜F・マリノス公式｜9/19（土）水戸戦 ホームゲームチケット販売概要", "url": "https://www.f-marinos.com/news/ticket/10307", "accessedAt": "2026-09-13" },
         { "label": "日産スタジアム｜電車でお越しの方", "url": "https://www.nissan-stadium.jp/access/train.php", "accessedAt": "2026-09-13" }

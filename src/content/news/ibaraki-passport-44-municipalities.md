@@ -47,6 +47,7 @@ sourceUrls:
     url: "https://www.pref.ibaraki.jp/bugai/koho/hodo/press/19press/documents/260806kankouyuukyaku.pdf"
     accessedAt: 2026-08-16
 relatedArticleUrls:
+  - "/news/ibaraki-passport-2026/"
   - "/news/ibaraki-airport-busan-air-busan-charter-2026/"
   - "/news/mito-hollyhock-soccer-tourism-2026/"
   - "/area/mito/"

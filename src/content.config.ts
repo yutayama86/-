@@ -174,6 +174,18 @@ const stores = defineCollection({
 });
 
 /**
+ * ガイド型ニュースの行動ボタン。
+ * href は公式の申請ページ（https://…）、サイト内ページ（/…）、ページ内の位置（#…）のどれか。
+ * 外部URLは新しいタブで開く。
+ */
+const guideCta = z.object({
+  label: z.string().min(1),
+  href: z.union([z.url(), z.string().regex(/^[/#]/)]),
+  /** ボタンの下に置く短い補足 */
+  note: z.string().min(1).optional(),
+});
+
+/**
  * 茨城ニュース解説（/news/）。
  * AIや外部ワークフローからMarkdownを追加する場合も、公開前に同じ検証を通す。
  */
@@ -227,9 +239,15 @@ const news = defineCollection({
     imageLicense: z.string().optional(),
     imageLicenseUrl: z.url().optional(),
     conclusion: z.string().min(1),
-    keyPoints: z.array(z.string().min(1)).min(1),
-    whatHappened: z.string().min(1),
-    whatChanges: z.string().min(1),
+    /**
+     * keyPoints / whatHappened / whatChanges / editorialAnalysis / regionalImpact / businessImplications は、
+     * 標準の解説記事では必須（下の superRefine で検査する）。
+     * guide を持つガイド型記事（申請方法・受け取り方など、読者の手順に沿って読む記事）では、
+     * 要点カードと自由見出しの節が代わりを務めるため省略できる。
+     */
+    keyPoints: z.array(z.string().min(1)).default([]),
+    whatHappened: z.string().min(1).optional(),
+    whatChanges: z.string().min(1).optional(),
     accessGuide: z.object({
       location: z.string().min(1),
       homeUseStarts: z.string().min(1),
@@ -252,9 +270,51 @@ const news = defineCollection({
       })).min(1),
       note: z.string().optional(),
     }).optional(),
-    editorialAnalysis: z.string().min(1),
-    regionalImpact: z.string().min(1),
-    businessImplications: z.array(z.string().min(1)).min(1),
+    editorialAnalysis: z.string().min(1).optional(),
+    regionalImpact: z.string().min(1).optional(),
+    businessImplications: z.array(z.string().min(1)).default([]),
+    /**
+     * ガイド型記事の本体。「申し込める？」「どこでもらえる？」のように、
+     * 読者の疑問の順に見出しを立てて答える記事で使う。
+     * これがある記事は、標準の7節（何が起きた？〜地域事業者への示唆）の代わりに
+     * 要点カード・行動ボタン・sections を描画する。FAQ・情報源・関連情報は共通。
+     */
+    guide: z.object({
+      /** 冒頭の要点カード。日付や締切など、検索して来た人が最初に知りたい事実だけ置く */
+      summaryCards: z.array(z.object({
+        label: z.string().min(1),
+        value: z.string().min(1),
+        /** 締切など、見落とすと困るものだけ true */
+        emphasis: z.boolean().default(false),
+      })).min(1),
+      /** 冒頭の行動ボタン */
+      cta: guideCta.optional(),
+      sections: z.array(z.object({
+        /** ページ内リンクと目次に使う */
+        id: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+        heading: z.string().min(1),
+        /** 見出しの上の英字ラベル（例 HOW TO APPLY）。他の記事の「02 / KEY POINTS」と同じ位置 */
+        kicker: z.string().min(1).optional(),
+        /** 見出しの直後に太字で置く、問いへの短い答え */
+        lead: z.string().min(1).optional(),
+        paragraphs: z.array(z.string().min(1)).default([]),
+        /** 手順など、順番に意味がある箇条書き */
+        steps: z.array(z.object({ title: z.string().min(1), detail: z.string().min(1) })).default([]),
+        items: z.array(z.string().min(1)).default([]),
+        /** 窓口・施設など、名前ごとに詳細を並べるもの */
+        details: z.array(z.object({
+          title: z.string().min(1),
+          rows: z.array(z.object({ label: z.string().min(1), value: z.string().min(1) })).min(1),
+        })).default([]),
+        /** 節の末尾に置く補足（注意書き） */
+        notes: z.array(z.string().min(1)).default([]),
+        cta: guideCta.optional(),
+        /** 節の末尾に差し込む、データから組み立てる一覧 */
+        block: z.enum(['passport-stamp-spots']).optional(),
+      })).min(1),
+      /** 本文の最後（FAQの前）に置く行動ボタン */
+      bottomCta: guideCta.optional(),
+    }).optional(),
     faq: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).default([]),
     sourceUrls: z.array(z.object({
       label: z.string().min(1),
@@ -278,6 +338,20 @@ const news = defineCollection({
   }).superRefine((data, ctx) => {
     if (!data.draft && !data.reviewed) {
       ctx.addIssue({ code: 'custom', path: ['reviewed'], message: 'ニュース公開には編集部の事実確認（reviewed: true）が必要です。' });
+    }
+    // 標準の解説記事は7節すべてが必要。ガイド型（guide あり）だけが省略できる。
+    if (!data.guide) {
+      const required = ['whatHappened', 'whatChanges', 'editorialAnalysis', 'regionalImpact'] as const;
+      for (const key of required) {
+        if (!data[key]) ctx.addIssue({ code: 'custom', path: [key], message: `${key} は必須です（guide を持つガイド型記事だけ省略できます）。` });
+      }
+      if (data.keyPoints.length === 0) ctx.addIssue({ code: 'custom', path: ['keyPoints'], message: 'keyPoints は1件以上必要です（guide を持つガイド型記事だけ省略できます）。' });
+      if (data.businessImplications.length === 0) ctx.addIssue({ code: 'custom', path: ['businessImplications'], message: 'businessImplications は1件以上必要です（guide を持つガイド型記事だけ省略できます）。' });
+    }
+    if (data.guide) {
+      const ids = data.guide.sections.map((section) => section.id);
+      const duplicated = ids.filter((id, index) => ids.indexOf(id) !== index);
+      if (duplicated.length > 0) ctx.addIssue({ code: 'custom', path: ['guide', 'sections'], message: `guide.sections の id が重複しています: ${duplicated.join(', ')}` });
     }
     // スポーツ用のフィールドは、どのチームの記事か決まっていないと置き場所が無い。
     // 付け忘れるとチームページに出ないまま気づけないので、ビルドで止める。

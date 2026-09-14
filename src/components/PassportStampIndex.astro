@@ -1,0 +1,107 @@
+---
+/**
+ * IBARAKI PASSPORT のスタンプ設置場所を、地域 → 市町村 → 設置場所の順に並べる。
+ *
+ * 61か所を開いたまま並べると記事の後半が遠くなるため、地域ごとに折りたたむ。
+ * 閉じた状態でも、地域名・市町村名・か所数は見える。
+ *
+ * 市町村ごとの行き先は、市町村別の茨城パスポート記事があればそこへ、
+ * 無ければ既存の街のページ（/area/<slug>/）へ。記事を増やしたら
+ * src/data/ibaraki-passport.ts の PASSPORT_MUNICIPALITY_GUIDES に足すだけでつながる。
+ */
+import { MUNI_BY_SLUG, REGIONS, type MunicipalitySlug } from '../data/areas';
+import {
+  PASSPORT_MUNICIPALITY_GUIDES, PASSPORT_OFFICIAL_URL, PASSPORT_REGION_ORDER,
+  PASSPORT_SPOTS_VERIFIED_AT, PASSPORT_STAMP_SPOTS,
+} from '../data/ibaraki-passport';
+
+const groups = PASSPORT_REGION_ORDER.map((region) => {
+  // 市町村の並びは公式一覧の順（最初に出てきた順）に合わせる
+  const order: MunicipalitySlug[] = [];
+  for (const spot of PASSPORT_STAMP_SPOTS) {
+    if (MUNI_BY_SLUG.get(spot.municipality)?.region === region && !order.includes(spot.municipality)) order.push(spot.municipality);
+  }
+  const towns = order.map((slug) => ({
+    slug,
+    name: MUNI_BY_SLUG.get(slug)!.name,
+    spots: PASSPORT_STAMP_SPOTS.filter((spot) => spot.municipality === slug),
+    guide: PASSPORT_MUNICIPALITY_GUIDES[slug],
+  }));
+  return {
+    region,
+    label: REGIONS[region].label,
+    towns,
+    spotCount: towns.reduce((sum, t) => sum + t.spots.length, 0),
+  };
+});
+
+const totalTowns = new Set(PASSPORT_STAMP_SPOTS.map((spot) => spot.municipality)).size;
+const [y, m, d] = PASSPORT_SPOTS_VERIFIED_AT.split('-').map(Number);
+---
+
+<div id="stamp-spots" class="psi">
+  <h3 class="psi__title">スタンプ設置場所一覧（{totalTowns}市町村・{PASSPORT_STAMP_SPOTS.length}か所）</h3>
+  <p class="psi__intro">エリア名を押すと、市町村ごとの設置場所と住所が開きます。施設名と住所は公式サイトの掲載どおりです。</p>
+  <div class="psi__regions">
+    {groups.map((g) => (
+      <details id={`stamp-${g.region}`} class="psi__region">
+        <summary>
+          <span class="psi__label">{g.label}エリア<small>{g.towns.length}市町村・{g.spotCount}か所</small></span>
+          <span class="psi__names">{g.towns.map((t) => t.name).join('・')}</span>
+        </summary>
+        <ul class="psi__towns">
+          {g.towns.map((t) => (
+            <li id={`stamp-${t.slug}`} class="psi__town">
+              <p class="psi__name"><strong>{t.name}</strong><span>{t.spots.length}か所</span></p>
+              <ul class="psi__spots">
+                {t.spots.map((s) => (
+                  <li>
+                    <b>{s.name}</b>
+                    <span>{s.address}</span>
+                    {s.note && <em>※{s.note}</em>}
+                  </li>
+                ))}
+              </ul>
+              <a class="psi__link" href={t.guide ?? `/area/${t.slug}/`}>
+                {t.guide ? `${t.name}の茨城パスポートガイド →` : `${t.name}の地域情報 →`}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    ))}
+  </div>
+  <p class="psi__note">
+    出典：<a href={PASSPORT_OFFICIAL_URL} target="_blank" rel="noopener noreferrer">観光いばらき「IBARAKI PASSPORT」スタンプの設置場所 ↗</a>（{y}年{m}月{d}日確認）。
+    営業日・営業時間などは変わる場合があるため、訪問前に各施設の公式サイト等で確認してください。
+  </p>
+</div>
+
+<style>
+  .psi{display:grid;gap:1rem;margin-top:2.2rem;scroll-margin-top:calc(var(--site-header-height,0px) + 1rem)}
+  .psi__title{font:600 1.2rem/1.5 var(--font-brand-display);color:var(--color-ink)}
+  .psi__intro,.psi__note{margin:0;color:var(--color-soil);font-size:.8rem;line-height:1.85}
+  .psi__note a{text-decoration:underline;text-underline-offset:.15em}
+  .psi__regions{display:grid;border-top:1px solid var(--interior-line,var(--color-mist))}
+  .psi__region{border-bottom:1px solid var(--interior-line,var(--color-mist));scroll-margin-top:calc(var(--site-header-height,0px) + 1rem)}
+  .psi__region summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.25rem 1rem;padding:1rem 0;cursor:pointer;list-style:none}
+  .psi__region summary::-webkit-details-marker{display:none}
+  .psi__region summary:after{content:'+';grid-column:2;grid-row:1/span 2;align-self:center;display:grid;place-items:center;width:2rem;height:2rem;border:1px solid var(--interior-blue,var(--color-tide));border-radius:50%;color:var(--interior-blue,var(--color-tide));font:600 1.1rem/1 var(--font-brand-meta)}
+  .psi__region[open] summary:after{content:'−'}
+  .psi__region summary:focus-visible{outline:2px solid var(--interior-blue,var(--color-tide));outline-offset:2px}
+  .psi__label{display:flex;flex-wrap:wrap;align-items:baseline;gap:.15rem .7rem;font:600 1.08rem/1.5 var(--font-brand-display);color:var(--color-ink)}
+  .psi__label small{font:700 .7rem var(--font-brand-meta);color:var(--interior-blue,var(--color-tide))}
+  .psi__names{grid-column:1;color:var(--color-soil);font-size:.76rem;line-height:1.75}
+  .psi__towns{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,15rem),1fr));gap:.7rem;margin:0 0 1.2rem;padding:0;list-style:none}
+  .psi__town{display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:.95rem 1rem;background:#fff;border:1px solid var(--interior-line,var(--color-mist));border-radius:.85rem;scroll-margin-top:calc(var(--site-header-height,0px) + 1rem)}
+  .psi__name{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;margin:0}
+  .psi__name strong{font:600 1rem/1.4 var(--font-brand-display);color:var(--color-ink)}
+  .psi__name span{flex:0 0 auto;font:700 .68rem var(--font-brand-meta);color:var(--interior-blue,var(--color-tide))}
+  .psi__spots{display:grid;gap:.55rem;margin:0;padding:0;list-style:none}
+  .psi__spots li{display:grid;gap:.1rem;padding-left:.75rem;border-left:2px solid var(--interior-sky,var(--color-mist))}
+  .psi__spots b{font-size:.88rem;line-height:1.6;color:var(--color-ink)}
+  .psi__spots span{font-size:.76rem;line-height:1.6;color:var(--color-soil)}
+  .psi__spots em{font-style:normal;font-size:.74rem;line-height:1.6;color:var(--interior-blue,var(--color-tide))}
+  .psi__link{margin-top:auto;padding-top:.2rem;font-size:.8rem;font-weight:700;color:var(--interior-blue,var(--color-tide))}
+  .psi__link:hover,.psi__link:focus-visible{text-decoration:underline;text-underline-offset:.15em}
+</style>

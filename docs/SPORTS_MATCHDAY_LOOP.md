@@ -37,8 +37,8 @@ npm run sports:status
 | 7日前 | 日時・会場・大会・中継・チケットを公式で確認し、ガイドの骨組みを作る | `kickoff` `venue` `broadcast` `officialUrl` `guide.sections(match, ticket, access)` |
 | 3日前 | イベント・グルメ・交通・駐車場を足す。ホームゲームはモデルコースを作る | `guide.sections(event, gourmet, parking, rules, cashless, tourism)` `matchDay` |
 | 前日 | 交通・天候・販売状況を再確認 | `guide.verifiedAt` `guide.unverified` |
-| 当日 | 最終案内。開場・当日券・運行を確認 | `guide.verifiedAt` |
-| 翌日 | 公式の結果に切り替える | `status: finished` `score` `pk` `recap` |
+| 当日 | 最終案内。開場・当日券・運行を確認。当日にビルドすると上部の要点枠が「MATCH DAY TODAY」になる | `guide.verifiedAt` `guide.keyFacts` |
+| 試合終了後 | クラブ公式の結果を確認してから切り替える。score を入れた時点で、その試合は LAST MATCH に、次の `scheduled` の試合が NEXT MATCH に上がる（当日の要点枠・観戦ガイドも次の試合のものに入れ替わる）。得点者など公式で確認できないことは書かない | `status: finished` `score` `pk` `recap` |
 | 翌々日以降 | 次の試合が自動で NEXT MATCH に上がる。今後の試合が3件を切ったら日程を足す | `matches[]` |
 
 どの段階でも、最後に `updatedAt` を今日にして次を通す。

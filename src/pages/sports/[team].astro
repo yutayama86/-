@@ -49,6 +49,13 @@ const recentForm = pickRecentForm(matches, 5);
 const upcoming = pickUpcoming(matches, nextMatch, 5);
 const guide = nextMatch?.guide;
 const matchDay = nextMatch?.matchDay;
+/**
+ * 試合当日にビルドしたときだけ、上部の要点枠を「当日版」の見出しにする。
+ * 日付は必ず見出しに入れる（翌日に再ビルドされないまま見られても、何日の話か分かるように）。
+ * 試合が終わって score を入れれば nextMatch が次の試合に移り、この枠ごと入れ替わる。
+ */
+const JST_YMD = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' });
+const isMatchDayToday = Boolean(nextMatch) && JST_YMD.format(nextMatch!.date) === JST_YMD.format(new Date());
 const GUIDE_ANCHOR = 'match-guide';
 
 /** データを公式情報で確認・更新した日。ビルド日ではない（更新していない日に更新したと見せない） */
@@ -213,8 +220,8 @@ const jsonLd = [
   {/* 次の試合の直前に必要なことだけを、ページ上部で先に見せる。詳細は MATCH GUIDE と個別記事 */}
   {nextMatch && guide && guide.keyFacts.length > 0 && (
     <section class="tm-block bp-wrap tm-keyfacts" aria-labelledby="tm-keyfacts">
-      <p class="tm-eyebrow">MATCH DAY ESSENTIALS</p>
-      <h2 id="tm-keyfacts" class="tm-title">{mdw(nextMatch.date)} {nextMatch.opponent}戦で押さえること</h2>
+      <p class="tm-eyebrow">{isMatchDayToday ? 'MATCH DAY TODAY' : 'MATCH DAY ESSENTIALS'}</p>
+      <h2 id="tm-keyfacts" class="tm-title">{mdw(nextMatch.date)} {nextMatch.opponent}戦{isMatchDayToday ? ' 当日に確認すること' : 'で押さえること'}</h2>
       <ul class="tm-keylist">{guide.keyFacts.map((fact) => <li>{fact}</li>)}</ul>
       <p class="tm-keylinks">
         <a href={`#${GUIDE_ANCHOR}`}>観戦ガイドの詳細（出典つき）→</a>

@@ -49,6 +49,8 @@ export interface ResolvedMatch {
   sources?: SportsSource[];
   articleUrl?: string;
   articleTitle?: string;
+  /** 記事の種類（sportsContentType）。LAST MATCH で「試合結果」と書いてよいかの判定に使う */
+  articleType?: string;
 }
 
 const newsPath = (id: string) => `/news/${id.split('/').pop()}/`;
@@ -125,6 +127,7 @@ function fromArticle(item: CollectionEntry<'news'>, forTeam: SportsTeamSlug): Re
     venue: match.venue,
     articleUrl: newsPath(item.id),
     articleTitle: item.data.title,
+    articleType: item.data.sportsContentType,
   };
 
   // 視点のチーム自身、または相手がイバトコの扱うチームでない場合は、書かれたまま
@@ -161,7 +164,14 @@ export async function getTeamMatches(team: SportsTeamSlug): Promise<ResolvedMatc
     // 同じ試合を複数の記事が扱うことがある（プレビューと試合結果など）。
     // 単純に展開すると、スコアを持たないプレビュー側の undefined が
     // 結果側のスコアを消してしまう。値のある項目だけを上書きする。
-    byKey.set(key, existing ? mergeDefined(existing, resolved) : resolved);
+    const merged = existing ? mergeDefined(existing, resolved) : resolved;
+    // 試合結果の記事があるなら、読み先はそれを残す。観戦ガイドやプレビューの記事で上書きしない
+    if (existing?.articleType === 'match-result' && resolved.articleType !== 'match-result') {
+      merged.articleUrl = existing.articleUrl;
+      merged.articleTitle = existing.articleTitle;
+      merged.articleType = existing.articleType;
+    }
+    byKey.set(key, merged);
   }
 
   return [...byKey.values()].sort((a, b) => a.date.valueOf() - b.date.valueOf());

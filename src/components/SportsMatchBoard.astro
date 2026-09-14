@@ -89,7 +89,8 @@ const withNote = (value?: string, note?: string) => (value ? (note ? `${value}�
             </ul>
           )}
           {latest.recap && <p class="mb__recap">{latest.recap}</p>}
-          {latest.articleUrl && <a class="mb__link" href={latest.articleUrl}>試合結果を読む →</a>}
+          {/* 試合前の観戦ガイドしか無い試合で「試合結果を読む」と出さない */}
+          {latest.articleUrl && <a class="mb__link" href={latest.articleUrl}>{latest.articleType === 'match-result' ? '試合結果を読む →' : 'この試合の記事を読む →'}</a>}
         </article>
       )}
 

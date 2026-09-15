@@ -281,7 +281,110 @@
       "venue": "Uvanceとどろきスタジアム by Fujitsu",
       "status": "scheduled",
       "broadcast": ["DAZN"],
-      "sources": [{ "label": "鹿島アントラーズ公式｜試合日程・結果", "url": "https://www.antlers.co.jp/blogs/games", "accessedAt": "2026-09-15" }]
+      "officialUrl": "https://www.frontale.co.jp/info/2026/0914_17.html",
+      "guide": {
+        "title": "川崎フロンターレ vs 鹿島アントラーズ アウェイ観戦ガイド（9月19日・Uvanceとどろきスタジアム）",
+        "verifiedAt": "2026-09-15",
+        "keyFacts": [
+          "18:00キックオフ、一般開門16:00。鹿島を応援する人の入場ゲートは、ビジターSA指定・ビジターA自由が13番ゲート、ビジターS指定がBandieraゲート（メインスタンド）です",
+          "9月15日夜の時点で、Jリーグチケットの販売ページはビジター席を含むほぼ全席種が「×」（空席なし）の表示でした。これから買う人は、クラブ公式リセールと当日券の案内を確認してください",
+          "当日券は、川崎の販売状況ページで当日券「あり」と表示された席種だけ。会場での販売は原則ホームA自由・ビジターA自由で、1枚500円の手数料がかかります",
+          "列は当日7:00から13番ゲート前で並べます。それより前の順番待ち・シート貼りと、ガムテープの使用は禁止です",
+          "周辺の駐車場は大幅に減っていて、正面の園路は13:00頃〜22:00頃まで一般車両通行止め。武蔵小杉駅北口から有料の直行臨時バスが15:00頃から出ます",
+          "荒天でも通常どおり開催。2階席は屋根がありますが雨が吹き込むことがあり、雨具（合羽）の持参が勧められています"
+        ],
+        "sections": [
+          {
+            "key": "match",
+            "title": "試合情報・当日の流れ",
+            "items": [
+              { "text": "2026年9月19日（土）18:00キックオフ、会場はUvanceとどろきスタジアム by Fujitsu。川崎フロンターレのホームゲーム（明治安田J1リーグ第8節）で、中継はDAZNです。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0914_17.html" },
+              { "text": "開門は一般16:00（キックオフ2時間前）。シーズンチケットなど一部のチケットは15:30に先行開門します。キックオフ直前は入場ゲートが混雑するおそれがあるとして、余裕を持った来場が呼びかけられています。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0914_17.html" },
+              { "text": "一時退場と再入場は、各ゲートの「再入場ゲート」でキックオフ30分前までできます。再入場にはチケットの提示が必要なので、同行者分のQRチケットはクラブ公式「譲渡」サービスで事前に分けておくよう案内されています。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0825_1.html" },
+              { "text": "鹿島は直前の9月15日、ACLエリートのリーグステージ初戦でニューカッスル・ジェッツに7-1で勝っています。", "sourceUrl": "https://www.antlers.co.jp/blogs/games" }
+            ]
+          },
+          {
+            "key": "ticket",
+            "title": "チケット",
+            "items": [
+              { "text": "チケフロ（Jリーグチケット）での先着販売で、全試合ダイナミックプライシング（価格変動制）です。一般発売のQRチケット・店頭発券は9月19日（土）20:00までと表示されています。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2630917/001" },
+              { "text": "ビジター専用席は3種類です。ビジターS指定（メイン下層南側、基本価格4,180円〜8,200円）、ビジターSA指定（ゴール裏2階南、2,370円〜6,100円）、ビジターA自由（ゴール裏1階南・立見、1,880円〜5,000円）。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2630917/001" },
+              { "text": "9月15日夜に販売ページを確認した時点では、ビジター席を含むほぼすべての席種に「×」が表示され、残りわずか（△）は車椅子席だけでした。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2630917/001" },
+              { "text": "当日券は、川崎の「ホームゲームチケット販売状況」で当日券販売が「あり」と表示された席種だけ、チケフロと会場で販売されます。会場での販売は原則ホームA自由とビジターA自由の2席種で、1枚500円の手数料がかかり、価格はダイナミックプライシングです。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0914_17.html" },
+              { "text": "クラブ公式リセールは9月5日10:00から、シーズンチケット開門の30分前まで（QR発券のチケットのみ）。公式の販売チャネル以外で購入したチケットでは入場できません。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0825_3.html" },
+              { "text": "ビジター専用席以外で鹿島のグッズを身につけて観戦できるのは、メインSS指定下層南側、メインSS指定上層中央（205〜209ブロック）、メインS指定南側、バックS指定南側、SA指定南側、ペアシート南側、テーブル付ペアシート、THERMOSパーティーシート、メイン車椅子席（101〜105ブロック）です。原則はホームサポーターのエリアで、それ以外の席で鹿島を応援することは禁止されています。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0825_1.html" }
+            ]
+          },
+          {
+            "key": "rules",
+            "title": "入場・応援のルール（ビジター側）",
+            "items": [
+              { "text": "順番待ちとシート貼りは、試合当日の7:00から13番ゲート前でできます。7:00より前の順番待ち・シート貼りは禁止で、ガムテープも使えません。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0825_1.html" },
+              { "text": "太鼓などの鳴り物と、大旗（Lサイズフラッグ1,015×1,575mmを超えるもの）は、ビジターA自由のエリアでのみ使えます。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0825_1.html" },
+              { "text": "横断幕は、ビジターA自由・ビジターSA指定のエリア内（1階席最前列・2階席最前列部分）に開門後から掲出できます。事前搬入と事前説明は15:00〜15:30に13番ゲート前です。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0825_1.html" },
+              { "text": "7番ゲートからは、鹿島のグッズを身につけて入場しないよう案内されています。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0825_1.html" },
+              { "text": "喫煙は加熱式たばこ専用喫煙所だけ（紙巻きたばこは不可）で、ビジタートイレ外にも喫煙所があります。等々力緑地内は指定場所以外は禁煙です。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0825_1.html" },
+              { "text": "ビン・カンは持ち込めず、入場ゲートで中身を移し替えてから入場します。", "sourceUrl": "https://www.frontale.co.jp/tickets/visitor_supporters.html" }
+            ]
+          },
+          {
+            "key": "gourmet",
+            "title": "グルメ",
+            "items": [
+              { "text": "場内のビジター側には、エフダイナーとファンキーズが出店します。メニュー・金額・出店店舗は変わる場合があります。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0914_15.html" },
+              { "text": "場外フロンパークのグルメは13:30〜キックオフまで。元祖ニュータンタンメン本舗や牛たん炭焼 利久などが出店予定です。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0914_15.html" }
+            ]
+          },
+          {
+            "key": "event",
+            "title": "イベント",
+            "items": [
+              { "text": "場外フロンパークでは「海豚（ふろん太）の日」を13:30〜17:30に開催し、通常より1時間早く開園します。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0914_17.html" },
+              { "text": "フロンパークのフットダーツ（芝生広場、13:30〜18:00、一般600円、雨天中止）は「どなたでも参加可能」とされています。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0914_17.html" }
+            ]
+          },
+          {
+            "key": "access",
+            "title": "アクセス（電車・バス）",
+            "items": [
+              { "text": "最寄り駅は武蔵中原駅、武蔵小杉駅（北口）、新丸子駅の3つで、いずれも徒歩で行けると案内されています。", "sourceUrl": "https://www.frontale.co.jp/tickets/beginners_guide/index.html" },
+              { "text": "武蔵小杉駅北口と等々力（正面広場）を結ぶ直行臨時バス（有料）が15:00頃から運行します。帰りの直行臨時バス（武蔵小杉駅行き）は、試合終了から約30分間運行されます。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0914_17.html" },
+              { "text": "武蔵小杉駅からタクシーを使うと、交通状況にもよりますが1,000円前後の距離です。", "sourceUrl": "https://www.frontale.co.jp/tickets/access_stadium.html" },
+              { "text": "来場・帰宅時に道いっぱいに広がる、車道にはみ出す、大声を上げる、ポイ捨てをするなど、近隣の迷惑になる行為をしないよう呼びかけられています。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0825_1.html" }
+            ]
+          },
+          {
+            "key": "parking",
+            "title": "車・駐車場",
+            "items": [
+              { "text": "東駐車場（10番ゲート裏）が関係者駐車場になるため、スタジアム周辺の駐車場台数は大幅に減っていて、公共交通機関での来場が求められています。周辺の一般有料駐車場も数に限りがあります。", "sourceUrl": "https://www.frontale.co.jp/tickets/visitor_supporters.html" },
+              { "text": "スタジアム正面の園路は、13:00頃から22:00頃まで一般車両通行止めです。", "sourceUrl": "https://www.frontale.co.jp/info/2026/0914_17.html" },
+              { "text": "競技場の周辺では、自転車を押して歩くよう案内されています。", "sourceUrl": "https://www.frontale.co.jp/tickets/visitor_supporters.html" }
+            ]
+          }
+        ],
+        "unverifiedNote": "次の項目は、公式情報で確認できていないため載せていません。確認でき次第、このページに追加します。",
+        "unverified": [
+          "ビジター席の当日券が販売されるか（川崎の販売状況ページの当日の表示による）",
+          "最寄り駅からスタジアムまでの徒歩の所要時間",
+          "鹿島公式の、この試合向けの応援ツアー・送迎バスの有無",
+          "茨城（鹿嶋・水戸方面）からの経路と所要時間、帰りの終電",
+          "ビジター側売店のメニューと価格",
+          "試合後の帰りの規制・混雑の案内"
+        ]
+      },
+      "sources": [
+        { "label": "鹿島アントラーズ公式｜試合日程・結果", "url": "https://www.antlers.co.jp/blogs/games", "accessedAt": "2026-09-15" },
+        { "label": "川崎フロンターレ公式｜9/19 鹿島「鹿島アントラーズを応援される皆様へ」", "url": "https://www.frontale.co.jp/info/2026/0825_1.html", "accessedAt": "2026-09-15" },
+        { "label": "川崎フロンターレ公式｜9/19 鹿島「ホームゲーム開催情報」", "url": "https://www.frontale.co.jp/info/2026/0914_17.html", "accessedAt": "2026-09-15" },
+        { "label": "川崎フロンターレ公式｜9/19 鹿島「スタジアムグルメ情報」", "url": "https://www.frontale.co.jp/info/2026/0914_15.html", "accessedAt": "2026-09-15" },
+        { "label": "川崎フロンターレ公式｜9/19 鹿島「チケット販売」のお知らせ", "url": "https://www.frontale.co.jp/info/2026/0825_3.html", "accessedAt": "2026-09-15" },
+        { "label": "川崎フロンターレ公式｜ビジターサポーターの皆様へ", "url": "https://www.frontale.co.jp/tickets/visitor_supporters.html", "accessedAt": "2026-09-15" },
+        { "label": "川崎フロンターレ公式｜Uvanceとどろきスタジアム by Fujitsuへのアクセス", "url": "https://www.frontale.co.jp/tickets/access_stadium.html", "accessedAt": "2026-09-15" },
+        { "label": "川崎フロンターレ公式｜初めての観戦ガイド", "url": "https://www.frontale.co.jp/tickets/beginners_guide/index.html", "accessedAt": "2026-09-15" },
+        { "label": "Jリーグチケット｜川崎フロンターレ対鹿島アントラーズ", "url": "https://www.jleague-ticket.jp/sales/perform/2630917/001", "accessedAt": "2026-09-15" }
+      ]
     },
     {
       "id": "kashima-antlers-2026-09-23-emperors-cup-r3",

@@ -120,6 +120,9 @@ if (info && canEmitEvent) {
         }
       : {}),
     ...(info.officialUrl ? { url: info.officialUrl } : {}),
+    // 開催状況。既定は「開催予定」で、公式が中止・延期を発表したときだけ eventInfo.status を変える
+    eventStatus: `https://schema.org/Event${info.status === 'cancelled' ? 'Cancelled' : info.status === 'postponed' ? 'Postponed' : 'Scheduled'}`,
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     description: d.description,
   });
 }

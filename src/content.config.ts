@@ -454,6 +454,11 @@ const events = defineCollection({
       access: z.string().optional(),
       /** 雨天・荒天時の扱い */
       weatherPolicy: z.string().optional(),
+      /**
+       * 開催状況。構造化データ（schema.org Event の eventStatus）に出す。
+       * 公式が中止・延期を発表したときだけ変える。推測で変えない。
+       */
+      status: z.enum(['scheduled', 'cancelled', 'postponed']).default('scheduled'),
       /** 主催者・公式サイト */
       officialName: z.string().optional(),
       officialUrl: z.url().optional(),

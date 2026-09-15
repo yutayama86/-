@@ -68,6 +68,34 @@ const ogImage = new URL(image ?? '/og.png', site.url).href;
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
+
+    {/*
+      計測の共通口。GA4が読み込めない・例外を投げる場合も呼び出し側を止めない。
+      個人情報を送らないため、値は固定の属性値・パスだけを使い、メールアドレスや電話番号らしき文字列は伏せる。
+    */}
+    <script is:inline>
+      window.shikumiAnalytics = (() => {
+        const SENSITIVE = /[^\s@<>()]+@[^\s@<>()]+\.[^\s@<>()]+|\+?\d[\d\s()-]{8,}\d/g;
+        const clean = (value, max = 100) =>
+          String(value ?? '').replace(SENSITIVE, '[redacted]').replace(/\s+/g, ' ').trim().slice(0, max);
+
+        const track = (name, params = {}, options = {}) => {
+          try {
+            if (typeof window.gtag !== 'function') return false;
+            const payload = { page_path: location.pathname };
+            for (const [key, value] of Object.entries(params)) {
+              payload[key] = typeof value === 'number' ? value : clean(value);
+            }
+            window.gtag('event', name, { ...payload, ...options });
+            return true;
+          } catch {
+            return false;
+          }
+        };
+
+        return { track, clean };
+      })();
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">本文へスキップ</a>
@@ -103,16 +131,43 @@ const ogImage = new URL(image ?? '/og.png', site.url).href;
       /* CTAのクリックを計測する。data-cta の値で設置場所を区別し、
          どの導線が問い合わせにつながったかを追えるようにする。 */
       (() => {
-        document.addEventListener('click', (event) => {
-          const target = event.target.closest('[data-cta]');
-          if (!target || typeof window.gtag !== 'function') return;
+        let lastTarget = null;
+        let lastAt = 0;
 
-          window.gtag('event', 'cta_click', {
-            cta_location: target.dataset.cta,
-            cta_topic: target.dataset.ctaTopic || '',
-            page_path: location.pathname,
-            transport_type: 'beacon',
-          });
+        // 遷移先はパスだけを送る。mailto: の本文やクエリに入力内容が載ることがあるため。
+        const destinationOf = (href) => {
+          if (!href) return '';
+          try {
+            const url = new URL(href, location.href);
+            if (url.protocol === 'mailto:') return 'mailto';
+            if (url.protocol === 'tel:') return 'tel';
+            return url.origin === location.origin ? url.pathname : `${url.origin}${url.pathname}`;
+          } catch {
+            return '';
+          }
+        };
+
+        document.addEventListener('click', (event) => {
+          const target = event.target instanceof Element ? event.target.closest('[data-cta]') : null;
+          if (!target || !window.shikumiAnalytics) return;
+
+          // ダブルクリックや連打を1回に数える
+          const now = Date.now();
+          if (target === lastTarget && now - lastAt < 1000) return;
+          lastTarget = target;
+          lastAt = now;
+
+          window.shikumiAnalytics.track(
+            'cta_click',
+            {
+              source_path: location.pathname,
+              destination: destinationOf(target.getAttribute('href')),
+              cta_label: target.dataset.ctaLabel || target.textContent.replace(/[→←]/g, ''),
+              cta_location: target.dataset.cta,
+              cta_topic: target.dataset.ctaTopic || '',
+            },
+            { transport_type: 'beacon' }
+          );
         });
       })();
     </script>

@@ -113,7 +113,7 @@ const turnstileSiteKey = '0x4AAAAAAEmB3I5NAyMoIF6c';
       {contact.email && (
         <section class="side__block">
           <h2 class="side__title">メールでのご相談</h2>
-          <p class="side__text"><a href={`mailto:${contact.email}`} data-cta="contact-email">{contact.email}</a></p>
+          <p class="side__text"><a href={`mailto:${contact.email}`} data-cta="contact-email" data-cta-label="メールでのご相談">{contact.email}</a></p>
         </section>
       )}
 
@@ -132,9 +132,24 @@ const turnstileSiteKey = '0x4AAAAAAEmB3I5NAyMoIF6c';
 
       const submit = form.querySelector('button[type="submit"]');
       const topicField = form.querySelector('#topic');
-      const track = (name, params) => {
-        if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+      const FORM_ID = 'contact';
+      const STARTED_KEY = 'shikumi:contact_form_started';
+
+      // 計測は送信処理から切り離す。GA4が読み込めない・例外を投げても問い合わせは止めない。
+      const track = (name, params, options) => {
+        try {
+          return window.shikumiAnalytics ? window.shikumiAnalytics.track(name, params, options) : false;
+        } catch {
+          return false;
+        }
       };
+      const session = {
+        get: (key) => { try { return sessionStorage.getItem(key); } catch { return null; } },
+        set: (key, value) => { try { sessionStorage.setItem(key, value); } catch { /* 保存できない環境では同一ページ内の重複だけ防ぐ */ } },
+        remove: (key) => { try { sessionStorage.removeItem(key); } catch { /* noop */ } },
+      };
+      // 送るのは選択肢の固定値だけ。入力欄の値は計測に使わない。
+      const topicValue = () => (topicField instanceof HTMLSelectElement ? topicField.value : '');
 
       // URLの ?topic= を初期選択に反映し、どのCTAから来たかを引き継ぐ
       const topicParam = new URLSearchParams(location.search).get('topic');
@@ -142,13 +157,22 @@ const turnstileSiteKey = '0x4AAAAAAEmB3I5NAyMoIF6c';
         if ([...topicField.options].some((o) => o.value === topicParam)) topicField.value = topicParam;
       }
 
-      // 最初の入力時に1度だけ送る。scripts/lib/ga4.mjs が集計に使うイベント名。
-      let started = false;
-      form.addEventListener('input', () => {
-        if (started) return;
+      // 最初の操作で1回だけ送る。再読み込みしても、送信が完了するまでは同じ入力の続きとして数えない。
+      let started = session.get(STARTED_KEY) === '1';
+      const markStarted = (event) => {
+        // Turnstileやハニーポットなど、訪問者が操作しない欄の変化は数えない
+        const field = event.target;
+        const isUserField =
+          (field instanceof HTMLInputElement && field.type !== 'hidden' && field.name !== 'website') ||
+          field instanceof HTMLSelectElement ||
+          field instanceof HTMLTextAreaElement;
+        if (started || !isUserField) return;
         started = true;
-        track('contact_form_start', { form_id: 'contact', topic: topicField ? topicField.value : '' });
-      });
+        session.set(STARTED_KEY, '1');
+        track('contact_form_start', { form_id: FORM_ID, topic: topicValue() });
+      };
+      form.addEventListener('input', markStarted);
+      form.addEventListener('change', markStarted);
 
       const showError = (message, fallbackHref) => {
         errorBox.textContent = '';
@@ -188,58 +212,99 @@ const turnstileSiteKey = '0x4AAAAAAEmB3I5NAyMoIF6c';
         return `mailto:${email}?subject=${encodeURIComponent(`【お問い合わせ】${topicLabel}`)}&body=${encodeURIComponent(body)}`;
       };
 
+      const errorTypeOf = (status) => {
+        if (status === 0) return 'network';
+        if (status === 400) return 'validation';
+        if (status === 403) return 'forbidden';
+        if (status === 503) return 'unavailable';
+        return 'server';
+      };
+
+      /** 送信成功後の処理。計測の成否に関係なく必ずサンクスページへ進む。 */
+      const completeSubmission = (topic, isBot) => {
+        let redirected = false;
+        const redirect = () => {
+          if (redirected) return;
+          redirected = true;
+          window.location.href = '/contact/thanks/';
+        };
+
+        session.remove(STARTED_KEY);
+        // ハニーポットが埋まった送信はAPIが成功を装って破棄するため、問い合わせとして数えない
+        const sent = isBot
+          ? false
+          : track('generate_lead', { form_id: FORM_ID, topic }, { event_callback: redirect, event_timeout: 1200 });
+        setTimeout(redirect, sent ? 1300 : 0);
+      };
+
+      let submitting = false;
+      let completed = false;
+
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
+        if (submitting || completed) return;
         errorBox.hidden = true;
         if (!form.checkValidity()) {
           form.reportValidity();
           return;
         }
+
+        submitting = true;
         if (submit instanceof HTMLButtonElement) submit.disabled = true;
         const data = new FormData(form);
-        const topic = String(data.get('topic') ?? '');
+        const topic = topicValue();
 
+        let response;
         try {
-          const response = await fetch(form.action, {
+          response = await fetch(form.action, {
             method: 'POST',
             body: new URLSearchParams(data),
             headers: { Accept: 'application/json' },
           });
-          if (!response.ok) {
-            const body = await response.json().catch(() => ({}));
-            const error = new Error(body.message || 'send_failed');
-            error.status = response.status;
-            throw error;
-          }
+        } catch {
+          response = null;
+        }
 
-          // 完了イベントが送られる前に遷移して計測が欠けないよう、
-          // GA4のコールバックかタイムアウトの早い方でサンクスページへ進む。
-          let redirected = false;
-          const redirect = () => {
-            if (redirected) return;
-            redirected = true;
-            window.location.href = '/contact/thanks/';
-          };
-          if (typeof window.gtag === 'function') {
-            window.gtag('event', 'generate_lead', { form_id: 'contact', topic, event_callback: redirect, event_timeout: 1500 });
-            setTimeout(redirect, 1600);
-          } else {
-            redirect();
-          }
-        } catch (error) {
-          const status = error && error.status ? error.status : 0;
-          track('form_error', { form_id: 'contact', topic, status });
-          if (status === 400) {
-            showError(error.message, null);
-          } else {
-            showError(
-              '送信できませんでした。お手数ですが、下のボタンからメールでお送りください。入力いただいた内容はそのまま引き継がれます。',
-              mailtoFallback(data)
-            );
-          }
-          // Turnstileのトークンは1回限りのため、再送信できるよう取り直す
+        if (response && response.ok) {
+          completed = true;
+          completeSubmission(topic, Boolean(data.get('website')));
+          return;
+        }
+
+        const status = response ? response.status : 0;
+        const body = response ? await response.json().catch(() => ({})) : {};
+        track('form_error', { form_id: FORM_ID, topic, error_type: errorTypeOf(status), status });
+
+        if (status === 400 && body.message) {
+          showError(body.message, null);
+        } else {
+          showError(
+            '送信できませんでした。お手数ですが、下のボタンからメールでお送りください。入力いただいた内容はそのまま引き継がれます。',
+            mailtoFallback(data)
+          );
+        }
+        // Turnstileのトークンは1回限りのため、再送信できるよう取り直す
+        try {
           if (window.turnstile && typeof window.turnstile.reset === 'function') window.turnstile.reset();
-          if (submit instanceof HTMLButtonElement) submit.disabled = false;
+        } catch {
+          /* noop */
+        }
+        submitting = false;
+        if (submit instanceof HTMLButtonElement) submit.disabled = false;
+      });
+
+      // サンクスページから戻る操作でキャッシュから復元されたとき、送信済みの状態を持ち越さない。
+      // 完了イベントは送信成功の処理内でしか送らないため、復元では再送されない。
+      window.addEventListener('pageshow', (event) => {
+        if (!event.persisted) return;
+        submitting = false;
+        completed = false;
+        started = session.get(STARTED_KEY) === '1';
+        if (submit instanceof HTMLButtonElement) submit.disabled = false;
+        try {
+          if (window.turnstile && typeof window.turnstile.reset === 'function') window.turnstile.reset();
+        } catch {
+          /* noop */
         }
       });
     })();

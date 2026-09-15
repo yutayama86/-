@@ -139,7 +139,8 @@ const ogImage = new URL(image ?? '/og.png', site.url).href;
           if (!href) return '';
           try {
             const url = new URL(href, location.href);
-            if (url.protocol === 'mailto:') return 'mailto';
+            // Cloudflareのメールアドレス難読化で mailto: が書き換えられた場合も同じ値にそろえる
+            if (url.protocol === 'mailto:' || url.pathname.startsWith('/cdn-cgi/l/email-protection')) return 'mailto';
             if (url.protocol === 'tel:') return 'tel';
             return url.origin === location.origin ? url.pathname : `${url.origin}${url.pathname}`;
           } catch {

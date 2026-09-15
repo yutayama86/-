@@ -119,7 +119,9 @@
       "opponent": "ニューカッスル・ジェッツ",
       "homeAway": "home",
       "venue": "カシマサッカースタジアム",
-      "status": "scheduled",
+      "status": "finished",
+      "score": { "own": 7, "opponent": 1 },
+      "recap": "カシマサッカースタジアムでニューカッスル・ジェッツに7-1で勝ち、AFCチャンピオンズリーグElite 2026/27のリーグステージ初戦を白星で飾りました。リーグ戦は9月2日の水戸戦から3試合続けて敗れていました。次は9月19日、アウェイで川崎フロンターレと対戦します。",
       "broadcast": ["DAZN"],
       "officialUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-acle01",
       "guide": {

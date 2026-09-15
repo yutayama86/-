@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="第20回かさま新栗まつり2026。笠間の栗から、食・体験・工芸・観光・寄附へ広がる消費の接点を示すイバトコ作成の図版">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="28" y="28" width="1144" height="574" fill="none" stroke="#d9d0c0" stroke-width="1"/>
+
+  <text x="80" y="96" font-family="'Source Sans 3', sans-serif" font-size="20" letter-spacing="2.4" fill="#a63f32">IBATOCO ・ 茨城ニュース解説</text>
+
+  <text x="80" y="206" font-family="'Shippori Mincho', serif" font-size="40" font-weight="700" fill="#315c68">第20回</text>
+  <text x="80" y="284" font-family="'Shippori Mincho', serif" font-size="68" font-weight="700" fill="#172b35">かさま新栗まつり</text>
+  <text x="84" y="350" font-family="'Source Sans 3', sans-serif" font-size="40" font-weight="700" letter-spacing="2" fill="#315c68">2026.10.2 − 10.4</text>
+
+  <text x="80" y="438" font-family="'Shippori Mincho', serif" font-size="32" font-weight="700" fill="#172b35">栗を「食べる」から、</text>
+  <text x="80" y="484" font-family="'Shippori Mincho', serif" font-size="32" font-weight="700" fill="#172b35">笠間を「体験する」3日間へ</text>
+
+  <g stroke="#315c68" stroke-width="2" stroke-dasharray="6 6">
+    <line x1="935" y1="300" x2="935" y2="178"/>
+    <line x1="935" y1="300" x2="1063" y2="248"/>
+    <line x1="935" y1="300" x2="1030" y2="400"/>
+    <line x1="935" y1="300" x2="840" y2="400"/>
+    <line x1="935" y1="300" x2="807" y2="248"/>
+  </g>
+  <circle cx="935" cy="300" r="44" fill="#a63f32"/>
+  <text x="935" y="294" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="19" font-weight="700" fill="#f6f2e9">笠間の</text>
+  <text x="935" y="318" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="19" font-weight="700" fill="#f6f2e9">栗</text>
+
+  <g fill="#f6f2e9" stroke="#315c68" stroke-width="2.5">
+    <circle cx="935" cy="170" r="12"/>
+    <circle cx="1071" cy="245" r="12"/>
+    <circle cx="1036" cy="408" r="12"/>
+    <circle cx="834" cy="408" r="12"/>
+    <circle cx="799" cy="245" r="12"/>
+  </g>
+  <g font-family="'Source Sans 3', sans-serif" font-size="20" font-weight="700" fill="#172b35">
+    <text x="935" y="146" text-anchor="middle">食</text>
+    <text x="1096" y="252">体験</text>
+    <text x="1036" y="448" text-anchor="middle">工芸</text>
+    <text x="834" y="448" text-anchor="middle">観光</text>
+    <text x="774" y="252" text-anchor="end">寄附</text>
+  </g>
+
+  <line x1="80" y1="516" x2="300" y2="516" stroke="#a63f32" stroke-width="3"/>
+
+  <text x="80" y="552" font-family="'Source Sans 3', sans-serif" font-size="21" fill="#75695a">笠間芸術の森公園 イベント広場 ・ 9:00〜16:00（最終日は15:00まで）</text>
+  <text x="80" y="580" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a">出典：笠間市の公開情報（図版はイバトコ編集部作成。公式画像は使用していません）</text>
+</svg>

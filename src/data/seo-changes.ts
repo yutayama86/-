@@ -44,6 +44,15 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260915-news-kashima-antlers-kawasaki-away-guide',
+    date: '2026-09-15',
+    url: '/news/kashima-antlers-kawasaki-away-guide-2026-09-19/',
+    kind: 'new-article',
+    change: '鹿島サポーター向けに9/19川崎戦（U等々力）の入場ゲート・列・チケット販売状況と当日券・応援ルール・アクセスをまとめた遠征ガイドを新規公開。チームページのNEXT MATCHからも導線',
+    queries: ['川崎 鹿島 チケット', '等々力 ビジター 入場', '鹿島 川崎 アウェイ'],
+    commit: '3130b9f',
+  },
+  {
     id: '20260915-news-ibaraki-passport-44-municipalities',
     date: '2026-09-15',
     url: '/news/ibaraki-passport-44-municipalities/',

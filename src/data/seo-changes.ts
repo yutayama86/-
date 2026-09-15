@@ -44,6 +44,16 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260916-events-tonegawa-hanabi-2026',
+    date: '2026-09-16',
+    url: '/events/tonegawa-hanabi-2026/',
+    kind: 'on-page',
+    change: '開催直前の更新。titleに18:30を追加し、冒頭で日時・打上数・会場を即答。来場時間帯の推奨、駐車場の事前予約前提と閉鎖情報、路線バス・自動運転バス・サイクルシェアの運休、中止告知は前日18時、当日券なしをFAQと要点に反映。Event構造化データにeventStatusを追加',
+    queries: ['利根川大花火大会', '利根川花火大会', '9月19日 花火大会', '利根川花火 駐車場', '利根川大花火大会 アクセス'],
+    commit: '9d1d5ea',
+    note: '開催後の表示減は季節性。評価は開催前日までのCTRとクリックで見る',
+  },
+  {
     id: '20260915-news-kashima-antlers-kawasaki-away-guide',
     date: '2026-09-15',
     url: '/news/kashima-antlers-kawasaki-away-guide-2026-09-19/',

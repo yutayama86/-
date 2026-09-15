@@ -1,3 +1,5 @@
+import { clearCtaOrigin, readCtaOrigin } from './analytics-events';
+
 /**
  * フォーム送信ヘルパー（クライアント）。
  * - form[data-endpoint] が設定されていれば Formspree へAJAX送信（ページ遷移なし）
@@ -19,10 +21,13 @@ interface Options {
 function trackConversion(id: string, subject: string): void {
   const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
   if (typeof gtag !== 'function') return;
+  // 記事末のCTAから来た送信なら、どのCTA・どの記事からかを付ける（無ければ付けない）
+  const origin = readCtaOrigin();
   gtag('event', 'generate_lead', {
     form_id: id,
     form_subject: subject || '(未選択)',
     page_path: window.location.pathname,
+    ...(origin ?? {}),
   });
 }
 
@@ -66,6 +71,7 @@ export function submitForm(form: HTMLFormElement, opts: Options): void {
           opts.conversionId || form.id || 'contact',
           String(data.get('inquiry_type') ?? ''),
         );
+        clearCtaOrigin();
         form.reset();
         show(opts.successText, 'ok');
         form.querySelectorAll('input, select, textarea').forEach((el) => {

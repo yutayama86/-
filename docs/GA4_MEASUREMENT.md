@@ -78,6 +78,54 @@ Chrome・Safariなど）で1回ずつ開くこと。
 
 送信先は Formspree（`https://formspree.io/f/mykrvjkg`）。本番で設定済み。
 
+### 1-5. 事業者向け導線の計測（2026-09-15 追加）
+
+記事詳細（`/news/*`）とイベント詳細（`/events/*`）の本文の最後に、地域事業者向けのCTAを1ブロック置いた
+（`src/components/BusinessCta.astro`）。行き先は既存の `/contact/`（ご用件を選んだ状態で開く）。
+イベント送信は `src/lib/analytics-events.ts`。
+
+| 段階 | イベント名 | いつ送るか | キーイベント |
+|---|---|---|---|
+| CTA表示 | `business_cta_view` | CTAの半分以上が画面に入ったとき、1ページ1回 | しない |
+| CTAクリック | `business_cta_click` | CTAのリンクを押したとき | しない |
+| フォーム到達 | `contact_form_view` | `/contact/` を開いたとき（CTA経由以外も含む） | しない |
+| 入力開始 | `contact_form_start` | フォームに初めてフォーカスしたとき、1回 | しない |
+| 送信完了 | `generate_lead` | 送信先が 2xx を返したときだけ（1-4） | **これだけ** |
+
+**途中の段階をキーイベントにしない。** 実際には届いていない問い合わせを成果として数えてしまう。
+
+付くパラメータ：
+
+| パラメータ | 値 | 付くイベント |
+|---|---|---|
+| `cta_type` | `listing`（掲載・情報提供）/ `consulting`（集客・Web・SNS相談）/ `biz_page`（/biz/ へのリンク） | click、および CTA経由のときの form_view / form_start / generate_lead |
+| `cta_location` | `article_end` | 同上＋view |
+| `cta_page_type` | `news` / `events` | 同上＋view |
+| `cta_origin_path` | CTAを押した記事のパス | CTA経由の form_view / form_start / generate_lead |
+| `link_url` | 押したリンク先 | click |
+| `landing_traffic_kind` | `search` / `ai_referral` / `other_referral` / `direct` / `unknown` | **全イベント**（config に載る） |
+
+- どのCTAから来たかは `sessionStorage` に30分だけ持つ。**内部リンクに `utm_*` を付けない**
+  （GA4のセッションの流入元が上書きされ、Organic Search の成果が別チャネルに化けるため）。
+- `traffic_kind` はページごとの referrer で決まるので、記事から `/contact/` へ移ると `other_referral` になる。
+  CVを入口の流入で見るために、セッションの入口の区分を `landing_traffic_kind` として別に持つ。
+  サイト内から来たのに入口の記録が無いときは `unknown`（推測で埋めない）。途中の Direct は入口を上書きしない。
+- 既存の `traffic_kind` の意味は変えていない（シート・探索の過去データと比較できるように）。
+
+#### Organic Search 由来のCVの見方
+
+1. **標準のチャネル**：探索で、ディメンション「セッションのデフォルト チャネル グループ」、
+   指標「イベント数」、フィルタ「イベント名 = generate_lead」。Organic Search の行が検索由来のCV。
+2. **入口の区分で見る（補助）**：カスタムディメンション `landing_traffic_kind` を登録後、
+   「イベント名 = generate_lead」×「landing_traffic_kind = search」。
+3. **ファネル**：探索 → ファネルデータ探索で
+   `business_cta_view` → `business_cta_click` → `contact_form_view` → `generate_lead`。
+   内訳に「セッションのデフォルト チャネル グループ」を入れると、Organic 経由の各段階の数が出る。
+   CTAクリック率 = `business_cta_click` ÷ `business_cta_view`。
+
+**有効問い合わせ件数**は GA4 では判定できない（中身を見ないと分からない）。
+Formspree に届いたメールを週1回数え、`generate_lead` の件数と並べて記録する。
+
 ---
 
 ## 2. 管理画面でやること（コードからは設定できない）
@@ -92,6 +140,11 @@ Chrome・Safariなど）で1回ずつ開くこと。
 | AI流入元 | イベント | `ai_source` |
 | フォーム種別 | イベント | `form_id` |
 | 問い合わせ用件 | イベント | `form_subject` |
+| CTAの種類 | イベント | `cta_type` |
+| CTAの位置 | イベント | `cta_location` |
+| CTAを置いたページ種別 | イベント | `cta_page_type` |
+| CTAを押した記事 | イベント | `cta_origin_path` |
+| 入口の流入区分 | イベント | `landing_traffic_kind` |
 
 登録した時点より後のデータにしか適用されない（遡及しない）。
 

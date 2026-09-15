@@ -1,0 +1,94 @@
+---
+/**
+ * 記事・イベント詳細の本文を読み終えたところに置く、地域事業者向けの導線（1ブロックだけ）。
+ *
+ * - 行き先は既存の問い合わせフォーム。ご用件は ?subject= で選んだ状態にする（contact.astro の既存の仕組み）
+ * - 編集記事と有料支援を混ぜない（/biz/ の TRANSPARENCY と同じ約束をここでも書く）
+ * - ポップアップ・追従表示はしない。本文の流れの最後に置くだけ
+ * - 計測は src/lib/analytics-events.ts。表示（1回）とクリックを送り、どのCTAから来たかをフォームへ引き継ぐ
+ */
+interface Props {
+  /** GA4 の cta_page_type。どの種類のページから来た問い合わせかを分ける */
+  pageType: 'news' | 'events';
+}
+const { pageType } = Astro.props;
+
+const OPTIONS = [
+  {
+    type: 'listing',
+    title: 'イバトコに掲載・情報提供したい',
+    body: 'お店・イベント・地域の取り組みの情報をお寄せください。編集記事は掲載料をいただかず、取り上げるかどうかは編集部が判断します。',
+    href: '/contact/?subject=取材・掲載相談',
+    label: '掲載・情報提供について送る',
+  },
+  {
+    type: 'consulting',
+    title: '集客・Web・SNSについて相談したい',
+    body: '店舗情報の整備、Webサイト、SNSやGoogleマップなどの発信を有料で支援します。費用と範囲は事前にお伝えし、編集記事の評価は販売しません。',
+    href: '/contact/?subject=地域事業者の相談',
+    label: '発信の相談をする',
+  },
+] as const;
+---
+
+<aside class="bcta" aria-labelledby="bcta-title" data-business-cta data-page-type={pageType}>
+  <p class="bcta__kicker">FOR LOCAL BUSINESSES</p>
+  <p id="bcta-title" class="bcta__title">茨城で店や事業をしている方へ</p>
+  <ul class="bcta__options">
+    {OPTIONS.map((option) => (
+      <li>
+        <a class="bcta__option" href={option.href} data-cta-type={option.type}>
+          <strong>{option.title}</strong>
+          <span class="bcta__body">{option.body}</span>
+          <span class="bcta__action">{option.label}<span aria-hidden="true">→</span></span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <p class="bcta__note"><a href="/biz/" data-cta-type="biz_page">イバトコの支援内容と、広告・編集記事の区分を見る</a></p>
+</aside>
+
+<script>
+  import { rememberCtaOrigin, trackEvent } from '../lib/analytics-events';
+
+  for (const block of document.querySelectorAll<HTMLElement>('[data-business-cta]')) {
+    const pageType = block.dataset.pageType ?? '';
+    const base = { cta_location: 'article_end', cta_page_type: pageType };
+
+    // クリック率の分母。半分以上が画面に入ったときに1回だけ送る
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          trackEvent('business_cta_view', base);
+          io.disconnect();
+        }
+      }, { threshold: 0.5 });
+      io.observe(block);
+    }
+
+    for (const link of block.querySelectorAll<HTMLAnchorElement>('a[data-cta-type]')) {
+      link.addEventListener('click', () => {
+        const ctaType = link.dataset.ctaType ?? '';
+        rememberCtaOrigin({ ...base, cta_type: ctaType, cta_origin_path: window.location.pathname });
+        trackEvent('business_cta_click', { ...base, cta_type: ctaType, link_url: link.getAttribute('href') ?? '' });
+      });
+    }
+  }
+</script>
+
+<style>
+  .bcta{display:grid;gap:.9rem;margin-top:clamp(2.75rem,5vw,4rem);padding:clamp(1.3rem,3vw,1.9rem);border:1px solid var(--interior-line,var(--color-mist));border-radius:1rem;background:#fff}
+  .bcta__kicker{margin:0;color:var(--interior-blue,var(--color-tide));font:700 .68rem var(--font-brand-meta);letter-spacing:.14em}
+  .bcta__title{margin:0;font:600 clamp(1.25rem,2.4vw,1.55rem)/1.45 var(--font-brand-display);color:var(--color-ink);text-wrap:balance}
+  .bcta__options{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:.7rem;margin:.2rem 0 0;padding:0;list-style:none}
+  .bcta__options li{margin:0;padding:0}
+  .bcta__options li::before{content:none}
+  .bcta__option{display:flex;flex-direction:column;gap:.45rem;height:100%;padding:1rem 1.05rem;border:1px solid var(--interior-line,var(--color-mist));border-radius:.85rem;background:var(--interior-sky-soft,var(--color-white));color:var(--color-ink);text-decoration:none;transition:border-color .2s ease,box-shadow .2s ease}
+  .bcta__option:hover,.bcta__option:focus-visible{border-color:var(--interior-blue,var(--color-tide));box-shadow:0 10px 26px rgba(25,55,88,.1)}
+  .bcta__option:focus-visible{outline:2px solid var(--interior-blue,var(--color-tide));outline-offset:2px}
+  .bcta__option strong{font-size:.98rem;line-height:1.6}
+  .bcta__body{color:var(--color-soil);font-size:.82rem;line-height:1.8}
+  .bcta__action{display:inline-flex;align-items:center;gap:.5rem;margin-top:auto;padding-top:.3rem;color:var(--interior-blue,var(--color-tide));font-size:.86rem;font-weight:700}
+  .bcta__note{margin:0;font-size:.78rem;line-height:1.8}
+  .bcta__note a{color:var(--color-soil);text-decoration:underline;text-underline-offset:.18em}
+</style>

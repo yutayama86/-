@@ -45,7 +45,11 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: 'お問い合
   @media(max-width:360px){.contact-intro h1{font-size:1.9rem;line-height:1.4}}
 </style>
 <script>
-  import { submitForm } from '../lib/forms'; const form=document.querySelector<HTMLFormElement>('.contact-form'); const params=new URLSearchParams(location.search); const subject=params.get('subject'); const select=document.getElementById('subject') as HTMLSelectElement|null;
+  import { submitForm } from '../lib/forms';
+  import { readCtaOrigin, trackEvent } from '../lib/analytics-events';
+  const form=document.querySelector<HTMLFormElement>('.contact-form'); const params=new URLSearchParams(location.search); const subject=params.get('subject'); const select=document.getElementById('subject') as HTMLSelectElement|null;
   if(subject&&select){let option=Array.from(select.options).find((item)=>item.value===subject||item.textContent?.trim()===subject);if(!option){option=new Option(subject,subject);select.add(option,1)}select.value=option.value;const detail=params.get('detail');const message=document.getElementById('message') as HTMLTextAreaElement|null;if(detail&&message&&!message.value)message.value=detail}
+  // フォーム到達と入力開始。送信完了（generate_lead）とは別のイベントで、キーイベントにはしない
+  if(form){const origin=readCtaOrigin();const inquiry=()=>(form.elements.namedItem('inquiry_type') as HTMLSelectElement|null)?.value||'';trackEvent('contact_form_view',{form_id:'contact',form_subject:inquiry(),...(origin??{})});form.addEventListener('focusin',()=>{trackEvent('contact_form_start',{form_id:'contact',form_subject:inquiry(),...(origin??{})})},{once:true})}
   if(form){form.addEventListener('submit',()=>{const type=(form.elements.namedItem('inquiry_type') as HTMLSelectElement|null)?.value||'お問い合わせ';const name=((form.elements.namedItem('name') as HTMLInputElement|null)?.value||'').trim();const field=form.querySelector<HTMLInputElement>('input[name="_subject"]');if(field)field.value=name?`【${type}】${name}`:`【${type}】お問い合わせ`});submitForm(form,{successText:'お問い合わせを受け付けました。内容を確認してご連絡します。',conversionId:'contact'})}
 </script>

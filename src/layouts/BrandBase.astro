@@ -162,6 +162,19 @@ const routeSegment = pathname.split('/').filter(Boolean)[0]?.replace(/[^a-z0-9-]
   }
   var kind = ai ? 'ai_referral' : (!refHost ? 'direct' : (isSearch(refHost) ? 'search' : 'other_referral'));
 
+  // 3-2) セッションの入口の流入区分。traffic_kind はページごとの referrer で決まるので、
+  //      記事から問い合わせページへ移ると other_referral（サイト内）になり、成果を入口の流入で見られない。
+  //      外から入ったページの区分を sessionStorage に持ち、サイト内の移動では上書きしない。
+  //      入口が分からない（サイト内から来たのに記録が無い）ときは unknown にして、推測で埋めない。
+  //      途中の Direct（ブックマーク等）は、GA4 と同じく記録済みの入口を上書きしない。
+  var landing = null;
+  try { landing = JSON.parse(sessionStorage.getItem('ibatoco_landing') || 'null'); } catch (e) {}
+  var internal = !!refHost && C.hosts.indexOf(refHost) > -1;
+  if (!landing || (!internal && kind !== 'direct')) {
+    landing = { kind: internal ? 'unknown' : kind, path: loc.pathname };
+    try { sessionStorage.setItem('ibatoco_landing', JSON.stringify(landing)); } catch (e) {}
+  }
+
   // 4) gtag読み込み
   var s = d.createElement('script');
   s.async = true;
@@ -170,10 +183,10 @@ const routeSegment = pathname.split('/').filter(Boolean)[0]?.replace(/[^a-z0-9-]
   w.dataLayer = w.dataLayer || [];
   w.gtag = function(){ w.dataLayer.push(arguments); };
   w.gtag('js', new Date());
-  var params = { traffic_kind: kind };
+  var params = { traffic_kind: kind, landing_traffic_kind: landing.kind };
   if (ai) params.ai_source = ai;
   w.gtag('config', C.id, params);
-  w.__ibatocoTraffic = { kind: kind, aiSource: ai || null, referrerHost: refHost || null };
+  w.__ibatocoTraffic = { kind: kind, aiSource: ai || null, referrerHost: refHost || null, landingKind: landing.kind, landingPath: landing.path };
 })();`} />
       </>
     )}

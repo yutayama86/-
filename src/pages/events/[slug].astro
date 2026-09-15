@@ -13,6 +13,7 @@ import BrandBase from '../../layouts/BrandBase.astro';
 import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
 import { breadcrumbJsonLd } from '../../lib/seo';
 import { INTERNAL_LINK_LABELS } from '../../data/internal-links';
+import BusinessCta from '../../components/BusinessCta.astro';
 import { getEvents } from '../../lib/content';
 import { MUNI_BY_SLUG } from '../../data/areas';
 
@@ -237,6 +238,8 @@ if (d.faq.length > 0) {
     ))}</ul>
     <p class="ev-caution">開催内容・日程・料金・交通は変更されることがあります。お出かけ前に必ず公式の最新情報をご確認ください。</p>
   </section>
+  {/* 本文を読み終えた位置に、地域事業者向けの導線を1つだけ置く */}
+  <BusinessCta pageType="events" />
     </div>
   </div>
 

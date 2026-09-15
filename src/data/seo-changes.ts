@@ -44,6 +44,15 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260915-news-ibaraki-passport-44-municipalities',
+    date: '2026-09-15',
+    url: '/news/ibaraki-passport-44-municipalities/',
+    kind: 'on-page',
+    change: '「交付方法や部数などの詳細は今後公表」「10月上旬に交付予定」を、県の9/10公表内容（10/10交付開始予定・10,000部・9/14〜25のオンライン申請・抽選）に更新し、申請ガイド記事への導線を追加。title・URLは変更なし',
+    queries: ['IBARAKI PASSPORT', '茨城パスポート'],
+    commit: '2aa5f88',
+  },
+  {
     id: '20260915-events-all',
     date: '2026-09-15',
     url: '/events/*',

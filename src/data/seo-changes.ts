@@ -44,6 +44,15 @@ export interface SeoChange {
  */
 export const SEO_CHANGES: SeoChange[] = [
   {
+    id: '20260916-news-hitachinokuni-long-trail-2026',
+    date: '2026-09-16',
+    url: '/news/hitachinokuni-long-trail-2026/',
+    kind: 'new-article',
+    change: '常陸国ロングトレイル全線開通（9/19・約350km）の解説記事を新規公開。開通内容、当日イベント、コースの構成、装備と通行止め・クマの注意、交通、今後の特集方針を整理',
+    queries: ['常陸国ロングトレイル', '常陸国ロングトレイル ルート', '常陸国ロングトレイル 350km', '茨城 ロングトレイル', '常陸国ロングトレイル アクセス'],
+    commit: 'a2ecf8a',
+  },
+  {
     id: '20260916-events-tonegawa-hanabi-2026',
     date: '2026-09-16',
     url: '/events/tonegawa-hanabi-2026/',

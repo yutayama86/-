@@ -52,9 +52,15 @@ export const LINK_PROVIDERS: Record<string, LinkProvider> = {
   'rakuten-travel': {
     id: 'rakuten-travel',
     name: '楽天トラベル',
-    status: 'none',
-    network: '未提携（候補：バリューコマース、楽天アフィリエイト）',
-    note: 'A8.netには見当たらなかった。楽天アフィリエイトなら「URLを入力してリンクを作成」で宿泊エリアページのリンクを作れる',
+    status: 'active',
+    network: '楽天アフィリエイト（提携審査なし／2026-09-17 リンク作成）',
+    note: 'バリューコマース側では提携しない（同じ広告主を2つのASPで持たない）',
+    affiliateLinks: {
+      'https://travel.rakuten.co.jp/yado/ibaraki/oarai.html':
+        'https://hb.afl.rakuten.co.jp/hgc/579937d6.d51864df.579937d7.bf4673dd/?pc=https%3A%2F%2Ftravel.rakuten.co.jp%2Fyado%2Fibaraki%2Foarai.html&link_type=text&ut=eyJwYWdlIjoidXJsIiwidHlwZSI6InRleHQiLCJjb2wiOjF9',
+      'https://travel.rakuten.co.jp/yado/ibaraki/mito.html':
+        'https://hb.afl.rakuten.co.jp/hgc/579937d6.d51864df.579937d7.bf4673dd/?pc=https%3A%2F%2Ftravel.rakuten.co.jp%2Fyado%2Fibaraki%2Fmito.html&link_type=text&ut=eyJwYWdlIjoidXJsIiwidHlwZSI6InRleHQiLCJjb2wiOjF9',
+    },
   },
   jalan: {
     id: 'jalan',

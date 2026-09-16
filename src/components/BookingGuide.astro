@@ -5,6 +5,8 @@
  * - 公式の一次情報を先に置き、そのあとに複数の予約サイトを並べる（比較できるようにする）
  * - 並び順は記事側の booking.items のとおり。報酬の高さで並べ替えない（基準は basis に書く）
  * - 提携が成立している提供元だけ広告リンクになり、そのときだけ広告表示を出す（src/data/affiliates.ts）
+ * - 広告リンクの rel は ASP が生成したコードに合わせて `nofollow sponsored noopener`。
+ *   noreferrer を付けない理由：参照元が消えると掲載サイトの照合ができず、成果が否認されうる
  * - クリックはGA4へ送る。提携していない状態で押されている数も見えるようにする
  */
 import { hasPaidLink, isPaidLink, outboundHref, partnerStatus, providerName } from '../data/affiliates';
@@ -50,7 +52,7 @@ const KIND_LABEL: Record<string, string> = {
           class="bkg__item"
           href={outboundHref(item.provider, item.url)}
           target="_blank"
-          rel={isPaidLink(item.provider, item.url) ? 'noopener noreferrer sponsored' : 'noopener noreferrer'}
+          rel={isPaidLink(item.provider, item.url) ? 'nofollow sponsored noopener' : 'noopener noreferrer'}
           data-provider={item.provider}
           data-kind={item.kind ?? 'official'}
           data-partner-status={partnerStatus(item.provider)}

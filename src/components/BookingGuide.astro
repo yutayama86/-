@@ -29,7 +29,7 @@ interface Props {
   pageType: 'news' | 'events';
 }
 const { booking, pageType } = Astro.props;
-const showAdNotice = hasPaidLink(booking.items.map((item) => item.provider));
+const showAdNotice = hasPaidLink(booking.items);
 const KIND_LABEL: Record<string, string> = {
   official: '公式',
   ota: '予約サイト',
@@ -42,7 +42,7 @@ const KIND_LABEL: Record<string, string> = {
   <p class="bkg__kicker">RESERVE &amp; CHECK</p>
   <p id="bkg-title" class="bkg__title">{booking.heading}</p>
   {booking.intro && <p class="bkg__intro">{booking.intro}</p>}
-  {showAdNotice && <p class="bkg__ad">広告を含みます。リンク先で予約・購入があった場合、イバトコに報酬が入ることがあります。</p>}
+  {showAdNotice && <p class="bkg__ad">アフィリエイト広告を含みます。リンク先で予約・購入があった場合、イバトコに報酬が入ることがあります。掲載している内容は、リンク先の公開情報にもとづきます。</p>}
   <ul class="bkg__list">
     {booking.items.map((item) => (
       <li>
@@ -50,7 +50,7 @@ const KIND_LABEL: Record<string, string> = {
           class="bkg__item"
           href={outboundHref(item.provider, item.url)}
           target="_blank"
-          rel={isPaidLink(item.provider) ? 'noopener noreferrer sponsored' : 'noopener noreferrer'}
+          rel={isPaidLink(item.provider, item.url) ? 'noopener noreferrer sponsored' : 'noopener noreferrer'}
           data-provider={item.provider}
           data-kind={item.kind ?? 'official'}
           data-partner-status={partnerStatus(item.provider)}
@@ -58,7 +58,7 @@ const KIND_LABEL: Record<string, string> = {
           <span class="bkg__meta">
             <span class="bkg__kind">{KIND_LABEL[item.kind ?? 'official']}</span>
             <span class="bkg__provider">{providerName(item.provider)}</span>
-            {isPaidLink(item.provider) && <span class="bkg__pr">広告</span>}
+            {isPaidLink(item.provider, item.url) && <span class="bkg__pr">広告</span>}
           </span>
           <strong>{item.label}<span aria-hidden="true">↗</span></strong>
           {item.note && <span class="bkg__note">{item.note}</span>}

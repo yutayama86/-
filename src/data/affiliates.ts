@@ -32,10 +32,14 @@ export interface LinkProvider {
   /** 申請日・審査の状況など、運用のメモ */
   note?: string;
   /**
-   * 提携後に、通常URLを広告リンクへ変える関数。status が 'active' のときだけ使う。
-   * 例：(url) => `https://example-asp.com/click?id=XXXX&url=${encodeURIComponent(url)}`
+   * 提携後の広告リンク。**ASPの管理画面で生成したリンクを、そのまま貼る。**
+   * キーは記事に書いてある元のURL、値は生成された広告リンク。
+   *
+   * 関数でURLを組み立てない理由：ASPによっては「生成されたリンクを変更しないこと」が
+   * 条件になっている（例：じゃらんnetの商品リンクは計測用パラメータを含む）。
+   * 組み立て直すと計測に反映されず、成果が計上されないことがある。
    */
-  affiliateUrl?: (url: string) => string;
+  affiliateLinks?: Record<string, string>;
 }
 
 export const LINK_PROVIDERS: Record<string, LinkProvider> = {
@@ -82,21 +86,26 @@ export function providerName(id: string): string {
   return LINK_PROVIDERS[id]?.name ?? id;
 }
 
-/** 提携が成立している提供元だけ、広告リンクへ書き換える */
+/**
+ * 提携が成立していて、そのURLの広告リンクが登録されているときだけ書き換える。
+ * 登録が無ければ通常の公式リンクのまま出す（勝手に組み立てない）。
+ */
 export function outboundHref(id: string, url: string): string {
   const provider = LINK_PROVIDERS[id];
-  if (!provider || provider.status !== 'active' || !provider.affiliateUrl) return url;
-  return provider.affiliateUrl(url);
+  if (!provider || provider.status !== 'active') return url;
+  return provider.affiliateLinks?.[url] ?? url;
 }
 
-/** その提供元へのリンクが広告（成果報酬あり）かどうか */
-export function isPaidLink(id: string): boolean {
-  return LINK_PROVIDERS[id]?.status === 'active';
+/** そのリンクが広告（成果報酬あり）かどうか。URLごとに判定する */
+export function isPaidLink(id: string, url: string): boolean {
+  const provider = LINK_PROVIDERS[id];
+  if (!provider || provider.status !== 'active') return false;
+  return Boolean(provider.affiliateLinks?.[url]);
 }
 
-/** ひとつでも広告リンクを含むなら、画面に広告表示を出す */
-export function hasPaidLink(ids: string[]): boolean {
-  return ids.some(isPaidLink);
+/** ページ内にひとつでも広告リンクがあるか。上部の広告表示を出すかの判定に使う */
+export function hasPaidLink(links: { provider: string; url: string }[]): boolean {
+  return links.some((link) => isPaidLink(link.provider, link.url));
 }
 
 /** GA4へ送る提携状態。集計時に「未提携のまま押されている」ことが分かるようにする */

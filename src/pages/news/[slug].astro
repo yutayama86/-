@@ -10,6 +10,7 @@ import { INTERNAL_LINK_LABELS } from '../../data/internal-links';
 import PassportStampIndex from '../../components/PassportStampIndex.astro';
 import BusinessCta from '../../components/BusinessCta.astro';
 import BookingGuide from '../../components/BookingGuide.astro';
+import { hasPaidLink } from '../../data/affiliates';
 
 export const getStaticPaths = (async () => (await getNews()).map((item) => ({
   params: { slug: item.id.split('/').pop() },
@@ -44,6 +45,8 @@ const changesHeading = data.accessGuide ? 'アクセス・駐車場・公共交�
  * 目次と節番号はそこから組み立てる。標準の記事の番号（08 / FAQ など）は変えない。
  */
 const guide = data.guide;
+/** 広告リンクを含むページは、記事の冒頭（ファーストビュー）でも広告であることを示す（ASPの掲載条件） */
+const hasAd = Boolean(data.booking) && hasPaidLink(data.booking!.items);
 const pad = (n: number) => String(n).padStart(2, '0');
 const guideFaqNo = guide ? guide.sections.length + 2 : 8;
 const guideSourcesNo = guide ? guideFaqNo + (data.faq.length > 0 ? 1 : 0) : 9;
@@ -121,6 +124,7 @@ if (data.faq.length > 0) jsonLd.push({
       <div class="news-detail__meta"><span>{NEWS_CATEGORIES[data.category].label}</span>{municipalities.length > 0 && <span>{municipalities.map((value) => value!.name).join('・')}</span>}</div>
       <h1>{data.title}</h1>
       <p class="news-detail__deck">{data.description}</p>
+      {hasAd && <p class="ad-disclosure">この記事にはアフィリエイト広告を含みます。</p>}
       {data.tags.length > 0 && <ul class="news-detail__tags" aria-label="記事のタグ">{data.tags.map((tag) => <li><a href={`/tag/${tagToSlug(tag)}/`}>#{tag}</a></li>)}</ul>}
       <div class="news-detail__dates"><time datetime={data.pubDate.toISOString()}>公開 {formatDate(data.pubDate)}</time>{data.updatedDate && <time datetime={data.updatedDate.toISOString()}>更新 {formatDate(data.updatedDate)}</time>}<span>{data.author}</span></div>
       {guide && <div class="guide-summary">
@@ -251,6 +255,7 @@ if (data.faq.length > 0) jsonLd.push({
   .news-detail__body ul.guide-notes{gap:.35rem;margin-top:1.2rem}
   .news-detail__body ul.guide-notes li{color:var(--color-soil);font-size:.82rem;line-height:1.85}
   .guide-cta--bottom+section{margin-top:clamp(2.5rem,4vw,3.75rem);padding-top:clamp(1.75rem,3vw,2.75rem);border-top:1px solid var(--interior-line,var(--color-mist))}
+  .ad-disclosure{margin-top:1rem;padding:.45rem .7rem;border:1px solid var(--interior-line,var(--color-mist));border-radius:.5rem;background:var(--interior-sky-soft,#eef6ff);color:var(--color-soil);font-size:.76rem;line-height:1.7;width:max-content;max-width:100%}
   .news-faq{border-top:1px solid var(--color-mist)}.news-faq div{padding-block:1.2rem;border-bottom:1px solid var(--color-mist)}.news-faq dt{font-weight:700;color:var(--color-ink)}.news-faq dd{margin-top:.45rem}.source-list{display:grid;gap:1rem}.source-list li{display:grid}.source-list a{color:var(--color-tide);text-decoration:underline;text-underline-offset:.2em}.source-list small{margin-top:.2rem;color:var(--color-soil);font-size:.68rem}.source-note{margin-top:1.5rem;padding:1rem;background:var(--color-white);font-size:.78rem!important;color:var(--color-soil)!important}
   .news-related{border-top:1px solid var(--color-mist)}.news-related .bp-section-title{margin-top:.6rem}.municipality-links{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.5rem}.municipality-links a{padding:.65rem .9rem;border:1px solid var(--color-tide);color:var(--color-tide);font-size:.78rem}.news-related__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-top:2rem}.local-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin-top:2rem;background:var(--color-mist)}.local-links a{display:grid;gap:.3rem;padding:1rem;background:var(--color-white);font-weight:600;color:var(--color-ink)}.local-links span{color:var(--color-tide);font-size:.66rem;letter-spacing:.1em}
   .editorial-links{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.25rem}.editorial-links a{padding:.65rem .9rem;background:var(--color-white);border:1px solid var(--color-mist);color:var(--color-tide);font-size:.78rem}

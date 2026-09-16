@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="常陸国ロングトレイル全線開通。2026年9月19日、約350kmの周回コース。中央部・北東部・南東部・南西部の4エリアを示したイバトコ作成の図版">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="28" y="28" width="1144" height="574" fill="none" stroke="#d9d0c0" stroke-width="1"/>
+
+  <text x="80" y="96" font-family="'Source Sans 3', sans-serif" font-size="20" letter-spacing="2.4" fill="#a63f32">IBATOCO ・ 茨城ニュース解説</text>
+
+  <text x="80" y="212" font-family="'Shippori Mincho', serif" font-size="58" font-weight="700" fill="#172b35">約350kmが</text>
+  <text x="80" y="284" font-family="'Shippori Mincho', serif" font-size="58" font-weight="700" fill="#172b35">一本につながる</text>
+  <text x="84" y="352" font-family="'Source Sans 3', sans-serif" font-size="44" font-weight="700" letter-spacing="3" fill="#315c68">2026.9.19</text>
+
+  <text x="80" y="432" font-family="'Shippori Mincho', serif" font-size="32" font-weight="700" fill="#172b35">常陸国ロングトレイル、全線開通</text>
+
+  <circle cx="940" cy="300" r="150" fill="none" stroke="#315c68" stroke-width="2.5" stroke-dasharray="7 7"/>
+  <g fill="#f6f2e9" stroke="#a63f32" stroke-width="3">
+    <circle cx="940" cy="150" r="13"/>
+    <circle cx="1090" cy="300" r="13"/>
+    <circle cx="940" cy="450" r="13"/>
+    <circle cx="790" cy="300" r="13"/>
+  </g>
+  <g font-family="'Source Sans 3', sans-serif" font-size="20" font-weight="700" fill="#172b35">
+    <text x="940" y="122" text-anchor="middle">北西部</text>
+    <text x="1118" y="307">北東部</text>
+    <text x="940" y="490" text-anchor="middle">南東部</text>
+    <text x="762" y="307" text-anchor="end">南西部</text>
+  </g>
+  <text x="940" y="292" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="24" font-weight="700" fill="#315c68">県北6市町</text>
+  <text x="940" y="326" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="19" fill="#75695a">周回コース</text>
+
+  <line x1="80" y1="470" x2="300" y2="470" stroke="#a63f32" stroke-width="3"/>
+
+  <text x="80" y="512" font-family="'Source Sans 3', sans-serif" font-size="21" fill="#75695a">里山・海・滝・歴史をつなぐ、歩く旅のインフラへ</text>
+  <text x="80" y="576" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a">出典：茨城県・常陸国ロングトレイル公式サイトの公開情報（図版はイバトコ編集部作成）</text>
+</svg>

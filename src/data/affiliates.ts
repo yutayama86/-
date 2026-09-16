@@ -65,9 +65,15 @@ export const LINK_PROVIDERS: Record<string, LinkProvider> = {
   jalan: {
     id: 'jalan',
     name: 'じゃらんnet',
-    status: 'none',
-    network: '未提携（候補：バリューコマース＝即時提携・MyLink可、A8.net＝提携審査あり）',
-    note: 'バリューコマース側はサイト審査中。審査完了までは広告が正しく表示されないため、生成リンクを受け取っても status は active にしない',
+    status: 'active',
+    network: 'A8.net（提携承認 2026-09-16／プログラムID s00000005230001）',
+    note: 'バリューコマース側では提携しない（同じ広告主を2つのASPで持たない）。表示回数計測用の1x1画像は入れていない（docs/MONETIZATION.md）',
+    affiliateLinks: {
+      'https://www.jalan.net/100000/LRG_101400/':
+        'https://px.a8.net/svt/ejp?a8mat=4BCCJM+CULTTE+14CS+BW8O2&a8ejpredirect=https%3A%2F%2Fwww.jalan.net%2F100000%2FLRG_101400%2F',
+      'https://www.jalan.net/100000/LRG_100500/':
+        'https://px.a8.net/svt/ejp?a8mat=4BCCJM+CULTTE+14CS+BW8O2&a8ejpredirect=https%3A%2F%2Fwww.jalan.net%2F100000%2FLRG_100500%2F',
+    },
   },
   'cn-playguide': {
     id: 'cn-playguide',

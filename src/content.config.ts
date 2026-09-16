@@ -174,6 +174,28 @@ const stores = defineCollection({
 });
 
 /**
+ * 読者が次に予約・確認する先への導線（記事末）。src/components/BookingGuide.astro が描画する。
+ *
+ * - **公式の一次情報を先に置く。** 予約サイトは比較できるよう2件以上並べる
+ * - 並び順の理由を basis に書く（報酬の高さで並べ替えない）
+ * - provider は src/data/affiliates.ts のID。提携が成立している提供元だけ広告リンクになる
+ */
+const bookingSchema = z.object({
+  heading: z.string().min(1),
+  intro: z.string().min(1).optional(),
+  /** 掲載順・選び方の基準。読者に見せる */
+  basis: z.string().min(1),
+  items: z.array(z.object({
+    label: z.string().min(1),
+    provider: z.string().min(1),
+    url: z.url(),
+    note: z.string().min(1).optional(),
+    kind: z.enum(['official', 'ota', 'ticket', 'transport']).default('official'),
+  })).min(2),
+  note: z.string().min(1).optional(),
+});
+
+/**
  * ガイド型ニュースの行動ボタン。
  * href は公式の申請ページ（https://…）、サイト内ページ（/…）、ページ内の位置（#…）のどれか。
  * 外部URLは新しいタブで開く。
@@ -316,6 +338,8 @@ const news = defineCollection({
       bottomCta: guideCta.optional(),
     }).optional(),
     faq: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).default([]),
+    /** 予約・確認先への導線（任意）。読者の目的が宿泊・体験・店舗利用につながる記事だけに置く */
+    booking: bookingSchema.optional(),
     sourceUrls: z.array(z.object({
       label: z.string().min(1),
       url: z.url(),
@@ -479,6 +503,8 @@ const events = defineCollection({
       url: z.union([z.url(), z.string().startsWith('/')]).optional(),
     })).default([]),
     faq: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).default([]),
+    /** 予約・確認先への導線（任意） */
+    booking: bookingSchema.optional(),
 
     sourceUrls: z.array(z.object({
       label: z.string().min(1),

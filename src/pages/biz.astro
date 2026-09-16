@@ -14,6 +14,55 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '地域事業
   <section class="separation"><div class="bp-wrap"><p class="bp-kicker">TRANSPARENCY</p><h2>Editorial、Partner、PRを混ぜない。</h2><div class="types"><article><span>EDITORIAL</span><h3>編集記事</h3><p>掲載対価を受けず、編集部の判断で企画・取材・編集します。</p></article><article><span>PARTNER</span><h3>発信支援</h3><p>情報整備や制作、運用に対価をいただく支援サービスです。編集評価は販売しません。</p></article><article><span>PR</span><h3>広告・タイアップ</h3><p>広告主の依頼によるコンテンツです。読者が判別できるよう明確に表示します。</p></article></div><a href="/about/pr-policy/">PR・広告の方針を読む →</a></div></section>
   <section class="services bp-wrap bp-section"><p class="bp-kicker">WHAT WE DO</p><h2>今あるものを、伝わる形へ。</h2><ol>{services.map((service)=><li><span>{service.n}</span><div><h3>{service.title}</h3><p>{service.body}</p></div></li>)}</ol></section>
   <section class="scope"><div class="bp-wrap"><p class="bp-kicker">SCOPE</p><ul><li>取材・インタビュー</li><li>写真・文章制作</li><li>店舗・企業情報の整備</li><li>Webサイト制作・改善</li><li>SEO・AI検索への情報設計</li><li>SNS・LINEなどの運用支援</li></ul><p>費用と範囲は、現状と目的を確認したうえで事前に提示します。契約前に成果を保証する表現は行いません。</p></div></section>
+  {/* 範囲を絞った有料サービス。料金は未確定のため出さず、見積もり相談へつなぐ */}
+  <section id="reservation-setup" class="setup"><div class="bp-wrap">
+    <p class="bp-kicker">SERVICE</p>
+    <h2>店舗情報・予約導線の整備</h2>
+    <p class="setup__lead">「営業時間が探しても分からない」「予約は電話だけ」。この状態のまま広告を出しても、来店にはつながりません。店舗の基本情報を整え、お客さんが迷わず予約・来店できる導線をつくるところまでを、範囲を決めて支援します。</p>
+    <div class="setup__grid">
+      <article>
+        <h3>こんな事業者の方へ</h3>
+        <ul>
+          <li>営業日・定休日・駐車場・予約方法が、Web上でばらばらになっている</li>
+          <li>Googleマップの情報が古いまま、直し方が分からない</li>
+          <li>予約が電話だけで、営業中に取りこぼしている</li>
+          <li>サイトはあるが、予約・問い合わせまでの導線がない</li>
+        </ul>
+      </article>
+      <article>
+        <h3>お渡しするもの</h3>
+        <ul>
+          <li>店舗基本情報の整理表（営業日・時間・定休日・駐車場・アクセス・支払い手段・予約方法）</li>
+          <li>Googleビジネスプロフィールの現状確認と、修正する項目の一覧</li>
+          <li>予約導線の設計（電話・フォーム・外部予約サービスのどれを主にするか）と設置</li>
+          <li>自社サイト・SNSプロフィールの該当箇所の修正案</li>
+        </ul>
+      </article>
+      <article>
+        <h3>含まないもの</h3>
+        <ul>
+          <li>サイトの全面制作、デザイン刷新</li>
+          <li>写真・動画の撮影（必要な場合は別途お見積もり）</li>
+          <li>広告出稿の運用代行</li>
+          <li>予約システムやツールの月額費用</li>
+          <li>集客数・売上・順位の保証</li>
+        </ul>
+      </article>
+    </div>
+    <div class="setup__flow">
+      <h3>相談から公開までの流れ</h3>
+      <ol>
+        <li><strong>相談</strong><span>フォームから、現状と困っていることをお送りください</span></li>
+        <li><strong>現状確認</strong><span>公開情報を確認し、オンラインまたはお電話で30分程度お話を伺います</span></li>
+        <li><strong>範囲と見積もりの提示</strong><span>作業範囲・費用・期間を事前にお伝えします。合意できた場合のみ着手します</span></li>
+        <li><strong>整備</strong><span>情報の整理と導線の設置を行います</span></li>
+        <li><strong>確認・公開</strong><span>内容をご確認いただいてから公開します</span></li>
+        <li><strong>公開後の修正</strong><span>公開後1回の修正まで含みます</span></li>
+      </ol>
+      <p class="setup__note">費用と期間は、現状と目的を確認したうえで事前に提示します。決まった料金表は用意していないため、まずはご相談ください。実績のない成果を約束することはしません。また、この支援は編集記事の掲載や評価とは切り離しています（編集記事は掲載料をいただきません）。</p>
+      <a class="setup__cta" href="/contact/?subject=地域事業者の相談" data-biz-service="reservation_setup">店舗情報・予約導線の相談をする <span aria-hidden="true">→</span></a>
+    </div>
+  </div></section>
   <section class="biz-cta bp-reading"><p class="bp-kicker">CONTACT</p><h2>今の悩みを、聞かせてください。</h2><p>掲載、取材、Web、発信運用について、困っていることをご連絡ください。</p><a href="/contact/?subject=地域事業者の相談">相談する →</a></section>
 </BrandBase>
 <style>
@@ -22,6 +71,33 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '地域事業
   .types{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:2rem;margin-top:3rem}.types article{padding-top:1rem;border-top:1px solid var(--color-tide)}.types span{font:.68rem var(--font-brand-meta);letter-spacing:.12em;color:var(--color-tide)}.types h3{margin-top:.6rem;font:600 1.4rem var(--font-brand-display);color:var(--color-ink)}.types p{margin-top:.7rem;line-height:1.9;color:var(--color-soil);font-size:.88rem}
   .services ol{margin-top:3rem;border-top:1px solid var(--color-mist)}.services li{display:grid;grid-template-columns:5rem 1fr;gap:2rem;padding-block:1.7rem;border-bottom:1px solid var(--color-mist)}.services li>span{font:600 1.8rem var(--font-brand-display);color:var(--color-mist)}.services h3{font:600 1.5rem var(--font-brand-display);color:var(--color-ink)}.services li p{margin-top:.5rem;color:var(--color-soil);line-height:1.8}
   .scope{padding-block:clamp(4rem,8vw,6rem);background:var(--color-white)}.scope ul{display:grid;grid-template-columns:repeat(2,1fr);margin-top:2rem;border-top:1px solid var(--color-mist)}.scope li{padding:1rem 1rem 1rem 2rem;border-bottom:1px solid var(--color-mist);color:var(--color-ink)}.scope .bp-wrap>p:last-child{max-width:var(--measure);margin-top:2rem;color:var(--color-soil);font-size:.82rem;line-height:1.8}.biz-cta{padding-block:clamp(5rem,11vw,9rem)}.biz-cta>p:not(.bp-kicker){margin-top:1.5rem;color:var(--color-soil)}
+  .setup{padding-block:clamp(4rem,9vw,7rem);background:var(--color-white);border-top:1px solid var(--color-mist)}
+  .setup h2{margin-top:1rem;font:600 clamp(2rem,5vw,4rem)/1.35 var(--font-brand-display);color:var(--color-ink)}
+  .setup__lead{max-width:var(--measure);margin-top:1.5rem;line-height:2;color:var(--color-soil)}
+  .setup__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:1.5rem;margin-top:2.5rem}
+  .setup__grid article{padding:1.25rem;border:1px solid var(--color-mist);border-radius:.85rem;background:var(--color-paper)}
+  .setup__grid h3{font:600 1.15rem/1.5 var(--font-brand-display);color:var(--color-ink)}
+  .setup__grid ul{display:grid;gap:.5rem;margin-top:.9rem;padding-left:1.1rem;list-style:disc}
+  .setup__grid li{color:var(--color-soil);font-size:.88rem;line-height:1.8}
+  .setup__flow{margin-top:2.5rem}
+  .setup__flow h3{font:600 1.15rem/1.5 var(--font-brand-display);color:var(--color-ink)}
+  .setup__flow ol{display:grid;gap:0;margin-top:1rem;padding:0;list-style:none;counter-reset:step;border-top:1px solid var(--color-mist)}
+  .setup__flow li{display:grid;grid-template-columns:2.2rem minmax(0,1fr);gap:.2rem .9rem;padding:.9rem 0;border-bottom:1px solid var(--color-mist);counter-increment:step}
+  .setup__flow li:before{content:counter(step);grid-row:span 2;display:grid;place-items:center;width:2.2rem;height:2.2rem;border:1px solid var(--color-tide);border-radius:50%;color:var(--color-tide);font:700 .85rem var(--font-brand-meta)}
+  .setup__flow strong{color:var(--color-ink)}
+  .setup__flow span{color:var(--color-soil);font-size:.86rem;line-height:1.8}
+  .setup__note{max-width:var(--measure);margin-top:1.5rem;color:var(--color-soil);font-size:.82rem;line-height:1.9}
+  .setup__cta{display:inline-flex;align-items:center;gap:.6rem;min-height:3.1rem;margin-top:1.75rem;padding:.75rem 1.4rem;border-radius:999px;background:var(--color-tide);color:#fff;font-weight:700}
   @media(max-width:750px){.types,.scope ul{grid-template-columns:1fr}.services li{grid-template-columns:3rem 1fr}}
   @media(max-width:360px){.biz-head h1{font-size:1.8rem;line-height:1.4}}
 </style>
+<script>
+  import { rememberCtaOrigin, trackEvent } from '../lib/analytics-events';
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-biz-service]')) {
+    link.addEventListener('click', () => {
+      const service = link.dataset.bizService ?? '';
+      rememberCtaOrigin({ cta_type: 'service_' + service, cta_location: 'biz_service', cta_page_type: 'biz', cta_origin_path: window.location.pathname });
+      trackEvent('business_cta_click', { cta_type: 'service_' + service, cta_location: 'biz_service', cta_page_type: 'biz', link_url: link.getAttribute('href') ?? '' });
+    });
+  }
+</script>

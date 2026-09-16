@@ -2,7 +2,7 @@
 title: "水戸信用金庫スタジアムのアクセス・駐車場｜最寄り駅・東海駅からの行き方"
 description: "水戸信用金庫スタジアムのアクセス・駐車場を公式情報で確認。最寄り駅はJR東海駅で、西口から無料シャトル約10分、徒歩約40分。車は那珂IC・東海スマートICから。予約制駐車場と先着順の違い、試合ごとに確認する乗り場・利用区画をまとめます。"
 pubDate: 2026-08-09
-updatedDate: 2026-09-08
+updatedDate: 2026-09-16
 author: "イバトコ編集部"
 category: "transport"
 tags: ["水戸ホーリーホック", "水戸信用金庫スタジアム", "予約制駐車場", "無料シャトル", "東海駅", "水戸駅"]
@@ -91,6 +91,37 @@ faq:
     answer: "水戸ホーリーホック公式サイトのニュースで、試合ごとに「アクセス情報のご案内」が公開されています。予約駐車場はakippaの公式予約ページ、臨時列車はJR東日本の発表が一次情報です。この記事は公式の案内をもとに整理したもので、当日の運用は公式の最新情報が優先します。"
   - question: "新スタジアムはいつ完成しますか？"
     answer: "今回の新ホームは新設施設の完成を指すものではありません。既存の笠松運動公園陸上競技場を水戸信用金庫スタジアムとして、2026/27シーズンからホームスタジアムに使用します。"
+booking:
+  heading: "駐車場を予約する・水戸周辺に泊まる"
+  intro: "ナイトゲームや遠方からの観戦では、駐車場の予約と宿の確保が先になります。"
+  basis: "公式の案内（クラブの駐車場ページ）を先に置き、そのあとに予約サイトを並べています。報酬の有無で順番は決めていません（2026年9月16日時点でいずれも提携していません）。"
+  items:
+    - label: "水戸ホーリーホック公式｜スタジアム・駐車場の案内"
+      provider: "official"
+      url: "https://www.mito-hollyhock.net/match/stadium/mito/"
+      kind: "official"
+      note: "予約制駐車場やシャトルバスの最新案内はクラブ公式で確認できます。"
+    - label: "akippa｜水戸ホーリーホック観戦の駐車場を予約する"
+      provider: "akippa"
+      url: "https://www.akippa.com/event/mito-hollyhock"
+      kind: "ota"
+      note: "クラブが案内している予約制駐車場のサービスです。"
+    - label: "水戸・笠間の宿を探す（楽天トラベル）"
+      provider: "rakuten-travel"
+      url: "https://travel.rakuten.co.jp/yado/ibaraki/mito.html"
+      kind: "ota"
+      note: "試合後に泊まる場合の空室と料金を比べられます。"
+    - label: "水戸・笠間の宿を探す（じゃらんnet）"
+      provider: "jalan"
+      url: "https://www.jalan.net/100000/LRG_100500/"
+      kind: "ota"
+      note: "同じエリアを別のサイトでも確認できます。"
+    - label: "水戸観光コンベンション協会｜宿泊情報"
+      provider: "official"
+      url: "https://mitokoumon.com/stay/"
+      kind: "official"
+      note: "水戸市の観光協会がまとめた宿泊情報です。"
+  note: "イバトコは駐車場・宿泊の予約を受け付けていません。空き状況と料金は各サービスで確認してください。"
 sourceUrls:
   - label: "水戸ホーリーホック公式｜アクセス情報のご案内（第四報／8月13日時点）"
     url: "https://www.mito-hollyhock.net/news/p%3D52928/"

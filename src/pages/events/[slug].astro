@@ -14,6 +14,7 @@ import Breadcrumbs, { type Crumb } from '../../components/Breadcrumbs.astro';
 import { breadcrumbJsonLd } from '../../lib/seo';
 import { INTERNAL_LINK_LABELS } from '../../data/internal-links';
 import BusinessCta from '../../components/BusinessCta.astro';
+import BookingGuide from '../../components/BookingGuide.astro';
 import { getEvents } from '../../lib/content';
 import { MUNI_BY_SLUG } from '../../data/areas';
 
@@ -232,6 +233,8 @@ if (d.faq.length > 0) {
       <dl class="ev-list">{d.faq.map((f) => <div><dt>{f.question}</dt><dd>{f.answer}</dd></div>)}</dl>
     </section>
   )}
+
+  {d.booking && <BookingGuide booking={d.booking} pageType="events" />}
 
   <section id="sources" aria-labelledby="ev-src">
     <p class="section-number">{no('sources')} / SOURCES</p>

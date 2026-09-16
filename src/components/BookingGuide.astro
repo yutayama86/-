@@ -1,0 +1,112 @@
+---
+/**
+ * 記事の読者が「次に予約・確認する先」へ進むための導線。
+ *
+ * - 公式の一次情報を先に置き、そのあとに複数の予約サイトを並べる（比較できるようにする）
+ * - 並び順は記事側の booking.items のとおり。報酬の高さで並べ替えない（基準は basis に書く）
+ * - 提携が成立している提供元だけ広告リンクになり、そのときだけ広告表示を出す（src/data/affiliates.ts）
+ * - クリックはGA4へ送る。提携していない状態で押されている数も見えるようにする
+ */
+import { hasPaidLink, isPaidLink, outboundHref, partnerStatus, providerName } from '../data/affiliates';
+
+export interface BookingItem {
+  label: string;
+  provider: string;
+  url: string;
+  note?: string;
+  kind?: 'official' | 'ota' | 'ticket' | 'transport';
+}
+export interface Booking {
+  heading: string;
+  intro?: string;
+  basis: string;
+  items: BookingItem[];
+  note?: string;
+}
+interface Props {
+  booking: Booking;
+  /** GA4 の link_page_type。どの種類のページからの予約クリックかを分ける */
+  pageType: 'news' | 'events';
+}
+const { booking, pageType } = Astro.props;
+const showAdNotice = hasPaidLink(booking.items.map((item) => item.provider));
+const KIND_LABEL: Record<string, string> = {
+  official: '公式',
+  ota: '予約サイト',
+  ticket: 'チケット',
+  transport: '交通',
+};
+---
+
+<aside class="bkg" aria-labelledby="bkg-title" data-booking-guide data-page-type={pageType}>
+  <p class="bkg__kicker">RESERVE &amp; CHECK</p>
+  <p id="bkg-title" class="bkg__title">{booking.heading}</p>
+  {booking.intro && <p class="bkg__intro">{booking.intro}</p>}
+  {showAdNotice && <p class="bkg__ad">広告を含みます。リンク先で予約・購入があった場合、イバトコに報酬が入ることがあります。</p>}
+  <ul class="bkg__list">
+    {booking.items.map((item) => (
+      <li>
+        <a
+          class="bkg__item"
+          href={outboundHref(item.provider, item.url)}
+          target="_blank"
+          rel={isPaidLink(item.provider) ? 'noopener noreferrer sponsored' : 'noopener noreferrer'}
+          data-provider={item.provider}
+          data-kind={item.kind ?? 'official'}
+          data-partner-status={partnerStatus(item.provider)}
+        >
+          <span class="bkg__meta">
+            <span class="bkg__kind">{KIND_LABEL[item.kind ?? 'official']}</span>
+            <span class="bkg__provider">{providerName(item.provider)}</span>
+            {isPaidLink(item.provider) && <span class="bkg__pr">広告</span>}
+          </span>
+          <strong>{item.label}<span aria-hidden="true">↗</span></strong>
+          {item.note && <span class="bkg__note">{item.note}</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <p class="bkg__basis"><strong>並べ方：</strong>{booking.basis}</p>
+  {booking.note && <p class="bkg__foot">{booking.note}</p>}
+</aside>
+
+<script>
+  import { trackEvent } from '../lib/analytics-events';
+
+  for (const block of document.querySelectorAll<HTMLElement>('[data-booking-guide]')) {
+    const pageType = block.dataset.pageType ?? '';
+    for (const link of block.querySelectorAll<HTMLAnchorElement>('a[data-provider]')) {
+      link.addEventListener('click', () => {
+        trackEvent('outbound_booking_click', {
+          link_provider: link.dataset.provider ?? '',
+          link_kind: link.dataset.kind ?? '',
+          partner_status: link.dataset.partnerStatus ?? '',
+          link_page_type: pageType,
+          link_url: link.getAttribute('href') ?? '',
+        });
+      });
+    }
+  }
+</script>
+
+<style>
+  .bkg{display:grid;gap:.85rem;margin-top:clamp(2.25rem,4vw,3rem);padding:clamp(1.2rem,3vw,1.75rem);border:1px solid var(--interior-line,var(--color-mist));border-radius:1rem;background:#fff}
+  .bkg__kicker{margin:0;color:var(--interior-blue,var(--color-tide));font:700 .68rem var(--font-brand-meta);letter-spacing:.14em}
+  .bkg__title{margin:0;font:600 clamp(1.2rem,2.3vw,1.5rem)/1.45 var(--font-brand-display);color:var(--color-ink);text-wrap:balance}
+  .bkg__intro{margin:0;color:var(--color-charcoal);font-size:.92rem;line-height:1.9}
+  .bkg__ad{margin:0;padding:.5rem .7rem;border-radius:.5rem;background:var(--interior-sky-soft,#eef6ff);color:var(--color-soil);font-size:.76rem;line-height:1.7}
+  .bkg__list{display:grid;gap:.6rem;margin:0;padding:0;list-style:none}
+  .bkg__list li{margin:0;padding:0}
+  .bkg__list li::before{content:none}
+  .bkg__item{display:grid;gap:.35rem;padding:.9rem 1rem;border:1px solid var(--interior-line,var(--color-mist));border-radius:.85rem;background:var(--interior-sky-soft,var(--color-white));color:var(--color-ink);text-decoration:none;transition:border-color .2s ease,box-shadow .2s ease}
+  .bkg__item:hover,.bkg__item:focus-visible{border-color:var(--interior-blue,var(--color-tide));box-shadow:0 10px 26px rgba(25,55,88,.1)}
+  .bkg__item:focus-visible{outline:2px solid var(--interior-blue,var(--color-tide));outline-offset:2px}
+  .bkg__meta{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem}
+  .bkg__kind{padding:.1rem .45rem;border-radius:999px;background:var(--color-ink);color:#fff;font:700 .62rem var(--font-brand-meta);letter-spacing:.06em}
+  .bkg__provider{color:var(--color-soil);font:700 .72rem var(--font-brand-meta)}
+  .bkg__pr{padding:.1rem .45rem;border-radius:999px;border:1px solid var(--color-signal);color:var(--color-signal);font:700 .62rem var(--font-brand-meta)}
+  .bkg__item strong{display:flex;align-items:baseline;gap:.4rem;font-size:.96rem;line-height:1.6}
+  .bkg__note{color:var(--color-soil);font-size:.8rem;line-height:1.8}
+  .bkg__basis,.bkg__foot{margin:0;color:var(--color-soil);font-size:.78rem;line-height:1.85}
+  .bkg__basis strong{color:var(--color-ink)}
+</style>

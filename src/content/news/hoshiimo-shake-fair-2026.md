@@ -2,6 +2,7 @@
 title: "ほしいもシェイクフェア2026は9月12日から｜参加店と店巡りの注意点"
 description: "ほしいもシェイクフェア2026は9月12日〜11月30日。36店舗・21種類のシェイクが登場します。販売開始が異なる店舗やキャンペーンの数え方を整理し、地域の店を巡るきっかけとしての可能性を考えます。"
 pubDate: 2026-09-11
+updatedDate: 2026-09-16
 author: "イバトコ編集部"
 category: "tourism"
 tags: ["ほしいも", "茨城観光", "地域産業", "周遊観光"]
@@ -26,6 +27,32 @@ businessImplications:
 faq:
   - question: "価格や営業時間はどこで確認できますか？"
     answer: "訪問する店舗の最新案内でご確認ください。販売開始日や営業状況は店舗ごとに異なるため、フェア全体の日程だけで判断しないようにしましょう。"
+booking:
+  heading: "参加店を確かめる・泊まって巡る"
+  intro: "参加店は広い範囲に分かれています。訪ねる前に販売状況を確認し、遠方からは泊まりで組むと回りやすくなります。"
+  basis: "公式の案内を先に置き、そのあとに宿泊を比べられる予約サイトを並べています。報酬の有無で順番は決めていません（2026年9月16日時点でいずれも提携していません）。"
+  items:
+    - label: "茨城県｜ほしいもシェイクフェアの案内"
+      provider: "official"
+      url: "https://www.pref.ibaraki.jp/kikaku/chikei/hitachinaka/r3_syokukaihatu.html"
+      kind: "official"
+      note: "参加店と実施内容の一次情報です。"
+    - label: "大洗・ひたちなかの宿を探す（楽天トラベル）"
+      provider: "rakuten-travel"
+      url: "https://travel.rakuten.co.jp/yado/ibaraki/oarai.html"
+      kind: "ota"
+      note: "ひたちなか・大洗の店を巡る場合の宿です。"
+    - label: "大洗・ひたちなかの宿を探す（じゃらんnet）"
+      provider: "jalan"
+      url: "https://www.jalan.net/100000/LRG_101400/"
+      kind: "ota"
+      note: "同じエリアを別のサイトでも確認できます。"
+    - label: "水戸・笠間の宿を探す（楽天トラベル）"
+      provider: "rakuten-travel"
+      url: "https://travel.rakuten.co.jp/yado/ibaraki/mito.html"
+      kind: "ota"
+      note: "水戸市内の店とあわせて回る場合の宿です。"
+  note: "イバトコは宿泊の予約を受け付けていません。店舗の販売状況・営業時間は各店の案内で確認してください。"
 sourceUrls:
   - label: "茨城県｜ほしいもシェイクフェア2026・参加店舗・キャンペーン案内"
     url: "https://www.pref.ibaraki.jp/kikaku/chikei/hitachinaka/r3_syokukaihatu.html"

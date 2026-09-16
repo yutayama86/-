@@ -53,13 +53,15 @@ export const LINK_PROVIDERS: Record<string, LinkProvider> = {
     id: 'rakuten-travel',
     name: '楽天トラベル',
     status: 'none',
-    network: '未提携（候補：楽天アフィリエイト、バリューコマース）',
+    network: '未提携（候補：バリューコマース、楽天アフィリエイト）',
+    note: 'A8.netには見当たらなかった。楽天アフィリエイトなら「URLを入力してリンクを作成」で宿泊エリアページのリンクを作れる',
   },
   jalan: {
     id: 'jalan',
     name: 'じゃらんnet',
     status: 'none',
-    network: '未提携（候補：リクルートかんたんアフィリエイト、バリューコマース）',
+    network: '未提携（候補：バリューコマース＝即時提携・MyLink可、A8.net＝提携審査あり）',
+    note: 'バリューコマース側はサイト審査中。審査完了までは広告が正しく表示されないため、生成リンクを受け取っても status は active にしない',
   },
   'cn-playguide': {
     id: 'cn-playguide',

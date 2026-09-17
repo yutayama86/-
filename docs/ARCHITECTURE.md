@@ -419,7 +419,16 @@ Search Console + GA4
 Pull Request
 ```
 
-判断は `--context <path>` のJSONで次工程へ渡り、GitHub Actionsのoutputにも `target_type` / `target_path` / `target_slug` / `target_category` / `target_file` / `editable` / `action_type` / `rule` / `reason` / `focus_keyword` を出します。**既存ページが選ばれた日に `select-daily-topic.mjs` は動きません。**
+判断は `.growth/target.json`（gitignore済み・`--context` で別の場所も指定可）に書き出され、後続のスクリプトはすべてこれを読みます。GitHub Actionsのoutputにも `target_type` / `target_path` / `target_slug` / `target_category` / `target_file` / `editable` / `action_type` / `rule` / `reason` / `focus_keyword` を出します。
+
+**チェーンはワークフローではなくスクリプトが保証します。**
+
+- `select-daily-topic.mjs` … 既存ページの日は改善へ回し、計測改善の日は `has_topic=false` を返す
+- `generate-article.mjs` … 既存ページの日は `improve-page.mjs` へ引き継ぎ、記事は `target_type=new_article` かつ同じslugのときだけ作る
+- `infer-article.mjs` … 判断に応じて記事生成（2パス）と改善（1パス）を切り替える
+- `verify-target-match.mjs` … `npm run verify` の一部として、公開コンテンツの変更が分析対象と一致しているかを確認する（判断ファイルがないPRのCIではスキップ）
+
+自動改善の対象は既定で `src/content/knowledge` のみです（日次ワークフローがコミットする範囲に合わせています）。広げる場合は環境変数 `DAILY_EDITABLE_KINDS`（例: `knowledge,case`）と、ワークフローの `git add` の範囲を一緒に変更します。
 
 **マージするまで公開されません。** 対象一致チェックか品質検証で落ちた場合は `git checkout -- src` で変更を破棄し、レポートだけを残してActionsを失敗にします。
 

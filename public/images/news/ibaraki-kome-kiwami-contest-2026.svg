@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="茨城県産米の評価が、機器による1次審査・2次審査を経て食味官能評価の最終審査に進み、最優秀賞の米が首都圏の販売へつながる流れを示したイバトコ作成の図版">
+  <rect width="1200" height="630" fill="#f6f2e9"/>
+  <rect x="28" y="28" width="1144" height="574" fill="none" stroke="#d9d0c0" stroke-width="1"/>
+
+  <text x="80" y="96" font-family="'Source Sans 3', sans-serif" font-size="20" letter-spacing="2.4" fill="#a63f32">IBATOCO ・ 茨城ニュース解説</text>
+
+  <text x="80" y="206" font-family="'Shippori Mincho', serif" font-size="56" font-weight="700" fill="#172b35">「茨城の米」から</text>
+  <text x="80" y="278" font-family="'Shippori Mincho', serif" font-size="56" font-weight="700" fill="#172b35">「この人の米」へ</text>
+
+  <line x1="80" y1="322" x2="300" y2="322" stroke="#a63f32" stroke-width="3"/>
+
+  <text x="80" y="372" font-family="'Shippori Mincho', serif" font-size="28" font-weight="700" fill="#315c68">第6回 いばらき米の極み頂上コンテスト</text>
+  <text x="80" y="416" font-family="'Source Sans 3', sans-serif" font-size="21" fill="#75695a">出品受付 2026.9.11 〜 9.30 必着／レギュラー米・有機米の2部門</text>
+
+  <g font-family="'Source Sans 3', sans-serif">
+    <rect x="80" y="466" width="196" height="76" fill="#ffffff" stroke="#315c68" stroke-width="2"/>
+    <text x="178" y="497" text-anchor="middle" font-size="19" font-weight="700" fill="#172b35">1次・2次審査</text>
+    <text x="178" y="524" text-anchor="middle" font-size="17" fill="#75695a">機器で測る</text>
+
+    <path d="M292 504 L322 504" stroke="#a63f32" stroke-width="2.5"/>
+    <path d="M316 498 L324 504 L316 510 Z" fill="#a63f32"/>
+
+    <rect x="340" y="466" width="196" height="76" fill="#ffffff" stroke="#315c68" stroke-width="2"/>
+    <text x="438" y="497" text-anchor="middle" font-size="19" font-weight="700" fill="#172b35">最終審査</text>
+    <text x="438" y="524" text-anchor="middle" font-size="17" fill="#75695a">審査員が食べる</text>
+
+    <path d="M552 504 L582 504" stroke="#a63f32" stroke-width="2.5"/>
+    <path d="M576 498 L584 504 L576 510 Z" fill="#a63f32"/>
+
+    <rect x="600" y="466" width="232" height="76" fill="#315c68"/>
+    <text x="716" y="497" text-anchor="middle" font-size="19" font-weight="700" fill="#ffffff">最優秀賞の米</text>
+    <text x="716" y="524" text-anchor="middle" font-size="17" fill="#e8eef0">県が首都圏へ売り込む</text>
+  </g>
+
+  <g transform="translate(940,236)">
+    <circle cx="0" cy="0" r="128" fill="none" stroke="#315c68" stroke-width="2.5" stroke-dasharray="7 7"/>
+    <text x="0" y="-26" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="26" font-weight="700" fill="#315c68">翌年も</text>
+    <text x="0" y="14" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="26" font-weight="700" fill="#315c68">同じ品種を</text>
+    <text x="0" y="54" text-anchor="middle" font-family="'Shippori Mincho', serif" font-size="26" font-weight="700" fill="#315c68">売れること</text>
+    <text x="0" y="92" text-anchor="middle" font-family="'Source Sans 3', sans-serif" font-size="18" fill="#75695a">最優秀賞の条件</text>
+  </g>
+
+  <text x="80" y="580" font-family="'Source Sans 3', sans-serif" font-size="15" fill="#75695a">出典：茨城県「第6回いばらき米の極み頂上コンテスト」の公開情報（図版はイバトコ編集部作成）</text>
+</svg>

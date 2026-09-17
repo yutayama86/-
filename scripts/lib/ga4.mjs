@@ -116,6 +116,40 @@ function pageRows(response) {
   }));
 }
 
+/** ページ×イベント名の件数を { '/path/': { cta_click: 1 } } の形にする。 */
+function eventCountsByPage(response) {
+  const result = {};
+  for (const row of response.rows ?? []) {
+    const path = row.dimensionValues?.[0]?.value;
+    const name = row.dimensionValues?.[1]?.value;
+    if (!path || !name) continue;
+    result[path] = result[path] ?? {};
+    result[path][name] = Number(row.metricValues?.[0]?.value ?? 0);
+  }
+  return result;
+}
+
+/** 問い合わせが発生したセッションの入口ページ。クエリ文字列は落として突き合わせる。 */
+function landingRows(response) {
+  const merged = new Map();
+  for (const row of response.rows ?? []) {
+    const raw = row.dimensionValues?.[0]?.value ?? '';
+    const sourceMedium = row.dimensionValues?.[1]?.value ?? '';
+    const leads = Number(row.metricValues?.[0]?.value ?? 0);
+    if (!raw || raw === '(not set)' || leads <= 0) continue;
+    const path = raw.split('?')[0];
+    const current = merged.get(path) ?? { path, leads: 0, sourceMedium: '' };
+    current.leads += leads;
+    current.sourceMedium = current.sourceMedium
+      ? current.sourceMedium === sourceMedium
+        ? current.sourceMedium
+        : '複数'
+      : sourceMedium;
+    merged.set(path, current);
+  }
+  return [...merged.values()].sort((a, b) => b.leads - a.leads || a.path.localeCompare(b.path));
+}
+
 /** 直近期間とその直前期間のサマリー、イベント、上位ページを返す。 */
 export async function fetchGa4Summary({ days = 7 } = {}) {
   if (!isGa4Configured()) {
@@ -129,6 +163,8 @@ export async function fetchGa4Summary({ days = 7 } = {}) {
   const endpoint = `https://analyticsdata.googleapis.com/v1beta/properties/${encodeURIComponent(propertyId)}:runReport`;
   const currentPeriod = period(days, 0);
   const previousPeriod = period(days, days);
+  // 問い合わせは件数が少ないため、帰属の確認だけ28日で見る
+  const attributionPeriod = period(Math.max(days, 28), 0);
 
   const request = async (body) => {
     const response = await fetch(endpoint, {
@@ -181,6 +217,34 @@ export async function fetchGa4Summary({ days = 7 } = {}) {
     limit: '10',
   };
 
+  // ページ別のイベント数。どのページのCTAが押されているかを、推測せず実データで見る。
+  const eventsByPageBody = {
+    dateRanges: [{ startDate: currentPeriod.start, endDate: currentPeriod.end }],
+    dimensions: [{ name: 'pagePath' }, { name: 'eventName' }],
+    metrics: [{ name: 'eventCount' }],
+    dimensionFilter: {
+      filter: { fieldName: 'eventName', inListFilter: { values: TRACKED_EVENTS } },
+    },
+    limit: '500',
+  };
+
+  /*
+    問い合わせが発生したセッションの入口ページ。
+    landingPage はセッション単位、eventCount はイベント単位の指標だが、
+    GA4は「そのセッションで発生したイベント数」として集計するため、
+    ここでは「問い合わせが起きたセッションの入口」という意味に限定して使う。
+    CTAをクリックしたページや、問い合わせの直前に見ていたページではない。
+  */
+  const leadLandingsBody = {
+    dateRanges: [{ startDate: attributionPeriod.start, endDate: attributionPeriod.end }],
+    dimensions: [{ name: 'landingPagePlusQueryString' }, { name: 'sessionSourceMedium' }],
+    metrics: [{ name: 'eventCount' }],
+    dimensionFilter: {
+      filter: { fieldName: 'eventName', stringFilter: { matchType: 'EXACT', value: 'generate_lead' } },
+    },
+    limit: '25',
+  };
+
   const [currentTotals, previousTotals, currentEvents, previousEvents, pages] = await Promise.all([
     request(totalsBody(currentPeriod)),
     request(totalsBody(previousPeriod)),
@@ -188,6 +252,18 @@ export async function fetchGa4Summary({ days = 7 } = {}) {
     request(eventsBody(previousPeriod)),
     request(pagesBody),
   ]);
+
+  // 追加の内訳が取れない日でも、基本の集計は返す（推測で埋めない）
+  let eventsByPage = null;
+  let leadLandings = null;
+  let breakdownError = null;
+  try {
+    const [byPage, landings] = await Promise.all([request(eventsByPageBody), request(leadLandingsBody)]);
+    eventsByPage = eventCountsByPage(byPage);
+    leadLandings = landingRows(landings);
+  } catch (error) {
+    breakdownError = error.message;
+  }
 
   return {
     current: {
@@ -201,5 +277,9 @@ export async function fetchGa4Summary({ days = 7 } = {}) {
       events: eventMap(previousEvents),
     },
     topPages: pageRows(pages),
+    eventsByPage,
+    leadLandings,
+    attributionPeriod,
+    breakdownError,
   };
 }

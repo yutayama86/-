@@ -124,12 +124,16 @@ shikumi-base/
 ├── scripts/
 │   ├── quality-check.mjs     記事の品質ゲート（CIで実行）
 │   ├── daily-growth.mjs      改善対象の自動判定＋レポート
-│   ├── select-daily-topic.mjs 日次の記事テーマ選定（仕組み化テーマの候補）
+│   ├── select-daily-topic.mjs 新規記事の日だけ使うテーマ選定
+│   ├── improve-page.mjs      既存ページを必要箇所だけ改善
+│   ├── verify-target-match.mjs 分析対象と変更ファイルの一致チェック
+│   ├── tests/                判定・改善・ガード・ワークフローのテスト（node --test）
 │   ├── generate-article.mjs  記事プロンプト作成と公開候補の保存
 │   ├── infer-article.mjs     Cloudflare Workers AI で記事を生成（2回：執筆＋事実監査）
 │   ├── seo-audit.mjs         sitemap・canonical・noindex の監査
 │   └── lib/
 │       ├── brand-guard.mjs   生成プロンプトの最上位制約と旧リフォーム文脈の検出（生成・品質ゲートで共用）
+│       ├── decide-target.mjs 投資先の優先順位判定（純関数・テスト対象）
 │       ├── gsc.mjs           Search Console API クライアント
 │       └── ga4.mjs           GA4 Data API クライアント
 │
@@ -400,28 +404,54 @@ Search Console（ドメインプロパティ `shikumi-base.com`）と連携済�
 
 `.github/workflows/daily-content.yml` が毎朝7時（JST）に実行されます。
 
-1. Search ConsoleとGA4からデータ取得
-2. 検索順位・CTRに加え、セッション→CTA→フォーム開始→問い合わせ完了の詰まりを判定
-3. 判定ルール・カテゴリ・検索語に合う商談直結キーワードを90日分の候補から選定
-4. `docs/seo-log/` に判断と根拠を記録
-5. 型チェック・ビルド・品質チェック
-6. Pull Request を作成
+**「毎日記事を書くシステム」ではなく、「毎日もっとも期待値の高い1ページへ投資するシステム」です。**
 
-**マージするまで公開されません。** Cloudflare Workers AIで生成した記事は `draft: false` の公開候補としてPRへ載せ、型・ビルド・品質検査を通過させます。内容と根拠を人が確認してPRをマージすると、Cloudflare Pagesへ自動公開されます。AI原稿の無確認公開は禁止です。
+```
+Search Console + GA4
+  ↓  scripts/daily-growth.mjs（判定は scripts/lib/decide-target.mjs）
+投資先を1つ決める（target_type / target_path / target_file / action_type）
+  ↓
+  ├ existing_page → scripts/improve-page.mjs（必要箇所だけ置換）
+  ├ new_article   → select-daily-topic.mjs → generate-article.mjs
+  └ measurement   → コンテンツは変更しない
+  ↓  scripts/verify-target-match.mjs（分析対象＝変更ファイルの確認）
+  ↓  npm run verify（テスト・型・ビルド・品質・SEO監査）
+Pull Request
+```
 
-### 判定ルール
+判断は `--context <path>` のJSONで次工程へ渡り、GitHub Actionsのoutputにも `target_type` / `target_path` / `target_slug` / `target_category` / `target_file` / `editable` / `action_type` / `rule` / `reason` / `focus_keyword` を出します。**既存ページが選ばれた日に `select-daily-topic.mjs` は動きません。**
 
-| ルール | 条件 | 対応 |
-| --- | --- | --- |
-| A | 表示100以上でCTR 2%未満 | title / description の見直し |
-| B | 平均掲載順位 11〜30位 | 内容追加・内部リンク強化 |
-| C | 流入があるのにCTA・フォーム・問い合わせの次段階へ進まない | 導線・フォーム改善 |
-| D | クリック10件以上 | 派生キーワードの記事を追加 |
-| E | 表示10未満 | 統合・リライト・削除の検討 |
+**マージするまで公開されません。** 対象一致チェックか品質検証で落ちた場合は `git checkout -- src` で変更を破棄し、レポートだけを残してActionsを失敗にします。
 
-Search Console が未設定の期間は、内部リンク数とカテゴリごとの記事数から判断します。GA4が未設定でも検索側の判定は継続します。
+### 投資先の優先順位
 
-ルールC（流入後の導線詰まり）の場合は新規記事を作らず、既存導線の改善を優先します。設定済みのGA4またはSearch Console APIで取得エラーが起きた場合も、誤ったデータで公開候補を作らないよう記事生成を止め、エラー内容を日次レポートに残したうえでActionsを失敗として表示します。
+| 優先 | ルール | 条件 | 改善タイプ |
+| --- | --- | --- | --- |
+| 1 | A | 問い合わせが発生したセッションの入口ページ | `service_link` / `content_rewrite` |
+| 2 | B | 10セッション以上あってCTAクリック0 | `cta` |
+| 3 | C | フォーム開始3件以上で送信完了0／CTA5件以上でフォーム開始0／20セッション以上でCTA0 | `cta`（/contact/ は人が確認） |
+| 4 | D | 表示30回以上かつ平均11〜30位 | `content_rewrite` |
+| 5 | E | 表示50回以上かつCTR 2%未満 | `title_description` |
+| 6 | F | 内部リンク2件未満／支援ページ・事例への導線なし | `internal_links` / `service_link` / `case_link` |
+| 7 | G | 上記がなく、28日の表示が100回以上 | `new_article` |
+| — | MEASUREMENT | 検索の母数が足りない | `measurement_fix`（記事を増やさない） |
+
+しきい値は `THRESHOLDS`（`scripts/lib/decide-target.mjs`）にまとめています。**検索の母数が足りない間は、無条件に新規記事を作りません。**
+
+### 問い合わせの帰属
+
+GA4 Data APIから、`generate_lead` が発生したセッションの**入口ページ**（`landingPagePlusQueryString`）と流入元を取得します。これは「問い合わせが起きたセッションの入口」であり、CTAを押したページでも直前に見ていたページでもありません。取得できない日は「問い合わせ発生あり・LP帰属未確定」と明示し、数値を推測しません。
+
+### 既存ページの改善の安全装置
+
+`scripts/improve-page.mjs` はAIに全文を書かせず、`{"edits":[{"find":"...","replace":"..."}]}` のJSONだけを受け取ります。
+
+- `find` は本文に**一度だけ**現れる文字列であること（見つからない・複数ある場合は中止）
+- 置換は最大6件、本文の40%まで、本文量の変化は90〜180%まで
+- 既存のH2見出しを削除しない
+- 旧リフォーム文脈、許可していない内部リンクが含まれていたら中止
+- `title_description` の日は本文を変更しない（title/descriptionのみ）
+- 適用時に `updatedAt` を更新する
 
 ---
 

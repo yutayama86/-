@@ -1,5 +1,10 @@
 #!/usr/bin/env node
-/** Cloudflare Workers AIで記事プロンプトを実行し、Markdown応答を保存する。 */
+/**
+ * Cloudflare Workers AIでプロンプトを実行し、応答を保存する。
+ *
+ *   --mode article （既定）新規記事。執筆と事実監査の2回に分ける。
+ *   --mode edit           既存ページの改善。JSONの変更指示を1回で返させる。
+ */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -10,6 +15,7 @@ function arg(name) {
   return index >= 0 ? process.argv[index + 1] : null;
 }
 
+const mode = arg('mode') || 'article';
 const promptFile = arg('prompt-file');
 const outputFile = arg('output-file');
 const accountId = process.env.CLOUDFLARE_ACCOUNT_ID?.trim();
@@ -17,7 +23,12 @@ const apiToken = process.env.CLOUDFLARE_AI_API_TOKEN?.trim();
 const model = process.env.CLOUDFLARE_AI_MODEL || '@cf/openai/gpt-oss-120b';
 
 if (!promptFile || !outputFile) {
-  console.error('使い方: node scripts/infer-article.mjs --prompt-file <path> --output-file <path>');
+  console.error('使い方: node scripts/infer-article.mjs --prompt-file <path> --output-file <path> [--mode article|edit]');
+  process.exit(1);
+}
+
+if (mode !== 'article' && mode !== 'edit') {
+  console.error(`未対応のモードです: ${mode}`);
   process.exit(1);
 }
 
@@ -34,10 +45,33 @@ if (!accountId || !apiToken) {
 const prompt = readFileSync(promptFile, 'utf-8');
 const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/v1/chat/completions`;
 
-const system = `${BRAND_PRIME_DIRECTIVE}
+const system =
+  mode === 'edit'
+    ? `${BRAND_PRIME_DIRECTIVE}
+
+あなたは、公開済みの記事を必要な箇所だけ直す日本語BtoB編集者です。${BRAND_POSITION}
+記事を作り直さず、指示された変更だけを返します。出力は指定されたJSONのみで、説明文やコードフェンスを付けません。`
+    : `${BRAND_PRIME_DIRECTIVE}
 
 あなたは、中小企業・地域企業の仕組み化を扱う日本語BtoB編集者です。${BRAND_POSITION}
 特定の業界向けの記事にせず、一般論、同語反復、未検証の効果断定を排し、与えられた事実だけで完成原稿を書いてください。`;
+
+/** 新規記事のときだけ行う、2回目の事実監査の指示。 */
+const AUDIT_INSTRUCTION = `上の原稿を事実監査し、Markdown全文をリライトしてください。
+
+- 最上位制約を再確認してください: ${BRAND_PRIME_DIRECTIVE}
+- 特定の業界を前提にした業務フロー、商品名、価格、期間、回数、件数の約束が含まれていれば削除し、多くの中小企業・地域企業に共通する業務の説明へ置き換えてください。
+- Web・SNS・AI・SEOを商品そのものとして売り込まず、仕組みを実装する手段として書いてください。
+- 明示されていない画面、連携先、割り振り方法、通知時刻、対応期限、金額基準、件数基準を削除してください。
+- 効果は保証せず、「防ぐ」「削減できる」ではなく「防止を目的にする」「確認しやすくする」としてください。
+- スプレッドシート、DB、PDF、タグ、フラグなど、採用が決まっていない実装技術を削除してください。
+- 「山野辺雄太さん」「毎日多数」など、不自然な呼び方や根拠のない量表現を削除してください。
+- イバトコに触れる場合は、シクミベースが自ら運営する地域メディアの公開ケーススタディとして扱い、顧客事例として書かないでください。
+- 内部リンクは、最初の指示の「内部リンクに使えるページ」にあるURLだけを通常のMarkdownリンクで使ってください。
+- 外部統計、架空の実績、架空の顧客、根拠のない閾値は使わないでください。
+- frontmatterと必須H2、2,200文字以上、内部リンク3件以上を維持してください。
+
+説明や監査メモは付けず、修正後のMarkdown全文だけを返してください。`;
 
 async function infer(messages) {
   const response = await fetch(endpoint, {
@@ -68,36 +102,30 @@ async function infer(messages) {
   return content;
 }
 
-let draft;
 let markdown;
+
 try {
-  draft = await infer([
-    { role: 'system', content: system },
-    { role: 'user', content: prompt },
-  ]);
-  markdown = await infer([
-    { role: 'system', content: system },
-    { role: 'user', content: prompt },
-    { role: 'assistant', content: draft },
-    {
-      role: 'user',
-      content: `上の原稿を事実監査し、Markdown全文をリライトしてください。
-
-- 最上位制約を再確認してください: ${BRAND_PRIME_DIRECTIVE}
-- 特定の業界を前提にした業務フロー、商品名、価格、期間、回数、件数の約束が含まれていれば削除し、多くの中小企業・地域企業に共通する業務の説明へ置き換えてください。
-- Web・SNS・AI・SEOを商品そのものとして売り込まず、仕組みを実装する手段として書いてください。
-- 明示されていない画面、連携先、割り振り方法、通知時刻、対応期限、金額基準、件数基準を削除してください。
-- 効果は保証せず、「防ぐ」「削減できる」ではなく「防止を目的にする」「確認しやすくする」としてください。
-- スプレッドシート、DB、PDF、タグ、フラグなど、採用が決まっていない実装技術を削除してください。
-- 「山野辺雄太さん」「毎日多数」など、不自然な呼び方や根拠のない量表現を削除してください。
-- イバトコに触れる場合は、シクミベースが自ら運営する地域メディアの公開ケーススタディとして扱い、顧客事例として書かないでください。
-- 内部リンクは、最初の指示の「内部リンクに使えるページ」にあるURLだけを通常のMarkdownリンクで使ってください。
-- 外部統計、架空の実績、架空の顧客、根拠のない閾値は使わないでください。
-- frontmatterと必須H2、2,200文字以上、内部リンク3件以上を維持してください。
-
-説明や監査メモは付けず、修正後のMarkdown全文だけを返してください。`,
-    },
-  ]);
+  if (mode === 'edit') {
+    // 改善は1回で返させる。全文生成ではないため監査パスは行わない。
+    markdown = await infer([
+      { role: 'system', content: system },
+      { role: 'user', content: prompt },
+    ]);
+  } else {
+    const draft = await infer([
+      { role: 'system', content: system },
+      { role: 'user', content: prompt },
+    ]);
+    markdown = await infer([
+      { role: 'system', content: system },
+      { role: 'user', content: prompt },
+      { role: 'assistant', content: draft },
+      {
+        role: 'user',
+        content: AUDIT_INSTRUCTION,
+      },
+    ]);
+  }
 } catch (error) {
   console.error(error.message);
   process.exit(1);

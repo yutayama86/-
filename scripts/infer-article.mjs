@@ -15,7 +15,16 @@ function arg(name) {
   return index >= 0 ? process.argv[index + 1] : null;
 }
 
-const mode = arg('mode') || 'article';
+const contextFile = '.growth/target.json';
+const modeFromContext = () => {
+  if (!existsSync(contextFile)) return 'article';
+  try {
+    return JSON.parse(readFileSync(contextFile, 'utf-8')).target?.target_type === 'new_article' ? 'article' : 'edit';
+  } catch {
+    return 'article';
+  }
+};
+const mode = arg('mode') || modeFromContext();
 const promptFile = arg('prompt-file');
 const outputFile = arg('output-file');
 const accountId = process.env.CLOUDFLARE_ACCOUNT_ID?.trim();

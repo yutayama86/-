@@ -3,6 +3,7 @@
 import { existsSync, readFileSync, readdirSync, appendFileSync } from 'node:fs';
 import { join } from 'node:path';
 const CONTENT_DIR='src/content/knowledge';
+const CONTEXT='.growth/target.json';
 const baseTopics=[
 ['shikumika','中小企業 属人化 解消','sme-dependency-reduction'],['shikumika','社長依存 脱却','owner-dependency-reduction'],['shikumika','業務標準化 進め方','business-standardization-guide'],['shikumika','仕組み化すべき業務','what-to-systemize'],['shikumika','業務フロー 可視化','business-flow-visualization'],['shikumika','業務マニュアル 作り方 中小企業','sme-operation-manual'],['shikumika','引き継ぎ 属人化 解消','handover-dependency-reduction'],['shikumika','業務改善 優先順位','process-improvement-priority'],['shikumika','中小企業 KPI 設計','sme-kpi-design'],['shikumika','業務改善 定着しない','process-improvement-adoption'],
 ['marketing','営業 仕組み化 中小企業','sme-sales-systemization'],['marketing','紹介営業 依存 脱却','referral-sales-dependency'],['marketing','反響営業 仕組み','inbound-sales-system'],['marketing','問い合わせ対応 属人化','inquiry-response-dependency'],['marketing','営業プロセス 標準化','sales-process-standardization'],['marketing','営業 引き継ぎ 仕組み','sales-handover-system'],['marketing','営業 KPI 中小企業','sme-sales-kpi'],['marketing','見込み客 フォロー 仕組み','lead-follow-up-system'],['marketing','問い合わせ管理 仕組み化','inquiry-management-systemization'],['marketing','営業会議 KPI 改善','sales-meeting-kpi'],['marketing','発信 仕組み化','content-publishing-system'],['marketing','SNS運用 属人化 解消','social-media-dependency-reduction'],['marketing','コンテンツ制作 仕組み化','content-production-system'],['marketing','情報発信 継続できない 企業','sustainable-company-publishing'],['marketing','広報 業務 標準化','pr-work-standardization'],
@@ -13,6 +14,22 @@ if(topics.length<90) throw new Error(`記事候補が${topics.length}件しか�
 const value=f=>{const i=process.argv.indexOf(f);return i>=0?process.argv[i+1]??'':''};
 const focusRule=value('--focus-rule'),focusCategory=value('--focus-category'),focusKeyword=value('--focus-keyword'),output=process.env.GITHUB_OUTPUT;
 const out=e=>{if(output)appendFileSync(output,[...e,''].join('\n'))};
+// その日の判断があれば、それに従う。既存ページの改善日に別テーマを選ばない。
+const ctx=existsSync(CONTEXT)?JSON.parse(readFileSync(CONTEXT,'utf8')).target:null;
+if(ctx){
+  const day=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  if(ctx.target_type==='existing_page'&&ctx.editable){
+    // 後続のスクリプトは判断ファイルを見て改善へ切り替える。slugは記事名ではなく作業名。
+    out(['has_topic=true','mode=improve',`category=${ctx.target_category||''}`,`keyword=${ctx.focus_keyword||''}`,`slug=daily-improvement-${day}`,`selection_basis=既存ページ ${ctx.target_path} の改善（${ctx.action_type}）`]);
+    console.log({mode:'improve',target:ctx.target_path,action:ctx.action_type});
+    process.exit(0);
+  }
+  if(ctx.target_type!=='new_article'){
+    out(['has_topic=false',`selection_basis=${ctx.target_type==='existing_page'?'人が確認する対象のため自動生成しない':'計測・インデックスの改善を優先'}`]);
+    console.log({mode:ctx.target_type,action:ctx.action_type});
+    process.exit(0);
+  }
+}
 if(focusRule==='C'||focusRule==='DATA_ERROR'){const r=focusRule==='C'?'コンバージョン障害の修正を優先':'計測障害の復旧を優先';out(['has_topic=false',`selection_basis=${r}`]);process.exit(0)}
 const existing=existsSync(CONTENT_DIR)?readdirSync(CONTENT_DIR).filter(n=>n.endsWith('.md')).map(n=>readFileSync(join(CONTENT_DIR,n),'utf8')).join('\n'):'';
 const pending=topics.filter(([,k,s])=>!existsSync(join(CONTENT_DIR,`${s}.md`))&&!existing.includes(`primaryKeyword: ${k}`));

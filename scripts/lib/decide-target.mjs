@@ -103,8 +103,21 @@ const fromArticle = (article, partial) =>
  * @param {object|null} input.search  Search Console の集計（rows / totals）
  * @param {object|null} input.ga4     GA4の集計（current / topPages / eventsByPage / leadLandings）
  * @param {string[]} input.measurementErrors 計測APIのエラー
+ * @param {string[]} input.editableKinds AIに自動改善させてよい種別（既定はknowledgeのみ）
  */
-export function decideTarget({ articles = [], search = null, ga4 = null, measurementErrors = [] }) {
+export function decideTarget({
+  articles = [],
+  search = null,
+  ga4 = null,
+  measurementErrors = [],
+  editableKinds = (process.env.DAILY_EDITABLE_KINDS ?? 'knowledge').split(',').map((kind) => kind.trim()),
+} = {}) {
+  /*
+    自動改善の対象は、日次ワークフローがコミットに含める範囲と揃える。
+    含まれない種別は候補から外し、毎日同じページで止まらないようにする。
+  */
+  const autoEditable = (article) => editableKinds.includes(article.kind ?? 'knowledge');
+  articles = articles.filter(autoEditable);
   const byPath = new Map(articles.map((article) => [article.path, article]));
   const searchByPath = new Map((search?.rows ?? []).map((row) => [row.path, row]));
   const eventsByPage = ga4?.eventsByPage ?? null;

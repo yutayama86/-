@@ -12,6 +12,7 @@
  */
 
 import { writeFileSync, existsSync, readFileSync, mkdirSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import {
   BRAND_POSITION,
@@ -49,7 +50,7 @@ function arg(name) {
   return index >= 0 ? process.argv[index + 1] : null;
 }
 
-const contextPath = arg('context');
+const contextPath = arg('context') ?? (existsSync('.growth/target.json') ? '.growth/target.json' : null);
 const allowUnplanned = process.argv.includes('--allow-unplanned');
 const category = arg('category');
 const keyword = arg('keyword');
@@ -88,6 +89,28 @@ if (contextPath) {
     process.exit(1);
   }
   const { target } = JSON.parse(readFileSync(contextPath, 'utf-8'));
+
+  /*
+    既存ページの改善が選ばれた日は、記事を作らずに改善スクリプトへ引き継ぐ。
+    ワークフローの書き方が古いままでも、分析した対象だけが変更されるようにする。
+  */
+  if (target?.target_type === 'existing_page' && target.editable) {
+    const phase = promptOutput
+      ? ['--prompt-output', promptOutput]
+      : responseFile
+        ? ['--response-file', responseFile]
+        : null;
+    if (!phase) {
+      console.error('既存ページの改善日です。--prompt-output か --response-file を指定してください。');
+      process.exit(1);
+    }
+    console.log(`既存ページの改善日のため、improve-page.mjs へ引き継ぎます: ${target.target_path}`);
+    const result = spawnSync('node', ['scripts/improve-page.mjs', '--context', contextPath, ...phase], {
+      stdio: 'inherit',
+    });
+    process.exit(result.status ?? 1);
+  }
+
   if (target?.target_type !== 'new_article') {
     console.error(
       `今日の投資先は「${target?.target_type}（${target?.target_path || target?.action_type}）」です。新規記事は作りません。`

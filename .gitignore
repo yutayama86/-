@@ -5,3 +5,6 @@ dist/
 .DS_Store
 
 .claude/
+
+# 日次処理がその日の判断を書き出す作業ファイル
+.growth/

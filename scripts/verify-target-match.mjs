@@ -18,10 +18,11 @@ function arg(name) {
   return index >= 0 ? process.argv[index + 1] : null;
 }
 
-const contextPath = arg('context');
+const contextPath = arg('context') ?? '.growth/target.json';
 if (!contextPath || !existsSync(contextPath)) {
-  console.error('使い方: node scripts/verify-target-match.mjs --context <path> [--changed "<file>,<file>"]');
-  process.exit(1);
+  // その日の判断がない環境（PRのCIやローカルのビルド）では確認することがない
+  console.log('■ 対象一致チェック: その日の判断ファイルがないためスキップします');
+  process.exit(0);
 }
 
 const { target, date } = JSON.parse(readFileSync(contextPath, 'utf-8'));
@@ -33,12 +34,20 @@ const changed = (
     : execSync('git status --porcelain', { encoding: 'utf-8' })
         .split('\n')
         .map((line) => line.slice(3))
+        // 作業用ファイルは判定に含めない
+        .filter((file) => !file.startsWith('.growth/'))
 )
   .map((file) => file.trim())
   .filter(Boolean);
 
 const logPath = `docs/seo-log/${date}.md`;
 const problems = [];
+
+/*
+  判定するのは公開されるコンテンツだけ。
+  日次レポート（docs/seo-log/）や手元の作業中のファイルは対象外にする。
+*/
+const watched = (file) => file.startsWith('src/');
 
 /** その日に触ってよいファイル。 */
 const allowed = new Set([logPath]);
@@ -51,7 +60,7 @@ if (target.target_type === 'new_article' && target.target_slug) {
 
 const contentChanges = changed.filter((file) => file.startsWith('src/'));
 
-for (const file of changed) {
+for (const file of changed.filter(watched)) {
   if (!allowed.has(file)) {
     problems.push(`分析対象ではないファイルが変更されています: ${file}`);
   }
@@ -81,7 +90,7 @@ if (target.target_type === 'new_article' && target.target_slug) {
 console.log('■ 対象一致チェック');
 console.log(`  判定: ${target.rule} / ${target.target_type} / ${target.action_type}`);
 console.log(`  分析対象: ${target.target_path || target.target_category || '—'}`);
-console.log(`  変更ファイル: ${changed.length > 0 ? changed.join(' / ') : '（なし）'}`);
+console.log(`  変更ファイル: ${changed.filter(watched).length > 0 ? changed.filter(watched).join(" / ") : '（なし）'}`);
 
 if (problems.length > 0) {
   for (const problem of problems) console.error(`  ✗ ${problem}`);

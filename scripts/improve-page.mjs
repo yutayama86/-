@@ -82,7 +82,7 @@ function arg(name) {
   return index >= 0 ? process.argv[index + 1] : null;
 }
 
-const contextPath = arg('context');
+const contextPath = arg('context') ?? '.growth/target.json';
 const promptOutput = arg('prompt-output');
 const responseFile = arg('response-file');
 

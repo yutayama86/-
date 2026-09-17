@@ -29,6 +29,11 @@ const CONTENT_DIRS = [
   { dir: 'src/content/case', kind: 'case' },
 ];
 const LOG_DIR = 'docs/seo-log';
+/*
+  その日の判断の置き場所。後続のスクリプトは、引数がなければここを読む。
+  ワークフローの書き方に依存せず、「分析した対象」を全工程が共有できるようにしている。
+*/
+const DEFAULT_CONTEXT = '.growth/target.json';
 
 const today = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Asia/Tokyo',
@@ -39,7 +44,7 @@ const today = new Intl.DateTimeFormat('en-CA', {
 const dryRun = process.argv.includes('--dry-run');
 const contextPath = (() => {
   const index = process.argv.indexOf('--context');
-  return index >= 0 ? process.argv[index + 1] : null;
+  return index >= 0 ? process.argv[index + 1] : DEFAULT_CONTEXT;
 })();
 
 /* --- 記事の読み込み --------------------------------------------------- */
@@ -279,11 +284,11 @@ const context = {
   },
 };
 
-if (contextPath) {
-  mkdirSync(dirname(contextPath), { recursive: true });
-  writeFileSync(contextPath, `${JSON.stringify(context, null, 2)}\n`, 'utf-8');
-  console.log(`\n判断の根拠を保存しました: ${contextPath}`);
+for (const path of new Set([DEFAULT_CONTEXT, contextPath].filter(Boolean))) {
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, `${JSON.stringify(context, null, 2)}\n`, 'utf-8');
 }
+console.log(`\n判断の根拠を保存しました: ${[...new Set([DEFAULT_CONTEXT, contextPath])].join(' / ')}`);
 
 /* --- ログの保存 ------------------------------------------------------- */
 
@@ -380,6 +385,10 @@ if (process.env.GITHUB_OUTPUT) {
       `focus_keyword=${output(target.focus_keyword)}`,
       `log_path=${LOG_DIR}/${today}.md`,
       `measurement_status=${measurementErrors.length > 0 ? 'error' : 'ok'}`,
+      // 旧ワークフローが読む名前も出しておく（移行中の互換用）
+      `focus_rule=${output(target.rule)}`,
+      `focus_category=${output(target.target_category)}`,
+      `focus_keyword=${output(target.focus_keyword)}`,
       '',
     ].join('\n')
   );

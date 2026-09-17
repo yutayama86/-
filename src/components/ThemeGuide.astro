@@ -17,6 +17,17 @@ const { theme } = Astro.props;
       <p class="bp-kicker">{theme.kicker}</p>
       <h1>{theme.title}</h1>
       <p class="tg-lead">{theme.lead}</p>
+      {theme.status && (
+        <section class="tg-status" aria-labelledby="tg-status-h">
+          <p class="tg-status__kicker">NOW<span>{theme.status.updatedAt}時点</span></p>
+          <h2 id="tg-status-h">{theme.status.heading}</h2>
+          <dl>{theme.status.rows.map(([t, d]) => <div><dt>{t}</dt><dd>{d}</dd></div>)}</dl>
+          {theme.status.note && <p class="tg-status__note">{theme.status.note}</p>}
+          {theme.status.links && theme.status.links.length > 0 && (
+            <ul class="tg-status__links">{theme.status.links.map((l) => <li><a href={l.href}>{l.label}<span aria-hidden="true">→</span></a></li>)}</ul>
+          )}
+        </section>
+      )}
     </div>
     {theme.hero && (
       <figure class="tg-hero">
@@ -69,6 +80,13 @@ const { theme } = Astro.props;
     </section>
   )}
 
+  {theme.faq && theme.faq.length > 0 && (
+    <section class="tg-faq bp-wrap" aria-labelledby="tg-faq-h">
+      <div class="tg-practical__head"><p class="bp-kicker">FAQ</p><h2 id="tg-faq-h">よくある質問</h2></div>
+      <dl>{theme.faq.map((f) => <div><dt>{f.question}</dt><dd>{f.answer}</dd></div>)}</dl>
+    </section>
+  )}
+
   <aside class="tg-info bp-wrap" aria-labelledby="tg-info-h">
     <div><p class="bp-kicker">INFORMATION</p><h2 id="tg-info-h">情報の確認について</h2><p>掲載内容は公開情報をもとに編集しています。開花・見頃・営業・催事・遊泳可否などは年や天候で変わります。訪ねる前に各施設・自治体の公式情報をご確認ください。</p></div>
     <div><p>最終確認：<time>{theme.checkedAt}</time></p>{theme.sources.length > 0 && <ul class="tg-info__links">{theme.sources.map((s) => <li><a href={s.url} target="_blank" rel="noopener">{s.label}<span aria-hidden="true">↗</span></a></li>)}</ul>}</div>
@@ -99,6 +117,24 @@ const { theme } = Astro.props;
   .tg-card h3{margin-top:.5rem;font:600 clamp(1.2rem,2vw,1.55rem)/1.4 var(--font-brand-display);color:var(--color-ink)}
   .tg-card__desc{margin-top:.7rem;color:var(--color-soil);line-height:1.85;font-size:.9rem}
   .tg-card__map{display:inline-block;margin-top:.9rem;color:var(--color-tide);font-size:.8rem;border-bottom:1px solid}
+  .tg-status{margin-top:clamp(1.75rem,3.5vw,2.5rem);padding:clamp(1.2rem,3vw,1.75rem);border:1px solid var(--color-mist);border-radius:1rem;background:var(--color-white)}
+  .tg-status__kicker{display:flex;flex-wrap:wrap;align-items:baseline;gap:.6rem;margin:0;color:var(--color-tide);font:700 .68rem var(--font-brand-meta);letter-spacing:.14em}
+  .tg-status__kicker span{color:var(--color-soil);font-weight:500;letter-spacing:.04em}
+  .tg-status h2{margin:.5rem 0 0;font:600 clamp(1.15rem,2.2vw,1.45rem)/1.5 var(--font-brand-display);color:var(--color-ink);text-wrap:balance}
+  .tg-status dl{margin:1rem 0 0;display:grid;gap:0;border-top:1px solid var(--color-mist)}
+  .tg-status dl>div{display:grid;gap:.25rem;padding:.8rem 0;border-bottom:1px solid var(--color-mist)}
+  .tg-status dt{font:600 .92rem var(--font-brand-display);color:var(--color-ink)}
+  .tg-status dd{margin:0;color:var(--color-soil);font-size:.88rem;line-height:1.85}
+  .tg-status__note{margin:.9rem 0 0;color:var(--color-soil);font-size:.8rem;line-height:1.8}
+  .tg-status__links{display:flex;flex-wrap:wrap;gap:.5rem .9rem;margin:.9rem 0 0;padding:0;list-style:none}
+  .tg-status__links li{margin:0}
+  .tg-status__links a{display:inline-flex;align-items:center;gap:.3rem;color:var(--color-tide);font-size:.85rem;text-decoration:none;border-bottom:1px solid currentColor}
+  .tg-status__links a:hover,.tg-status__links a:focus-visible{color:var(--color-ink)}
+  .tg-faq{padding-block:clamp(2.5rem,5vw,4rem)}
+  .tg-faq dl{margin-top:2rem;display:grid;gap:0;border-top:1px solid var(--color-mist)}
+  .tg-faq dl>div{padding:1.25rem 0;border-bottom:1px solid var(--color-mist)}
+  .tg-faq dt{font:600 1.02rem/1.6 var(--font-brand-display);color:var(--color-ink)}
+  .tg-faq dd{margin:.5rem 0 0;color:var(--color-soil);line-height:1.85;font-size:.9rem}
   .tg-practical{padding-block:clamp(3rem,6vw,5rem)}.tg-practical__head h2{margin-top:.6rem;font:600 clamp(1.5rem,2.8vw,2.2rem) var(--font-brand-display);color:var(--color-ink)}
   .tg-practical dl{margin-top:2rem;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--color-mist)}.tg-practical dl>div{padding:1.5rem;border-bottom:1px solid var(--color-mist)}.tg-practical dl>div:nth-child(odd){border-right:1px solid var(--color-mist)}
   .tg-practical dt{font:600 1.05rem var(--font-brand-display);color:var(--color-ink)}.tg-practical dd{margin:.5rem 0 0;color:var(--color-soil);line-height:1.8;font-size:.9rem}

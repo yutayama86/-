@@ -3,12 +3,25 @@ import BrandBase from '../layouts/BrandBase.astro';
 import ThemeGuide from '../components/ThemeGuide.astro';
 import { THEMES } from '../data/themes';
 const theme = THEMES.kouyou;
-const jsonLd = {
-  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+const breadcrumb = {
+  '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'ホーム', item: new URL('/', Astro.site).href },
     { '@type': 'ListItem', position: 2, name: theme.title, item: new URL('/kouyou/', Astro.site).href },
   ],
+};
+// FAQは画面に出している内容とそろえる。片方だけ足したり消したりしない。
+const faqLd = theme.faq && theme.faq.length > 0 ? {
+  '@type': 'FAQPage',
+  mainEntity: theme.faq.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+} : null;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': faqLd ? [breadcrumb, faqLd] : [breadcrumb],
 };
 ---
 <BrandBase title={theme.metaTitle} description={theme.metaDescription} jsonLd={jsonLd}>

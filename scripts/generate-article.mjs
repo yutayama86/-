@@ -49,6 +49,8 @@ function arg(name) {
   return index >= 0 ? process.argv[index + 1] : null;
 }
 
+const contextPath = arg('context');
+const allowUnplanned = process.argv.includes('--allow-unplanned');
 const category = arg('category');
 const keyword = arg('keyword');
 const slug = arg('slug') ?? (keyword ? slugify(keyword) : null);
@@ -73,6 +75,33 @@ function slugify(text) {
     .replace(/[^\w\s-]/g, '')
     .replace(/\s+/g, '-')
     .slice(0, 60) || `article-${Date.now()}`;
+}
+
+/*
+  日次処理で「既存ページの改善」が選ばれた日に、別テーマの記事を作らないためのガード。
+  daily-growth が書き出した判断（--context）で target_type=new_article のときだけ生成する。
+  手動で試すときだけ --allow-unplanned を付ける。
+*/
+if (contextPath) {
+  if (!existsSync(contextPath)) {
+    console.error(`判断ファイルが見つかりません: ${contextPath}`);
+    process.exit(1);
+  }
+  const { target } = JSON.parse(readFileSync(contextPath, 'utf-8'));
+  if (target?.target_type !== 'new_article') {
+    console.error(
+      `今日の投資先は「${target?.target_type}（${target?.target_path || target?.action_type}）」です。新規記事は作りません。`
+    );
+    process.exit(1);
+  }
+  if (target.target_slug && target.target_slug !== slug) {
+    console.error(`選定された記事（${target.target_slug}）と指定されたslug（${slug}）が一致しません。`);
+    process.exit(1);
+  }
+} else if (!allowUnplanned) {
+  console.error('--context <判断ファイル> が必要です。計測の判断を経ずに記事を作らない運用にしています。');
+  console.error('（手動で試す場合のみ --allow-unplanned を付けてください）');
+  process.exit(1);
 }
 
 const outPath = join(KNOWLEDGE_DIR, `${slug}.md`);

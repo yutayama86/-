@@ -36,9 +36,18 @@ const nowD = new Date();
 const todayD = new Date(nowD.getFullYear(), nowD.getMonth(), nowD.getDate());
 const areaEvents = (await getEventsByMunicipality(slug!))
   .filter((e) => {
+    // 日付で落とすのは、開催日の決まっている催し（articleType: 'event'）だけ。
+    // ガイドや開業情報の startDate は「情報の基準日」なので、
+    // 同じ条件で落とすと、通年で使える記事が翌日から街のページに出なくなる。
+    if (e.data.articleType !== 'event') return true;
     const end = e.data.eventInfo?.endDate ?? e.data.eventInfo?.startDate;
     return !end || end >= todayD;
   })
+  // その街に固有の記事を先に出す。県全体のまとめ記事は startDate を持たず
+  // pubDate で並ぶため、そのままだと個別の催しを押し出して
+  // 「◯◯のイベント」にその街のものが1本も出ない、という状態になる。
+  // 同じ市町村数どうしの並び（開催が近い順）は、sortが安定なので保たれる。
+  .sort((a, b) => a.data.municipalities.length - b.data.municipalities.length)
   .slice(0, 6);
 const eventPath = (id: string) => `/events/${id.split('/').pop()}/`;
 const eventDate = (x: Date) => new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric', weekday: 'short' }).format(x);

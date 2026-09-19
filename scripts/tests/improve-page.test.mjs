@@ -19,7 +19,7 @@ function contextFor({ dir, file }, actionType) {
   writeFileSync(
     path,
     JSON.stringify({
-      date: '2026-09-17',
+      date: '2000-01-01',
       target: {
         target_type: 'existing_page',
         target_path: '/knowledge/shikumika/shikumika-toha/',

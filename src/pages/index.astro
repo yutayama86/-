@@ -1,6 +1,7 @@
 ---
 import BrandBase from '../layouts/BrandBase.astro';
 import HomeThemeNav from '../components/HomeThemeNav.astro';
+import ThisWeek from '../components/ThisWeek.astro';
 import HomeEditorialProcess from '../components/HomeEditorialProcess.astro';
 import HomeAreaExplorer from '../components/HomeAreaExplorer.astro';
 import NewsCard from '../components/NewsCard.astro';
@@ -130,6 +131,9 @@ const heroSlides = [
       </svg>
     </div>
   </section>
+
+  {/* 日付から入る枠。該当が無ければブロックごと出ない（既存TOPの構成は変えない） */}
+  <ThisWeek />
 
   <section class="discover" id="discover">
     <div class="bp-wrap discover-grid">

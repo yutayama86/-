@@ -20,6 +20,11 @@ export interface ThemeSection { kicker: string; title: string; body: string; }
 export interface ThemeStatus {
   /** 公式を確認した日。画面に出すので、更新したら必ず直す */
   updatedAt: string;
+  /**
+   * 開催期間。入っている期間だけ「今週の茨城」に出る（src/lib/happenings.ts）。
+   * 季節が終わったら status ごと消すこと（古い期間を残さない）。
+   */
+  period?: { from: string; to: string; label: string; place?: string };
   heading: string;
   /** いま何が見られるか、次に何が変わるか。左が項目名、右が中身 */
   rows: [string, string][];
@@ -315,6 +320,12 @@ export const THEMES: Record<Theme['slug'], Theme> = {
     lead: '秋の茨城は、9月のコキアから11月の渓谷へと、順に色づいていきます。ひたちなかのみはらしの丘を埋めるコキア。日本三名瀑・袋田の滝、日本最大級の吊橋がかかる竜神峡、橋を包む花貫渓谷の紅葉のトンネル。丘から渓谷まで、茨城の秋をまとめました。',
     status: {
       updatedAt: '2026年9月18日',
+      period: {
+        from: '2026-09-18',
+        to: '2026-11-03',
+        label: 'きて みて さわって コキアカーニバル（国営ひたち海浜公園）',
+        place: 'ひたちなか市',
+      },
       heading: 'いまのコキアと、次に色が変わる目安',
       rows: [
         ['いまの状態', '9月18日（金）に「きて みて さわって コキアカーニバル」が始まりました。公園公式の観賞時期では、コキアは9月下旬まで「緑葉」の期間です。'],

@@ -1,0 +1,74 @@
+---
+/**
+ * 「今日・明日・今週末、茨城で何があるか」。
+ *
+ * 記事を探させるのではなく、日付から入れるようにするための枠。
+ * 中身は src/lib/happenings.ts が既存データ（イベント・試合・季節）から組み立てる。
+ *
+ * 該当が1件も無ければ、このブロックごと出さない。
+ * 「今日は何もありません」と書くくらいなら、無いほうがよい。
+ */
+import { getWeekBoard, type HappeningKind } from '../lib/happenings';
+
+const board = await getWeekBoard();
+
+const KIND_LABEL: Record<HappeningKind, string> = {
+  event: 'イベント',
+  sports: '試合',
+  season: '開催中',
+};
+---
+
+{board.length > 0 && (
+  <section class="tw" aria-labelledby="tw-title">
+    <div class="bp-wrap">
+      <p class="bp-kicker">THIS WEEK</p>
+      <h2 id="tw-title" class="tw__title">今週、茨城でできること</h2>
+      <p class="tw__lead">公開情報で日程を確認できたものだけを並べています。終わったものは出していません。</p>
+
+      <div class="tw__groups">
+        {board.map((group) => (
+          <div class="tw__group">
+            <p class="tw__when">{group.label}</p>
+            <ul class="tw__list">
+              {group.items.map((item) => (
+                <li>
+                  <a href={item.href} data-week-kind={item.kind}>
+                    <span class="tw__meta">
+                      <span class:list={['tw__kind', `is-${item.kind}`]}>{KIND_LABEL[item.kind]}</span>
+                      <time>{item.dateLabel}</time>
+                    </span>
+                    <strong>{item.title}</strong>
+                    {item.place && <span class="tw__place">{item.place}</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .tw{padding-block:clamp(2.5rem,5vw,4rem);background:var(--color-white)}
+  .tw__title{margin-top:.6rem;font:600 clamp(1.6rem,3.2vw,2.4rem)/1.35 var(--font-brand-display);color:var(--color-ink);text-wrap:balance}
+  .tw__lead{margin-top:.8rem;max-width:var(--measure);color:var(--color-soil);font-size:.88rem;line-height:1.9}
+  .tw__groups{display:grid;gap:1.75rem;margin-top:1.75rem}
+  .tw__when{margin:0 0 .7rem;color:var(--color-tide);font:700 .8rem var(--font-brand-meta);letter-spacing:.08em}
+  .tw__list{display:grid;gap:.6rem;margin:0;padding:0;list-style:none}
+  .tw__list li{margin:0}
+  .tw__list a{display:grid;gap:.3rem;padding:.9rem 1rem;border:1px solid var(--color-mist);border-radius:.85rem;background:var(--color-white);color:var(--color-ink);text-decoration:none;transition:border-color .2s ease,box-shadow .2s ease}
+  .tw__list a:hover,.tw__list a:focus-visible{border-color:var(--color-tide);box-shadow:0 10px 26px rgba(25,55,88,.1)}
+  .tw__list a:focus-visible{outline:2px solid var(--color-tide);outline-offset:2px}
+  .tw__meta{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--color-soil);font-size:.76rem}
+  .tw__kind{padding:.1rem .5rem;border-radius:999px;font:700 .68rem var(--font-brand-meta);letter-spacing:.04em;background:var(--color-ink);color:#fff}
+  .tw__kind.is-sports{background:var(--color-tide)}
+  .tw__kind.is-season{background:var(--color-signal,#a63f32)}
+  .tw__list strong{font:600 1rem/1.55 var(--font-brand-display)}
+  .tw__place{color:var(--color-soil);font-size:.8rem}
+  @media (min-width:52em){
+    .tw__groups{grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:2rem}
+  }
+</style>

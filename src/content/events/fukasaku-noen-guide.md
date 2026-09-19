@@ -80,6 +80,8 @@ businessIntent:
   food: true
   experience: true
 evergreen: true
+relatedBusinesses:
+  - "hokota-farm-001"
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

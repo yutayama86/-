@@ -74,6 +74,8 @@ businessIntent:
   parking: true
   food: true
 evergreen: true
+relatedBusinesses:
+  - "hitachinaka-shop-001"
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

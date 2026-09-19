@@ -123,6 +123,10 @@ businessIntent:
   food: true
   experience: true
 evergreen: true
+relatedBusinesses:
+  - "oarai-hotel-001"
+  - "hokota-farm-001"
+  - "hitachinaka-shop-001"
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

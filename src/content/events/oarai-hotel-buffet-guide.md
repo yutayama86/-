@@ -75,6 +75,8 @@ businessIntent:
   accommodation: true
   food: true
 evergreen: true
+relatedBusinesses:
+  - "oarai-hotel-001"
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

@@ -95,6 +95,8 @@ relatedArticleUrls:
   - "/events/"
   - "/kouyou/"
   - "/odekake/"
+relatedBusinesses:
+  - "hitachinaka-activity-001"
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

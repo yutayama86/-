@@ -387,6 +387,13 @@ const news = defineCollection({
      * 過去記事は消さずURLも変えない。終了表示とあわせて次の版へ案内するために使う。
      */
     supersededBy: z.string().startsWith('/').optional(),
+    /**
+     * この記事が扱っている店舗・施設のID（src/data/businesses.ts）。
+     * 本文へ自動で差し込むためのものではなく、
+     * 「どの事業者に触れた記事か」を機械的に集めるために持つ。
+     * 存在しないIDは scripts/data-audit.mjs が検出する。
+     */
+    relatedBusinesses: z.array(z.string().min(1)).optional(),
     sourceUrls: z.array(z.object({
       label: z.string().min(1),
       url: z.url(),
@@ -564,6 +571,13 @@ const events = defineCollection({
      * 過去記事は消さずURLも変えない。終了表示とあわせて次の版へ案内するために使う。
      */
     supersededBy: z.string().startsWith('/').optional(),
+    /**
+     * この記事が扱っている店舗・施設のID（src/data/businesses.ts）。
+     * 本文へ自動で差し込むためのものではなく、
+     * 「どの事業者に触れた記事か」を機械的に集めるために持つ。
+     * 存在しないIDは scripts/data-audit.mjs が検出する。
+     */
+    relatedBusinesses: z.array(z.string().min(1)).optional(),
 
     sourceUrls: z.array(z.object({
       label: z.string().min(1),

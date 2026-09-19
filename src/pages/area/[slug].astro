@@ -13,6 +13,7 @@ import { MUNICIPALITIES, MUNI_BY_SLUG, REGIONS, municipalitiesByRegion } from '.
 import { getPublishedArticles, getPublishedStores, getIndexableNews, getEventsByMunicipality } from '../../lib/content';
 import { themesForArea } from '../../data/themes';
 import { lifecycleOf } from '../../lib/lifecycle';
+import ArticleNextSteps from '../../components/ArticleNextSteps.astro';
 import { michinoekiForArea } from '../../data/michinoeki';
 import { areaToSlug } from '../../data/areas';
 
@@ -164,7 +165,10 @@ const jsonLd: Record<string, unknown>[] = [
     {hasContent ? <div class="area-content bp-wrap">
       {articles.length > 0 && <section><p class="bp-kicker">STORIES</p><h2 class="bp-section-title">{municipality.name}で聞いた物語</h2><div class="story-grid">{articles.map((article) => <BrandStoryCard article={article} />)}</div></section>}
       {stores.length > 0 && <section><p class="bp-kicker">PLACES</p><h2 class="bp-section-title">確認できた場所</h2><ul class="place-list">{stores.map((store) => <li><a href={`/place/${store.id}/`}><span><small>{store.data.category}</small><strong>{store.data.name}</strong><span>{store.data.tagline}</span></span><span aria-hidden="true">→</span></a></li>)}</ul></section>}
-    </div> : <section class="area-empty bp-reading"><p class="bp-kicker">FIELD NOTE</p><h2>この街の記録は、これから。</h2><p>公開確認済みの記事・場所はまだありません。架空のおすすめや未確認情報では埋めず、現地で確認できた内容から掲載します。</p><a href="/contact/">この街の“いいとこ”を教える →</a></section>}
+    </div> : <section class="area-empty bp-reading"><p class="bp-kicker">FIELD NOTE</p><h2>この街の記録は、これから。</h2><p>公開確認済みの記事・場所はまだありません。架空のおすすめや未確認情報では埋めず、現地で確認できた内容から掲載します。</p><a href="/contact/">この街の“いいとこ”を教える →</a>
+      {/* 行き止まりにしない。近い街とテーマへ戻れるようにする（既存の部品を再利用） */}
+      <ArticleNextSteps municipalities={[slug!]} pageType="news" />
+    </section>}
 
   </article>}
 

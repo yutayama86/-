@@ -66,6 +66,8 @@ relatedArticleUrls:
   - "/events/"
   - "/kouyou/"
   - "/events/ibaraki-events-november-2026/"
+relatedBusinesses:
+  - "hitachinaka-activity-001"
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

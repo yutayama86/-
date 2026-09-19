@@ -1,6 +1,6 @@
 {
   "team": "kashima-antlers",
-  "updatedAt": "2026-09-19",
+  "updatedAt": "2026-09-20",
   "matches": [
     {
       "id": "kashima-antlers-2026-08-07-j1-01",
@@ -301,7 +301,97 @@
       "status": "scheduled",
       "broadcast": ["スポーツライブ+2 ch.584", "スカパー！"],
       "officialUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-emp3rd",
-      "sources": [{ "label": "鹿島アントラーズ公式｜試合日程・結果", "url": "https://www.antlers.co.jp/blogs/games", "accessedAt": "2026-09-13" }]
+      "guide": {
+        "title": "鹿島アントラーズ vs ヴァンフォーレ甲府 観戦ガイド（9月23日・天皇杯3回戦）",
+        "verifiedAt": "2026-09-20",
+        "keyFacts": [
+          "9月23日（水・祝）17:00キックオフ、メルカリスタジアム。開場は14:00（予定）で再入場できます",
+          "9月20日の時点でチケットは買えます。Jリーグチケットでの販売は9月22日（火）23:59まで。S席5,500円、A席5,000円、B席4,000円、C席3,000円、ゴール裏自由席1,000〜2,000円（1枚あたり）",
+          "天皇杯はシーズンチケットの対象外です。観戦にはこの試合のチケットが必要です",
+          "場外のメルカリロードフードコートは12:00から。開場の2時間前から食べられ、試合終了後30分頃まで営業します",
+          "メルカリスタジアムは一部店舗を除き完全キャッシュレスです。場内に交通系ICのチャージ機はありません",
+          "潮来ICとスタジアム周辺は試合開始の約3時間前から混雑します。試合後は駐車場を出るのに1時間以上かかることがあります"
+        ],
+        "sections": [
+          {
+            "key": "match",
+            "title": "試合情報・当日の流れ",
+            "items": [
+              { "text": "2026年9月23日（水・祝）17:00キックオフ、メルカリスタジアムでの開催です。天皇杯 JFA 第106回全日本サッカー選手権大会の3回戦で、鹿島アントラーズのホームゲームにあたります。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-emp3rd" },
+              { "text": "当日の流れは、12:00 場外飲食店オープン → 14:00 メルカリスタジアム開場（予定・再入場可）→ 17:00 キックオフ（予定）→ 19:00 試合終了（予定）です。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-emp3rd" },
+              { "text": "この試合は、メインスタンドから見て鹿島アントラーズが右側ベンチ、ヴァンフォーレ甲府が左側ベンチを使います。チケットの席種名にある「ベンチ左」「ベンチ右」は、この並びを指します。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2636360/001" },
+              { "text": "中継はスカパー！（スポーツライブ+2 ch.584）です。", "sourceUrl": "https://www.antlers.co.jp/blogs/games" },
+              { "text": "鹿島は9月19日のリーグ戦で、アウェイの川崎フロンターレ戦に0-2で敗れています。", "sourceUrl": "https://www.antlers.co.jp/blogs/games" }
+            ]
+          },
+          {
+            "key": "ticket",
+            "title": "チケット",
+            "items": [
+              { "text": "天皇杯はシーズンチケットの対象外です。クラブは「天皇杯、AFC主催大会は対象外」としており、観戦にはこの試合のチケットが必要です。", "sourceUrl": "https://www.antlers.co.jp/pages/fanclub-season" },
+              { "text": "9月20日にJリーグチケットの販売ページを確認した時点で、多くの席種に空席ありの表示が出ていました。一部の席種は残りわずか、または販売なしの表示です。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2636360/001" },
+              { "text": "一般発売（店頭発券・配送）は9月22日（火）23:59までと表示されています。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2636360/001" },
+              { "text": "価格は1枚あたり、エグゼクティブ8,000円、S席5,500円、A席5,000円、B席4,000円、C席（上層・下層）3,000円、ゴール裏自由席と車椅子席が1,000〜2,000円です。B駐車券は1,000円で、チケットと同じページから買えます。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2636360/001" },
+              { "text": "座席を必要とする場合を除き、大人の有料入場者1名につき小学生未満の幼児は1名無料と案内されています。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2636360/001" }
+            ]
+          },
+          {
+            "key": "gourmet",
+            "title": "グルメ・場内の支払い",
+            "items": [
+              { "text": "場外の「メルカリロードフードコート」は、スタジアム場外スポーツセンターのジーコ像前で12:00から試合終了後30分頃まで営業します（混雑状況により前後します）。テーブルとイスがあり、試合後も利用できます。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-emp3rd" },
+              { "text": "場外の出店は、五浦ハム（肉）、シオン（キッチンカー・ポテト）、漁師小屋（魚介）、merengue（カレー）です。メニューと金額は変わる場合があります。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-emp3rd" },
+              { "text": "場内の売店は2階のメインスタンド・南スタンド・北スタンド・バックスタンドにあります。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-emp3rd" },
+              { "text": "メルカリスタジアムは一部店舗を除き完全キャッシュレスです。場内に交通系ICカードのチャージ機はないため、事前のチャージか、鹿島サッカースタジアム駅の簡易チャージ機の利用が案内されています。", "sourceUrl": "https://www.antlers.co.jp/pages/all-cashless" }
+            ]
+          },
+          {
+            "key": "event",
+            "title": "イベント・グッズ",
+            "items": [
+              { "text": "来場者限定の抽選「来場者鹿BIG」と、オンラインの「どこでも鹿BIG」があります。応募は当日0:00からで、受付終了は「どこでも鹿BIG」が18:00、「来場者鹿BIG」が18:15です。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-emp3rd" },
+              { "text": "カシマサッカーミュージアムでは、タイトルフラッグや優勝カップ、クラブレジェンドの記念展示、年代別の歴代在籍選手のパネル展示を見られます。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-emp3rd" },
+              { "text": "グッズ店は、FAMILY（場内2階南ゴール裏コンコース）とANNEX（場内2階バックスタンド側コンコース）。どちらも14:00の開場から試合終了後30分頃までです。", "sourceUrl": "https://www.antlers.co.jp/pages/mdp-2026-27-emp3rd" }
+            ]
+          },
+          {
+            "key": "access",
+            "title": "アクセス（電車・バス）",
+            "items": [
+              { "text": "試合当日は、鹿島臨海鉄道が鹿島サッカースタジアム駅に臨時停車します。水戸方面では交通系ICカードが使えないため、切符が必要です。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-stadium-access" },
+              { "text": "東京方面からは東京駅からの高速バスが主な手段です。ほかに、勝田駅・水戸駅、つくば駅・土浦駅、海浜幕張駅からの予約制バスがあります。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-stadium-access" },
+              { "text": "帰りの高速バスは試合終了後に順次出発し、最終便は試合（またはセレモニー等）終了から約30分後の発車予定です。運行台数には限りがあります。鹿島神宮駅行きのピストンバスは、試合終了から約20分後の発車予定です。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-stadium-access" },
+              { "text": "試合終了後の5ゲートとスタジアム前交差点付近は非常に混雑します。3ゲート・4ゲート・6ゲートからの分散退場に協力するよう呼びかけられています。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-stadium-access" }
+            ]
+          },
+          {
+            "key": "parking",
+            "title": "車・駐輪",
+            "items": [
+              { "text": "潮来ICおよびスタジアムまでの道路は、試合開始の約3時間前から非常に混雑が予想されます。試合終了後は、スタジアム周辺の駐車場から出るのに1時間以上かかることがあります。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-stadium-access" },
+              { "text": "クラブは渋滞緩和のため、公共交通機関の利用か、車への乗り合わせを呼びかけています。周辺の商業施設や路上への無断駐車・停車はできません。周辺道路は地域の人の生活道路でもあります。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-stadium-access" },
+              { "text": "B駐車券はJリーグチケットで1枚1,000円で販売されています。", "sourceUrl": "https://www.jleague-ticket.jp/sales/perform/2636360/001" },
+              { "text": "バイク・自転車は指定された駐輪場に停めます。それ以外の場所への駐輪は禁止で、歩道では車両から降りて押して通行するよう案内されています。", "sourceUrl": "https://www.antlers.co.jp/pages/guide-stadium-access" }
+            ]
+          }
+        ],
+        "unverifiedNote": "次の項目は、この記事の更新時点で公式情報を確認できていないため載せていません。確認でき次第、追加します。",
+        "unverified": [
+          "当日券が販売されるか（Jリーグチケットの販売が9月22日23:59で終わったあとの扱い）",
+          "鹿島臨海鉄道の臨時停車の具体的な時刻",
+          "駐車場の開場時刻と、B駐車場以外の区画が使えるか",
+          "試合の見どころ（クラブ公式のMATCH PREVIEWは9月20日時点で準備中）",
+          "ホームタウンデイズなどの地域イベントがこの試合で行われるか"
+        ]
+      },
+      "sources": [
+        { "label": "鹿島アントラーズ公式｜試合日程・結果", "url": "https://www.antlers.co.jp/blogs/games", "accessedAt": "2026-09-20" },
+        { "label": "鹿島アントラーズ公式｜9月23日 天皇杯3回戦 観戦ガイド", "url": "https://www.antlers.co.jp/pages/mdp-2026-27-emp3rd", "accessedAt": "2026-09-20" },
+        { "label": "鹿島アントラーズ公式｜スタジアムへの行き方／帰り方", "url": "https://www.antlers.co.jp/pages/guide-stadium-access", "accessedAt": "2026-09-20" },
+        { "label": "鹿島アントラーズ公式｜メルカリスタジアム完全キャッシュレス化のご案内", "url": "https://www.antlers.co.jp/pages/all-cashless", "accessedAt": "2026-09-20" },
+        { "label": "鹿島アントラーズ公式｜シーズンチケット", "url": "https://www.antlers.co.jp/pages/fanclub-season", "accessedAt": "2026-09-20" },
+        { "label": "Jリーグチケット｜天皇杯3回戦 鹿島アントラーズ対ヴァンフォーレ甲府", "url": "https://www.jleague-ticket.jp/sales/perform/2636360/001", "accessedAt": "2026-09-20" }
+      ]
     },
     {
       "id": "kashima-antlers-2026-10-09-j1-09",

@@ -71,6 +71,7 @@ relatedArticleUrls:
   - "/area/oarai/"
   - "/events/nakaminato-ichibazushi-guide/"
   - "/events/oarai-ankou-matsuri-2026/"
+commercialPriority: medium
 businessIntent:
   accommodation: true
   food: true

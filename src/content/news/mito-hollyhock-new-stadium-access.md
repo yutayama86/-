@@ -154,6 +154,7 @@ place:
   name: "水戸信用金庫スタジアム（笠松運動公園陸上競技場）"
   address: "茨城県那珂市向山1282-1"
   url: "https://www.mito-hollyhock.net/match/stadium/mito/"
+commercialPriority: high
 businessIntent:
   booking: true
   accommodation: true

@@ -89,6 +89,7 @@ relatedArticleUrls:
   - "/area/oarai/"
   - "/events/oarai-kaijo-hanabi-2026/"
   - "/events/ibaraki-events-november-2026/"
+commercialPriority: high
 businessIntent:
   booking: true
   accommodation: true

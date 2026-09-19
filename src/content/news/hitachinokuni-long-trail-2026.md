@@ -150,6 +150,7 @@ relatedArticleUrls:
   - "/area/hitachi/"
   - "/area/hitachiota/"
   - "/kouyou/"
+commercialPriority: low
 businessIntent:
   accommodation: true
   experience: true

@@ -117,6 +117,7 @@ relatedArticleUrls:
   - "/area/hitachinaka/"
   - "/area/hokota/"
   - "/area/oarai/"
+commercialPriority: medium
 businessIntent:
   booking: true
   accommodation: true

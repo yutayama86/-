@@ -70,6 +70,7 @@ relatedArticleUrls:
   - "/events/ibaraki-bus-tour-spots/"
   - "/area/hitachinaka/"
   - "/area/oarai/"
+commercialPriority: low
 businessIntent:
   parking: true
   food: true

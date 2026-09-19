@@ -75,6 +75,7 @@ relatedArticleUrls:
   - "/events/ibaraki-bus-tour-spots/"
   - "/area/hokota/"
   - "/events/nakaminato-ichibazushi-guide/"
+commercialPriority: medium
 businessIntent:
   parking: true
   food: true

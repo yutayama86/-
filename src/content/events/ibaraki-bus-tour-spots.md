@@ -117,6 +117,12 @@ relatedArticleUrls:
   - "/area/hitachinaka/"
   - "/area/hokota/"
   - "/area/oarai/"
+businessIntent:
+  booking: true
+  accommodation: true
+  food: true
+  experience: true
+evergreen: true
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

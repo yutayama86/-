@@ -62,4 +62,7 @@ relatedArticleUrls:
   - "/news/ibaraki-natto-nihonichi-project-2026/"
   - "/news/hitachinaka-machizemi-2026/"
   - "/area/kasama/"
+businessIntent:
+  businessLead: true
+evergreen: true
 ---

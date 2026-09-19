@@ -42,10 +42,49 @@ export interface Business {
 }
 
 /**
- * 事業者の登録簿。**まだ空**。
- * 実在と掲載可否を確認したものから、1件ずつ足していく。
+ * 事業者の登録簿。
+ *
+ * 入れる条件は「複数の記事から参照されていて、公式サイトで実在を確認できたもの」。
+ * 候補は手で決めず、記事本文の外部リンクを数えて選んだ。
+ * 主催者・観光協会・報道・チケット代理店は事業者ではないので入れない。
  */
-export const BUSINESSES: Business[] = [];
+export const BUSINESSES: Business[] = [
+  {
+    id: 'oarai-hotel-001',
+    name: '大洗ホテル',
+    municipality: 'oarai',
+    category: 'hotel',
+    officialUrl: 'https://www.oarai-hotel.co.jp/',
+    verifiedAt: '2026-09-19',
+    note: '夕食ビュッフェの記事とバスツアーの記事から参照',
+  },
+  {
+    id: 'hokota-farm-001',
+    name: '深作農園',
+    municipality: 'hokota',
+    category: 'farm',
+    officialUrl: 'https://fukasaku.com/',
+    verifiedAt: '2026-09-19',
+    note: 'メロン専用サイト（fukasaku-melon.com）も併設',
+  },
+  {
+    id: 'hitachinaka-shop-001',
+    name: '那珂湊おさかな市場',
+    municipality: 'hitachinaka',
+    category: 'shop',
+    officialUrl: 'https://www.nakaminato-osakanaichiba.jp/',
+    verifiedAt: '2026-09-19',
+  },
+  {
+    id: 'hitachinaka-activity-001',
+    name: '国営ひたち海浜公園',
+    municipality: 'hitachinaka',
+    category: 'activity',
+    officialUrl: 'https://www.hitachikaihin.jp/',
+    verifiedAt: '2026-09-19',
+    note: 'コキア・ネモフィラ。紅葉ページと秋のおでかけ記事から参照',
+  },
+];
 
 export const BUSINESS_BY_ID: ReadonlyMap<string, Business> = new Map(
   BUSINESSES.map((b) => [b.id, b]),

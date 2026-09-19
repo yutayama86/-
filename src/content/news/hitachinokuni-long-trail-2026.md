@@ -150,4 +150,8 @@ relatedArticleUrls:
   - "/area/hitachi/"
   - "/area/hitachiota/"
   - "/kouyou/"
+businessIntent:
+  accommodation: true
+  experience: true
+evergreen: true
 ---

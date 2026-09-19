@@ -70,6 +70,10 @@ relatedArticleUrls:
   - "/events/ibaraki-bus-tour-spots/"
   - "/area/hitachinaka/"
   - "/area/oarai/"
+businessIntent:
+  parking: true
+  food: true
+evergreen: true
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

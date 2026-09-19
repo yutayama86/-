@@ -71,6 +71,10 @@ relatedArticleUrls:
   - "/area/oarai/"
   - "/events/nakaminato-ichibazushi-guide/"
   - "/events/oarai-ankou-matsuri-2026/"
+businessIntent:
+  accommodation: true
+  food: true
+evergreen: true
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

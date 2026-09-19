@@ -75,6 +75,11 @@ relatedArticleUrls:
   - "/events/ibaraki-bus-tour-spots/"
   - "/area/hokota/"
   - "/events/nakaminato-ichibazushi-guide/"
+businessIntent:
+  parking: true
+  food: true
+  experience: true
+evergreen: true
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

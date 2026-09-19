@@ -61,4 +61,9 @@ relatedArticleUrls:
   - "/area/hitachinaka/"
   - "/area/oarai/"
   - "/news/ibaraki-passport-44-municipalities/"
+businessIntent:
+  booking: true
+  accommodation: true
+  food: true
+evergreen: false
 ---

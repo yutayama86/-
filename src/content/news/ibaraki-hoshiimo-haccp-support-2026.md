@@ -56,4 +56,7 @@ relatedArticleUrls:
   - "/area/tokai/"
   - "/area/naka/"
   - "/news/hoshiimo-shake-fair-2026/"
+businessIntent:
+  businessLead: true
+evergreen: true
 ---

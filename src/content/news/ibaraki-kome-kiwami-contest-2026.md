@@ -58,4 +58,7 @@ relatedArticleUrls:
   - "/news/ibaraki-hoshiimo-haccp-support-2026/"
   - "/news/kasama-shinguri-matsuri-2026/"
   - "/news/kasama-kogiku-meigara-sanchi-2026/"
+businessIntent:
+  businessLead: true
+evergreen: false
 ---

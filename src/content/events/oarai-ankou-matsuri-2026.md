@@ -89,6 +89,12 @@ relatedArticleUrls:
   - "/area/oarai/"
   - "/events/oarai-kaijo-hanabi-2026/"
   - "/events/ibaraki-events-november-2026/"
+businessIntent:
+  booking: true
+  accommodation: true
+  parking: true
+  food: true
+evergreen: false
 ---
 
 本文はfrontmatterの構造化フィールドへ移送済みです。

@@ -1,0 +1,124 @@
+---
+/**
+ * 記事を読み終えた人が「次にどこへ行けるか」を、既存の分類からだけ組み立てる。
+ *
+ * 出す根拠はすべてデータ側にある。似ていそう、で並べない。
+ *  - テーマ：themes.ts がその市町村を自分の関連として挙げている場合だけ
+ *  - 近い街：MUNICIPALITIES の緯度経度から実際に距離を計算した上位3件
+ *  - 観戦：記事の frontmatter に sportsTeam がある場合だけ
+ *
+ * 該当が無い区分は見出しごと出さない。空の枠を作らないため。
+ * 本文・title・H1・URL には触れない。記事の下に足すだけの部品。
+ */
+import { MUNICIPALITIES, MUNI_BY_SLUG } from '../data/areas';
+import { themesForArea } from '../data/themes';
+import { SPORTS_TEAM_BY_SLUG, type SportsTeamSlug } from '../data/sports';
+
+interface Props {
+  /** 呼び出し側（content collection の型）から素直に渡せるよう string で受け、
+      実在する市町村だけに絞り込んでから使う。存在しない値は黙って捨てる */
+  municipalities: readonly string[];
+  sportsTeam?: string;
+  /** GA4で「どの種類のページからの回遊か」を分けるために使う */
+  pageType: 'news' | 'events' | 'sports';
+}
+const { municipalities: rawMunicipalities, sportsTeam: rawTeam, pageType } = Astro.props;
+// 実在する市町村だけを残す。リンク切れを作らないため
+const municipalities = rawMunicipalities.filter((slug) => MUNI_BY_SLUG.has(slug));
+const sportsTeam = rawTeam && rawTeam in SPORTS_TEAM_BY_SLUG ? (rawTeam as SportsTeamSlug) : undefined;
+
+/** 2点間の距離（km）。近い街を出すのに、見た目の並びではなく実距離を使う */
+function distanceKm(a: { lat: number; lon: number }, b: { lat: number; lon: number }): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLon = toRad(b.lon - a.lon);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(h));
+}
+
+// テーマ。複数の市町村が指定されていても、同じテーマは1回だけ出す
+const themeMap = new Map<string, { slug: string; title: string; kicker: string }>();
+for (const slug of municipalities) {
+  for (const theme of themesForArea(slug)) themeMap.set(theme.slug, theme);
+}
+const themes = [...themeMap.values()];
+
+// 近い街。記事が扱っている市町村そのものは除く。県全体の記事（指定なし）では出さない。
+// チームページはホームタウンの一覧を既に持っているので、そこでは出さない（同じ役割を二重に置かない）
+const own = new Set<string>(municipalities);
+const nearby = municipalities.length > 0 && pageType !== 'sports'
+  ? (() => {
+      const scored = new Map<string, number>();
+      for (const slug of municipalities) {
+        const from = MUNI_BY_SLUG.get(slug);
+        if (!from) continue;
+        for (const m of MUNICIPALITIES) {
+          if (own.has(m.slug)) continue;
+          const d = distanceKm(from, m);
+          const prev = scored.get(m.slug);
+          if (prev === undefined || d < prev) scored.set(m.slug, d);
+        }
+      }
+      return [...scored.entries()]
+        .sort((a, b) => a[1] - b[1])
+        .slice(0, 3)
+        .map(([slug, km]) => ({ ...MUNI_BY_SLUG.get(slug)!, km: Math.round(km) }));
+    })()
+  : [];
+
+const team = sportsTeam ? SPORTS_TEAM_BY_SLUG[sportsTeam] : undefined;
+const hasAnything = themes.length > 0 || nearby.length > 0 || Boolean(team);
+---
+
+{hasAnything && (
+  <nav class="nxt bp-wrap" aria-labelledby="nxt-title" data-next-steps data-page-type={pageType}>
+    <p class="nxt__kicker">NEXT</p>
+    <h2 id="nxt-title" class="nxt__title">ここから続けて読む</h2>
+
+    {team && (
+      <div class="nxt__group">
+        <p class="nxt__label">観戦の情報</p>
+        <ul class="nxt__list">
+          <li><a href={`/sports/${team.slug}/`} data-next-kind="sports">{team.name}の日程・アクセス・観戦ガイド<span aria-hidden="true">→</span></a></li>
+        </ul>
+      </div>
+    )}
+
+    {themes.length > 0 && (
+      <div class="nxt__group">
+        <p class="nxt__label">テーマで読む</p>
+        <ul class="nxt__list">
+          {themes.map((theme) => (
+            <li><a href={`/${theme.slug}/`} data-next-kind="theme">{theme.title}<span aria-hidden="true">→</span></a></li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {nearby.length > 0 && (
+      <div class="nxt__group">
+        <p class="nxt__label">近くの街</p>
+        <ul class="nxt__list">
+          {nearby.map((m) => (
+            <li><a href={`/area/${m.slug}/`} data-next-kind="nearby">{m.name}<span class="nxt__km">約{m.km}km</span><span aria-hidden="true">→</span></a></li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </nav>
+)}
+
+<style>
+  .nxt{display:grid;gap:1.1rem;margin-top:clamp(2.25rem,4vw,3rem);padding:clamp(1.2rem,3vw,1.75rem);border:1px solid var(--interior-line,var(--color-mist));border-radius:1rem;background:var(--color-white)}
+  .nxt__kicker{margin:0;color:var(--interior-blue,var(--color-tide));font:700 .68rem var(--font-brand-meta);letter-spacing:.14em}
+  .nxt__title{margin:0;font:600 clamp(1.15rem,2.2vw,1.45rem)/1.5 var(--font-brand-display);color:var(--color-ink)}
+  .nxt__group{display:grid;gap:.5rem}
+  .nxt__label{margin:0;color:var(--color-soil);font:700 .74rem var(--font-brand-meta);letter-spacing:.06em}
+  .nxt__list{display:flex;flex-wrap:wrap;gap:.5rem;margin:0;padding:0;list-style:none}
+  .nxt__list li{margin:0;padding:0}
+  .nxt__list li::before{content:none}
+  .nxt__list a{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem .85rem;border:1px solid var(--interior-line,var(--color-mist));border-radius:999px;background:var(--interior-sky-soft,#eef6ff);color:var(--color-ink);font-size:.86rem;line-height:1.5;text-decoration:none;transition:border-color .2s ease,box-shadow .2s ease}
+  .nxt__list a:hover,.nxt__list a:focus-visible{border-color:var(--interior-blue,var(--color-tide));box-shadow:0 8px 20px rgba(25,55,88,.1)}
+  .nxt__list a:focus-visible{outline:2px solid var(--interior-blue,var(--color-tide));outline-offset:2px}
+  .nxt__km{color:var(--color-soil);font-size:.74rem}
+</style>

@@ -9,9 +9,13 @@
  */
 interface Props {
   /** GA4 の cta_page_type。どの種類のページから来た問い合わせかを分ける */
-  pageType: 'news' | 'events';
+  pageType: 'news' | 'events' | 'sports';
+  /** 記事が扱っている市町村（1つめ）。どの地域の記事からの相談かを見るため */
+  municipality?: string;
+  /** 記事の分類。news はカテゴリ、events は articleType、sports は 'team' */
+  contentCategory?: string;
 }
-const { pageType } = Astro.props;
+const { pageType, municipality, contentCategory } = Astro.props;
 
 const OPTIONS = [
   {
@@ -31,7 +35,7 @@ const OPTIONS = [
 ] as const;
 ---
 
-<aside class="bcta" aria-labelledby="bcta-title" data-business-cta data-page-type={pageType}>
+<aside class="bcta" aria-labelledby="bcta-title" data-business-cta data-page-type={pageType} data-municipality={municipality ?? ''} data-content-category={contentCategory ?? ''}>
   <p class="bcta__kicker">FOR LOCAL BUSINESSES</p>
   <p id="bcta-title" class="bcta__title">茨城で店や事業をしている方へ</p>
   <ul class="bcta__options">
@@ -53,7 +57,16 @@ const OPTIONS = [
 
   for (const block of document.querySelectorAll<HTMLElement>('[data-business-cta]')) {
     const pageType = block.dataset.pageType ?? '';
-    const base = { cta_location: 'article_end', cta_page_type: pageType };
+    // source_page / municipality / content_category を足して、
+    // 「どのページの、どの地域の、どの種類の記事から相談が来たか」を分けられるようにする。
+    // イベント名は business_cta_click のまま変えない（9/15からの計測を途切れさせないため）。
+    const base = {
+      cta_location: 'article_end',
+      cta_page_type: pageType,
+      source_page: window.location.pathname,
+      municipality: block.dataset.municipality || '(none)',
+      content_category: block.dataset.contentCategory || '(none)',
+    };
 
     // クリック率の分母。半分以上が画面に入ったときに1回だけ送る
     if ('IntersectionObserver' in window) {

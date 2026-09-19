@@ -7,10 +7,37 @@ const services=[
   {n:'02',title:'伝わる形をつくる',body:'取材、撮影、文章、Webページ制作を通じて、事業の価値が正確に伝わる状態をつくります。'},
   {n:'03',title:'発信を育てる',body:'Web、SNS、検索、AI検索など、必要な接点の運用と改善を継続的に支援します。'},
 ];
+/**
+ * 困りごとから入る入口。ページ全体は「何をするか」の順で並んでいるが、
+ * 相談する側は自分の困りごとの言葉で探すため、先に受け止める枠を置く。
+ * 最後の1件は「決まっていない人」の受け皿で、ここを消さない。
+ */
+const problems = [
+  { q: '店舗や施設の情報が、古いままになっている', a: '営業時間・場所・予約方法など、読者と検索サービスの両方が読める形に整理します。', href: '#reservation-setup' },
+  { q: '検索やSNSから、人が来ない', a: 'どの言葉で探されているかを確認し、足りない情報と伝え方を設計します。', href: null },
+  { q: '予約の導線が、たどりにくい', a: '予約できる場所までの道筋を短くし、迷う箇所を減らします。', href: '#reservation-setup' },
+  { q: 'Webサイトを直したいが、どこからか分からない', a: '直す価値のある箇所から順に、範囲と費用を決めて進めます。', href: null },
+  { q: '何を頼めばいいか、まだ決まっていない', a: 'それで構いません。現状をうかがったうえで、必要なことと不要なことを一緒に切り分けます。', href: null },
+];
 const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '地域事業者の方へ' }];
 ---
 <BrandBase title="地域事業者の方へ｜イバトコ" description="店舗・企業の情報整理、取材、Web制作、発信運用を支援します。広告と編集記事の区分も明示します。" jsonLd={breadcrumbJsonLd(crumbs, Astro.site)}>
   <header class="biz-head bp-wrap"><Breadcrumbs items={crumbs} /><p class="bp-kicker">FOR LOCAL BUSINESSES</p><h1>載せるだけでは、<br />終わらせない。</h1><p>情報を載せただけでは、店や会社の良さは十分に伝わりません。イバトコは、有料支援を編集記事に見せず、情報整理・取材・制作・運用を必要な範囲で支えます。</p><a href="/contact/?subject=地域事業者の相談">相談内容を送る →</a></header>
+  <section class="problems bp-wrap bp-section" aria-labelledby="biz-problems">
+    <p class="bp-kicker">WHERE TO START</p>
+    <h2 id="biz-problems">こんなところで、止まっていませんか</h2>
+    <dl class="problems__list">
+      {problems.map((item) => (
+        <div>
+          <dt>{item.q}</dt>
+          <dd>{item.a}{item.href && <> <a href={item.href}>この支援を見る →</a></>}</dd>
+        </div>
+      ))}
+    </dl>
+    <p class="problems__note">当てはまるものが無くても構いません。困っていることをそのまま書いて送っていただければ、こちらで整理します。</p>
+    <a class="problems__cta" href="/contact/?subject=地域事業者の相談">現状を相談する →</a>
+  </section>
+
   <section class="separation"><div class="bp-wrap"><p class="bp-kicker">TRANSPARENCY</p><h2>Editorial、Partner、PRを混ぜない。</h2><div class="types"><article><span>EDITORIAL</span><h3>編集記事</h3><p>掲載対価を受けず、編集部の判断で企画・取材・編集します。</p></article><article><span>PARTNER</span><h3>発信支援</h3><p>情報整備や制作、運用に対価をいただく支援サービスです。編集評価は販売しません。</p></article><article><span>PR</span><h3>広告・タイアップ</h3><p>広告主の依頼によるコンテンツです。読者が判別できるよう明確に表示します。</p></article></div><a href="/about/pr-policy/">PR・広告の方針を読む →</a></div></section>
   <section class="services bp-wrap bp-section"><p class="bp-kicker">WHAT WE DO</p><h2>今あるものを、伝わる形へ。</h2><ol>{services.map((service)=><li><span>{service.n}</span><div><h3>{service.title}</h3><p>{service.body}</p></div></li>)}</ol></section>
   <section class="scope"><div class="bp-wrap"><p class="bp-kicker">SCOPE</p><ul><li>取材・インタビュー</li><li>写真・文章制作</li><li>店舗・企業情報の整備</li><li>Webサイト制作・改善</li><li>SEO・AI検索への情報設計</li><li>SNS・LINEなどの運用支援</li></ul><p>費用と範囲は、現状と目的を確認したうえで事前に提示します。契約前に成果を保証する表現は行いません。</p></div></section>
@@ -66,6 +93,16 @@ const crumbs: Crumb[] = [{ name: 'ホーム', href: '/' }, { name: '地域事業
   <section class="biz-cta bp-reading"><p class="bp-kicker">CONTACT</p><h2>今の悩みを、聞かせてください。</h2><p>掲載、取材、Web、発信運用について、困っていることをご連絡ください。</p><a href="/contact/?subject=地域事業者の相談">相談する →</a></section>
 </BrandBase>
 <style>
+  .problems h2{margin-top:.6rem;font:600 clamp(1.5rem,2.8vw,2.2rem)/1.4 var(--font-brand-display);color:var(--color-ink);text-wrap:balance}
+  .problems__list{margin:2rem 0 0;display:grid;gap:0;border-top:1px solid var(--color-mist)}
+  .problems__list>div{padding:1.15rem 0;border-bottom:1px solid var(--color-mist)}
+  .problems__list dt{font:600 1rem/1.6 var(--font-brand-display);color:var(--color-ink)}
+  .problems__list dd{margin:.45rem 0 0;color:var(--color-soil);font-size:.9rem;line-height:1.85}
+  .problems__list dd a{color:var(--interior-blue,var(--color-tide));border-bottom:1px solid currentColor;white-space:nowrap}
+  .problems__note{margin:1.25rem 0 0;color:var(--color-soil);font-size:.86rem;line-height:1.85}
+  .problems__cta{display:inline-flex;align-items:center;min-height:44px;margin-top:1.25rem;padding:.6rem 1.4rem;border-radius:999px;background:var(--interior-blue,var(--color-tide));color:#fff;font-size:.9rem;font-weight:700;text-decoration:none}
+  .problems__cta:hover,.problems__cta:focus-visible{background:var(--color-ink)}
+
   .biz-head{padding-block:clamp(5rem,11vw,10rem);border-bottom:1px solid var(--color-mist)}.biz-head h1{margin-top:1rem;font:600 clamp(2.7rem,7vw,6rem)/1.2 var(--font-brand-display);color:var(--color-ink)}.biz-head>p:not(.bp-kicker){max-width:var(--measure);margin-top:2rem;line-height:2;color:var(--color-soil)}.biz-head>a,.separation .bp-wrap>a,.biz-cta>a{display:inline-block;margin-top:2rem;color:var(--color-tide);border-bottom:1px solid}
   .separation{padding-block:clamp(4rem,9vw,7rem);background:var(--color-white)}.separation h2,.services>h2,.biz-cta h2{margin-top:1rem;font:600 clamp(2rem,5vw,4rem)/1.35 var(--font-brand-display);color:var(--color-ink)}/* 750pxで1列に落としていたが、768pxでは3列のまま1枚224px＝日本語で約10字になっていた。幅で畳む */
   .types{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:2rem;margin-top:3rem}.types article{padding-top:1rem;border-top:1px solid var(--color-tide)}.types span{font:.68rem var(--font-brand-meta);letter-spacing:.12em;color:var(--color-tide)}.types h3{margin-top:.6rem;font:600 1.4rem var(--font-brand-display);color:var(--color-ink)}.types p{margin-top:.7rem;line-height:1.9;color:var(--color-soil);font-size:.88rem}

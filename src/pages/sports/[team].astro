@@ -22,6 +22,8 @@ import SportsRecentForm from '../../components/SportsRecentForm.astro';
 import SportsMatchGuide from '../../components/SportsMatchGuide.astro';
 import SportsMatchDay from '../../components/SportsMatchDay.astro';
 import SportsUpcoming from '../../components/SportsUpcoming.astro';
+import ArticleNextSteps from '../../components/ArticleNextSteps.astro';
+import BusinessCta from '../../components/BusinessCta.astro';
 import { breadcrumbJsonLd } from '../../lib/seo';
 import {
   SPORTS_TEAMS, SPORTS_TEAM_BY_SLUG, SPORTS_CONTENT_TYPES,
@@ -354,6 +356,13 @@ const jsonLd = [
       <li><a href="/news/">茨城ニュース解説 →</a></li>
     </ul>
   </section>
+
+  {/* 観戦のあとに行ける先。ホームタウンの市町村から、テーマと近い街だけを出す */}
+  <div class="bp-wrap bp-section">
+    <ArticleNextSteps municipalities={[...townSlugs]} pageType="sports" />
+    {/* 記事と同じ、地域事業者向けの導線を1つだけ */}
+    <BusinessCta pageType="sports" municipality={[...townSlugs][0]} contentCategory="team" />
+  </div>
 </BrandBase>
 
 <style>

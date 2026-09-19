@@ -15,6 +15,7 @@ import { breadcrumbJsonLd } from '../../lib/seo';
 import { INTERNAL_LINK_LABELS } from '../../data/internal-links';
 import BusinessCta from '../../components/BusinessCta.astro';
 import BookingGuide from '../../components/BookingGuide.astro';
+import ArticleNextSteps from '../../components/ArticleNextSteps.astro';
 import { hasPaidLink } from '../../data/affiliates';
 import { getEvents } from '../../lib/content';
 import { MUNI_BY_SLUG } from '../../data/areas';
@@ -246,8 +247,10 @@ if (d.faq.length > 0) {
     ))}</ul>
     <p class="ev-caution">開催内容・日程・料金・交通は変更されることがあります。お出かけ前に必ず公式の最新情報をご確認ください。</p>
   </section>
+  {/* 既存の分類から作った回遊先。該当が無ければ何も出ない */}
+  <ArticleNextSteps municipalities={d.municipalities} pageType="events" />
   {/* 本文を読み終えた位置に、地域事業者向けの導線を1つだけ置く */}
-  <BusinessCta pageType="events" />
+  <BusinessCta pageType="events" municipality={d.municipalities[0]} contentCategory={d.articleType} />
     </div>
   </div>
 

@@ -68,6 +68,9 @@ const byNumberDesc = (key) => (a, b) => b[key] - a[key] || a.slug.localeCompare(
 /** 数値が取れないときに推測で埋めない。 */
 const value = (input, fallback = 0) => (typeof input === 'number' && Number.isFinite(input) ? input : fallback);
 
+/** その判断がどれだけ実測に支えられているか。推測で上げない。 */
+const CONFIDENCE = { A: 'measured', B: 'measured', C: 'measured', D: 'measured', E: 'measured', F: 'site-state', G: 'measured', MEASUREMENT: 'insufficient-data', DATA_ERROR: 'unavailable' };
+
 function decision(partial) {
   return {
     target_type: 'measurement',
@@ -78,6 +81,7 @@ function decision(partial) {
     editable: false,
     action_type: 'measurement_fix',
     focus_keyword: '',
+    confidence: CONFIDENCE[partial.rule] ?? 'unknown',
     expected_effect: EXPECTED_EFFECT[partial.rule] ?? '—',
     next_check: NEXT_CHECK[partial.rule] ?? '—',
     ...partial,
@@ -104,6 +108,7 @@ const fromArticle = (article, partial) =>
  * @param {object|null} input.ga4     GA4の集計（current / topPages / eventsByPage / leadLandings）
  * @param {string[]} input.measurementErrors 計測APIのエラー
  * @param {string[]} input.editableKinds AIに自動改善させてよい種別（既定はknowledgeのみ）
+ * @param {string[]} input.pendingFiles 未マージのPRに含まれ、mainへ未反映のファイル
  */
 export function decideTarget({
   articles = [],
@@ -111,13 +116,19 @@ export function decideTarget({
   ga4 = null,
   measurementErrors = [],
   editableKinds = (process.env.DAILY_EDITABLE_KINDS ?? 'knowledge').split(',').map((kind) => kind.trim()),
+  pendingFiles = [],
 } = {}) {
   /*
     自動改善の対象は、日次ワークフローがコミットに含める範囲と揃える。
     含まれない種別は候補から外し、毎日同じページで止まらないようにする。
   */
   const autoEditable = (article) => editableKinds.includes(article.kind ?? 'knowledge');
-  articles = articles.filter(autoEditable);
+  /*
+    未マージのPRに同じファイルの変更が残っている間は、同じ対象を選び直さない。
+    同じ改善を二重に作らず、PRが積み上がるのを防ぐ。
+  */
+  const pending = new Set(pendingFiles);
+  articles = articles.filter((article) => autoEditable(article) && !pending.has(article.file));
   const byPath = new Map(articles.map((article) => [article.path, article]));
   const searchByPath = new Map((search?.rows ?? []).map((row) => [row.path, row]));
   const eventsByPage = ga4?.eventsByPage ?? null;

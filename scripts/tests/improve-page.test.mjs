@@ -110,7 +110,7 @@ test('title_description では本文を変更しない', () => {
 const rejects = [
   {
     name: '本文に存在しない箇所は置換しない',
-    action: 'internal_links',
+    action: 'content_rewrite',
     payload: { edits: [{ find: 'この文章はどこにも存在しません。テスト用の文字列です。', replace: '置き換え' }] },
     expect: /見つかりません/,
   },
@@ -148,7 +148,8 @@ const rejects = [
       edits: [
         {
           find: 'ツールを導入することでも、マニュアルを作ることでもありません。',
-          replace: '詳しくは[こちら](/knowledge/shikumika/does-not-exist/)をご覧ください。',
+          replace:
+            'ツールを導入することでも、マニュアルを作ることでもありません。詳しくは[こちら](/knowledge/shikumika/does-not-exist/)をご覧ください。',
         },
       ],
     },
@@ -156,7 +157,7 @@ const rejects = [
   },
   {
     name: 'JSONとして読めない応答は拒否する',
-    action: 'internal_links',
+    action: 'content_rewrite',
     payload: 'これはJSONではありません',
     expect: /JSONとして読み取れません/,
   },
@@ -207,4 +208,61 @@ test('新規記事の日は改善スクリプトを動かさない', () => {
   const result = run(['--context', context, '--prompt-output', join(dir, 'prompt.md')]);
   assert.equal(result.ok, false);
   assert.match(result.stderr, /既存ページの改善ではない/);
+});
+
+const APPEND_FIND = 'ツールを導入することでも、マニュアルを作ることでもありません。';
+
+test('リンク追加では既存の文を消せない', () => {
+  const ws = workspace();
+  const context = contextFor(ws, 'service_link');
+  const response = respond(ws.dir, {
+    summary: '支援ページへの導線を追加',
+    edits: [{ find: APPEND_FIND, replace: '詳しくは[集客・営業の仕組み](/service/web/)をご覧ください。' }],
+  });
+
+  const result = run(['--context', context, '--response-file', response]);
+  assert.equal(result.ok, false);
+  assert.match(result.stderr, /既存の文を書き換えています/);
+  assert.equal(readFileSync(ws.file, 'utf-8'), ws.original);
+});
+
+test('壊れたMarkdownリンクを拒否する', () => {
+  const ws = workspace();
+  const context = contextFor(ws, 'service_link');
+  const response = respond(ws.dir, {
+    summary: 'リンク追加',
+    edits: [{ find: APPEND_FIND, replace: `${APPEND_FIND}\n\nさらに【集客・営業の仕組み】(/service/web/)もご覧ください。` }],
+  });
+
+  const result = run(['--context', context, '--response-file', response]);
+  assert.equal(result.ok, false);
+  assert.match(result.stderr, /リンク記法が壊れています/);
+  assert.equal(readFileSync(ws.file, 'utf-8'), ws.original);
+});
+
+test('リンクを増やしすぎる提案を拒否する', () => {
+  const ws = workspace();
+  const context = contextFor(ws, 'service_link');
+  const links = '[集客・営業の仕組み](/service/web/)と[発信の仕組み](/service/sns/)と[業務・改善の仕組み](/service/ai-dx/)';
+  const response = respond(ws.dir, {
+    summary: 'リンク追加',
+    edits: [{ find: APPEND_FIND, replace: `${APPEND_FIND}\n\n${links}を参照してください。` }],
+  });
+
+  const result = run(['--context', context, '--response-file', response]);
+  assert.equal(result.ok, false);
+  assert.match(result.stderr, /リンクを3件増やそうとしています/);
+});
+
+test('追記だけのリンク追加は適用できる', () => {
+  const ws = workspace();
+  const context = contextFor(ws, 'service_link');
+  const replace = `${APPEND_FIND}\n\n進め方の相談先は[業務・改善の仕組み](/service/ai-dx/)にまとめています。`;
+  const response = respond(ws.dir, { summary: 'リンク追加', edits: [{ find: APPEND_FIND, replace }] });
+
+  const result = run(['--context', context, '--response-file', response]);
+  assert.ok(result.ok, result.stderr);
+  const updated = readFileSync(ws.file, 'utf-8');
+  assert.ok(updated.includes(APPEND_FIND), '元の文が残っている');
+  assert.ok(updated.includes('/service/ai-dx/'));
 });

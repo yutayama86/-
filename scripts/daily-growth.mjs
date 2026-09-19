@@ -115,6 +115,9 @@ const dataError = searchResult.error ?? null;
 const ga4Data = ga4Result.data ?? null;
 const ga4Error = ga4Result.error ?? null;
 
+const searchStatus = !isConfigured() ? 'not_configured' : dataError ? 'unavailable' : 'success';
+const ga4Status = !isGa4Configured() ? 'not_configured' : ga4Error ? 'unavailable' : 'success';
+
 const measurementErrors = [];
 if (isConfigured() && dataError) measurementErrors.push(`Search Console: ${dataError}`);
 if (isGa4Configured() && ga4Error) measurementErrors.push(`GA4: ${ga4Error}`);
@@ -140,7 +143,43 @@ const search = searchRaw
     }
   : null;
 
-const target = decideTarget({ articles, search, ga4: ga4Data, measurementErrors });
+/** 未マージのGrowth PRに含まれる変更。mainへ未反映のまま同じ対象を選ばないために使う。 */
+async function pendingGrowthChanges() {
+  const repo = process.env.GITHUB_REPOSITORY || 'yutayama86/home';
+  const api = `https://api.github.com/repos/${repo}`;
+  const headers = { Accept: 'application/vnd.github+json' };
+  if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+
+  try {
+    const response = await fetch(`${api}/pulls?state=open&per_page=20`, { headers });
+    if (!response.ok) throw new Error(`${response.status}`);
+
+    const pulls = (await response.json()).filter((pull) => pull.head?.ref?.startsWith('automation/daily-seo-'));
+    const open = [];
+
+    for (const pull of pulls) {
+      const filesResponse = await fetch(`${api}/pulls/${pull.number}/files?per_page=50`, { headers });
+      const files = filesResponse.ok ? await filesResponse.json() : [];
+      open.push({
+        number: pull.number,
+        branch: pull.head.ref,
+        createdAt: pull.created_at,
+        files: files.map((file) => file.filename).filter((name) => name.startsWith('src/')),
+      });
+    }
+
+    return { status: 'success', open };
+  } catch (error) {
+    return { status: 'unavailable', open: [], error: error.message };
+  }
+}
+
+const pending = process.argv.includes('--skip-pr-check')
+  ? { status: 'skipped', open: [] }
+  : await pendingGrowthChanges();
+const pendingFiles = pending.open.flatMap((pull) => pull.files);
+
+const target = decideTarget({ articles, search, ga4: ga4Data, measurementErrors, pendingFiles });
 
 /* --- レポート --------------------------------------------------------- */
 
@@ -154,6 +193,23 @@ const lines = [];
 lines.push('【シクミベース Daily Growth Report】');
 lines.push('');
 lines.push(`日付: ${today}`);
+lines.push('');
+
+lines.push('■ 計測の取得状況');
+lines.push(`  Search Console: ${searchStatus}`);
+lines.push(`  GA4: ${ga4Status}`);
+if (pending.status === 'success') {
+  lines.push(
+    pending.open.length > 0
+      ? `  未マージのGrowth PR: ${pending.open.map((pull) => `#${pull.number}（${pull.createdAt.slice(0, 10)}）`).join(' / ')}`
+      : '  未マージのGrowth PR: なし'
+  );
+  if (pendingFiles.length > 0) {
+    lines.push(`  main未反映のファイル: ${[...new Set(pendingFiles)].join(' / ')}（今日は対象から外しています）`);
+  }
+} else if (pending.status === 'unavailable') {
+  lines.push(`  未マージのGrowth PR: 確認できませんでした（${pending.error}）`);
+}
 lines.push('');
 
 lines.push('■ 検索結果（Search Console）');
@@ -265,7 +321,14 @@ const targetPageEvents = target.target_path ? ga4Data?.eventsByPage?.[target.tar
 
 const context = {
   date: today,
+  dry_run: dryRun,
   target,
+  status: {
+    search: searchStatus,
+    ga4: ga4Status,
+    pendingPullRequests: pending.open.map((pull) => ({ number: pull.number, branch: pull.branch, files: pull.files })),
+    pendingCheck: pending.status,
+  },
   metrics: {
     search: search
       ? { period: search.period, totals: search.totals, page: targetSearchStats }
@@ -318,6 +381,10 @@ if (!dryRun) {
     `target_path: ${target.target_path || '—'}`,
     `target_file: ${target.target_file || '—'}`,
     `action_type: ${target.action_type}`,
+    `confidence: ${target.confidence}`,
+    `search_status: ${searchStatus}`,
+    `ga4_status: ${ga4Status}`,
+    `pending_prs: ${pending.open.map((pull) => `#${pull.number}`).join(' ') || 'none'}`,
     `keyword: ${target.focus_keyword || '—'}`,
     `data_source: ${
       target.rule === 'DATA_ERROR'
@@ -382,6 +449,10 @@ if (process.env.GITHUB_OUTPUT) {
       `action_type=${output(target.action_type)}`,
       `rule=${output(target.rule)}`,
       `reason=${output(target.reason)}`,
+      `confidence=${output(target.confidence)}`,
+      `search_status=${searchStatus}`,
+      `ga4_status=${ga4Status}`,
+      `pending_prs=${output(pending.open.map((pull) => `#${pull.number}`).join(' '))}`,
       `focus_keyword=${output(target.focus_keyword)}`,
       `log_path=${LOG_DIR}/${today}.md`,
       `measurement_status=${measurementErrors.length > 0 ? 'error' : 'ok'}`,

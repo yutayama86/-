@@ -25,7 +25,7 @@ if (!contextPath || !existsSync(contextPath)) {
   process.exit(0);
 }
 
-const { target, date } = JSON.parse(readFileSync(contextPath, 'utf-8'));
+const { target, date, dry_run: dryRun } = JSON.parse(readFileSync(contextPath, 'utf-8'));
 
 const changedInput = arg('changed');
 const changed = (
@@ -42,6 +42,11 @@ const changed = (
 
 const logPath = `docs/seo-log/${date}.md`;
 const problems = [];
+
+// 実行したのに当日のログがない状態を成功にしない（ログを書かない試し実行は除く）
+if (!dryRun && !existsSync(logPath)) {
+  problems.push(`その日のGrowthログがありません: ${logPath}`);
+}
 
 /*
   判定するのは公開されるコンテンツだけ。

@@ -42,21 +42,21 @@ const ACTION_RULES = {
   internal_links: {
     label: 'サイト内リンクの追加',
     instruction:
-      '文脈が合う位置に、関連する既存記事へのMarkdownリンクを追加してください。リンクのためだけの不自然な一文を足さず、既存の文へ自然に組み込んでください。',
+      '文脈が合う位置に、関連する既存記事へのMarkdownリンクを追加してください。リンクのためだけの不自然な一文を足さず、既存の文へ自然に組み込んでください。既存の文はそのまま残し、findに指定した文をreplaceの先頭にそのまま含めたうえで、後ろに追記してください。',
     allowMeta: false,
     allowEdits: true,
   },
   service_link: {
     label: '支援ページへの導線の追加',
     instruction:
-      '記事の内容に合う支援ページへのMarkdownリンクを、読者の次の行動として自然な位置に追加してください。売り込みの表現は使わないでください。',
+      '記事の内容に合う支援ページへのMarkdownリンクを、読者の次の行動として自然な位置に追加してください。売り込みの表現は使わないでください。既存の文はそのまま残し、findに指定した文をreplaceの先頭にそのまま含めたうえで、後ろに追記してください。追加するリンクは1つだけにしてください。',
     allowMeta: false,
     allowEdits: true,
   },
   case_link: {
     label: '公開ケーススタディへの導線の追加',
     instruction:
-      'シクミベース自身が運営するイバトコの公開ケーススタディ（/case/ibatoco/）へのリンクを、記事の主張の根拠として自然な位置に追加してください。顧客事例として書かないでください。',
+      'シクミベース自身が運営するイバトコの公開ケーススタディ（/case/ibatoco/）へのリンクを、記事の主張の根拠として自然な位置に追加してください。顧客事例として書かないでください。既存の文はそのまま残し、findに指定した文をreplaceの先頭にそのまま含めたうえで、後ろに追記してください。',
     allowMeta: false,
     allowEdits: true,
   },
@@ -69,8 +69,13 @@ const ACTION_RULES = {
   },
 };
 
+/** リンクを足すだけの改善は、既存の文を消さずに追記だけを許す。 */
+const APPEND_ONLY_ACTIONS = new Set(['internal_links', 'service_link', 'case_link']);
+
 const LIMITS = {
   maxEdits: 6,
+  /** リンク追加系で新しく増やしてよい内部リンクの数 */
+  maxAddedLinks: 2,
   minFindLength: 12,
   maxReplacedRatio: 0.4,
   minBodyRatio: 0.9,
@@ -264,8 +269,27 @@ try {
   process.exit(1);
 }
 
+/** 却下の理由はその日のログにも残す。CIのログを開かなくても原因が分かるようにする。 */
 const fail = (message) => {
   console.error(message);
+
+  const logPath = context.date ? `docs/seo-log/${context.date}.md` : null;
+  if (logPath && existsSync(logPath)) {
+    const note = [
+      '',
+      '## rejected_improvement',
+      `対象: ${target.target_path}（${target.action_type}）`,
+      `理由: ${message}`,
+      '',
+    ].join('\n');
+    try {
+      writeFileSync(logPath, `${readFileSync(logPath, 'utf-8').trimEnd()}\n${note}`, 'utf-8');
+      console.error(`却下の理由を記録しました: ${logPath}`);
+    } catch {
+      /* ログに書けなくても、終了コードで失敗は伝わる */
+    }
+  }
+
   process.exit(1);
 };
 
@@ -309,6 +333,10 @@ if (rule.allowMeta) {
     if (find.length < LIMITS.minFindLength) fail(`edits[${index}].find が短すぎます（${find.length}文字）`);
     if (find === replace) fail(`edits[${index}] は変更になっていません`);
 
+    if (APPEND_ONLY_ACTIONS.has(target.action_type) && !replace.includes(find)) {
+      fail(`edits[${index}] が既存の文を書き換えています。${target.action_type} では、元の文を残したまま追記してください`);
+    }
+
     const occurrences = newBody.split(find).length - 1;
     if (occurrences === 0) fail(`edits[${index}].find が本文に見つかりません: ${find.slice(0, 40)}…`);
     if (occurrences > 1) fail(`edits[${index}].find が本文に${occurrences}箇所あり、置換先を特定できません`);
@@ -316,6 +344,19 @@ if (rule.allowMeta) {
     newBody = newBody.replace(find, replace);
     replacedChars += find.length;
     applied.push(`置換${index + 1}: ${find.slice(0, 30).replace(/\n/g, ' ')}…`);
+  }
+
+  // Markdownとして成立しないリンク（【…】(/path/) など）を弾く
+  const brokenLink = newBody.match(/[】）〕>](\((?:\/|https?:)[^)]*\))/);
+  if (brokenLink) fail(`Markdownのリンク記法が壊れています: ${brokenLink[0].slice(0, 40)}`);
+
+  const countLinks = (text) => (text.match(/\]\((?:\/|https?:)[^)]*\)/g) ?? []).length;
+  const addedLinks = countLinks(newBody) - countLinks(body);
+  if (APPEND_ONLY_ACTIONS.has(target.action_type) && addedLinks > LIMITS.maxAddedLinks) {
+    fail(`リンクを${addedLinks}件増やそうとしています（上限${LIMITS.maxAddedLinks}件）`);
+  }
+  if (APPEND_ONLY_ACTIONS.has(target.action_type) && addedLinks < 1) {
+    fail('リンクが増えていません');
   }
 
   const ratio = replacedChars / body.length;

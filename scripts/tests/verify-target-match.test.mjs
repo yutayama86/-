@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -104,4 +104,23 @@ test('自動編集の対象外を選んだ日は、レポートだけ許可す�
 
   const ng = run(context, [LOG, 'src/pages/contact/index.astro']);
   assert.equal(ng.ok, false, '人が確認する対象をAIが書き換えていないか');
+});
+
+
+test('その日のGrowthログがなければ失敗させる', () => {
+  const missingDate = '2000-01-02';
+  const dir = mkdtempSync(join(tmpdir(), 'target-match-'));
+  const path = join(dir, 'context.json');
+  writeFileSync(
+    path,
+    JSON.stringify({
+      date: missingDate,
+      target: { rule: 'MEASUREMENT', target_type: 'measurement', target_path: '', target_file: '', editable: false, action_type: 'measurement_fix' },
+      metrics: {},
+    })
+  );
+
+  const result = run(path, []);
+  assert.equal(result.ok, false);
+  assert.match(result.stderr, /Growthログがありません/);
 });

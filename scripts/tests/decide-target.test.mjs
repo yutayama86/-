@@ -177,3 +177,32 @@ test('既存ページを選んだときは必ずファイルが決まってい�
   assert.ok(result.target_file, 'target_file が必要');
   assert.equal(result.target_file, page.file);
 });
+
+test('未マージのPRに含まれるページは、その日の対象にしない', () => {
+  const pendingArticle = article({ slug: 'pending', path: '/knowledge/web/pending/', file: 'src/content/knowledge/pending.md', internalLinks: 0 });
+  const other = article({ slug: 'other', path: '/knowledge/web/other/', file: 'src/content/knowledge/other.md', internalLinks: 1 });
+
+  const withoutPending = decideTarget({ articles: [pendingArticle, other], search: searchOf([]) });
+  assert.equal(withoutPending.target_slug, 'pending');
+
+  const result = decideTarget({
+    articles: [pendingArticle, other],
+    search: searchOf([]),
+    pendingFiles: ['src/content/knowledge/pending.md'],
+  });
+  assert.equal(result.target_slug, 'other', '未反映の変更がある対象は避ける');
+});
+
+test('判断には確度が付く', () => {
+  const measured = decideTarget({
+    articles: [article()],
+    search: searchOf([{ path: '/knowledge/shikumika/sample/', impressions: 300, clicks: 1, ctr: 0.003, position: 6 }]),
+  });
+  assert.equal(measured.confidence, 'measured');
+
+  const unavailable = decideTarget({ articles: [article()], measurementErrors: ['GA4: 500'] });
+  assert.equal(unavailable.confidence, 'unavailable');
+
+  const thin = decideTarget({ articles: [article()], search: searchOf([]) });
+  assert.ok(['site-state', 'insufficient-data'].includes(thin.confidence));
+});

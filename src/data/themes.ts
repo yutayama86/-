@@ -24,7 +24,7 @@ export interface ThemeStatus {
    * 開催期間。入っている期間だけ「今週の茨城」に出る（src/lib/happenings.ts）。
    * 季節が終わったら status ごと消すこと（古い期間を残さない）。
    */
-  period?: { from: string; to: string; label: string; place?: string };
+  period?: { from: string; to: string; label: string; place?: string; municipality?: string };
   heading: string;
   /** いま何が見られるか、次に何が変わるか。左が項目名、右が中身 */
   rows: [string, string][];
@@ -325,6 +325,7 @@ export const THEMES: Record<Theme['slug'], Theme> = {
         to: '2026-11-03',
         label: 'きて みて さわって コキアカーニバル（国営ひたち海浜公園）',
         place: 'ひたちなか市',
+        municipality: 'hitachinaka',
       },
       heading: 'いまのコキアと、次に色が変わる目安',
       rows: [

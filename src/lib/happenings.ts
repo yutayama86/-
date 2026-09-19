@@ -38,9 +38,17 @@ export interface Happening {
   dateLabel: string;
   /** 市町村名。分かるものだけ */
   place?: string;
+  /** 市町村slug。街のページで絞り込むのに使う */
+  municipality?: string;
   /** 期間ものかどうか（今日も開催中、の表示に使う） */
   ongoing: boolean;
 }
+
+/** ホームスタジアムのある市町村。街のページに試合を出すために使う */
+const HOME_MUNICIPALITY: Partial<Record<SportsTeamSlug, string>> = {
+  'kashima-antlers': 'kashima',
+  'mito-hollyhock': 'naka',
+};
 
 const JP_DATE = new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric', weekday: 'short', timeZone: 'Asia/Tokyo' });
 
@@ -101,6 +109,7 @@ export async function getHappenings(now: Date = new Date()): Promise<Happening[]
       start, end,
       dateLabel: info.startTime ? `${JP_DATE.format(start)} ${info.startTime}` : JP_DATE.format(start),
       place: muni ? MUNI_BY_SLUG.get(muni)?.name : undefined,
+      municipality: muni,
       ongoing: end > start,
     });
   }
@@ -127,6 +136,8 @@ export async function getHappenings(now: Date = new Date()): Promise<Happening[]
         start, end: start,
         dateLabel: m.kickoff ? `${JP_DATE.format(start)} ${m.kickoff}` : JP_DATE.format(start),
         place: m.homeAway === 'home' ? m.venue : `アウェイ・${m.venue ?? ''}`,
+        // ホームゲームだけ、その街の出来事として扱う（アウェイは県外のため）
+        municipality: m.homeAway === 'home' ? HOME_MUNICIPALITY[slug] : undefined,
         ongoing: false,
       });
     }
@@ -146,6 +157,7 @@ export async function getHappenings(now: Date = new Date()): Promise<Happening[]
       start, end,
       dateLabel: `${JP_DATE.format(start)} 〜 ${JP_DATE.format(end)}`,
       place: period.place,
+      municipality: period.municipality,
       ongoing: true,
     });
   }
@@ -173,4 +185,9 @@ export async function getWeekBoard(now: Date = new Date()): Promise<{ bucket: Wh
   return (['today', 'tomorrow', 'weekend', 'thisWeek'] as WhenBucket[])
     .filter((b) => grouped.get(b)?.length)
     .map((b) => ({ bucket: b, label: LABEL[b], items: grouped.get(b)! }));
+}
+
+/** その街で今週あることだけを返す。街のページ用 */
+export async function getHappeningsForMunicipality(slug: string, now: Date = new Date()): Promise<Happening[]> {
+  return (await getHappenings(now)).filter((h) => h.municipality === slug);
 }

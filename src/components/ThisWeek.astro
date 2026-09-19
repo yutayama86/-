@@ -20,7 +20,7 @@ const KIND_LABEL: Record<HappeningKind, string> = {
 ---
 
 {board.length > 0 && (
-  <section class="tw" aria-labelledby="tw-title">
+  <section class="tw" aria-labelledby="tw-title" data-this-week>
     <div class="bp-wrap">
       <p class="bp-kicker">THIS WEEK</p>
       <h2 id="tw-title" class="tw__title">今週、茨城でできること</h2>
@@ -33,7 +33,7 @@ const KIND_LABEL: Record<HappeningKind, string> = {
             <ul class="tw__list">
               {group.items.map((item) => (
                 <li>
-                  <a href={item.href} data-week-kind={item.kind}>
+                  <a href={item.href} data-week-kind={item.kind} data-week-bucket={group.bucket} data-week-place={item.place ?? ''}>
                     <span class="tw__meta">
                       <span class:list={['tw__kind', `is-${item.kind}`]}>{KIND_LABEL[item.kind]}</span>
                       <time>{item.dateLabel}</time>
@@ -50,6 +50,27 @@ const KIND_LABEL: Record<HappeningKind, string> = {
     </div>
   </section>
 )}
+
+<script>
+  import { commonParams, trackEvent } from '../lib/analytics-events';
+
+  // 「今週できること」のどれが押されるかを見る。
+  // どの区分（今日/今週末/この先）と、どの種類（試合/イベント/開催中）が
+  // 押されるかで、次にどのデータを厚くすべきかが決まる。
+  for (const block of document.querySelectorAll<HTMLElement>('[data-this-week]')) {
+    for (const link of block.querySelectorAll<HTMLAnchorElement>('a[data-week-kind]')) {
+      link.addEventListener('click', () => {
+        trackEvent('next_action_click', {
+          ...commonParams({ page_type: 'home' }),
+          destination_type: link.dataset.weekKind ?? '',
+          when_bucket: link.dataset.weekBucket ?? '',
+          action_source: 'this_week',
+          destination_url: link.getAttribute('href') ?? '',
+        });
+      });
+    }
+  }
+</script>
 
 <style>
   .tw{padding-block:clamp(2.5rem,5vw,4rem);background:var(--color-white)}

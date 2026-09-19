@@ -14,6 +14,8 @@ import { getPublishedArticles, getPublishedStores, getIndexableNews, getEventsBy
 import { themesForArea } from '../../data/themes';
 import { lifecycleOf } from '../../lib/lifecycle';
 import ArticleNextSteps from '../../components/ArticleNextSteps.astro';
+import { getHappeningsForMunicipality } from '../../lib/happenings';
+import { businessesInMunicipality } from '../../data/businesses';
 import { michinoekiForArea } from '../../data/michinoeki';
 import { areaToSlug } from '../../data/areas';
 
@@ -65,6 +67,10 @@ const isDaigo = slug === 'daigo';
 const relatedThemes = themesForArea(slug!);
 // この街にある道の駅（公式一覧で確認済みのものだけ）
 const areaMichinoeki = michinoekiForArea(slug!);
+// この街で今週あること（イベント・ホームゲーム・季節もの）。無ければ出さない
+const areaThisWeek = await getHappeningsForMunicipality(slug!);
+// この街の店舗・施設。実在を確認して登録したものだけ
+const areaBusinesses = businessesInMunicipality(slug!);
 // 指示書のあるガイド（日立＝別コンポーネント）はそれを使用。
 // 現在は43市町村にガイドがあり、日立は専用コンポーネントなので、この分岐は実質通らない。
 // ガイドが無い市町村を足したときのフォールバックとして残している。
@@ -172,6 +178,42 @@ const jsonLd: Record<string, unknown>[] = [
 
   </article>}
 
+  {/* ここから下は44市町村すべてで出す。ガイドの有無で分かれる三項の外に置く */}
+    {areaThisWeek.length > 0 && (
+      <section class="area-week bp-wrap" aria-labelledby="area-week-h">
+        <p class="bp-kicker">THIS WEEK</p>
+        <h2 id="area-week-h" class="bp-section-title">{municipality.name}で、今週できること</h2>
+        <ul class="area-week__list">
+          {areaThisWeek.map((h) => (
+            <li><a href={h.href}>
+              <span class="area-week__meta"><time>{h.dateLabel}</time></span>
+              <strong>{h.title}</strong>
+            </a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {areaBusinesses.length > 0 && (
+      <section class="area-biz bp-wrap" aria-labelledby="area-biz-h">
+        <p class="bp-kicker">PLACES</p>
+        <h2 id="area-biz-h" class="bp-section-title">{municipality.name}の店・施設</h2>
+        <ul class="area-biz__list">
+          {areaBusinesses.map((b) => (
+            <li>
+              <div class="area-biz__body">
+                <strong>{b.name}</strong>
+                {b.description && <p>{b.description}</p>}
+                {b.verifiedAt && <span class="area-biz__checked">{b.verifiedAt} 時点の公開情報で確認</span>}
+              </div>
+              {b.officialUrl && <a href={b.officialUrl} target="_blank" rel="noopener noreferrer" data-business-id={b.id} data-business-category={b.category}>公式サイト ↗</a>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+
   {areaEvents.length > 0 && (
     <section class="area-news area-events">
       <div class="bp-wrap">
@@ -224,6 +266,22 @@ const jsonLd: Record<string, unknown>[] = [
 </BrandBase>
 
 <style>
+  .area-week{padding-block:clamp(2rem,4vw,3rem)}
+  .area-week__list{display:grid;gap:.6rem;margin-top:1.5rem;padding:0;list-style:none}
+  .area-week__list li{margin:0}
+  .area-week__list a{display:grid;gap:.3rem;padding:.9rem 1rem;border:1px solid var(--color-mist);border-radius:.85rem;color:var(--color-ink);text-decoration:none}
+  .area-week__list a:hover,.area-week__list a:focus-visible{border-color:var(--color-tide)}
+  .area-week__meta{color:var(--color-soil);font-size:.78rem}
+  .area-week__list strong{font:600 1rem/1.55 var(--font-brand-display)}
+  .area-biz{padding-block:clamp(2rem,4vw,3rem)}
+  .area-biz__list{display:grid;gap:.9rem;margin-top:1.5rem;padding:0;list-style:none}
+  .area-biz__list li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.8rem;margin:0;padding:1rem;border:1px solid var(--color-mist);border-radius:.85rem}
+  .area-biz__body strong{display:block;font:600 1.02rem var(--font-brand-display);color:var(--color-ink)}
+  .area-biz__body p{margin:.35rem 0 0;color:var(--color-soil);font-size:.88rem;line-height:1.8}
+  .area-biz__checked{display:inline-block;margin-top:.4rem;color:var(--color-soil);font-size:.74rem}
+  .area-biz__list a{display:inline-flex;align-items:center;min-height:44px;padding:.5rem 1rem;border-radius:999px;background:var(--interior-sky-soft,#eef6ff);color:var(--color-tide);font-size:.85rem;font-weight:700;text-decoration:none;white-space:nowrap}
+  .area-biz__list a:hover,.area-biz__list a:focus-visible{background:var(--color-tide);color:#fff}
+
   .area-page{padding-top:clamp(4rem,9vw,7rem)}.area-head{padding-bottom:clamp(4rem,8vw,7rem);border-bottom:1px solid var(--color-mist)}.crumbs{display:flex;gap:.55rem;margin-bottom:2.5rem;color:var(--color-soil);font-size:.78rem}.crumbs a{border-bottom:1px solid transparent}.crumbs a:hover{border-color:var(--color-tide)}
   .area-head h1{margin-top:1rem;font:600 clamp(4rem,12vw,10rem)/1 var(--font-brand-display);letter-spacing:.03em;color:var(--color-ink)}.area-lead{max-width:var(--measure);margin-top:2rem;font:500 clamp(1rem,1.7vw,1.25rem)/2 var(--font-brand-display);color:var(--color-soil)}.map-back{display:inline-block;margin-top:2rem;color:var(--color-tide);border-bottom:1px solid}
   .area-content{display:grid;gap:clamp(5rem,10vw,9rem);padding-block:clamp(4rem,9vw,8rem)}.area-content h2{margin-top:.7rem}.story-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem;margin-top:2rem}

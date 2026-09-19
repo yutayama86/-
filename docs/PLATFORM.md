@@ -116,6 +116,22 @@ partnerType   editorial（既定）/ partner / pr
 | `contact_form_view` / `contact_form_start` | 問い合わせフォーム到達・入力開始 |
 | `generate_lead` | 送信先が2xxを返した送信だけ |
 | `local_business_click` | 事業者の公式・予約・SNSへ移動（IDを付けられるリンクだけ） |
+| `next_action_click` | 「今週できること」「ここから続けて読む」を押した |
+
+`next_action_click` のパラメータ：`destination_type`（event / sports / season / theme / nearby）、
+`when_bucket`（today / tomorrow / weekend / thisWeek）、`action_source`（this_week / article_next）。
+**どの区分・どの種類が押されるかで、次にどのデータを厚くすべきかを決める。**
+
+### 地域行動数（North Star の候補）
+
+PVではなく「地域で行動したか」を見る。いまは次の合計を観測するだけで、
+正式なKPIの計算式は固定しない（同一ユーザーの重複などがあるため）。
+
+```
+local_business_click + outbound_booking_click + next_action_click
+```
+
+まず観測する。数字の意味が分かってから定義を決める。
 
 **キーイベントは `generate_lead` だけ。** ほかは途中経過で、
 キーイベントにすると「届いていない問い合わせ」を成果として数えてしまう。

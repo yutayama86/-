@@ -71,6 +71,7 @@ const ALLOWED_EVENTS = new Set([
   'contact_form_start',
   'generate_lead',
   'local_business_click',
+  'next_action_click',
 ]);
 const srcFiles = [];
 (function walk(dir) {

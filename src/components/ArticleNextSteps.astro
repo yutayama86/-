@@ -108,6 +108,26 @@ const hasAnything = themes.length > 0 || nearby.length > 0 || Boolean(team);
   </nav>
 )}
 
+<script>
+  import { commonParams, trackEvent } from '../lib/analytics-events';
+
+  // 記事を読み終えた人が、次にどこへ進むかを見る。
+  // 観戦・テーマ・近い街のどれが押されるかで、回遊の作り方を決める。
+  for (const block of document.querySelectorAll<HTMLElement>('[data-next-steps]')) {
+    const pageType = block.dataset.pageType ?? '';
+    for (const link of block.querySelectorAll<HTMLAnchorElement>('a[data-next-kind]')) {
+      link.addEventListener('click', () => {
+        trackEvent('next_action_click', {
+          ...commonParams({ page_type: pageType }),
+          destination_type: link.dataset.nextKind ?? '',
+          action_source: 'article_next',
+          destination_url: link.getAttribute('href') ?? '',
+        });
+      });
+    }
+  }
+</script>
+
 <style>
   .nxt{display:grid;gap:1.1rem;margin-top:clamp(2.25rem,4vw,3rem);padding:clamp(1.2rem,3vw,1.75rem);border:1px solid var(--interior-line,var(--color-mist));border-radius:1rem;background:var(--color-white)}
   .nxt__kicker{margin:0;color:var(--interior-blue,var(--color-tide));font:700 .68rem var(--font-brand-meta);letter-spacing:.14em}

@@ -200,6 +200,41 @@ const bookingSchema = z.object({
  * href は公式の申請ページ（https://…）、サイト内ページ（/…）、ページ内の位置（#…）のどれか。
  * 外部URLは新しいタブで開く。
  */
+/**
+ * 記事の「商業属性」。記事を資産として集計するために持つ。
+ *
+ * すべて任意。既存記事に後から一括で入れることはしない（書いていない記事は
+ * 「未設定」であって「該当しない」ではない、という区別を保つため）。
+ * 未設定でもビルドは通り、画面の出しわけにも影響しない。
+ *
+ * 使い道：src/lib/taxonomy.ts から「水戸 × 宿泊意図」のような絞り込みを行う。
+ */
+const businessIntentSchema = z.object({
+  /** 予約できる先（宿・チケット・駐車場など）への導線が意味を持つ記事か */
+  booking: z.boolean().default(false),
+  /** 泊まる判断に関わる */
+  accommodation: z.boolean().default(false),
+  /** 駐車場・車で行く判断に関わる */
+  parking: z.boolean().default(false),
+  /** 食べる先の判断に関わる */
+  food: z.boolean().default(false),
+  /** 体験・アクティビティの申し込みに関わる */
+  experience: z.boolean().default(false),
+  /** 読者ではなく事業者に関係する（/biz/ の見込み） */
+  businessLead: z.boolean().default(false),
+});
+
+/** 収益導線を足す優先度。GSCの実データを見て人が決める。推測で埋めない */
+const commercialPrioritySchema = z.enum(['low', 'medium', 'high']);
+
+/**
+ * イベントの状態。**保存せず計算する**のが既定。
+ * 保存すると必ず古くなる（開催日を過ぎても upcoming のまま残る）ため、
+ * src/lib/lifecycle.ts が eventInfo の日付から毎ビルド判定する。
+ * この enum は、計算では表せない例外を人が上書きするときだけ使う。
+ */
+const eventLifecycleSchema = z.enum(['upcoming', 'today', 'ended', 'evergreen']);
+
 const guideCta = z.object({
   label: z.string().min(1),
   href: z.union([z.url(), z.string().regex(/^[/#]/)]),
@@ -340,6 +375,18 @@ const news = defineCollection({
     faq: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).default([]),
     /** 予約・確認先への導線（任意）。読者の目的が宿泊・体験・店舗利用につながる記事だけに置く */
     booking: bookingSchema.optional(),
+    /** 商業属性（任意）。未設定＝未判定。src/lib/taxonomy.ts で集計に使う */
+    businessIntent: businessIntentSchema.optional(),
+    commercialPriority: commercialPrioritySchema.optional(),
+    /** 時期に左右されず読まれ続ける記事か。未設定＝未判定 */
+    evergreen: z.boolean().optional(),
+    /** 計算結果を人が上書きしたいときだけ。通常は書かない（古くなるため） */
+    eventLifecycle: eventLifecycleSchema.optional(),
+    /**
+     * 翌年版など、この記事の役割を引き継いだページ。
+     * 過去記事は消さずURLも変えない。終了表示とあわせて次の版へ案内するために使う。
+     */
+    supersededBy: z.string().startsWith('/').optional(),
     sourceUrls: z.array(z.object({
       label: z.string().min(1),
       url: z.url(),
@@ -505,6 +552,18 @@ const events = defineCollection({
     faq: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).default([]),
     /** 予約・確認先への導線（任意） */
     booking: bookingSchema.optional(),
+    /** 商業属性（任意）。未設定＝未判定。src/lib/taxonomy.ts で集計に使う */
+    businessIntent: businessIntentSchema.optional(),
+    commercialPriority: commercialPrioritySchema.optional(),
+    /** 時期に左右されず読まれ続ける記事か。未設定＝未判定 */
+    evergreen: z.boolean().optional(),
+    /** 計算結果を人が上書きしたいときだけ。通常は書かない（古くなるため） */
+    eventLifecycle: eventLifecycleSchema.optional(),
+    /**
+     * 翌年版など、この記事の役割を引き継いだページ。
+     * 過去記事は消さずURLも変えない。終了表示とあわせて次の版へ案内するために使う。
+     */
+    supersededBy: z.string().startsWith('/').optional(),
 
     sourceUrls: z.array(z.object({
       label: z.string().min(1),

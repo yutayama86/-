@@ -29,8 +29,11 @@ interface Props {
   booking: Booking;
   /** GA4 の link_page_type。どの種類のページからの予約クリックかを分ける */
   pageType: 'news' | 'events';
+  /** 共通の分析軸。記事が扱っている市町村と分類 */
+  municipality?: string;
+  contentCategory?: string;
 }
-const { booking, pageType } = Astro.props;
+const { booking, pageType, municipality, contentCategory } = Astro.props;
 const showAdNotice = hasPaidLink(booking.items);
 const KIND_LABEL: Record<string, string> = {
   official: '公式',
@@ -40,7 +43,7 @@ const KIND_LABEL: Record<string, string> = {
 };
 ---
 
-<aside class="bkg" aria-labelledby="bkg-title" data-booking-guide data-page-type={pageType}>
+<aside class="bkg" aria-labelledby="bkg-title" data-booking-guide data-page-type={pageType} data-municipality={municipality ?? ''} data-content-category={contentCategory ?? ''}>
   <p class="bkg__kicker">RESERVE &amp; CHECK</p>
   <p id="bkg-title" class="bkg__title">{booking.heading}</p>
   {booking.intro && <p class="bkg__intro">{booking.intro}</p>}
@@ -73,13 +76,15 @@ const KIND_LABEL: Record<string, string> = {
 </aside>
 
 <script>
-  import { trackEvent } from '../lib/analytics-events';
+  import { commonParams, trackEvent } from '../lib/analytics-events';
 
   for (const block of document.querySelectorAll<HTMLElement>('[data-booking-guide]')) {
     const pageType = block.dataset.pageType ?? '';
     for (const link of block.querySelectorAll<HTMLAnchorElement>('a[data-provider]')) {
       link.addEventListener('click', () => {
         trackEvent('outbound_booking_click', {
+          // 既存パラメータは変えない。共通の軸（source_page など）だけ足す
+          ...commonParams({ page_type: pageType, municipality: block.dataset.municipality, content_category: block.dataset.contentCategory }),
           link_provider: link.dataset.provider ?? '',
           link_kind: link.dataset.kind ?? '',
           partner_status: link.dataset.partnerStatus ?? '',

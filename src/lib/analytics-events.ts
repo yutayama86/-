@@ -30,6 +30,9 @@ export interface CtaOrigin {
   cta_location: string;
   cta_page_type: string;
   cta_origin_path: string;
+  /** どの地域・分類の記事から来た相談かを、送信完了まで引き継ぐ。個人情報は入れない */
+  cta_origin_municipality?: string;
+  cta_origin_category?: string;
 }
 
 export function trackEvent(name: string, params: Params = {}): void {
@@ -37,6 +40,65 @@ export function trackEvent(name: string, params: Params = {}): void {
   if (typeof gtag !== 'function') return;
   const clean = Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined && v !== ''));
   gtag('event', name, { page_path: window.location.pathname, ...clean });
+}
+
+/**
+ * どのイベントにも共通で付ける情報。
+ * 「どのページの、どの種類の、どの地域の、どの分類の記事からの行動か」を、
+ * outbound_booking_click / business_cta_click / local_business_click で同じ名前に揃える。
+ * 揃っていないと、あとから横断で見るときに軸が合わない。
+ */
+export interface CommonContext {
+  page_type?: string;
+  municipality?: string;
+  content_category?: string;
+}
+
+/** 共通パラメータを組み立てる。空文字は trackEvent 側で落とす */
+export function commonParams(ctx: CommonContext = {}): Params {
+  return {
+    source_page: typeof window === 'undefined' ? undefined : window.location.pathname,
+    page_type: ctx.page_type,
+    municipality: ctx.municipality || undefined,
+    content_category: ctx.content_category || undefined,
+  };
+}
+
+/**
+ * 同じイベントが同じ要素から二重に飛ぶのを防ぐ。
+ * 表示イベント（1ページ1回）や、二重にバインドされた場合の保険。
+ */
+const fired = new Set<string>();
+export function trackOnce(key: string, name: string, params: Params = {}): void {
+  if (fired.has(key)) return;
+  fired.add(key);
+  trackEvent(name, params);
+}
+
+/**
+ * 外部の店舗・施設・観光事業者へのリンクの計測。
+ *
+ * **いまは全外部リンクに自動で付けない。** 事業者IDを付けられるリンクにだけ、
+ * 呼び出し側から明示的に使う。IDの無いリンクを名前だけで数えても、
+ * あとで名寄せできないため。
+ */
+export interface LocalBusinessClick extends CommonContext {
+  business_id: string;
+  business_name: string;
+  business_category: string;
+  /** official / map / reservation / tel など、リンクの種類 */
+  link_kind: string;
+}
+
+export function trackLocalBusinessClick(info: LocalBusinessClick): void {
+  const { business_id, business_name, business_category, link_kind, ...ctx } = info;
+  trackEvent('local_business_click', {
+    ...commonParams(ctx),
+    business_id,
+    business_name,
+    business_category,
+    link_kind,
+  });
 }
 
 export function rememberCtaOrigin(origin: CtaOrigin): void {

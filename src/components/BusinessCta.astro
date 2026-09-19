@@ -53,26 +53,26 @@ const OPTIONS = [
 </aside>
 
 <script>
-  import { rememberCtaOrigin, trackEvent } from '../lib/analytics-events';
+  import { commonParams, rememberCtaOrigin, trackEvent, trackOnce } from '../lib/analytics-events';
 
   for (const block of document.querySelectorAll<HTMLElement>('[data-business-cta]')) {
     const pageType = block.dataset.pageType ?? '';
     // source_page / municipality / content_category を足して、
     // 「どのページの、どの地域の、どの種類の記事から相談が来たか」を分けられるようにする。
     // イベント名は business_cta_click のまま変えない（9/15からの計測を途切れさせないため）。
+    const municipality = block.dataset.municipality || '';
+    const contentCategory = block.dataset.contentCategory || '';
     const base = {
       cta_location: 'article_end',
       cta_page_type: pageType,
-      source_page: window.location.pathname,
-      municipality: block.dataset.municipality || '(none)',
-      content_category: block.dataset.contentCategory || '(none)',
+      ...commonParams({ page_type: pageType, municipality, content_category: contentCategory }),
     };
 
     // クリック率の分母。半分以上が画面に入ったときに1回だけ送る
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
-          trackEvent('business_cta_view', base);
+          trackOnce(`business_cta_view:${window.location.pathname}`, 'business_cta_view', base);
           io.disconnect();
         }
       }, { threshold: 0.5 });
@@ -82,7 +82,14 @@ const OPTIONS = [
     for (const link of block.querySelectorAll<HTMLAnchorElement>('a[data-cta-type]')) {
       link.addEventListener('click', () => {
         const ctaType = link.dataset.ctaType ?? '';
-        rememberCtaOrigin({ ...base, cta_type: ctaType, cta_origin_path: window.location.pathname });
+        rememberCtaOrigin({
+          cta_type: ctaType,
+          cta_location: 'article_end',
+          cta_page_type: pageType,
+          cta_origin_path: window.location.pathname,
+          cta_origin_municipality: municipality || undefined,
+          cta_origin_category: contentCategory || undefined,
+        });
         trackEvent('business_cta_click', { ...base, cta_type: ctaType, link_url: link.getAttribute('href') ?? '' });
       });
     }

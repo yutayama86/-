@@ -19,6 +19,9 @@ import ArticleNextSteps from '../../components/ArticleNextSteps.astro';
 import { hasPaidLink } from '../../data/affiliates';
 import { getEvents } from '../../lib/content';
 import { MUNI_BY_SLUG } from '../../data/areas';
+import { lifecycleOf, LIFECYCLE_LABEL } from '../../lib/lifecycle';
+import { facetsOfEvent, getAllFacets } from '../../lib/taxonomy';
+import { findRelated } from '../../lib/related';
 
 export const getStaticPaths = (async () => {
   const events = await getEvents();
@@ -66,6 +69,18 @@ const unknownLabels = info ? ([
 ] as [string, string | undefined][]).filter(([, v]) => !v).map(([k]) => k) : [];
 
 const towns = d.municipalities.map((s) => MUNI_BY_SLUG.get(s)).filter(Boolean);
+// 開催状況は保存せず毎ビルド計算する。保存すると開催後も upcoming のまま残る
+const lifecycle = lifecycleOf(entry);
+const lifecycleLabel = LIFECYCLE_LABEL[lifecycle];
+/**
+ * 関連記事はルールで選ぶ（src/lib/related.ts）。
+ * 一致した軸が1つも無いものは出さない。終了したイベントも候補にしない。
+ * 編集部が手で選んだ relatedArticleUrls とは重複させない。
+ */
+const related = findRelated(facetsOfEvent(entry), await getAllFacets(), {
+  limit: 4,
+  exclude: d.relatedArticleUrls,
+});
 const crumbs: Crumb[] = [
   { name: 'ホーム', href: '/' },
   { name: '茨城のイベント・おでかけ', href: '/events/' },
@@ -152,6 +167,10 @@ if (d.faq.length > 0) {
     <Breadcrumbs items={crumbs} />
     <p class="bp-kicker">{d.articleType === 'event' ? 'EVENT' : d.articleType === 'roundup' ? 'ROUNDUP' : 'GUIDE'}</p>
     <h1>{d.title}</h1>
+    {lifecycleLabel && <p class:list={['ev-status', `is-${lifecycle}`]}>{lifecycleLabel}</p>}
+    {lifecycle === 'ended' && d.supersededBy && (
+      <p class="ev-status__next"><a href={d.supersededBy}>最新の回の記事を見る →</a></p>
+    )}
     <p class="ev-lead">{d.summary}</p>
     {d.booking && hasPaidLink(d.booking.items) && <p class="ad-disclosure"><span class="ad-disclosure__tag">#アフィリエイト広告</span>この記事にはアフィリエイト広告を含みます。</p>}
     <p class="ev-meta">
@@ -237,7 +256,7 @@ if (d.faq.length > 0) {
     </section>
   )}
 
-  {d.booking && <BookingGuide booking={d.booking} pageType="events" />}
+  {d.booking && <BookingGuide booking={d.booking} pageType="events" municipality={d.municipalities[0]} contentCategory={d.articleType} />}
 
   <section id="sources" aria-labelledby="ev-src">
     <p class="section-number">{no('sources')} / SOURCES</p>
@@ -254,6 +273,16 @@ if (d.faq.length > 0) {
     </div>
   </div>
 
+  {related.length > 0 && (
+    <section class="bp-wrap bp-section" aria-labelledby="ev-auto-rel">
+      <p class="bp-kicker">RELATED</p>
+      <h2 id="ev-auto-rel" class="bp-section-title">あわせて読む</h2>
+      <ul class="ev-links">
+        {related.map((r) => <li><a href={r.facets.path}>{r.facets.title} →</a></li>)}
+      </ul>
+    </section>
+  )}
+
   {(towns.length > 0 || d.relatedArticleUrls.length > 0) && (
     <section class="bp-wrap bp-section" aria-labelledby="ev-rel">
       <h2 id="ev-rel" class="bp-section-title">この街のこと</h2>
@@ -267,6 +296,12 @@ if (d.faq.length > 0) {
 </BrandBase>
 
 <style>
+  .ev-status{display:inline-flex;align-items:center;margin:1rem 0 0;padding:.3rem .85rem;border-radius:999px;font:700 .8rem var(--font-brand-meta);letter-spacing:.04em}
+  .ev-status.is-ended{background:var(--color-mist);color:var(--color-soil)}
+  .ev-status.is-today{background:var(--color-signal,#a63f32);color:#fff}
+  .ev-status__next{margin:.6rem 0 0;font-size:.88rem}
+  .ev-status__next a{color:var(--interior-blue,var(--color-tide));border-bottom:1px solid currentColor}
+
   /*
    * 本文の基準幅。日本語は1文字＝1emなので em で測る。
    * ch は「0」の字幅＝半角が基準で、56ch と書いても28字にしかならない。

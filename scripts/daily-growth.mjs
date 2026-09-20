@@ -145,7 +145,7 @@ const search = searchRaw
 
 /** 未マージのGrowth PRに含まれる変更。mainへ未反映のまま同じ対象を選ばないために使う。 */
 async function pendingGrowthChanges() {
-  const repo = process.env.GITHUB_REPOSITORY || 'yutayama86/home';
+  const repo = process.env.GITHUB_REPOSITORY || 'yutayama86/shikumi-base';
   const api = `https://api.github.com/repos/${repo}`;
   const headers = { Accept: 'application/vnd.github+json' };
   if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;

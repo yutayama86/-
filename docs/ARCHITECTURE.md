@@ -18,7 +18,7 @@
 | 目的 | 中小企業・地域企業の集客・営業・業務・発信・組織を再現可能な仕組みに変える事業ブランドとして、仕組み化の相談を獲得する反響営業型サイト |
 | 廃止済み | 旧リフォーム特化の商品・診断・価格・URL（`/service/reform-lead-os/`、`/diagnosis/reform-lead/`）。記事・CTA・生成プロンプトで使用しない |
 | 運営 | 山野辺 雄太（個人事業。**法人ではない**） |
-| リポジトリ | https://github.com/yutayama86/home |
+| リポジトリ | https://github.com/yutayama86/shikumi-base |
 | ローカル | `~/Desktop/shikumi-base` |
 | 本番ブランチ | `main`（push で自動デプロイ） |
 

@@ -381,6 +381,19 @@ if (rule.allowMeta) {
   if (removed.length > 0) fail(`既存の見出しが削除されています: ${removed.join(' / ')}`);
 }
 
+// AIが実在する記事slugを誤ったカテゴリ配下で返した場合だけ、リポジトリ内の正規URLへ補正する。
+// slugが一致しないリンクや外部リンクは触らず、後段の検証で拒否する。
+const canonicalKnowledgePathBySlug = new Map(
+  referenceArticles(KNOWLEDGE_DIR).map((article) => {
+    const slug = article.path.split('/').filter(Boolean).at(-1);
+    return [slug, article.path];
+  })
+);
+newBody = newBody.replace(/\/knowledge\/[^/]+\/([^/]+)\//g, (path, slug) => {
+  const canonical = canonicalKnowledgePathBySlug.get(slug);
+  return canonical ?? path;
+});
+
 const updated = `---\n${newFrontmatter}\n---\n${newBody}`;
 
 const legacy = findLegacyTerms(updated);

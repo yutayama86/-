@@ -19,7 +19,7 @@
     "preview": "astro preview",
     "deploy": "npm run build && wrangler pages deploy dist --project-name=shikumi-base --branch=main",
     "astro": "astro",
-    "test": "node --test scripts/tests/*.test.mjs",
+    "test": "node --test --test-concurrency=1 scripts/tests/*.test.mjs",
     "improve": "node scripts/improve-page.mjs",
     "audit:target": "node scripts/verify-target-match.mjs"
   },

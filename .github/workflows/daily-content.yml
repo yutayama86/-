@@ -5,6 +5,7 @@ on:
     # 毎朝7:00（JST）= 前日22:00（UTC）
     - cron: '0 22 * * *'
   workflow_dispatch:
+  # workflow定義変更後はmain上でGrowth経路を自己診断する。
   push:
     branches: [main]
     paths:

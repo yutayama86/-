@@ -19,17 +19,17 @@
     "preview": "astro preview",
     "deploy": "npm run build && wrangler pages deploy dist --project-name=shikumi-base --branch=main",
     "astro": "astro",
-    "test": "node --test scripts/tests/*.test.mjs",
+    "test": "node --test --test-concurrency=1 scripts/tests/*.test.mjs",
     "improve": "node scripts/improve-page.mjs",
     "audit:target": "node scripts/verify-target-match.mjs"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.6.0",
-    "astro": "^7.1.6"
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "typescript": "^5.9.3",
-    "wrangler": "^4.125.0"
+    "wrangler": "^4.135.0"
   }
 }

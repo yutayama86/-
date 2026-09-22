@@ -1,4 +1,5 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
 /** ナレッジ記事のカテゴリ。追加するときは src/site.config.ts の categories も更新する。 */
@@ -49,7 +50,7 @@ const caseStudy = defineCollection({
     /** 自社で運営している事例か（イバトコなど）。 */
     isOwnProject: z.boolean().default(false),
     /** 外部公開URL。ある場合のみ。 */
-    url: z.string().url().optional(),
+    url: z.url().optional(),
 
     /** 課題・打ち手・結果。結果は検証できる事実のみを書く。 */
     challenge: z.string(),

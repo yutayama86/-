@@ -232,7 +232,6 @@ if (ga4Data) {
   const { current, previous } = ga4Data;
   const event = current.events;
   const ctaRate = current.sessions > 0 ? (event.cta_click / current.sessions) * 100 : 0;
-  const formRate = event.cta_click > 0 ? (event.contact_form_start / event.cta_click) * 100 : 0;
   const leadRate = event.contact_form_start > 0 ? (event.generate_lead / event.contact_form_start) * 100 : 0;
 
   lines.push(`  集計期間: ${current.period.start} 〜 ${current.period.end}（前7日比）`);
@@ -240,7 +239,7 @@ if (ga4Data) {
   lines.push(`  セッション: ${current.sessions} ${formatDelta(current.sessions, previous.sessions)}`);
   lines.push(`  表示ページ数: ${current.screenPageViews} ${formatDelta(current.screenPageViews, previous.screenPageViews)}`);
   lines.push(`  CTAクリック: ${event.cta_click}（セッション比 ${ctaRate.toFixed(1)}%）`);
-  lines.push(`  フォーム開始: ${event.contact_form_start}（CTA比 ${formRate.toFixed(1)}%）`);
+  lines.push(`  フォーム開始: ${event.contact_form_start}（CTAクリックとはセッション帰属が異なるため単純比率は出しません）`);
   lines.push(`  問い合わせ完了: ${event.generate_lead}（開始比 ${leadRate.toFixed(1)}%）`);
   lines.push(`  フォームエラー: ${event.form_error}`);
 

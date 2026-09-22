@@ -256,7 +256,11 @@ if (!responseFile || !existsSync(responseFile)) {
 }
 
 const raw = readFileSync(responseFile, 'utf-8').trim();
-const jsonText = raw
+// gpt-oss 系モデルが内部チャンネル表現を本文へ混ぜる場合は、最終メッセージ部分だけを使う。
+const modelPayload = raw.includes('<|message|>')
+  ? raw.slice(raw.lastIndexOf('<|message|>') + '<|message|>'.length).replace(/<\|end\|>\s*$/i, '').trim()
+  : raw;
+const jsonText = modelPayload
   .replace(/^```(?:json)?\s*/i, '')
   .replace(/```$/, '')
   .trim();

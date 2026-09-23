@@ -83,7 +83,7 @@ test('指定された箇所だけを置換し、更新日を記録する', () =>
   assert.match(updated, /^updatedAt: \d{4}-\d{2}-\d{2}$/m, '更新日が入る');
   assert.equal(
     updated.replace(/^updatedAt: .*$\n/m, '').replace(replace, find),
-    ws.original,
+    ws.original.replace(/^updatedAt: .*$\n/m, ''),
     '指定箇所と更新日以外は変わらない'
   );
 });

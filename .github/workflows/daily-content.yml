@@ -109,6 +109,9 @@ jobs:
         if: steps.article.outcome == 'success' && steps.verify.outcome == 'failure'
         run: |
           article_path="src/content/knowledge/${{ steps.topic.outputs.slug }}.md"
+          if [ "${{ steps.topic.outputs.mode }}" = "improve" ]; then
+            article_path="${{ steps.topic.outputs.file }}"
+          fi
           if [ -f "$article_path" ]; then
             echo "::group::Rejected article for editorial review"
             sed -n '1,320p' "$article_path"

@@ -9,6 +9,7 @@ keywords:
   - 生成AI 業務活用
   - Claude 仕事
 publishedAt: 2026-08-26
+updatedAt: 2026-09-25
 relatedServices:
   - ai-dx
 relatedArticles:
@@ -139,4 +140,4 @@ Google Workspace 中心なら Gemini、Microsoft 365 中心なら関連サービ
 - まず1つに絞り、不足を感じたら追加する
 - どのサービスでも、社外に出す文書は人が確認する
 
-シクミベースでは、ツール選定よりも「どの業務のどこを変えるか」を先に整理します。[AI・業務改善について](/service/ai-dx/)もあわせてご覧ください。
+シクミベースでは、ツール選定よりも「どの業務のどこを変えるか」を先に整理します。[AI・業務改善について](/service/ai-dx/)もあわせてご覧ください。さらに、シクミベースが運営する地域メディア『イバトコ』の公開ケーススタディは[こちら](/case/ibatoco/)です。
